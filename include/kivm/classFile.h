@@ -143,7 +143,7 @@ namespace kivm {
          * The constant_pool table is indexed
          * from {@code 1} to {@code constant_pool_count - 1}.
          */
-        cp_info *constant_pool;
+        cp_info **constant_pool;
 
         u2 access_flags;
 
