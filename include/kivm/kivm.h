@@ -2,11 +2,11 @@
 // Created by kiva on 2018/2/25.
 //
 
-#ifndef KIVAVM_H
-#define KIVAVM_H
+#pragma once
 
 #include <cstdint>
 #include <cstddef>
+#include <shared/string.h>
 
 typedef unsigned char u1;
 typedef unsigned short u2;
@@ -102,4 +102,6 @@ typedef unsigned long long u8;
 #define ACC_MIRANDA             0x8000
 #define ACC_REFLECT_MASK        0xffff
 
-#endif //KIVAVM_H
+
+namespace kivm {
+}

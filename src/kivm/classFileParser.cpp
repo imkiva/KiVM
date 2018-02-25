@@ -4,8 +4,13 @@
 
 #include <kivm/classFile.h>
 #include <cmath>
+#include <ostream>
 
 namespace kivm {
+
+    std::ostream &operator>>(std::ostream &_stream, CONSTANT_Class_info &_class_info) {
+        return _stream;
+    }
 
     int CONSTANT_Integer_info::get_constant() const {
         return static_cast<int>(bytes);

@@ -9,6 +9,7 @@
 #pragma once
 
 #include <kivm/kivm.h>
+#include <iosfwd>
 
 /* Constant pool tags */
 #define CONSTANT_Utf8                    1
@@ -534,6 +535,14 @@ namespace kivm {
         char *_source;       // Source of stream (directory name, ZIP/JAR archive name)
         bool _need_verify;  // True if verification is on for the class file
 
+        void guarantee_more(int size) {
+            auto remaining = (size_t) (_buffer_end - _current);
+            auto usize = (unsigned int) size;
+            if (usize > remaining) {
+                // TODO: Unexpected EOF
+            }
+        }
+
     public:
         ClassFileStream(u1 *buffer, int length, char *source);
 
@@ -549,14 +558,6 @@ namespace kivm {
         char *source() const { return _source; }
 
         void set_verify(bool flag) { _need_verify = flag; }
-
-        void guarantee_more(int size) {
-            auto remaining = (size_t) (_buffer_end - _current);
-            auto usize = (unsigned int) size;
-            if (usize > remaining) {
-                // TODO: Unexpected EOF
-            }
-        }
 
         // Read u1 from stream
         u1 get_u1();
@@ -595,6 +596,9 @@ namespace kivm {
             return res;
         }
 
+        // Copy `count` u1 bytes from current position to `to`
+        void get_u1_bytes(u1 *to, int count);
+
         // Get direct pointer into stream at current position.
         // Returns NULL if length elements are not remaining. The caller is
         // responsible for calling skip below if buffer contents is used.
@@ -627,6 +631,35 @@ namespace kivm {
 
         // Tells whether eos is reached
         bool at_eos() const { return _current == _buffer_end; }
+
+        // Yeah...
+        ClassFileStream &operator>>(CONSTANT_Utf8_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_Class_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_Double_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_Float_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_Long_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_Integer_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_String_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_Fieldref_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_Methodref_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_InterfaceMethodref_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_MethodHandle_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_MethodType_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_NameAndType_info &info);
+
+        ClassFileStream &operator>>(CONSTANT_InvokeDynamic_info &info);
     };
 
 

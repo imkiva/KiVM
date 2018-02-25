@@ -17,5 +17,5 @@ set(SOURCE_FILES src/main.cpp
         include/shared/lock.h
         src/kivm/oopBase.cpp
         src/kivm/oop.cpp
-        src/kivm/classFileParser.cpp)
+        src/kivm/classFileParser.cpp include/shared/string.h)
 add_executable(KivaVM ${SOURCE_FILES})
