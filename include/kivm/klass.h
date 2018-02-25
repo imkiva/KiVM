@@ -1,9 +1,7 @@
 //
 // Created by kiva on 2018/2/25.
 //
-
-#ifndef KIVAVM_KLASS_H
-#define KIVAVM_KLASS_H
+#pragma once
 
 #define T_BOOLEAN               4
 #define T_CHAR                  5
@@ -16,41 +14,42 @@
 
 #include <kivm/kivm.h>
 
-enum ClassType {
-    INSTANCE_CLASS,
-    OBJECT_ARRAY_CLASS,
-    TYPE_ARRAY_CLASS,
-};
+namespace kivm {
+    enum ClassType {
+        INSTANCE_CLASS,
+        OBJECT_ARRAY_CLASS,
+        TYPE_ARRAY_CLASS,
+    };
 
-enum oopType {
-    INSTANCE_OOP,
-    PRIMITIVE_OOP,
-    OBJECT_ARRAY_OOP,
-    TYPE_ARRAY_OOP,
-};
+    enum oopType {
+        INSTANCE_OOP,
+        PRIMITIVE_OOP,
+        OBJECT_ARRAY_OOP,
+        TYPE_ARRAY_OOP,
+    };
 
-enum ClassState {
-    allocated,
-    loaded,
-    linked,
-    being_initialized,
-    fully_initialized,
-    initialization_error,
-};
+    enum ClassState {
+        allocated,
+        loaded,
+        linked,
+        being_initialized,
+        fully_initialized,
+        initialization_error,
+    };
 
-class Klass {
-private:
-    ClassState _state;
-    ClassType _type;
+    class Klass {
+    private:
+        ClassState _state;
+        ClassType _type;
 
-public:
-    ClassType type() const { return _type; }
+    public:
+        ClassType type() const { return _type; }
 
-    void set_type(ClassType type) { _type = type; }
+        void set_type(ClassType type) { _type = type; }
 
-    ClassState state() const { return _state; }
+        ClassState state() const { return _state; }
 
-    void set_state(ClassState state) { _state = state; }
-};
+        void set_state(ClassState state) { _state = state; }
+    };
+}
 
-#endif //KIVAVM_KLASS_H
