@@ -637,7 +637,7 @@ namespace kivm {
         u2 attribute_tag = to_attribute_tag(attribute_name_index, constant_pool);
         switch (attribute_tag) {
             case ATTRIBUTE_Code: {
-                Code_attribute *result = new Code_attribute;
+                auto *result = new Code_attribute;
                 result->init(stream, constant_pool);
                 return result;
             }
