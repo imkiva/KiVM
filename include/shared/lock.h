@@ -8,6 +8,6 @@
 #include <mutex>
 
 namespace kivm {
-	using Lock = std::mutex;
-	using LockGuard = std::lock_guard<std::mutex>;
+    using Lock = std::mutex;
+    using LockGuard = std::lock_guard<std::mutex>;
 }
