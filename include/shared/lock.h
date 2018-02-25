@@ -5,32 +5,9 @@
 #ifndef KIVAVM_LOCK_H
 #define KIVAVM_LOCK_H
 
-#include <pthread.h>
-#include <shared/acl.h>
+#include <mutex>
 
-class Lock {
-private:
-    DISALLOW_COPY(Lock);
-    pthread_mutexattr_t _attr;
-    pthread_mutex_t _mutex;
-
-public:
-    Lock();
-
-    void lock();
-
-    void unlock();
-
-    ~Lock();
-};
-
-class LockGuard {
-private:
-    Lock &lock;
-public:
-    LockGuard(Lock &lock) : lock(lock) { lock.lock(); }
-
-    ~LockGuard() { lock.unlock(); }
-};
+using Lock = std::mutex;
+using LockGuard = std::lock_guard<std::mutex>;
 
 #endif //KIVAVM_LOCK_H

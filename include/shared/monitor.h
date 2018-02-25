@@ -5,64 +5,61 @@
 #ifndef KIVAVM_MONITOR_H
 #define KIVAVM_MONITOR_H
 
-#include <pthread.h>
-#include <sys/time.h>
+#include <condition_variable>
+#include <thread>
+#include <mutex>
+#include <chrono>
 
-class Monitor {
+class Monitor final {
 private:
-    pthread_mutex_t _mutex;
-    pthread_mutexattr_t _attr;
-    pthread_cond_t _cond;
+	std::mutex _mutex;
+	std::condition_variable _cond;
+	std::unique_lock<std::mutex> _lock;
 
 public:
-    Monitor() {
-        pthread_mutexattr_init(&_attr);
-        pthread_mutexattr_settype(&_attr, PTHREAD_MUTEX_RECURSIVE);
+	Monitor() : _lock(_mutex) {}
 
-        pthread_mutex_init(&_mutex, &_attr);
-        pthread_cond_init(&_cond, nullptr);
-    }
+	Monitor(const Monitor &) = delete;
 
-    void enter() {
-        pthread_mutex_lock(&_mutex);
-    }
+	Monitor(Monitor &&) noexcept = delete;
 
-    void wait() {
-        pthread_cond_wait(&_cond, &_mutex);
-    }
+	~Monitor() = default;
 
-    void wait(long timesec) {
-        struct timeval val{};
-        gettimeofday(&val, nullptr);
-        val.tv_usec += timesec;
+	void enter()
+	{
+		_mutex.lock();
+	}
 
-        struct timespec spec{};
-        spec.tv_sec = val.tv_sec;
-        spec.tv_nsec = val.tv_usec * 1000;
-        pthread_cond_timedwait(&_cond, &_mutex, &spec);
-    }
+	void wait()
+	{
+		_cond.wait(_lock);
+	}
 
-    void notify() {
-        pthread_cond_signal(&_cond);
-    }
+	void wait(std::size_t time)
+	{
+		_cond.wait_for(_lock, std::chrono::milliseconds(time));
+	}
 
-    void notify_all() {
-        pthread_cond_broadcast(&_cond);
-    }
+	void notify()
+	{
+		_cond.notify_one();
+	}
 
-    void leave() {
-        pthread_mutex_unlock(&_mutex);
-    }
+	void notify_all()
+	{
+		_cond.notify_all();
+	}
 
-    void force_unlock_when_athrow() {
-        pthread_mutex_trylock(&_mutex);
-        pthread_mutex_unlock(&_mutex);
-    }
+	void leave()
+	{
+		_mutex.unlock();
+	}
 
-    ~Monitor() {
-        pthread_mutex_destroy(&_mutex);
-        pthread_cond_destroy(&_cond);
-    }
+	void force_unlock_when_athrow()
+	{
+		_mutex.try_lock();
+		_mutex.unlock();
+	}
 };
 
 #endif //KIVAVM_MONITOR_H
