@@ -43,7 +43,7 @@ namespace kivm {
     double CONSTANT_Double_info::get_constant() const {
         long bits = ((long) high_bytes << 32) + low_bytes;
 
-        if (DOUBLE_IS_NEGATIVE_INFINITY(bits)) {
+        if (DOUBLE_IS_POSITIVE_INFINITY(bits)) {
             return _DOUBLE_POSITIVE_INFINITY;
 
         } else if (DOUBLE_IS_NEGATIVE_INFINITY(bits)) {
