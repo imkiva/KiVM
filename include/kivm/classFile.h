@@ -27,6 +27,34 @@
 #define CONSTANT_MethodType             16
 #define CONSTANT_InvokeDynamic          18
 
+#define REF_getField                 1
+#define REF_getStatic                2
+#define REF_putField                 3
+#define REF_putStatic                4
+#define REF_invokeVirtual            5
+#define REF_invokeStatic             6
+#define REF_invokeSpecial            7
+#define REF_newInvokeSpecial         8
+#define REF_invokeInterface          9
+
+/* JVM Specification §4.4.4 */
+#define _FLOAT_POSITIVE_INFINITY    0x7f800000
+#define _FLOAT_NEGATIVE_INFINITY    0xff800000
+#define FLOAT_IS_POSITIVE_INFINITY(x)    ((x) == _FLOAT_POSITIVE_INFINITY)
+#define FLOAT_IS_NEGATIVE_INFINITY(x)    ((x) == _FLOAT_NEGATIVE_INFINITY)
+#define FLOAT_NAN                   0x7f800001
+#define FLOAT_IS_NAN(x) (((x) >= 0x7f800001 && (x) <= 0x7fffffff) \
+                            || ((x) >= 0xff800001 && (x) <= 0xffffffff))
+
+/* JVM Specification §4.4.5 */
+#define _DOUBLE_POSITIVE_INFINITY   0x7ff0000000000000L
+#define _DOUBLE_NEGATIVE_INFINITY   0xfff0000000000000L
+#define DOUBLE_IS_POSITIVE_INFINITY(x)    ((x) == _DOUBLE_POSITIVE_INFINITY)
+#define DOUBLE_IS_NEGATIVE_INFINITY(x)    ((x) == _DOUBLE_NEGATIVE_INFINITY)
+#define DOUBLE_NAN                  0x7ff0000000000001L
+#define DOUBLE_IS_NAN(x) (((x) >= 0x7ff0000000000001L && (x) <= 0x7fffffffffffffffL) \
+                            || ((x) >= 0xfff0000000000001L && (x) <= 0xffffffffffffffffL))
+
 /**
  * Constant pool info
  */
@@ -35,15 +63,9 @@ struct cp_info {
      * Constant pool tags
      */
     u1 tag;
-    u1 *info;
 };
 
-struct CONSTANT_Class_info {
-    /**
-     * Must be {@code CONSTANT_Class}
-     */
-    u1 tag;
-
+struct CONSTANT_Class_info : public cp_info {
     /**
      * The value of the {@code name_index} item must be
      * a valid index into the {@code constant_pool} table.
@@ -58,12 +80,7 @@ struct CONSTANT_Class_info {
     u2 name_index;
 };
 
-struct CONSTANT_Fieldref_info {
-    /**
-     * Must be {@code CONSTANT_Fieldref}
-     */
-    u1 tag;
-
+struct CONSTANT_Fieldref_info : public cp_info {
     /**
      * The value of the {@code class_index} item must be
      * a valid index into the {@code constant_pool} table.
@@ -87,12 +104,7 @@ struct CONSTANT_Fieldref_info {
     u2 name_and_type_index;
 };
 
-struct CONSTANT_Methodref_info {
-    /**
-     * Must be {@code CONSTANT_Methodref}
-     */
-    u1 tag;
-
+struct CONSTANT_Methodref_info : public cp_info {
     /**
      * The value of the {@code class_index} item must be
      * a valid index into the {@code constant_pool} table.
@@ -116,12 +128,7 @@ struct CONSTANT_Methodref_info {
     u2 name_and_type_index;
 };
 
-struct CONSTANT_InterfaceMethodref_info {
-    /**
-     * Must be {@code CONSTANT_InterfaceMethodref}
-     */
-    u1 tag;
-
+struct CONSTANT_InterfaceMethodref_info : public cp_info {
     /**
      * The value of the {@code class_index} item must be
      * a valid index into the {@code constant_pool} table.
@@ -145,12 +152,7 @@ struct CONSTANT_InterfaceMethodref_info {
     u2 name_and_type_index;
 };
 
-struct CONSTANT_String_info {
-    /**
-     * Must be {@code CONSTANT_String}
-     */
-    u1 tag;
-
+struct CONSTANT_String_info : public cp_info {
     /**
      * The value of the {@code string_index} item must be
      * a valid index into the {@code constant_pool} table.
@@ -162,26 +164,18 @@ struct CONSTANT_String_info {
     u2 string_index;
 };
 
-struct CONSTANT_Integer_info {
-    /**
-     * Must be {@code CONSTANT_Integer}
-     */
-    u1 tag;
-
+struct CONSTANT_Integer_info : public cp_info {
     /**
      * The {@code bytes} represents the value of the int constant.
      * The bytes of the value are stored
      * in big-endian (high byte first) order.
      */
     u4 bytes;
+
+    int get_constant() const;
 };
 
-struct CONSTANT_Float_info {
-    /**
-     * Must be {@code CONSTANT_Float}
-     */
-    u1 tag;
-
+struct CONSTANT_Float_info : public cp_info {
     /**
      * The {@code bytes} represents the value of the float constant
      * in IEEE 754 floating-point single format (§2.3.2).
@@ -189,14 +183,11 @@ struct CONSTANT_Float_info {
      * in big-endian (high byte first) order.
      */
     u4 bytes;
+
+    float get_constant() const;
 };
 
-struct CONSTANT_Long_info {
-    /**
-     * Must be {@code CONSTANT_Long}
-     */
-    u1 tag;
-
+struct CONSTANT_Long_info : public cp_info {
     /**
      * The unsigned {@code high_bytes} and {@code low_bytes}
      * together represent the value of the long constant:
@@ -207,15 +198,11 @@ struct CONSTANT_Long_info {
      */
     u4 high_bytes;
     u4 low_bytes;
+
+    long get_constant() const;
 };
 
-struct CONSTANT_Double_info {
-    /**
-     * Must be {@code CONSTANT_Double}
-     */
-    u1 tag;
-
-
+struct CONSTANT_Double_info : public cp_info {
     /**
      * The {@code high_bytes} and {@code low_bytes}
      * together represent the double value in
@@ -225,14 +212,11 @@ struct CONSTANT_Double_info {
      */
     u4 high_bytes;
     u4 low_bytes;
+
+    double get_constant() const;
 };
 
-struct CONSTANT_NameAndType_info {
-    /**
-     * Must be {@code CONSTANT_NameAndType}
-     */
-    u1 tag;
-
+struct CONSTANT_NameAndType_info : public cp_info {
     /**
      * The value of the {@code name_index} item must be
      * a valid index into the {@code constant_pool} table.
@@ -253,12 +237,7 @@ struct CONSTANT_NameAndType_info {
     u2 descriptor_index;
 };
 
-struct CONSTANT_Utf8_info {
-    /**
-     * Must be {@code CONSTANT_Utf8}
-     */
-    u1 tag;
-
+struct CONSTANT_Utf8_info : public cp_info {
     /**
      * The value of the {@code length} item gives
      * the number of bytes in the bytes array
@@ -276,12 +255,7 @@ struct CONSTANT_Utf8_info {
     u1 *bytes;
 };
 
-struct CONSTANT_MethodHandle_info {
-    /**
-     * Must be {@code CONSTANT_MethodHandle}
-     */
-    u1 tag;
-
+struct CONSTANT_MethodHandle_info : public cp_info {
     /**
      * The value of the {@code reference_kind} item must be in the range 1 to 9.
      * The value denotes the kind of this method handle,
@@ -339,12 +313,7 @@ struct CONSTANT_MethodHandle_info {
     u2 reference_index;
 };
 
-struct CONSTANT_MethodType_info {
-    /**
-     * Must be {@code CONSTANT_MethodType}
-     */
-    u1 tag;
-
+struct CONSTANT_MethodType_info : public cp_info {
     /**
      * The value of the {@code descriptor_index} item must be
      * a valid index into the {@code constant_pool} table.
@@ -355,12 +324,7 @@ struct CONSTANT_MethodType_info {
     u2 descriptor_index;
 };
 
-struct CONSTANT_InvokeDynamic_info {
-    /**
-     * Must be {@code CONSTANT_InvokeDynamic}
-     */
-    u1 tag;
-
+struct CONSTANT_InvokeDynamic_info : public cp_info {
     /**
      * The value of the {@code bootstrap_method_attr_index} item must be
      * a valid index into the {@code bootstrap_methods} array of
@@ -664,6 +628,11 @@ public:
 
     // Tells whether eos is reached
     bool at_eos() const { return _current == _buffer_end; }
+};
+
+
+class ClassFileParser {
+public:
 };
 
 #endif //KIVAVM_CLASS_FILE_H
