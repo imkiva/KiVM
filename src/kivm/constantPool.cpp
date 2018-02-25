@@ -2,16 +2,10 @@
 // Created by kiva on 2018/2/25.
 //
 
-#include <kivm/classFile.h>
+#include <kivm/constantPool.h>
 #include <cmath>
-#include <ostream>
 
 namespace kivm {
-
-    std::ostream &operator>>(std::ostream &_stream, CONSTANT_Class_info &_class_info) {
-        return _stream;
-    }
-
     int CONSTANT_Integer_info::get_constant() const {
         return static_cast<int>(bytes);
     }
@@ -60,5 +54,25 @@ namespace kivm {
                      : (bits & 0xfffffffffffffL) | 0x10000000000000L;
             return s * m * pow(2, e - 1075);
         }
+    }
+
+    String CONSTANT_Utf8_info::get_constant() const {
+        // UTF-8 Strings in Java needs to be Unicode in C++
+        static String cached;
+        static bool converted = false;
+        if (!converted) {
+            cached = kivm::strings::from_bytes(bytes, length);
+            converted = true;
+        }
+
+        return cached;
+    }
+
+    CONSTANT_Utf8_info::CONSTANT_Utf8_info() : cp_info() {
+        bytes = nullptr;
+    }
+
+    CONSTANT_Utf8_info::~CONSTANT_Utf8_info() {
+        delete[] bytes;
     }
 }

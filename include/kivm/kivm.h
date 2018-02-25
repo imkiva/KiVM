@@ -6,12 +6,10 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <shared/types.h>
 #include <shared/string.h>
 
-typedef unsigned char u1;
-typedef unsigned short u2;
-typedef unsigned int u4;
-typedef unsigned long long u8;
+
 
 /**
  * Declared public; may be accessed from outside its package.

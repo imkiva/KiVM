@@ -59,6 +59,10 @@ namespace kivm {
          * Constant pool tags
          */
         u1 tag;
+
+        cp_info() = default;
+
+        virtual ~cp_info() = default;
     };
 
     struct CONSTANT_Class_info : public cp_info {
@@ -249,6 +253,12 @@ namespace kivm {
          * {@code (byte)0} or lie in the range {@code (byte)0xf0} - {@code (byte)0xff}.
          */
         u1 *bytes;
+
+        CONSTANT_Utf8_info();
+
+        ~CONSTANT_Utf8_info() override;
+
+        String get_constant() const;
     };
 
     struct CONSTANT_MethodHandle_info : public cp_info {

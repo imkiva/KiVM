@@ -3,8 +3,17 @@
 //
 #pragma once
 
+#include <shared/types.h>
 #include <string>
 
 namespace kivm {
-    using String = std::wstring;
+
+    namespace strings {
+        using String  = std::wstring;
+
+        String from_bytes(u1 *bytes, size_t length);
+    }
+
+
+    using String = strings::String;
 }
