@@ -6,6 +6,7 @@
 #define KIVAVM_H
 
 #include <cstdint>
+#include <cstddef>
 
 typedef unsigned char u1;
 typedef unsigned short u2;
