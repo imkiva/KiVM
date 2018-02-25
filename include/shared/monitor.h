@@ -13,6 +13,7 @@ private:
     pthread_mutex_t _mutex;
     pthread_mutexattr_t _attr;
     pthread_cond_t _cond;
+
 public:
     Monitor() {
         pthread_mutexattr_init(&_attr);
@@ -31,11 +32,11 @@ public:
     }
 
     void wait(long timesec) {
-        struct timeval val;
-        gettimeofday(&val, NULL);
+        struct timeval val{};
+        gettimeofday(&val, nullptr);
         val.tv_usec += timesec;
-        // convert:
-        struct timespec spec;
+
+        struct timespec spec{};
         spec.tv_sec = val.tv_sec;
         spec.tv_nsec = val.tv_usec * 1000;
         pthread_cond_timedwait(&_cond, &_mutex, &spec);
