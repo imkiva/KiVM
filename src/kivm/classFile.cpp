@@ -13,7 +13,7 @@ namespace kivm {
     }
 
     field_info::~field_info() {
-        ClassFileParser::dealloc_attributes(&attributes, attributes_count);
+        AttributeParser::dealloc_attributes(&attributes, attributes_count);
     }
 
     void field_info::init(ClassFileStream &stream, cp_info **constant_pool) {
@@ -21,7 +21,7 @@ namespace kivm {
         name_index = stream.get_u2();
         descriptor_index = stream.get_u2();
         attributes_count = stream.get_u2();
-        ClassFileParser::read_attributes(&attributes, attributes_count,
+        AttributeParser::read_attributes(&attributes, attributes_count,
                                          stream, constant_pool);
     }
 
@@ -31,7 +31,7 @@ namespace kivm {
     }
 
     method_info::~method_info() {
-        ClassFileParser::dealloc_attributes(&attributes, attributes_count);
+        AttributeParser::dealloc_attributes(&attributes, attributes_count);
     }
 
     void method_info::init(ClassFileStream &stream, cp_info **constant_pool) {
@@ -39,7 +39,7 @@ namespace kivm {
         name_index = stream.get_u2();
         descriptor_index = stream.get_u2();
         attributes_count = stream.get_u2();
-        ClassFileParser::read_attributes(&attributes, attributes_count,
+        AttributeParser::read_attributes(&attributes, attributes_count,
                                          stream, constant_pool);
     }
 }

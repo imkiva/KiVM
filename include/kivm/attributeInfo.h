@@ -345,4 +345,14 @@ namespace kivm {
 
         ~MethodParameters_attribute() override;
     };
+
+    class AttributeParser {
+    public:
+        static void read_attributes(attribute_info ***p, u2 count,
+                                    ClassFileStream &stream, cp_info **constant_pool);
+
+        static void dealloc_attributes(attribute_info ***p, u2 count);
+
+        static attribute_info *parse_attribute(ClassFileStream &stream, cp_info **constant_pool);
+    };
 }

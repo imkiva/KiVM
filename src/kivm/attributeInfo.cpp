@@ -442,7 +442,7 @@ namespace kivm {
     Code_attribute::~Code_attribute() {
         delete[] code;
         delete[] exception_table;
-        ClassFileParser::dealloc_attributes(&attributes, attributes_count);
+        AttributeParser::dealloc_attributes(&attributes, attributes_count);
     }
 
     void Code_attribute::init(ClassFileStream &stream, cp_info **constant_pool) {
@@ -460,7 +460,7 @@ namespace kivm {
             exception_table[i].catch_type = stream.get_u2();
         }
         attributes_count = stream.get_u2();
-        ClassFileParser::read_attributes(&attributes, attributes_count,
+        AttributeParser::read_attributes(&attributes, attributes_count,
                                          stream, constant_pool);
     }
 
@@ -579,5 +579,41 @@ namespace kivm {
 
     MethodParameters_attribute::~MethodParameters_attribute() {
         delete[] parameters;
+    }
+
+    /*******************************************************************
+     * Attribute parser
+     *******************************************************************/
+
+    attribute_info *AttributeParser::parse_attribute(ClassFileStream &stream,
+                                                     cp_info **constant_pool) {
+        // TODO: parse attributes
+        return nullptr;
+    }
+
+
+    void AttributeParser::read_attributes(attribute_info ***p, u2 count,
+                                          ClassFileStream &stream, cp_info **constant_pool) {
+        auto **attributes = new attribute_info *[count];
+        for (int j = 0; j < count; ++j) {
+            attributes[j] = AttributeParser::parse_attribute(stream, constant_pool);
+        }
+        if (p != nullptr) {
+            *p = attributes;
+        } else {
+            dealloc_attributes(&attributes, count);
+        }
+    }
+
+    void AttributeParser::dealloc_attributes(attribute_info ***p, u2 count) {
+        if (p == nullptr) {
+            return;
+        }
+        auto **attributes = *p;
+        for (int i = 0; i < count; i++) {
+            delete attributes[i];
+        }
+        delete[] attributes;
+        *p = nullptr;
     }
 }

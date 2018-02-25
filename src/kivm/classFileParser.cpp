@@ -29,7 +29,7 @@ namespace kivm {
     }
 
     void ClassFileParser::dealloc(ClassFile *class_file) {
-        ClassFileParser::dealloc_attributes(&class_file->attributes, class_file->attributes_count);
+        AttributeParser::dealloc_attributes(&class_file->attributes, class_file->attributes_count);
         for (int i = 1; i < class_file->constant_pool_count; ++i) {
             delete class_file->constant_pool[i];
         }
@@ -190,39 +190,7 @@ namespace kivm {
 
     void ClassFileParser::parse_attributes(ClassFile *classFile) {
         classFile->attributes_count = _classFileStream.get_u2();
-        read_attributes(&classFile->attributes, classFile->attributes_count,
+        AttributeParser::read_attributes(&classFile->attributes, classFile->attributes_count,
                         _classFileStream, classFile->constant_pool);
-    }
-
-    attribute_info *ClassFileParser::parse_attribute(ClassFileStream &stream,
-                                                     cp_info **constant_pool) {
-        // TODO: parse attributes
-        return nullptr;
-    }
-
-
-    void ClassFileParser::read_attributes(attribute_info ***p, u2 count,
-                                          ClassFileStream &stream, cp_info **constant_pool) {
-        auto **attributes = new attribute_info *[count];
-        for (int j = 0; j < count; ++j) {
-            attributes[j] = ClassFileParser::parse_attribute(stream, constant_pool);
-        }
-        if (p != nullptr) {
-            *p = attributes;
-        } else {
-            dealloc_attributes(&attributes, count);
-        }
-    }
-
-    void ClassFileParser::dealloc_attributes(attribute_info ***p, u2 count) {
-        if (p == nullptr) {
-            return;
-        }
-        auto **attributes = *p;
-        for (int i = 0; i < count; i++) {
-            delete attributes[i];
-        }
-        delete[] attributes;
-        *p = nullptr;
     }
 }
