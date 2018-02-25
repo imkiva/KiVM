@@ -64,6 +64,12 @@ namespace kivm {
             return *_current;
         }
 
+        u2 peek_u2() const {
+            u2 res;
+            READ_U2(res, _current);
+            return res;
+        }
+
         // Read u1 from stream
         u1 get_u1();
 

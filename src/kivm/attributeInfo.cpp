@@ -4,7 +4,7 @@
 
 #include <kivm/attributeInfo.h>
 #include <kivm/classFileStream.h>
-#include <kivm/classFileParser.h>
+#include <unordered_map>
 #include <cassert>
 
 namespace kivm {
@@ -585,9 +585,133 @@ namespace kivm {
      * Attribute parser
      *******************************************************************/
 
+    static u2 to_attribute_tag(u2 attribute_name_index, cp_info **constant_pool) {
+        static std::unordered_map<String, u2> ATTRIBUTE_MAPPING{
+                {L"ConstantValue",                        ATTRIBUTE_ConstantValue},
+                {L"Code",                                 ATTRIBUTE_Code},
+                {L"StackMapTable",                        ATTRIBUTE_StackMapTable},
+                {L"Exceptions",                           ATTRIBUTE_Exceptions},
+                {L"InnerClasses",                         ATTRIBUTE_InnerClasses},
+                {L"EnclosingMethod",                      ATTRIBUTE_EnclosingMethod},
+                {L"Synthetic",                            ATTRIBUTE_Synthetic},
+                {L"Signature",                            ATTRIBUTE_Signature},
+                {L"SourceFile",                           ATTRIBUTE_SourceFile},
+                {L"SourceDebugExtension",                 ATTRIBUTE_SourceDebugExtension},
+                {L"LineNumberTable",                      ATTRIBUTE_LineNumberTable},
+                {L"LocalVariableTable",                   ATTRIBUTE_LocalVariableTable},
+                {L"LocalVariableTypeTable",               ATTRIBUTE_LocalVariableTypeTable},
+                {L"Deprecated",                           ATTRIBUTE_Deprecated},
+                {L"RuntimeVisibleAnnotations",            ATTRIBUTE_RuntimeVisibleAnnotations},
+                {L"RuntimeInvisibleAnnotations",          ATTRIBUTE_RuntimeInvisibleAnnotations},
+                {L"RuntimeVisibleParameterAnnotations",   ATTRIBUTE_RuntimeVisibleParameterAnnotations},
+                {L"RuntimeInvisibleParameterAnnotations", ATTRIBUTE_RuntimeInvisibleParameterAnnotations},
+                {L"RuntimeVisibleTypeAnnotations",        ATTRIBUTE_RuntimeVisibleTypeAnnotations},
+                {L"RuntimeInvisibleTypeAnnotations",      ATTRIBUTE_RuntimeInvisibleTypeAnnotations},
+                {L"AnnotationDefault",                    ATTRIBUTE_AnnotationDefault},
+                {L"BootstrapMethods",                     ATTRIBUTE_BootstrapMethods},
+                {L"MethodParameters",                     ATTRIBUTE_MethodParameters},
+        };
+
+        cp_info *cp = constant_pool[attribute_name_index];
+        if (cp->tag == CONSTANT_Utf8) {
+            auto *utf8_info = (CONSTANT_Utf8_info *) cp;
+            auto iter = ATTRIBUTE_MAPPING.find(utf8_info->get_constant());
+            if (iter != ATTRIBUTE_MAPPING.end()) {
+                return iter->second;
+            }
+        }
+        return ATTRIBUTE_INVALID;
+    }
+
+    template<typename T>
+    static T *read_attribute_entry(ClassFileStream &stream) {
+        T *result = new T;
+        stream >> *result;
+        return result;
+    }
+
     attribute_info *AttributeParser::parse_attribute(ClassFileStream &stream,
                                                      cp_info **constant_pool) {
         // TODO: parse attributes
+        u2 attribute_name_index = stream.peek_u2();
+        u2 attribute_tag = to_attribute_tag(attribute_name_index, constant_pool);
+        switch (attribute_tag) {
+            case ATTRIBUTE_Code: {
+                Code_attribute *result = new Code_attribute;
+                result->init(stream, constant_pool);
+                return result;
+            }
+            case ATTRIBUTE_ConstantValue:
+                return read_attribute_entry<ConstantValue_attribute>(stream);
+
+            case ATTRIBUTE_StackMapTable:
+                return read_attribute_entry<StackMapTable_attribute>(stream);
+
+            case ATTRIBUTE_Exceptions:
+                return read_attribute_entry<Exceptions_attribute>(stream);
+
+            case ATTRIBUTE_InnerClasses:
+                return read_attribute_entry<InnerClasses_attribute>(stream);
+
+            case ATTRIBUTE_EnclosingMethod:
+                return read_attribute_entry<EnclosingMethod_attribute>(stream);
+
+            case ATTRIBUTE_Synthetic:
+                return read_attribute_entry<Synthetic_attribute>(stream);
+
+            case ATTRIBUTE_Signature:
+                return read_attribute_entry<Signature_attribute>(stream);
+
+            case ATTRIBUTE_SourceFile:
+                return read_attribute_entry<SourceFile_attribute>(stream);
+
+            case ATTRIBUTE_SourceDebugExtension:
+                return read_attribute_entry<SourceDebugExtension_attribute>(stream);
+
+            case ATTRIBUTE_LineNumberTable:
+                return read_attribute_entry<LineNumberTable_attribute>(stream);
+
+            case ATTRIBUTE_LocalVariableTable:
+                return read_attribute_entry<LocalVariableTable_attribute>(stream);
+
+            case ATTRIBUTE_LocalVariableTypeTable:
+                return read_attribute_entry<LocalVariableTypeTable_attribute>(stream);
+
+            case ATTRIBUTE_Deprecated:
+                return read_attribute_entry<Deprecated_attribute>(stream);
+
+            case ATTRIBUTE_BootstrapMethods:
+                return read_attribute_entry<BootstrapMethods_attribute>(stream);
+
+            case ATTRIBUTE_MethodParameters:
+                return read_attribute_entry<MethodParameters_attribute>(stream);
+
+            default:
+                fprintf(stderr, "Unimplemented attribute: %u\n", attribute_tag);
+                exit(1);
+                return nullptr;
+
+//            case ATTRIBUTE_RuntimeVisibleAnnotations:
+//                return read_attribute_entry<RuntimeVisibleAnnotations_attribute>(stream);
+//
+//            case ATTRIBUTE_RuntimeInvisibleAnnotations:
+//                return read_attribute_entry<RuntimeInvisibleAnnotations_attribute>(stream);
+//
+//            case ATTRIBUTE_RuntimeVisibleParameterAnnotations:
+//                return read_attribute_entry<RuntimeVisibleParameterAnnotations_attribute>(stream);
+//
+//            case ATTRIBUTE_RuntimeInvisibleParameterAnnotations:
+//                return read_attribute_entry<RuntimeInvisibleParameterAnnotations_attribute>(stream);
+//
+//            case ATTRIBUTE_RuntimeVisibleTypeAnnotations:
+//                return read_attribute_entry<RuntimeVisibleTypeAnnotations_attribute>(stream);
+//
+//            case ATTRIBUTE_RuntimeInvisibleTypeAnnotations:
+//                return read_attribute_entry<RuntimeInvisibleTypeAnnotations_attribute>(stream);
+//
+//            case ATTRIBUTE_AnnotationDefault:
+//                return read_attribute_entry<AnnotationDefault_attribute>(stream);
+        }
         return nullptr;
     }
 

@@ -17,6 +17,32 @@
 #define ITEM_Object             7
 #define ITEM_Uninitialized      8
 
+#define ATTRIBUTE_ConstantValue 0
+#define ATTRIBUTE_Code 1
+#define ATTRIBUTE_StackMapTable 2
+#define ATTRIBUTE_Exceptions 3
+#define ATTRIBUTE_InnerClasses 4
+#define ATTRIBUTE_EnclosingMethod 5
+#define ATTRIBUTE_Synthetic 6
+#define ATTRIBUTE_Signature 7
+#define ATTRIBUTE_SourceFile 8
+#define ATTRIBUTE_SourceDebugExtension 9
+#define ATTRIBUTE_LineNumberTable 10
+#define ATTRIBUTE_LocalVariableTable 11
+#define ATTRIBUTE_LocalVariableTypeTable 12
+#define ATTRIBUTE_Deprecated 13
+#define ATTRIBUTE_RuntimeVisibleAnnotations 14
+#define ATTRIBUTE_RuntimeInvisibleAnnotations 15
+#define ATTRIBUTE_RuntimeVisibleParameterAnnotations 16
+#define ATTRIBUTE_RuntimeInvisibleParameterAnnotations 17
+#define ATTRIBUTE_RuntimeVisibleTypeAnnotations 18
+#define ATTRIBUTE_RuntimeInvisibleTypeAnnotations 19
+#define ATTRIBUTE_AnnotationDefault 20
+#define ATTRIBUTE_BootstrapMethods 21
+#define ATTRIBUTE_MethodParameters 22
+
+#define ATTRIBUTE_INVALID 99
+
 namespace kivm {
     class ClassFileStream;
 

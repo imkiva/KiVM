@@ -100,7 +100,7 @@ namespace kivm {
     }
 
     template<typename T>
-    void read_pool_entry(cp_info **pool, int index, ClassFileStream &stream) {
+    static void read_pool_entry(cp_info **pool, int index, ClassFileStream &stream) {
         pool[index] = new T;
         stream >> *(T *) pool[index];
     }
