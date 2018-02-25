@@ -195,6 +195,14 @@ namespace kivm {
         info.name_and_type_index = get_u2();
         return *this;
     }
+
+    ClassFileStream &ClassFileStream::operator>>(field_info &info) {
+        return *this;
+    }
+
+    ClassFileStream &ClassFileStream::operator>>(method_info &info) {
+        return *this;
+    }
 }
 
 #pragma clang diagnostic pop

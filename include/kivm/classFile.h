@@ -175,6 +175,6 @@ namespace kivm {
         method_info *methods;
 
         u2 attributes_count;
-        attribute_info *attributes;
+        attribute_info **attributes;
     };
 }

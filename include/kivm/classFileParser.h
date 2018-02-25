@@ -20,7 +20,7 @@ namespace kivm {
         FILE *_file;
         u1 *_content;
 
-        ClassFile* parse();
+        ClassFile *parse();
 
         void parse_constant_pool(ClassFile *classFile);
 
@@ -31,6 +31,8 @@ namespace kivm {
         void parse_methods(ClassFile *classFile);
 
         void parse_attributes(ClassFile *classFile);
+
+        attribute_info *parse_attribute(ClassFile *classFile);
 
     public:
         explicit ClassFileParser(const char *filePath);
