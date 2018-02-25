@@ -9,10 +9,11 @@
 #pragma ide diagnostic ignored "missing_default_case"
 namespace kivm {
 
-    ClassFileStream::ClassFileStream(u1 *buffer, int length, char *source) {
+    ClassFileStream::ClassFileStream() = default;
+
+    void ClassFileStream::init(u1 *buffer, size_t length) {
         this->_buffer_start = buffer;
         this->_buffer_end = buffer + length;
-        this->_source = source;
         set_verify(false);
         set_current(buffer);
     }

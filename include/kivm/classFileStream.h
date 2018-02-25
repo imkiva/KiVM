@@ -27,7 +27,7 @@ namespace kivm {
         u1 *_buffer_start; // Buffer bottom
         u1 *_buffer_end;   // Buffer top (one past last element)
         u1 *_current;      // Current buffer position
-        char *_source;       // Source of stream (directory name, ZIP/JAR archive name)
+        const char *_source;       // Source of stream (directory name, ZIP/JAR archive name)
         bool _need_verify;  // True if verification is on for the class file
 
         void guarantee_more(int size) {
@@ -39,20 +39,29 @@ namespace kivm {
         }
 
     public:
-        ClassFileStream(u1 *buffer, int length, char *source);
+        ClassFileStream();
+
+        void init(u1 *buffer, size_t length);
 
         // Buffer access
         u1 *buffer() const { return _buffer_start; }
 
-        int length() const { return static_cast<int>(_buffer_end - _buffer_start); }
+        size_t length() const { return static_cast<size_t>(_buffer_end - _buffer_start); }
 
         u1 *current() const { return _current; }
 
         void set_current(u1 *pos) { _current = pos; }
 
-        char *source() const { return _source; }
+        const char *source() const { return _source; }
 
         void set_verify(bool flag) { _need_verify = flag; }
+
+        void set_source(const char *source) { _source = source; }
+
+        // Peek u1
+        u1 peek_u1() const {
+            return *_current;
+        }
 
         // Read u1 from stream
         u1 get_u1();

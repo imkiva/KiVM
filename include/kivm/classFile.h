@@ -128,7 +128,7 @@ namespace kivm {
         attribute_info *attributes;
     };
 
-    struct ClassFileFormat {
+    struct ClassFile {
         /**
          * The magic item supplies the magic number identifying the class file format.
          * It has the value 0xCAFEBABE.
