@@ -100,7 +100,7 @@ namespace kivm {
     void ClassFileParser::parse_constant_pool(ClassFile *classFile) {
         u2 count = classFile->constant_pool_count;
 
-        classFile->constant_pool = new cp_info *[count + 1];
+        classFile->constant_pool = new cp_info *[count];
         cp_info **pool = classFile->constant_pool;
 
         // The constant_pool table is indexed
