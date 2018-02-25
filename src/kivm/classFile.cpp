@@ -13,10 +13,7 @@ namespace kivm {
     }
 
     field_info::~field_info() {
-        for (int j = 0; j < attributes_count; ++j) {
-            delete attributes[j];
-        }
-        delete[] attributes;
+        ClassFileParser::dealloc_attributes(&attributes, attributes_count);
     }
 
     void field_info::init(ClassFileStream &stream, cp_info **constant_pool) {
@@ -24,10 +21,8 @@ namespace kivm {
         name_index = stream.get_u2();
         descriptor_index = stream.get_u2();
         attributes_count = stream.get_u2();
-        attributes = new attribute_info *[attributes_count];
-        for (int attr = 0; attr < attributes_count; ++attr) {
-            attributes[attr] = ClassFileParser::parse_attribute(stream, constant_pool);
-        }
+        ClassFileParser::read_attributes(&attributes, attributes_count,
+                                         stream, constant_pool);
     }
 
     method_info::method_info() {
@@ -36,10 +31,7 @@ namespace kivm {
     }
 
     method_info::~method_info() {
-        for (int j = 0; j < attributes_count; ++j) {
-            delete attributes[j];
-        }
-        delete[] attributes;
+        ClassFileParser::dealloc_attributes(&attributes, attributes_count);
     }
 
     void method_info::init(ClassFileStream &stream, cp_info **constant_pool) {
@@ -47,9 +39,7 @@ namespace kivm {
         name_index = stream.get_u2();
         descriptor_index = stream.get_u2();
         attributes_count = stream.get_u2();
-        attributes = new attribute_info *[attributes_count];
-        for (int attr = 0; attr < attributes_count; ++attr) {
-            attributes[attr] = ClassFileParser::parse_attribute(stream, constant_pool);
-        }
+        ClassFileParser::read_attributes(&attributes, attributes_count,
+                                         stream, constant_pool);
     }
 }

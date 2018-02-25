@@ -14,12 +14,19 @@ namespace kivm {
 
         static void dealloc(ClassFile *class_file);
 
+        static void read_attributes(attribute_info ***p, u2 count,
+                                    ClassFileStream &stream, cp_info **constant_pool);
+
+        static void dealloc_attributes(attribute_info ***p, u2 count);
+
+    private:
         static attribute_info *parse_attribute(ClassFileStream &stream, cp_info **constant_pool);
 
     private:
         ClassFile *_classFile;
         ClassFileStream _classFileStream;
         FILE *_file;
+
         u1 *_content;
 
         ClassFile *parse();

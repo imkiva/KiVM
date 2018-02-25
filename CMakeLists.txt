@@ -17,5 +17,5 @@ set(SOURCE_FILES src/main.cpp
         include/shared/lock.h
         src/kivm/oopBase.cpp
         src/kivm/oop.cpp
-        src/kivm/constantPool.cpp include/shared/string.h include/kivm/constantPool.h include/shared/types.h src/shared/string.cpp include/kivm/classFileStream.h include/kivm/classFileParser.h src/kivm/classFileParser.cpp src/kivm/classFile.cpp)
+        src/kivm/constantPool.cpp include/shared/string.h include/kivm/constantPool.h include/shared/types.h src/shared/string.cpp include/kivm/classFileStream.h include/kivm/classFileParser.h src/kivm/classFileParser.cpp src/kivm/classFile.cpp include/kivm/attributeInfo.h src/kivm/attributeInfo.cpp)
 add_executable(KivaVM ${SOURCE_FILES})
