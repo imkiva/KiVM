@@ -14,6 +14,8 @@ namespace kivm {
 
         static void dealloc(ClassFile *class_file);
 
+        static attribute_info *parse_attribute(ClassFileStream &stream, cp_info **constant_pool);
+
     private:
         ClassFile *_classFile;
         ClassFileStream _classFileStream;
@@ -31,8 +33,6 @@ namespace kivm {
         void parse_methods(ClassFile *classFile);
 
         void parse_attributes(ClassFile *classFile);
-
-        attribute_info *parse_attribute(ClassFile *classFile);
 
     public:
         explicit ClassFileParser(const char *filePath);

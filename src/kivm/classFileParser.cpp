@@ -29,15 +29,15 @@ namespace kivm {
     }
 
     void ClassFileParser::dealloc(ClassFile *class_file) {
-        for (int i = 1; i < class_file->attributes_count; ++i) {
+        for (int i = 0; i < class_file->attributes_count; ++i) {
             delete class_file->attributes[i];
         }
         for (int i = 1; i < class_file->constant_pool_count; ++i) {
             delete class_file->constant_pool[i];
         }
-        delete[] class_file->interfaces;
         delete[] class_file->methods;
         delete[] class_file->fields;
+        delete[] class_file->interfaces;
         delete[] class_file->attributes;
         delete[] class_file->constant_pool;
         delete class_file;
@@ -178,7 +178,7 @@ namespace kivm {
         u2 count = classFile->fields_count = _classFileStream.get_u2();
         classFile->fields = new field_info[count];
         for (int i = 0; i < count; ++i) {
-            _classFileStream >> classFile->fields[i];
+            classFile->fields[i].init(_classFileStream, classFile->constant_pool);
         }
     }
 
@@ -186,7 +186,7 @@ namespace kivm {
         u2 count = classFile->methods_count = _classFileStream.get_u2();
         classFile->methods = new method_info[count];
         for (int i = 0; i < count; ++i) {
-            _classFileStream >> classFile->methods[i];
+            classFile->methods[i].init(_classFileStream, classFile->constant_pool);
         }
     }
 
@@ -194,11 +194,14 @@ namespace kivm {
         u2 count = classFile->attributes_count = _classFileStream.get_u2();
         classFile->attributes = new attribute_info *[count];
         for (int i = 0; i < count; ++i) {
-            classFile->attributes[i] = parse_attribute(classFile);
+            classFile->attributes[i] = parse_attribute(_classFileStream,
+                                                       classFile->constant_pool);
         }
     }
 
-    attribute_info *ClassFileParser::parse_attribute(ClassFile *classFile) {
+    attribute_info *ClassFileParser::parse_attribute(ClassFileStream &stream,
+                                                     cp_info **constant_pool) {
+
         return nullptr;
     }
 }

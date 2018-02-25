@@ -6,6 +6,7 @@
 
 #include <kivm/kivm.h>
 #include <kivm/constantPool.h>
+#include <kivm/classFileStream.h>
 #include <iosfwd>
 
 namespace kivm {
@@ -79,7 +80,13 @@ namespace kivm {
          * The additional attributes of this field (§4.7),
          * whose length is {@code attributes_count}
          */
-        attribute_info *attributes;
+        attribute_info **attributes;
+
+        field_info();
+
+        ~field_info();
+
+        void init(ClassFileStream &stream, cp_info **constant_pool);
     };
 
 
@@ -125,7 +132,13 @@ namespace kivm {
          * The additional attributes of this method (§4.7),
          * whose length is {@code attributes_count}
          */
-        attribute_info *attributes;
+        attribute_info **attributes;
+
+        method_info();
+
+        ~method_info();
+
+        void init(ClassFileStream &stream, cp_info **constant_pool);
     };
 
     struct ClassFile {

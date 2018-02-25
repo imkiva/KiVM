@@ -165,9 +165,5 @@ namespace kivm {
         ClassFileStream &operator>>(CONSTANT_NameAndType_info &info);
 
         ClassFileStream &operator>>(CONSTANT_InvokeDynamic_info &info);
-
-        ClassFileStream &operator>>(field_info &info);
-
-        ClassFileStream &operator>>(method_info &info);
     };
 }
