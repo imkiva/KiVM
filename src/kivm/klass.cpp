@@ -151,7 +151,7 @@ namespace kivm {
     }
 
     void InstanceKlass::link_fields(cp_info **pool) {
-
+        
     }
 
     void InstanceKlass::link_methods(cp_info **pool) {
