@@ -163,5 +163,4 @@ int main(int argc, const char **argv) {
         ClassFileParser::dealloc(classFile);
     }
     return 0;
-
 }

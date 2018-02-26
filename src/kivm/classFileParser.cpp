@@ -26,7 +26,7 @@ namespace kivm {
         classFile->fields = nullptr;
         classFile->methods = nullptr;
         classFile->attributes = nullptr;
-        return new ClassFile;
+        return classFile;
     }
 
     void ClassFileParser::dealloc(ClassFile *class_file) {
