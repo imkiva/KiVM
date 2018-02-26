@@ -27,7 +27,7 @@ set(SOURCE_FILES
         src/kivm/classFileParser.cpp
         src/kivm/classFile.cpp
         include/kivm/attributeInfo.h
-        src/kivm/attributeInfo.cpp)
+        src/kivm/attributeInfo.cpp src/kivm/klass.cpp include/kivm/classLoader.h src/kivm/classLoader.cpp)
 
 add_executable(KivaVM ${SOURCE_FILES} src/bin/main.cpp)
 add_executable(javap ${SOURCE_FILES} src/bin/javap.cpp)

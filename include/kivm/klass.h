@@ -3,16 +3,10 @@
 //
 #pragma once
 
-#define T_BOOLEAN               4
-#define T_CHAR                  5
-#define T_FLOAT                 6
-#define T_DOUBLE                7
-#define T_BYTE                  8
-#define T_SHORT                 9
-#define T_INT                  10
-#define T_LONG                 11
-
+#include <unordered_map>
 #include <kivm/kivm.h>
+#include <kivm/classFile.h>
+#include <kivm/classLoader.h>
 
 namespace kivm {
     enum ClassType {
@@ -40,16 +34,93 @@ namespace kivm {
     class Klass {
     private:
         ClassState _state;
+        u2 _access_flag;
+
+    protected:
+        String _name;
         ClassType _type;
 
+        Klass *_super_class;
+
     public:
-        ClassType type() const { return _type; }
+        ClassState get_state() const {
+            return _state;
+        }
 
-        void set_type(ClassType type) { _type = type; }
+        void set_state(ClassState _state) {
+            this->_state = _state;
+        }
 
-        ClassState state() const { return _state; }
+        u2 get_access_flag() const {
+            return _access_flag;
+        }
 
-        void set_state(ClassState state) { _state = state; }
+        void set_access_flag(u2 _access_flag) {
+            Klass::_access_flag = _access_flag;
+        }
+
+        const String &get_name() const {
+            return _name;
+        }
+
+        void set_name(const String &_name) {
+            this->_name = _name;
+        }
+
+        ClassType get_type() const {
+            return _type;
+        }
+
+        void set_type(ClassType _type) {
+            this->_type = _type;
+        }
+
+        Klass *get_super_class() const {
+            return _super_class;
+        }
+
+        void set_super_class(Klass *_super_class) {
+            this->_super_class = _super_class;
+        }
+
+    public:
+        Klass();
+
+        virtual ~Klass() = default;
+    };
+
+    class oopDesc;
+
+    typedef oopDesc *oop;
+
+    class InstanceKlass : public Klass {
+    private:
+        ClassLoader *_class_loader;
+
+    private:
+        ClassFile *_class_file;
+
+        std::unordered_map<u2, InstanceKlass *> _interfaces;
+        std::unordered_map<u2, oop> _static_fields;
+
+        void link_constant_pool(cp_info **constant_pool);
+
+        void link_super_class(cp_info **pool);
+
+        void link_methods(cp_info **pool);
+
+        void link_fields(cp_info **pool);
+
+        void link_attributes(cp_info **pool);
+
+    public:
+        InstanceKlass(ClassFile *classFile, ClassLoader *class_loader);
+
+        ClassLoader *get_class_loader() const {
+            return _class_loader;
+        }
+
+        void link_class();
     };
 }
 
