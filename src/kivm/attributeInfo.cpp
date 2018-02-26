@@ -446,6 +446,7 @@ namespace kivm {
     }
 
     void Code_attribute::init(ClassFileStream &stream, cp_info **constant_pool) {
+        stream >> *((attribute_info *) this);
         max_stack = stream.get_u2();
         max_locals = stream.get_u2();
         code_length = stream.get_u4();
@@ -615,9 +616,11 @@ namespace kivm {
         cp_info *cp = constant_pool[attribute_name_index];
         if (cp->tag == CONSTANT_Utf8) {
             auto *utf8_info = (CONSTANT_Utf8_info *) cp;
-            auto iter = ATTRIBUTE_MAPPING.find(utf8_info->get_constant());
+            const String &name = utf8_info->get_constant();
+            auto iter = ATTRIBUTE_MAPPING.find(name);
             if (iter != ATTRIBUTE_MAPPING.end()) {
-                return iter->second;
+                u2 tag = iter->second;
+                return tag;
             }
         }
         return ATTRIBUTE_INVALID;
@@ -632,7 +635,6 @@ namespace kivm {
 
     attribute_info *AttributeParser::parse_attribute(ClassFileStream &stream,
                                                      cp_info **constant_pool) {
-        // TODO: parse attributes
         u2 attribute_name_index = stream.peek_u2();
         u2 attribute_tag = to_attribute_tag(attribute_name_index, constant_pool);
         switch (attribute_tag) {
@@ -685,6 +687,11 @@ namespace kivm {
 
             case ATTRIBUTE_MethodParameters:
                 return read_attribute_entry<MethodParameters_attribute>(stream);
+
+            case ATTRIBUTE_INVALID:
+                fprintf(stderr, "Invalid attribute tag: %u\n", attribute_tag);
+                exit(1);
+                return nullptr;
 
             default:
                 fprintf(stderr, "Unimplemented attribute: %u\n", attribute_tag);

@@ -254,11 +254,20 @@ namespace kivm {
          */
         u1 *bytes;
 
+    private:
+        /**
+         * Make a cache because we may call get_constant() many times.
+         */
+        String _cached_string;
+        bool _cached;
+
+    public:
+
         CONSTANT_Utf8_info();
 
         ~CONSTANT_Utf8_info() override;
 
-        String get_constant() const;
+        String get_constant();
     };
 
     struct CONSTANT_MethodHandle_info : public cp_info {

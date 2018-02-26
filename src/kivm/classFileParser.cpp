@@ -13,7 +13,8 @@ namespace kivm {
         auto *content = new u1[size + 1];
         if (content != nullptr) {
             fseek(file, 0L, SEEK_SET);
-            *psize = fread(content, static_cast<size_t>(size), 1, file);
+            fread(content, static_cast<size_t>(size), 1, file);
+            *psize = static_cast<size_t>(size);
         }
         return content;
     }
@@ -42,6 +43,7 @@ namespace kivm {
     }
 
     ClassFileParser::ClassFileParser(const char *filePath) {
+        _classFile = nullptr;
         _content = nullptr;
         _file = fopen(filePath, "rb");
         _classFileStream.set_source(filePath);
@@ -57,7 +59,7 @@ namespace kivm {
     ClassFile *ClassFileParser::classFile() {
         if (_classFile == nullptr) {
             if (_file != nullptr) {
-                parse();
+                _classFile = parse();
             }
         }
 

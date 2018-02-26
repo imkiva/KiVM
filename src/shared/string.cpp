@@ -5,6 +5,8 @@
 #include <shared/string.h>
 #include <cassert>
 #include <vector>
+#include <codecvt>
+#include <locale>
 
 namespace kivm {
     namespace strings {
@@ -97,6 +99,16 @@ namespace kivm {
                 }
             }
             return String(buffer.begin(), buffer.end());
+        }
+
+        String from_std_string(const std::string &str) {
+            std::wstring_convert<std::codecvt_utf8<wchar_t >> convert;
+            return convert.from_bytes(str);
+        }
+
+        std::string to_std_string(const String &str) {
+            std::wstring_convert<std::codecvt_utf8<wchar_t>> convert;
+            return convert.to_bytes(str);
         }
     }
 }

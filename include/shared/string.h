@@ -12,8 +12,11 @@ namespace kivm {
         using String  = std::wstring;
 
         String from_bytes(u1 *bytes, size_t length);
-    }
 
+        String from_std_string(const std::string &str);
+
+        std::string to_std_string(const String &str);
+    }
 
     using String = strings::String;
 }

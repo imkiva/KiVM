@@ -56,20 +56,19 @@ namespace kivm {
         }
     }
 
-    String CONSTANT_Utf8_info::get_constant() const {
+    String CONSTANT_Utf8_info::get_constant() {
         // UTF-8 Strings in Java needs to be Unicode in C++
-        static String cached;
-        static bool converted = false;
-        if (!converted) {
-            cached = kivm::strings::from_bytes(bytes, length);
-            converted = true;
+        if (!_cached) {
+            _cached_string = kivm::strings::from_bytes(bytes, length);
+            _cached = true;
         }
 
-        return cached;
+        return _cached_string;
     }
 
     CONSTANT_Utf8_info::CONSTANT_Utf8_info() : cp_info() {
         bytes = nullptr;
+        _cached = false;
     }
 
     CONSTANT_Utf8_info::~CONSTANT_Utf8_info() {
