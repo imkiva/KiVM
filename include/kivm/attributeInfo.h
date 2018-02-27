@@ -87,11 +87,13 @@ namespace kivm {
     struct Code_attribute : public attribute_info {
         u2 max_stack;
         u2 max_locals;
+
         u4 code_length;
         u1 *code;
-        u2 exception_table_length;
 
+        u2 exception_table_length;
         exception_table_t *exception_table;
+
         u2 attributes_count;
         attribute_info **attributes;
 

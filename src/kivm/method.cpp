@@ -32,6 +32,13 @@ namespace kivm {
         this->_method_info = method_info;
     }
 
+    bool Method::is_pc_in_method(const u1 *pc) {
+        return _code_attr != nullptr
+               && _code_attr->code_length > 0
+               && _code_attr->code != nullptr
+               && (pc - _code_attr->code) < _code_attr->code_length;
+    }
+
     void Method::link_and_init(cp_info **pool) {
         if (_linked) {
             return;
@@ -96,6 +103,19 @@ namespace kivm {
 
     void Method::link_code_attribute(cp_info **pool, Code_attribute *attr) {
         _code_attr = attr;
+        // check exception handlers
+        for (int i = 0; i < attr->exception_table_length; ++i) {
+            u1 *code_base = attr->code;
+            if (is_pc_in_method(code_base + attr->exception_table[i].start_pc)
+                && is_pc_in_method(code_base + attr->exception_table[i].end_pc)
+                && is_pc_in_method(code_base + attr->exception_table[i].handler_pc)) {
+                continue;
+            }
+            // TODO: throw VerifyError
+            assert(false);
+        }
+
+        // link attributes
         for (int i = 0; i < attr->attributes_count; ++i) {
             attribute_info *sub_attr = attr->attributes[i];
             switch (AttributeParser::to_attribute_tag(sub_attr->attribute_name_index, pool)) {

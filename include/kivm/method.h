@@ -43,6 +43,8 @@ namespace kivm {
 
         void link_code_attribute(cp_info **pool, Code_attribute *attr);
 
+        bool is_pc_in_method(const u1 *pc);
+
     public:
         Method(InstanceKlass *clazz, method_info *method_info);
 
