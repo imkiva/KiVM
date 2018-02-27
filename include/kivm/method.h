@@ -1,6 +1,7 @@
 //
 // Created by kiva on 2018/2/27.
 //
+#pragma once
 
 #include <kivm/kivm.h>
 #include <list>

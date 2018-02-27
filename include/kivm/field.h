@@ -1,0 +1,85 @@
+//
+// Created by kiva on 2018/2/28.
+//
+#pragma once
+
+#include <kivm/kivm.h>
+
+namespace kivm {
+    class InstanceKlass;
+
+    class field_info;
+
+    class cp_info;
+
+    class ConstantValue_attribute;
+
+    class Field {
+    private:
+        InstanceKlass *_klass;
+        String _name;
+        String _descriptor;
+        String _signature;
+        u2 _access_flag;
+
+        field_info *_field_info;
+        ConstantValue_attribute *_constant_attribute;
+
+        bool _linked;
+
+        void link_attributes(cp_info **pool);
+
+    public:
+        Field(InstanceKlass *clazz, field_info *field_info);
+
+        void link_field(cp_info **pool);
+
+        InstanceKlass *get_class() const {
+            return _klass;
+        }
+
+        const String &get_name() const {
+            return _name;
+        }
+
+        const String &get_descriptor() const {
+            return _descriptor;
+        }
+
+        const String &get_signature() const {
+            return _signature;
+        }
+
+        u2 get_access_flag() const {
+            return _access_flag;
+        }
+
+        bool is_linked() const {
+            return _linked;
+        }
+
+        bool is_public() const {
+            return (get_access_flag() & ACC_PUBLIC) == ACC_PUBLIC;
+        }
+
+        bool is_private() const {
+            return (get_access_flag() & ACC_PRIVATE) == ACC_PRIVATE;
+        }
+
+        bool is_protected() const {
+            return (get_access_flag() & ACC_PROTECTED) == ACC_PROTECTED;
+        }
+
+        bool is_final() const {
+            return (get_access_flag() & ACC_FINAL) == ACC_FINAL;
+        }
+
+        bool is_static() {
+            return (get_access_flag() & ACC_STATIC) == ACC_STATIC;
+        }
+
+        bool is_volatile() const {
+            return (get_access_flag() & ACC_VOLATILE) == ACC_VOLATILE;
+        }
+    };
+}

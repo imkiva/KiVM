@@ -30,12 +30,11 @@ namespace kivm {
 
     void InstanceKlass::link_and_init() {
         cp_info **pool = _class_file->constant_pool;
+        this->set_access_flag(_class_file->access_flags);
 
         auto *class_info = require_constant<CONSTANT_Class_info>(pool, _class_file->this_class);
         auto *utf8_info = require_constant<CONSTANT_Utf8_info>(pool, class_info->name_index);
-
         this->set_name(utf8_info->get_constant());
-        this->set_access_flag(_class_file->access_flags);
 
         link_super_class(pool);
         link_interfaces(pool);
@@ -100,13 +99,12 @@ namespace kivm {
     }
 
     void InstanceKlass::link_fields(cp_info **pool) {
+
     }
 
     void InstanceKlass::link_constant_pool(cp_info **constant_pool) {
-
     }
 
     void InstanceKlass::link_attributes(cp_info **pool) {
-
     }
 }

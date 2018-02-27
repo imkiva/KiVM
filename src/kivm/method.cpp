@@ -44,6 +44,8 @@ namespace kivm {
         this->_linked = false;
         this->_klass = clazz;
         this->_method_info = method_info;
+        this->_code_attr = nullptr;
+        this->_exception_attr = nullptr;
     }
 
     bool Method::is_pc_in_method(const u1 *pc) {
