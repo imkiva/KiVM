@@ -22,7 +22,7 @@ namespace kivm {
     public:
         static bool is_same(const Method *lhs, const Method *rhs);
 
-        static const String & make_identity(const Method *m);
+        static const String &make_identity(const Method *m);
 
     private:
         InstanceKlass *_klass;

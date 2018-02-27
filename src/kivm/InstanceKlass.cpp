@@ -89,11 +89,15 @@ namespace kivm {
             method->link_method(pool);
             MethodPool::add(method);
 
+            using std::make_pair;
+
             if (method->is_final() || method->is_private()) {
-                _pftable.insert(std::make_pair(Method::make_identity(method), method));
+                // TODO: replace with runtime constant pool index
+                _pftable.insert(make_pair(_class_file->methods[i].name_index, method));
 
             } else if (method->is_static()) {
-                _stable.insert(std::make_pair(Method::make_identity(method), method));
+                // TODO: replace with runtime constant pool index
+                _stable.insert(make_pair(_class_file->methods[i].name_index, method));
 
             } else {
                 // Do not use _vtable.insert()
