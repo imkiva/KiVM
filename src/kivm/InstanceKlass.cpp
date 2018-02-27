@@ -12,6 +12,9 @@ namespace kivm {
         this->set_type(ClassType::INSTANCE_CLASS);
         this->_class_file = classFile;
         this->_class_loader = _class_loader;
+        this->_bm_attr = nullptr;
+        this->_em_attr = nullptr;
+        this->_ic_attr = nullptr;
     }
 
     InstanceKlass *InstanceKlass::require_instance_class(u2 class_info_index) {
@@ -126,8 +129,43 @@ namespace kivm {
     }
 
     void InstanceKlass::link_constant_pool(cp_info **constant_pool) {
+        // TODO: Implement runtime constant pool
+        // currently, we use cp_info as runtime constant pool
     }
 
     void InstanceKlass::link_attributes(cp_info **pool) {
+        for (int i = 0; i < _class_file->attributes_count; ++i) {
+            attribute_info *attr = _class_file->attributes[i];
+
+            switch (AttributeParser::to_attribute_tag(attr->attribute_name_index, pool)) {
+                case ATTRIBUTE_InnerClasses:
+                    _ic_attr = (InnerClasses_attribute *) attr;
+                    break;
+                case ATTRIBUTE_EnclosingMethod:
+                    _em_attr = (EnclosingMethod_attribute *) attr;
+                    break;
+                case ATTRIBUTE_Signature: {
+                    auto *sig_attr = (Signature_attribute *) attr;
+                    auto *utf8 = require_constant<CONSTANT_Utf8_info>(pool, sig_attr->signature_index);
+                    _signature = utf8->get_constant();
+                    break;
+                }
+                case ATTRIBUTE_SourceFile: {
+                    auto *s = (SourceFile_attribute *) attr;
+                    auto *utf8 = require_constant<CONSTANT_Utf8_info>(pool, s->sourcefile_index);
+                    _source_file = utf8->get_constant();
+                    break;
+                }
+                case ATTRIBUTE_BootstrapMethods:
+                    _bm_attr = (BootstrapMethods_attribute *) attr;
+                    break;
+                case ATTRIBUTE_RuntimeVisibleAnnotations:
+                case ATTRIBUTE_RuntimeVisibleTypeAnnotations:
+                default: {
+                    // TODO
+                    break;
+                }
+            }
+        }
     }
 }

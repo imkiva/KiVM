@@ -16,12 +16,22 @@ namespace kivm {
 
     class Field;
 
+    class InnerClasses_attribute;
+
+    class EnclosingMethod_attribute;
+
+    class BootstrapMethods_attribute;
+
     class InstanceKlass : public Klass {
     private:
         ClassLoader *_class_loader;
-
-    private:
         ClassFile *_class_file;
+        String _source_file;
+        String _signature;
+
+        InnerClasses_attribute *_ic_attr;
+        EnclosingMethod_attribute *_em_attr;
+        BootstrapMethods_attribute *_bm_attr;
 
         /**
          * Methods that have been invoked by invokevirtual.
@@ -94,6 +104,14 @@ namespace kivm {
 
         ClassLoader *get_class_loader() const {
             return _class_loader;
+        }
+
+        const String &get_source_file() const {
+            return _source_file;
+        }
+
+        const String &get_signature() const {
+            return _signature;
         }
 
         void link_and_init() override;
