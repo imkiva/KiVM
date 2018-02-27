@@ -2,8 +2,8 @@
 // Created by kiva on 2018/2/26.
 //
 
-#include <kivm/classFile.h>
-#include <kivm/classFileParser.h>
+#include <kivm/classfile/classFile.h>
+#include <kivm/classfile/classFileParser.h>
 
 namespace kivm {
 

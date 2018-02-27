@@ -3,7 +3,7 @@
 //
 
 #include <kivm/method.h>
-#include <kivm/instanceKlass.h>
+#include <kivm/oop/instanceKlass.h>
 #include <shared/lock.h>
 
 #include <sstream>

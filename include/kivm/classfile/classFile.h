@@ -5,8 +5,8 @@
 #pragma once
 
 #include <kivm/kivm.h>
-#include <kivm/attributeInfo.h>
-#include <kivm/constantPool.h>
+#include <kivm/classfile/attributeInfo.h>
+#include <kivm/classfile/constantPool.h>
 #include <iosfwd>
 
 namespace kivm {

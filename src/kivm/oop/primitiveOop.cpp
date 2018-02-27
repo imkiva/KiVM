@@ -2,7 +2,7 @@
 // Created by kiva on 2018/2/28.
 //
 
-#include <kivm/primitiveOop.h>
+#include <kivm/oop/primitiveOop.h>
 
 namespace kivm {
     intOopDesc::intOopDesc(int value) : primitiveOopDesc(value) {

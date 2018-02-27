@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <kivm/classFile.h>
-#include <kivm/classFileStream.h>
+#include <kivm/classfile/classFile.h>
+#include <kivm/classfile/classFileStream.h>
 
 namespace kivm {
     class ClassFileParser {

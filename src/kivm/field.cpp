@@ -2,8 +2,8 @@
 // Created by kiva on 2018/2/28.
 //
 #include <kivm/field.h>
-#include <kivm/classFile.h>
-#include <kivm/instanceKlass.h>
+#include <kivm/classfile/classFile.h>
+#include <kivm/oop/instanceKlass.h>
 #include <shared/lock.h>
 
 #include <sstream>

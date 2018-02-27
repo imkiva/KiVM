@@ -2,7 +2,7 @@
 // Created by kiva on 2018/2/25.
 //
 
-#include <kivm/oop.h>
+#include <kivm/oop/oop.h>
 
 namespace kivm {
     void *oopBase::allocate(size_t size, bool add_to_pool) {

@@ -5,7 +5,7 @@
 #pragma once
 
 #include <kivm/kivm.h>
-#include <kivm/constantPool.h>
+#include <kivm/classfile/constantPool.h>
 
 #define ITEM_Top                0
 #define ITEM_Integer            1

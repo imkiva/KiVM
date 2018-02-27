@@ -3,7 +3,7 @@
 //
 
 #include <kivm/kivm.h>
-#include <kivm/classFileParser.h>
+#include <kivm/classfile/classFileParser.h>
 
 using namespace kivm;
 

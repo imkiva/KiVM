@@ -3,8 +3,8 @@
 //
 #pragma once
 
-#include <kivm/klass.h>
-#include <kivm/oopfwd.h>
+#include <kivm/oop/klass.h>
+#include <kivm/oop/oopfwd.h>
 #include <unordered_map>
 #include <vector>
 

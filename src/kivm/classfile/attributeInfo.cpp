@@ -2,8 +2,8 @@
 // Created by kiva on 2018/2/26.
 //
 
-#include <kivm/attributeInfo.h>
-#include <kivm/classFileStream.h>
+#include <kivm/classfile/attributeInfo.h>
+#include <kivm/classfile/classFileStream.h>
 #include <unordered_map>
 #include <cassert>
 

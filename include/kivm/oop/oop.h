@@ -5,8 +5,8 @@
 #pragma once
 
 #include <kivm/kivm.h>
-#include <kivm/oopfwd.h>
-#include <kivm/klass.h>
+#include <kivm/oop/oopfwd.h>
+#include <kivm/oop/klass.h>
 #include <shared/lock.h>
 #include <shared/monitor.h>
 #include <list>

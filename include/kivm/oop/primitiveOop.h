@@ -2,7 +2,7 @@
 // Created by kiva on 2018/2/28.
 //
 
-#include <kivm/oop.h>
+#include <kivm/oop/oop.h>
 
 namespace kivm {
     template<typename T>

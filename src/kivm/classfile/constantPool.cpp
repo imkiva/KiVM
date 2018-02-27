@@ -2,7 +2,7 @@
 // Created by kiva on 2018/2/25.
 //
 
-#include <kivm/constantPool.h>
+#include <kivm/classfile/constantPool.h>
 #include <cmath>
 
 namespace kivm {

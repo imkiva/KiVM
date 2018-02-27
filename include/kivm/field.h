@@ -4,7 +4,7 @@
 #pragma once
 
 #include <kivm/kivm.h>
-#include <kivm/oopfwd.h>
+#include <kivm/oop/oopfwd.h>
 #include <list>
 
 namespace kivm {

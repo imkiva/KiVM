@@ -5,7 +5,7 @@
 
 #include <unordered_map>
 #include <kivm/kivm.h>
-#include <kivm/classFile.h>
+#include <kivm/classfile/classFile.h>
 #include <kivm/classLoader.h>
 
 namespace kivm {

@@ -2,7 +2,7 @@
 // Created by kiva on 2018/2/25.
 //
 
-#include <kivm/classFileStream.h>
+#include <kivm/classfile/classFileStream.h>
 #include <cassert>
 
 #pragma clang diagnostic push

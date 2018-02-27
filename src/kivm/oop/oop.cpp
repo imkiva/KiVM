@@ -2,7 +2,7 @@
 // Created by kiva on 2018/2/25.
 //
 
-#include <kivm/oop.h>
+#include <kivm/oop/oop.h>
 
 namespace kivm {
     markOopDesc::markOopDesc(oopType type) {

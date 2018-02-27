@@ -4,7 +4,7 @@
 
 #include <unordered_map>
 #include <kivm/classLoader.h>
-#include <kivm/klass.h>
+#include <kivm/oop/klass.h>
 #include <shared/lock.h>
 
 namespace kivm {

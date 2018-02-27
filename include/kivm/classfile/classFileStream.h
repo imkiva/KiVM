@@ -5,8 +5,8 @@
 #pragma once
 
 #include <kivm/kivm.h>
-#include <kivm/constantPool.h>
-#include <kivm/classFile.h>
+#include <kivm/classfile/constantPool.h>
+#include <kivm/classfile/classFile.h>
 
 /**
  * Ugly but useful
