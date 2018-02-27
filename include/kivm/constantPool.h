@@ -356,4 +356,90 @@ namespace kivm {
          */
         u2 name_and_type_index;
     };
+
+    template<typename T>
+    struct constant_helper {
+        constexpr static u2 get_tag() = delete;
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_Utf8_info> {
+        constexpr static u2 get_tag() { return CONSTANT_Utf8; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_Integer_info> {
+        constexpr static u2 get_tag() { return CONSTANT_Integer; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_Float_info> {
+        constexpr static u2 get_tag() { return CONSTANT_Float; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_Long_info> {
+        constexpr static u2 get_tag() { return CONSTANT_Long; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_Double_info> {
+        constexpr static u2 get_tag() { return CONSTANT_Double; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_Class_info> {
+        constexpr static u2 get_tag() { return CONSTANT_Class; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_String_info> {
+        constexpr static u2 get_tag() { return CONSTANT_String; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_Fieldref_info> {
+        constexpr static u2 get_tag() { return CONSTANT_Fieldref; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_Methodref_info> {
+        constexpr static u2 get_tag() { return CONSTANT_Methodref; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_InterfaceMethodref_info> {
+        constexpr static u2 get_tag() { return CONSTANT_InterfaceMethodref; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_NameAndType_info> {
+        constexpr static u2 get_tag() { return CONSTANT_NameAndType; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_MethodHandle_info> {
+        constexpr static u2 get_tag() { return CONSTANT_MethodHandle; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_MethodType_info> {
+        constexpr static u2 get_tag() { return CONSTANT_MethodType; }
+    };
+
+    template<>
+    struct constant_helper<CONSTANT_InvokeDynamic_info> {
+        constexpr static u2 get_tag() { return CONSTANT_InvokeDynamic; }
+    };
+
+    template<typename T>
+    T *require_constant(cp_info **pool, u2 index) {
+        cp_info *info = pool[index];
+        if (info->tag != constant_helper<T>::get_tag()) {
+            // TODO: throw VerifyError
+            assert(false);
+            return nullptr;
+        }
+        return (T *) info;
+    }
 }

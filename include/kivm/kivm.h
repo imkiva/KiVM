@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <cassert>
 #include <shared/types.h>
 #include <shared/string.h>
 

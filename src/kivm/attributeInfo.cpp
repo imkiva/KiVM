@@ -586,7 +586,7 @@ namespace kivm {
      * Attribute parser
      *******************************************************************/
 
-    static u2 to_attribute_tag(u2 attribute_name_index, cp_info **constant_pool) {
+    u2 AttributeParser::to_attribute_tag(u2 attribute_name_index, cp_info **constant_pool) {
         static std::unordered_map<String, u2> ATTRIBUTE_MAPPING{
                 {L"ConstantValue",                        ATTRIBUTE_ConstantValue},
                 {L"Code",                                 ATTRIBUTE_Code},

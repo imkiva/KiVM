@@ -1,0 +1,129 @@
+//
+// Created by kiva on 2018/2/27.
+//
+
+#include <kivm/method.h>
+#include <kivm/instanceKlass.h>
+#include <shared/lock.h>
+
+namespace kivm {
+    static Lock &get_method_pool_lock() {
+        static Lock _method_pool_lock;
+        return _method_pool_lock;
+    }
+
+    void MethodPool::add(Method *method) {
+        LockGuard guard(get_method_pool_lock());
+        entries_internal().push_back(method);
+    }
+
+    std::list<Method *> &MethodPool::entries_internal() {
+        static std::list<Method *> _entries;
+        return _entries;
+    }
+
+    const std::list<Method *> &MethodPool::entries() {
+        return entries_internal();
+    }
+
+    Method::Method(InstanceKlass *clazz, method_info *method_info) {
+        this->_linked = false;
+        this->_klass = clazz;
+        this->_method_info = method_info;
+    }
+
+    void Method::link_and_init(cp_info **pool) {
+        if (_linked) {
+            return;
+        }
+
+        this->_access_flag = _method_info->access_flags;
+        auto *name_info = require_constant<CONSTANT_Utf8_info>(pool, _method_info->name_index);
+        auto *desc_info = require_constant<CONSTANT_Utf8_info>(pool, _method_info->descriptor_index);
+        this->_name = name_info->get_constant();
+        this->_descriptor = desc_info->get_constant();
+        link_attributes(pool);
+        _linked = true;
+    }
+
+    void Method::link_attributes(cp_info **pool) {
+        for (int i = 0; i < _method_info->attributes_count; ++i) {
+            attribute_info *attr = _method_info->attributes[i];
+
+            switch (AttributeParser::to_attribute_tag(attr->attribute_name_index, pool)) {
+                case ATTRIBUTE_Code: {
+                    link_code_attribute(pool, (Code_attribute *) attr);
+                    break;
+                }
+                case ATTRIBUTE_Exceptions: {
+                    link_exception_attribute(pool, (Exceptions_attribute *) attr);
+                    break;
+                }
+                case ATTRIBUTE_Signature: {
+                    auto *sig_attr = (Signature_attribute *) attr;
+                    auto *utf8 = require_constant<CONSTANT_Utf8_info>(pool, sig_attr->signature_index);
+                    _signature = utf8->get_constant();
+                    break;
+                }
+                case ATTRIBUTE_RuntimeVisibleAnnotations: {
+                    // TODO
+                }
+                case ATTRIBUTE_RuntimeVisibleParameterAnnotations: {
+                    // TODO
+                }
+                case ATTRIBUTE_RuntimeVisibleTypeAnnotations: {
+                    // TODO
+                }
+                case ATTRIBUTE_AnnotationDefault: {
+                    // TODO
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+    }
+
+    void Method::link_exception_attribute(cp_info **pool, Exceptions_attribute *attr) {
+        for (int i = 0; i < attr->number_of_exceptions; ++i) {
+            u2 exception_index = attr->exception_index_table[i];
+            auto *class_info = require_constant<CONSTANT_Class_info>(pool, exception_index);
+            auto *utf8_info = require_constant<CONSTANT_Utf8_info>(pool, class_info->name_index);
+            Klass *loaded = ClassLoader::require_class(get_class()->get_class_loader(),
+                                                       utf8_info->get_constant());
+            if (loaded->get_type() != ClassType::INSTANCE_CLASS) {
+                // TODO: throw VerifyError
+                assert(false);
+                continue;
+            }
+
+            auto *exception_class = (InstanceKlass *) loaded;
+            _throws.push_back(exception_class);
+        }
+    }
+
+    void Method::link_code_attribute(cp_info **pool, Code_attribute *attr) {
+        _code_attr = attr;
+        for (int i = 0; i < attr->attributes_count; ++i) {
+            attribute_info *sub_attr = attr->attributes[i];
+            switch (AttributeParser::to_attribute_tag(sub_attr->attribute_name_index, pool)) {
+                case ATTRIBUTE_LineNumberTable: {
+                    auto *line_attr = (LineNumberTable_attribute *) sub_attr;
+                    for (int j = 0; j < line_attr->line_number_table_length; ++j) {
+                        _line_number_table[line_attr->line_number_table[j].start_pc]
+                                = line_attr->line_number_table[j].line_number;
+                    }
+                    break;
+                }
+                case ATTRIBUTE_RuntimeVisibleTypeAnnotations:
+                case ATTRIBUTE_StackMapTable:
+                case ATTRIBUTE_LocalVariableTable:
+                case ATTRIBUTE_LocalVariableTypeTable:
+                case ATTRIBUTE_RuntimeInvisibleTypeAnnotations:
+                default:
+                    // TODO
+                    break;
+            }
+        }
+    }
+}

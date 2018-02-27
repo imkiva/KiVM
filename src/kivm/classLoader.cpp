@@ -18,6 +18,22 @@ namespace kivm {
         return bootstrap_classes;
     }
 
+    Klass *ClassLoader::require_class(ClassLoader *classLoader, const String &className) {
+        if (classLoader == nullptr) {
+            // This is a bootstrap class
+            classLoader = BootstrapClassLoader::get_class_loader();
+        }
+
+        Klass *loaded_class = classLoader == nullptr
+                              ? nullptr
+                              : classLoader->loadClass(className);
+        if (loaded_class == nullptr) {
+            // TODO: throw LinkageError
+            assert(false);
+        }
+        return loaded_class;
+    }
+
     BootstrapClassLoader *BootstrapClassLoader::get_class_loader() {
         static BootstrapClassLoader classLoader;
         return &classLoader;

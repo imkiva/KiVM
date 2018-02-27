@@ -74,7 +74,7 @@ namespace kivm {
     };
 
     struct ConstantValue_attribute : public attribute_info {
-        u2 constantvalue_index;
+        u2 constant_index;
     };
 
     struct exception_table_t {
@@ -229,6 +229,9 @@ namespace kivm {
     struct Exceptions_attribute : public attribute_info {
         u2 number_of_exceptions;
 
+        /**
+         * CONSTANT_Class_info
+         */
         u2 *exception_index_table;
 
         Exceptions_attribute();
@@ -283,7 +286,6 @@ namespace kivm {
     struct line_number_table_t {
         u2 start_pc;
         u2 line_number;
-
     };
 
     struct LineNumberTable_attribute : public attribute_info {
@@ -378,6 +380,8 @@ namespace kivm {
                                     ClassFileStream &stream, cp_info **constant_pool);
 
         static void dealloc_attributes(attribute_info ***p, u2 count);
+
+        static u2 to_attribute_tag(u2 attribute_name_index, cp_info **constant_pool);
 
         static attribute_info *parse_attribute(ClassFileStream &stream, cp_info **constant_pool);
     };
