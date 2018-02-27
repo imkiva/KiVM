@@ -4,6 +4,7 @@
 #pragma once
 
 #include <kivm/kivm.h>
+#include <list>
 
 namespace kivm {
     class InstanceKlass;
@@ -81,5 +82,15 @@ namespace kivm {
         bool is_volatile() const {
             return (get_access_flag() & ACC_VOLATILE) == ACC_VOLATILE;
         }
+    };
+
+    class FieldPool {
+    private:
+        static std::list<Field *> &entries_internal();
+
+    public:
+        static void add(Field *method);
+
+        static const std::list<Field *> &entries();
     };
 }

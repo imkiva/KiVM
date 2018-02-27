@@ -22,6 +22,7 @@ namespace kivm {
         Klass *loaded = ClassLoader::require_class(get_class_loader(), utf8_info->get_constant());
         if (loaded->get_type() != ClassType::INSTANCE_CLASS) {
             // TODO: throw VerifyError
+            this->set_state(ClassState::initialization_error);
             assert(false);
             return nullptr;
         }
@@ -43,6 +44,8 @@ namespace kivm {
         link_constant_pool(pool);
         link_attributes(pool);
         this->set_state(ClassState::linked);
+        this->set_state(ClassState::being_initialized);
+        this->set_state(ClassState::fully_initialized);
     }
 
     void InstanceKlass::link_super_class(cp_info **pool) {
@@ -50,6 +53,7 @@ namespace kivm {
             // java.lang.Object
             if (get_name() != L"java/lang/Object") {
                 // TODO: throw VerifyError
+                this->set_state(ClassState::initialization_error);
                 assert(false);
             }
             // java.lang.Object does not need a superclass.
@@ -60,6 +64,7 @@ namespace kivm {
         auto *super_class = require_instance_class(_class_file->super_class);
         if (super_class->is_final()) {
             // TODO: throw VerifyError
+            this->set_state(ClassState::initialization_error);
             assert(false);
         }
         set_super_class(super_class);
@@ -99,7 +104,6 @@ namespace kivm {
     }
 
     void InstanceKlass::link_fields(cp_info **pool) {
-
     }
 
     void InstanceKlass::link_constant_pool(cp_info **constant_pool) {

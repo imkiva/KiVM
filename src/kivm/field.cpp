@@ -3,8 +3,27 @@
 //
 #include <kivm/field.h>
 #include <kivm/classFile.h>
+#include <shared/lock.h>
 
 namespace kivm {
+    static Lock &get_method_pool_lock() {
+        static Lock _method_pool_lock;
+        return _method_pool_lock;
+    }
+
+    void FieldPool::add(Field *method) {
+        LockGuard guard(get_method_pool_lock());
+        entries_internal().push_back(method);
+    }
+
+    std::list<Field *> &FieldPool::entries_internal() {
+        static std::list<Field *> _entries;
+        return _entries;
+    }
+
+    const std::list<Field *> &FieldPool::entries() {
+        return entries_internal();
+    }
 
     Field::Field(InstanceKlass *clazz, field_info *field_info) {
         this->_linked = false;
