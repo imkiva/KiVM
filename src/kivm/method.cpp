@@ -65,18 +65,10 @@ namespace kivm {
                     _signature = utf8->get_constant();
                     break;
                 }
-                case ATTRIBUTE_RuntimeVisibleAnnotations: {
-                    // TODO
-                }
-                case ATTRIBUTE_RuntimeVisibleParameterAnnotations: {
-                    // TODO
-                }
-                case ATTRIBUTE_RuntimeVisibleTypeAnnotations: {
-                    // TODO
-                }
-                case ATTRIBUTE_AnnotationDefault: {
-                    // TODO
-                }
+                case ATTRIBUTE_RuntimeVisibleAnnotations:
+                case ATTRIBUTE_RuntimeVisibleParameterAnnotations:
+                case ATTRIBUTE_RuntimeVisibleTypeAnnotations:
+                case ATTRIBUTE_AnnotationDefault:
                 default: {
                     break;
                 }
