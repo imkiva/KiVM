@@ -5,6 +5,7 @@
 
 #include <kivm/klass.h>
 #include <unordered_map>
+#include <vector>
 
 namespace kivm {
     class oopDesc;
@@ -12,6 +13,8 @@ namespace kivm {
     typedef oopDesc *oop;
 
     class Method;
+
+    class Field;
 
     class InstanceKlass : public Klass {
     private:
@@ -34,15 +37,37 @@ namespace kivm {
 
         /**
          * private or final methods.
-         * map<constant-index, method>
+         * map<name + " " + descriptor, method>
          */
-        std::unordered_map<u2, Method *> _pftable;
+        std::unordered_map<String, Method *> _pftable;
 
         /**
          * static methods.
-         * map<constant-index, method>
+         * map<name + " " + descriptor, method>
          */
-        std::unordered_map<u2, Method *> _stable;
+        std::unordered_map<String, Method *> _stable;
+
+        /**
+         * static fields.
+         * map<name + " " + descriptor, <vector-offset, Field*>>
+         */
+        std::unordered_map<String, std::pair<u2, Field *>> _static_fields;
+
+        /**
+         * instance fields.
+         * map<name + " " + descriptor, <vector-offset, Field*>>
+         */
+        std::unordered_map<String, std::pair<u2, Field *>> _instance_fields;
+
+        /**
+         * static fields' values.
+         */
+        std::vector<oop> _static_field_values;
+
+        /**
+         * instance fields' initial values.
+         */
+        std::vector<oop> _instance_field_init_values;
 
         /**
          * interfaces
@@ -50,7 +75,7 @@ namespace kivm {
          */
         std::unordered_map<String, InstanceKlass *> _interfaces;
 
-        InstanceKlass* require_instance_class(u2 class_info_index);
+        InstanceKlass *require_instance_class(u2 class_info_index);
 
         void link_constant_pool(cp_info **constant_pool);
 

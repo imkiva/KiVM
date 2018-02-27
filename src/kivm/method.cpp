@@ -34,7 +34,7 @@ namespace kivm {
                && lhs->get_descriptor() == rhs->get_descriptor();
     }
 
-    const String &Method::make_identity(const Method *m) {
+    String Method::make_identity(const Method *m) {
         std::wstringstream ss;
         ss << m->get_name() << L" " << m->get_descriptor();
         return ss.str();

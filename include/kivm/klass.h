@@ -23,12 +23,12 @@ namespace kivm {
     };
 
     enum ClassState {
-        allocated,
-        loaded,
-        linked,
-        being_initialized,
-        fully_initialized,
-        initialization_error,
+        ALLOCATED,
+        LOADED,
+        LINKED,
+        BEING_INITIALIZED,
+        FULLY_INITIALIZED,
+        INITIALIZATION_ERROR,
     };
 
     class Klass {

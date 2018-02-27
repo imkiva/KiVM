@@ -3,10 +3,9 @@
 //
 
 #include <kivm/klass.h>
-#include <cassert>
 
 namespace kivm {
     Klass::Klass() {
-        this->_state = ClassState::allocated;
+        this->_state = ClassState::ALLOCATED;
     }
 }

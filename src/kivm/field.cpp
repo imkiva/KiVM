@@ -3,7 +3,10 @@
 //
 #include <kivm/field.h>
 #include <kivm/classFile.h>
+#include <kivm/instanceKlass.h>
 #include <shared/lock.h>
+
+#include <sstream>
 
 namespace kivm {
     static Lock &get_method_pool_lock() {
@@ -25,11 +28,24 @@ namespace kivm {
         return entries_internal();
     }
 
+    bool Field::is_same(const Field *lhs, const Field *rhs) {
+        return lhs != nullptr && rhs != nullptr
+               && lhs->get_name() == rhs->get_name()
+               && lhs->get_descriptor() == rhs->get_descriptor();
+    }
+
+    String Field::make_identity(const Field *f) {
+        std::wstringstream ss;
+        ss << f->get_name() << L" " << f->get_descriptor();
+        return ss.str();
+    }
+
     Field::Field(InstanceKlass *clazz, field_info *field_info) {
         this->_linked = false;
         this->_klass = clazz;
         this->_field_info = field_info;
         this->_constant_attribute = nullptr;
+        this->_value_class_type = nullptr;
     }
 
     void Field::link_field(cp_info **pool) {
@@ -42,6 +58,7 @@ namespace kivm {
         this->_name = name_info->get_constant();
         this->_descriptor = desc_info->get_constant();
         link_attributes(pool);
+        link_value_type();
         this->_linked = true;
     }
 
@@ -67,6 +84,51 @@ namespace kivm {
                     // TODO
                     break;
             }
+        }
+    }
+
+    void Field::link_value_type() {
+        switch (_descriptor[0]) {
+            case L'Z':
+                _value_type = ValueType::BOOLEAN;
+                break;
+            case L'B':
+                _value_type = ValueType::BYTE;
+                break;
+            case L'C':
+                _value_type = ValueType::CHAR;
+                break;
+            case L'S':
+                _value_type = ValueType::SHORT;
+                break;
+            case L'I':
+                _value_type = ValueType::INT;
+                break;
+            case L'F':
+                _value_type = ValueType::FLOAT;
+                break;
+            case L'J':
+                _value_type = ValueType::LONG;
+                break;
+            case L'D':
+                _value_type = ValueType::DOUBLE;
+                break;
+            case L'L': {
+                _value_type = ValueType::OBJECT;
+                const String &class_name = _descriptor.substr(1, _descriptor.size() - 2);
+                _value_class_type = ClassLoader::require_class(get_class()->get_class_loader(),
+                                                               class_name);
+                break;
+            }
+            case L'[': {
+                _value_type = ValueType::ARRAY;
+                _value_class_type = ClassLoader::require_class(get_class()->get_class_loader(),
+                                                               _descriptor);
+                break;
+            }
+            default:
+                // TODO: throw VerifyError
+                assert(false);
         }
     }
 }

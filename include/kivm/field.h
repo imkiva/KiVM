@@ -7,6 +7,8 @@
 #include <list>
 
 namespace kivm {
+    class Klass;
+
     class InstanceKlass;
 
     class field_info;
@@ -15,7 +17,25 @@ namespace kivm {
 
     class ConstantValue_attribute;
 
+    enum ValueType {
+        BYTE,
+        BOOLEAN,
+        CHAR,
+        SHORT,
+        INT,
+        FLOAT,
+        LONG,
+        DOUBLE,
+        OBJECT,
+        ARRAY,
+    };
+
     class Field {
+    public:
+        static bool is_same(const Field *lhs, const Field *rhs);
+
+        static String make_identity(const Field *f);
+
     private:
         InstanceKlass *_klass;
         String _name;
@@ -23,12 +43,21 @@ namespace kivm {
         String _signature;
         u2 _access_flag;
 
+        ValueType _value_type;
+
+        /**
+         * Only available when _value_type is OBJECT or ARRAY
+         */
+        Klass *_value_class_type;
+
         field_info *_field_info;
         ConstantValue_attribute *_constant_attribute;
 
         bool _linked;
 
         void link_attributes(cp_info **pool);
+
+        void link_value_type();
 
     public:
         Field(InstanceKlass *clazz, field_info *field_info);
@@ -53,6 +82,10 @@ namespace kivm {
 
         u2 get_access_flag() const {
             return _access_flag;
+        }
+
+        ValueType get_value_type() const {
+            return _value_type;
         }
 
         bool is_linked() const {
