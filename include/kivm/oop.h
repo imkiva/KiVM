@@ -5,27 +5,21 @@
 #pragma once
 
 #include <kivm/kivm.h>
+#include <kivm/oopfwd.h>
 #include <kivm/klass.h>
 #include <shared/lock.h>
 #include <shared/monitor.h>
-
 #include <list>
 
 // Forward declaration
 
 namespace kivm {
-    class oopDesc;
-
-    typedef oopDesc *oop;
-
     class oopPool {
     public:
         static std::list<oop> &oop_handler_pool() {
             static std::list<oop> oop_handler_pool;
             return oop_handler_pool;
         }
-
-        static oop copy(oop _oop);
     };
 
     class oopBase {
@@ -63,6 +57,8 @@ namespace kivm {
         Monitor _monitor;
 
     public:
+        markOopDesc(oopType type);
+
         oopType type() const { return _type; }
 
         void enter_monitor() { _monitor.enter(); }
@@ -88,13 +84,9 @@ namespace kivm {
         Klass *_klass;
 
     public:
-        explicit oopDesc(markOop mark, Klass *klass) : _mark(mark), _klass(klass) {}
+        explicit oopDesc(Klass *klass, oopType type);
 
-        explicit oopDesc(oop other) : _mark(other->mark()), _klass(other->klass()) {}
-
-        virtual ~oopDesc();
-
-        virtual oop copy();
+        ~oopDesc() override;
 
         markOop mark() { return _mark; }
 

@@ -27,7 +27,7 @@ set(SOURCE_FILES
         src/kivm/classFileParser.cpp
         src/kivm/classFile.cpp
         include/kivm/attributeInfo.h
-        src/kivm/attributeInfo.cpp src/kivm/klass.cpp include/kivm/classLoader.h src/kivm/classLoader.cpp include/kivm/method.h src/kivm/InstanceKlass.cpp src/kivm/method.cpp include/kivm/field.h src/kivm/field.cpp)
+        src/kivm/attributeInfo.cpp src/kivm/klass.cpp include/kivm/classLoader.h src/kivm/classLoader.cpp include/kivm/method.h src/kivm/InstanceKlass.cpp src/kivm/method.cpp include/kivm/field.h src/kivm/field.cpp include/kivm/MirrorKlass.h include/kivm/oopfwd.h src/kivm/MirrorKlass.cpp include/kivm/instanceOop.h src/kivm/instanceOop.cpp include/kivm/primitiveOop.h src/kivm/primitiveOop.cpp)
 
 add_executable(KivaVM ${SOURCE_FILES} src/bin/main.cpp)
 add_executable(javap ${SOURCE_FILES} src/bin/javap.cpp)

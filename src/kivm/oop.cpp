@@ -5,19 +5,16 @@
 #include <kivm/oop.h>
 
 namespace kivm {
-    template<typename T, typename...ArgsT>
-    void construct_object(T *ptr, ArgsT &&...args) {
-        if (ptr != nullptr) {
-            ::new(ptr) T(std::forward<ArgsT>(args)...);
-        }
+    markOopDesc::markOopDesc(oopType type) {
+        this->_type = type;
     }
 
-    oop oopDesc::copy() {
-        auto _oop = static_cast<oop>(oopBase::operator new(sizeof(*this), false));
-        construct_object(_oop, this);
-        return _oop;
+    oopDesc::oopDesc(Klass *klass, oopType type) {
+        this->_klass = klass;
+        this->_mark = new markOopDesc(type);
     }
 
-    oopDesc::~oopDesc() = default;
-
+    oopDesc::~oopDesc() {
+        delete this->_mark;
+    }
 }

@@ -4,6 +4,7 @@
 #pragma once
 
 #include <kivm/kivm.h>
+#include <kivm/oopfwd.h>
 #include <list>
 
 namespace kivm {
@@ -16,19 +17,6 @@ namespace kivm {
     class cp_info;
 
     class ConstantValue_attribute;
-
-    enum ValueType {
-        BYTE,
-        BOOLEAN,
-        CHAR,
-        SHORT,
-        INT,
-        FLOAT,
-        LONG,
-        DOUBLE,
-        OBJECT,
-        ARRAY,
-    };
 
     class Field {
     public:

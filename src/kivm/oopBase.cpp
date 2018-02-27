@@ -5,11 +5,6 @@
 #include <kivm/oop.h>
 
 namespace kivm {
-
-    oop oopPool::copy(oop _other) {
-        return _other->copy();
-    }
-
     void *oopBase::allocate(size_t size, bool add_to_pool) {
         if (size == 0) {
             return nullptr;

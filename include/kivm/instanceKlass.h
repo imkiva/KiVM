@@ -4,14 +4,11 @@
 #pragma once
 
 #include <kivm/klass.h>
+#include <kivm/oopfwd.h>
 #include <unordered_map>
 #include <vector>
 
 namespace kivm {
-    class oopDesc;
-
-    typedef oopDesc *oop;
-
     class Method;
 
     class Field;
@@ -25,6 +22,8 @@ namespace kivm {
     class InstanceKlass : public Klass {
     private:
         ClassLoader *_class_loader;
+        mirrorOop _mirror_loader;
+
         ClassFile *_class_file;
         String _source_file;
         String _signature;

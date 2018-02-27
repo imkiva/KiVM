@@ -15,13 +15,6 @@ namespace kivm {
         TYPE_ARRAY_CLASS,
     };
 
-    enum oopType {
-        INSTANCE_OOP,
-        PRIMITIVE_OOP,
-        OBJECT_ARRAY_OOP,
-        TYPE_ARRAY_OOP,
-    };
-
     enum ClassState {
         ALLOCATED,
         LOADED,
