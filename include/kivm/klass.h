@@ -83,10 +83,36 @@ namespace kivm {
             this->_super_class = _super_class;
         }
 
+        bool is_public() const {
+            return (get_access_flag() & ACC_PUBLIC) == ACC_PUBLIC;
+        }
+
+        bool is_private() const {
+            return (get_access_flag() & ACC_PRIVATE) == ACC_PRIVATE;
+        }
+
+        bool is_protected() const {
+            return (get_access_flag() & ACC_PROTECTED) == ACC_PROTECTED;
+        }
+
+        bool is_final() const {
+            return (get_access_flag() & ACC_FINAL) == ACC_FINAL;
+        }
+
+        bool is_static() {
+            return (get_access_flag() & ACC_STATIC) == ACC_STATIC;
+        }
+
+        bool is_abstract() {
+            return (get_access_flag() & ACC_ABSTRACT) == ACC_ABSTRACT;
+        }
+
     public:
         Klass();
 
         virtual ~Klass() = default;
+
+        virtual void link_and_init() = 0;
     };
 }
 

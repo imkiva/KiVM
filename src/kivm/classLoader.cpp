@@ -30,7 +30,11 @@ namespace kivm {
         if (loaded_class == nullptr) {
             // TODO: throw LinkageError
             assert(false);
+            return nullptr;
         }
+
+        // What we really need is an initialized class
+        loaded_class->link_and_init();
         return loaded_class;
     }
 

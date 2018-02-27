@@ -6,6 +6,8 @@
 #include <kivm/instanceKlass.h>
 #include <shared/lock.h>
 
+#include <sstream>
+
 namespace kivm {
     static Lock &get_method_pool_lock() {
         static Lock _method_pool_lock;
@@ -26,6 +28,18 @@ namespace kivm {
         return entries_internal();
     }
 
+    bool Method::is_same(const Method *lhs, const Method *rhs) {
+        return lhs != nullptr && rhs != nullptr
+               && lhs->get_name() == rhs->get_name()
+               && lhs->get_descriptor() == rhs->get_descriptor();
+    }
+
+    const String &Method::make_identity(const Method *m) {
+        std::wstringstream ss;
+        ss << m->get_name() << L" " << m->get_descriptor();
+        return ss.str();
+    }
+
     Method::Method(InstanceKlass *clazz, method_info *method_info) {
         this->_linked = false;
         this->_klass = clazz;
@@ -39,7 +53,7 @@ namespace kivm {
                && (pc - _code_attr->code) < _code_attr->code_length;
     }
 
-    void Method::link_and_init(cp_info **pool) {
+    void Method::link_method(cp_info **pool) {
         if (_linked) {
             return;
         }
