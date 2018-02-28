@@ -3,7 +3,7 @@
 //
 #include <kivm/field.h>
 #include <kivm/classfile/classFile.h>
-#include <kivm/oop/InstanceKlassX.h>
+#include <kivm/oop/instanceKlass.h>
 #include <shared/lock.h>
 
 #include <sstream>

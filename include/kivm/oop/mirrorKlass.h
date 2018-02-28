@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <kivm/oop/InstanceKlassX.h>
+#include <kivm/oop/instanceKlass.h>
 
 namespace kivm {
     class mirrorKlass : public InstanceKlass {

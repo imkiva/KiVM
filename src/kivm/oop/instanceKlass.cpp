@@ -2,7 +2,7 @@
 // Created by kiva on 2018/2/27.
 //
 
-#include <kivm/oop/InstanceKlassX.h>
+#include <kivm/oop/instanceKlass.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/method.h>
 #include <kivm/field.h>
