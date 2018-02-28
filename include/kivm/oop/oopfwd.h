@@ -40,12 +40,12 @@ namespace kivm {
 
     class doubleOopDesc;
 
-    typedef oopDesc *oop;
-    typedef instanceOopDesc *instanceOop;
-    typedef mirrorOopDesc *mirrorOop;
-    typedef arrayOopDesc *arrayOop;
-    typedef intOopDesc *intOop;
-    typedef longOopDesc *longOop;
-    typedef floatOopDesc *floatOop;
-    typedef doubleOopDesc *doubleOop;
+    using oop = oopDesc *;
+    using instanceOop = instanceOopDesc *;
+    using mirrorOop = mirrorOopDesc *;
+    using arrayOop= arrayOopDesc *;
+    using intOop = intOopDesc *;
+    using longOop= longOopDesc *;
+    using floatOop = floatOopDesc *;
+    using doubleOop = doubleOopDesc *;
 }

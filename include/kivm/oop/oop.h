@@ -88,8 +88,8 @@ namespace kivm {
 
         ~oopDesc() override;
 
-        markOop mark() { return _mark; }
+        markOop get_mark() const { return _mark; }
 
-        Klass *klass() { return _klass; }
+        Klass *get_klass() const { return _klass; }
     };
 }
