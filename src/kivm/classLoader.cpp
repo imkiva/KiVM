@@ -51,6 +51,10 @@ namespace kivm {
         }
 
         // OK, let's find it!
-        return BaseClassLoader::loadClass(class_name);
+        auto *loaded = BaseClassLoader::loadClass(class_name);
+        if (loaded != nullptr) {
+            cache_map.insert(std::make_pair(class_name, loaded));
+        }
+        return loaded;
     }
 }
