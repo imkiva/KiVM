@@ -1046,7 +1046,7 @@ namespace kivm {
 
             case ATTRIBUTE_AnnotationDefault:
                 return read_attribute_entry<AnnotationDefault_attribute>(stream);
-            
+
             case ATTRIBUTE_INVALID:
                 fprintf(stderr, "Invalid attribute tag: %u\n", attribute_tag);
                 exit(1);

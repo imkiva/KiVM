@@ -3,6 +3,7 @@
 
 int main() {
     using namespace kivm;
-    auto *a = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(L"java/lang/CloneNotSupportedException");
+    auto *a = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/lang/String");
     return 0;
 }
