@@ -628,7 +628,7 @@ namespace kivm {
 
     template<typename T>
     static T *read_attribute_entry(ClassFileStream &stream) {
-        T *result = new T;
+        auto *result = new T;
         stream >> *result;
         return result;
     }

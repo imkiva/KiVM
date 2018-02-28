@@ -116,7 +116,11 @@ namespace kivm {
         // The constant_pool table is indexed
         // from 1 to count - 1
         for (int i = 1; i < count; ++i) {
-            switch (_classFileStream.peek_u1()) {
+            u1 tag = _classFileStream.peek_u1();
+            if (tag == '\0') {
+                return;
+            }
+            switch (tag) {
                 case CONSTANT_Utf8:
                     read_pool_entry<CONSTANT_Utf8_info>(pool, i, _classFileStream);
                     break;

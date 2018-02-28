@@ -40,7 +40,10 @@ namespace kivm {
     }
 
     Klass *BaseClassLoader::loadClass(const String &class_name) {
-        static String RT_DIR = strings::from_std_string(getenv("KLASSPATH"));
+        static const char *KLASSPATH_ENV = getenv("KLASSPATH");
+        static String RT_DIR = KLASSPATH_ENV == nullptr
+                               ? L""
+                               : strings::from_std_string(KLASSPATH_ENV);
 
         // Load array class
         if (class_name[0] == L'[') {
@@ -55,7 +58,9 @@ namespace kivm {
                     // java/lang/Object
                     const String &component = class_name.substr(2, class_name.size() - 3);
                     auto *component_class = (InstanceKlass *) loadClass(component);
-                    return initialized_klass(new ObjectArrayKlass(this, dimension, component_class));
+                    return component_class != nullptr
+                           ? initialized_klass(new ObjectArrayKlass(this, dimension, component_class))
+                           : nullptr;
                 }
 
                 // for example: LI -> I
@@ -67,6 +72,10 @@ namespace kivm {
             // remove the first '['
             const String &down_type_name = class_name.substr(1);
             auto *down_type = (ArrayKlass *) loadClass(down_type_name);
+            if (down_type == nullptr) {
+                return nullptr;
+            }
+
             if (down_type->is_object_array()) {
                 return initialized_klass(new ObjectArrayKlass(this, (ObjectArrayKlass *) down_type));
             } else {
@@ -76,7 +85,7 @@ namespace kivm {
 
         // Load instance class
         std::wstringstream path_builder;
-        path_builder << RT_DIR << L'/' << class_name;
+        path_builder << RT_DIR << L'/' << class_name << L".class";
         const String &class_file_path = path_builder.str();
         ClassFileParser classFileParser(strings::to_std_string(class_file_path).c_str());
         ClassFile *classFile = classFileParser.classFile();

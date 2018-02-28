@@ -1,6 +1,8 @@
-#include <iostream>
+#include <kivm/classLoader.h>
+#include <kivm/oop/instanceKlass.h>
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    using namespace kivm;
+    auto *a = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(L"java/lang/CloneNotSupportedException");
     return 0;
 }

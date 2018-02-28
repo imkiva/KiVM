@@ -8,8 +8,8 @@
 #include <shared/lock.h>
 
 namespace kivm {
-    static Lock &get_bootstrap_lock() {
-        static Lock lock;
+    static RecursiveLock &get_bootstrap_lock() {
+        static RecursiveLock lock;
         return lock;
     }
 
@@ -41,7 +41,7 @@ namespace kivm {
     }
 
     Klass *BootstrapClassLoader::loadClass(const String &class_name) {
-        LockGuard guard(get_bootstrap_lock());
+        RecursiveLockGuard guard(get_bootstrap_lock());
         auto &cache_map = get_bootstrap_classes();
 
         // check whether class is already loaded
