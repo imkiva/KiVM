@@ -10,17 +10,6 @@
 
 namespace kivm {
     namespace strings {
-        /* Copied from: https://github.com/wind2412/wind_jvm/blob/master/src/class_parser.cpp */
-        constexpr int BIT_NUM = 8;
-
-        static bool test_bit_1(const u1 *bytes, size_t length,
-                               int position, int bit_pos) {
-            u1 target = bytes[position];
-            int real_pos = BIT_NUM - position - 1;
-            assert(real_pos >= 0);
-            return ((target >> real_pos) & 1) == 1;
-        }
-
         // $ 4.4.7
         static bool is_first_type(const u1 *bytes, size_t length, int position) {
             assert(position + 1 <= length);

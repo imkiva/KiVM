@@ -31,14 +31,6 @@ namespace kivm {
         }
     }
 
-    template<typename T>
-    T initialized_klass(T klass) {
-        if (klass != nullptr) {
-            klass->link_and_init();
-        }
-        return klass;
-    }
-
     Klass *BaseClassLoader::loadClass(const String &class_name) {
         static const char *KLASSPATH_ENV = getenv("KLASSPATH");
         static String RT_DIR = KLASSPATH_ENV == nullptr
@@ -59,13 +51,13 @@ namespace kivm {
                     const String &component = class_name.substr(2, class_name.size() - 3);
                     auto *component_class = (InstanceKlass *) loadClass(component);
                     return component_class != nullptr
-                           ? initialized_klass(new ObjectArrayKlass(this, dimension, component_class))
+                           ? new ObjectArrayKlass(this, dimension, component_class)
                            : nullptr;
                 }
 
                 // for example: LI -> I
                 ValueType component_type = parse_primitive_type(class_name[1]);
-                return initialized_klass(new TypeArrayKlass(this, dimension, component_type));
+                return new TypeArrayKlass(this, dimension, component_type);
             }
 
             // Load multi-dimension array recursively
@@ -77,9 +69,9 @@ namespace kivm {
             }
 
             if (down_type->is_object_array()) {
-                return initialized_klass(new ObjectArrayKlass(this, (ObjectArrayKlass *) down_type));
+                return new ObjectArrayKlass(this, (ObjectArrayKlass *) down_type);
             } else {
-                return initialized_klass(new TypeArrayKlass(this, (TypeArrayKlass *) down_type));
+                return new TypeArrayKlass(this, (TypeArrayKlass *) down_type);
             }
         }
 
@@ -90,7 +82,7 @@ namespace kivm {
         ClassFileParser classFileParser(strings::to_std_string(class_file_path).c_str());
         ClassFile *classFile = classFileParser.classFile();
         return classFile != nullptr
-               ? initialized_klass(new InstanceKlass(classFile, this))
+               ? new InstanceKlass(classFile, this)
                : nullptr;
     }
 }

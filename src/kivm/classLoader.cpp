@@ -54,6 +54,8 @@ namespace kivm {
         auto *loaded = BaseClassLoader::loadClass(class_name);
         if (loaded != nullptr) {
             cache_map.insert(std::make_pair(class_name, loaded));
+            loaded->set_state(ClassState::LOADED);
+            loaded->link_and_init();
         }
         return loaded;
     }

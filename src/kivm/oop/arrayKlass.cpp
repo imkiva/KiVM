@@ -14,6 +14,7 @@ namespace kivm {
 
     void ArrayKlass::link_and_init() {
         // nothing to do.
+        this->set_state(ClassState::FULLY_INITIALIZED);
     }
 
     TypeArrayKlass::TypeArrayKlass(ClassLoader *class_loader, int dimension, ValueType component_type)

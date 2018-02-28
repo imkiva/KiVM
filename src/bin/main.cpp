@@ -4,6 +4,5 @@
 int main() {
     using namespace kivm;
     auto *a = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(L"java/lang/CloneNotSupportedException");
-    printf("loaded\n");
     return 0;
 }
