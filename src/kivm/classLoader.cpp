@@ -32,9 +32,6 @@ namespace kivm {
             assert(false);
             return nullptr;
         }
-
-        // What we really need is an initialized class
-        loaded_class->link_and_init();
         return loaded_class;
     }
 
@@ -53,8 +50,7 @@ namespace kivm {
             return iter->second;
         }
 
-        // Okay, let's load it.
-        // TODO: find and load classes.
-        return nullptr;
+        // OK, let's find it!
+        return BaseClassLoader::loadClass(class_name);
     }
 }

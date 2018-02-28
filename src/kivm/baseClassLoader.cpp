@@ -1,0 +1,87 @@
+//
+// Created by kiva on 2018/3/1.
+//
+
+#include <kivm/classLoader.h>
+#include <kivm/oop/klass.h>
+#include <kivm/oop/instanceKlass.h>
+#include <kivm/oop/arrayKlass.h>
+#include <kivm/classfile/classFileParser.h>
+#include <sstream>
+
+namespace kivm {
+    ValueType parse_primitive_type(wchar_t c) {
+        switch (c) {
+            case L'B':    // byte
+            case L'Z':    // boolean
+            case L'S':    // short
+            case L'C':    // char
+            case L'I':    // int
+                return ValueType::INT;
+            case L'J':
+                return ValueType::LONG;
+            case L'F':    // float
+                return ValueType::FLOAT;
+            case L'D':    // double
+                return ValueType::DOUBLE;
+            default:
+                assert(false);
+                // TODO: abort VM.
+                return ValueType::SHORT;
+        }
+    }
+
+    template<typename T>
+    T initialized_klass(T klass) {
+        if (klass != nullptr) {
+            klass->link_and_init();
+        }
+        return klass;
+    }
+
+    Klass *BaseClassLoader::loadClass(const String &class_name) {
+        static String RT_DIR = strings::from_std_string(getenv("KLASSPATH"));
+
+        // Load array class
+        if (class_name[0] == L'[') {
+            // [I
+            int dimension = 0;
+            while (class_name[++dimension] == L'[') continue;
+
+            // Load 1-dimension array directly
+            if (dimension == 1) {
+                // for example: [Ljava/lang/Object;
+                if (class_name[1] == L'L') {
+                    // java/lang/Object
+                    const String &component = class_name.substr(2, class_name.size() - 3);
+                    auto *component_class = (InstanceKlass *) loadClass(component);
+                    return initialized_klass(new ObjectArrayKlass(this, dimension, component_class));
+                }
+
+                // for example: LI -> I
+                ValueType component_type = parse_primitive_type(class_name[1]);
+                return initialized_klass(new TypeArrayKlass(this, dimension, component_type));
+            }
+
+            // Load multi-dimension array recursively
+            // remove the first '['
+            const String &down_type_name = class_name.substr(1);
+            auto *down_type = (ArrayKlass *) loadClass(down_type_name);
+            if (down_type->is_object_array()) {
+                return initialized_klass(new ObjectArrayKlass(this, (ObjectArrayKlass *) down_type));
+            } else {
+                return initialized_klass(new TypeArrayKlass(this, (TypeArrayKlass *) down_type));
+            }
+        }
+
+        // Load instance class
+        std::wstringstream path_builder;
+        path_builder << RT_DIR << L'/' << class_name;
+        const String &class_file_path = path_builder.str();
+        ClassFileParser classFileParser(strings::to_std_string(class_file_path).c_str());
+        ClassFile *classFile = classFileParser.classFile();
+        return classFile != nullptr
+               ? initialized_klass(new InstanceKlass(classFile, this))
+               : nullptr;
+    }
+}

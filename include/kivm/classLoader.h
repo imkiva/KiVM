@@ -24,7 +24,12 @@ namespace kivm {
         virtual ~ClassLoader() = default;
     };
 
-    class BootstrapClassLoader : public ClassLoader {
+    class BaseClassLoader : public ClassLoader {
+    public:
+        Klass *loadClass(const String &class_name) override;
+    };
+
+    class BootstrapClassLoader : public BaseClassLoader {
     public:
         static BootstrapClassLoader *get();
 
