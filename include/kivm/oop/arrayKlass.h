@@ -11,6 +11,8 @@ namespace kivm {
     class ArrayKlass : public Klass {
     private:
         ClassLoader *_class_loader;
+        mirrorOop _mirror_loader;
+
         int _dimension;
         T _component_type;
 
