@@ -36,6 +36,7 @@ namespace kivm {
             auto usize = (unsigned int) size;
             if (usize > remaining) {
                 // TODO: Unexpected EOF
+                assert(false);
             }
         }
 
