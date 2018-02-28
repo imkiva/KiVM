@@ -32,7 +32,11 @@ namespace kivm {
     void ClassFileParser::dealloc(ClassFile *class_file) {
         AttributeParser::dealloc_attributes(&class_file->attributes, class_file->attributes_count);
         for (int i = 1; i < class_file->constant_pool_count; ++i) {
+            u1 tag = class_file->constant_pool[i]->tag;
             delete class_file->constant_pool[i];
+            if (tag == CONSTANT_Long || tag == CONSTANT_Double) {
+                ++i;
+            }
         }
         delete[] class_file->methods;
         delete[] class_file->fields;
@@ -132,9 +136,11 @@ namespace kivm {
                     break;
                 case CONSTANT_Long:
                     read_pool_entry<CONSTANT_Long_info>(pool, i, _classFileStream);
+                    ++i;
                     break;
                 case CONSTANT_Double:
                     read_pool_entry<CONSTANT_Double_info>(pool, i, _classFileStream);
+                    ++i;
                     break;
                 case CONSTANT_Class:
                     read_pool_entry<CONSTANT_Class_info>(pool, i, _classFileStream);
@@ -197,6 +203,6 @@ namespace kivm {
     void ClassFileParser::parse_attributes(ClassFile *classFile) {
         classFile->attributes_count = _classFileStream.get_u2();
         AttributeParser::read_attributes(&classFile->attributes, classFile->attributes_count,
-                        _classFileStream, classFile->constant_pool);
+                                         _classFileStream, classFile->constant_pool);
     }
 }
