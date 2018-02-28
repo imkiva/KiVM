@@ -2,7 +2,8 @@
 // Created by kiva on 2018/2/27.
 //
 
-#include <kivm/oop/instanceKlass.h>
+#include <kivm/oop/InstanceKlassX.h>
+#include <kivm/oop/primitiveOop.h>
 #include <kivm/method.h>
 #include <kivm/field.h>
 #include <sstream>
@@ -109,6 +110,26 @@ namespace kivm {
         }
     }
 
+    static void init_field_data(std::vector<oop> &values, Field *field) {
+        switch (field->get_value_type()) {
+            case ValueType::INT:
+                values.push_back(new intOopDesc(0));
+                break;
+            case ValueType::LONG:
+                values.push_back(new longOopDesc(0L));
+                break;
+            case ValueType::FLOAT:
+                values.push_back(new floatOopDesc(0.0f));
+                break;
+            case ValueType::DOUBLE:
+                values.push_back(new doubleOopDesc(0.0));
+                break;
+            default:
+                values.push_back(nullptr);
+                break;
+        }
+    }
+
     void InstanceKlass::link_fields(cp_info **pool) {
         u2 static_field_index = 0;
         u2 instance_field_index = 0;
@@ -119,13 +140,17 @@ namespace kivm {
 
             using std::make_pair;
             if (field->is_static()) {
+                init_field_data(_static_field_values, field);
                 _static_fields.insert(make_pair(Field::make_identity(field),
                                                 make_pair(static_field_index++, field)));
             } else {
+                init_field_data(_instance_field_init_values, field);
                 _instance_fields.insert(make_pair(Field::make_identity(field),
                                                   make_pair(instance_field_index++, field)));
             }
         }
+        this->_static_field_values.shrink_to_fit();
+        this->_instance_field_init_values.shrink_to_fit();
     }
 
     void InstanceKlass::link_constant_pool(cp_info **constant_pool) {

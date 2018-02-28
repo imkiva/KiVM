@@ -3,26 +3,19 @@
 //
 #pragma once
 
-#include <kivm/oop/instanceKlass.h>
+#include <kivm/oop/InstanceKlassX.h>
 #include <kivm/oop/oopfwd.h>
 
 namespace kivm {
-    template<typename T, ClassType _TYPE>
     class ArrayKlass : public Klass {
     private:
         ClassLoader *_class_loader;
         mirrorOop _mirror_loader;
 
         int _dimension;
-        T _component_type;
 
     public:
-        ArrayKlass(ClassLoader *class_loader, int dimension, T component_type) {
-            this->_class_loader = class_loader;
-            this->_dimension = dimension;
-            this->_component_type = component_type;
-            this->set_type(_TYPE);
-        }
+        ArrayKlass(ClassLoader *class_loader, int dimension, ClassType class_type);
 
         ClassLoader *get_class_loader() const {
             return _class_loader;
@@ -31,12 +24,29 @@ namespace kivm {
         int get_dimension() const {
             return _dimension;
         }
+    };
 
-        T get_component_type() const {
+    class TypeArrayKlass : public ArrayKlass {
+    private:
+        ValueType _component_type;
+
+    public:
+        TypeArrayKlass(ClassLoader *class_loader, int dimension, ValueType component_type);
+
+        ValueType get_component_type() const {
             return _component_type;
         }
     };
 
-    using TypeArrayKlass = ArrayKlass<ValueType, ClassType::TYPE_ARRAY_CLASS>;
-    using ObjectArrayKlass = ArrayKlass<InstanceKlass *, ClassType::OBJECT_ARRAY_CLASS>;
+    class ObjectArrayKlass : public ArrayKlass {
+    private:
+        InstanceKlass * _component_type;
+
+    public:
+        ObjectArrayKlass(ClassLoader *class_loader, int dimension, InstanceKlass * component_type);
+
+        InstanceKlass * get_component_type() const {
+            return _component_type;
+        }
+    };
 }

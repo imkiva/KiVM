@@ -3,7 +3,7 @@
 //
 
 #include <kivm/oop/oop.h>
-#include <kivm/oop/instanceKlass.h>
+#include <kivm/oop/InstanceKlassX.h>
 #include <vector>
 
 namespace kivm {
