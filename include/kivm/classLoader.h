@@ -26,7 +26,7 @@ namespace kivm {
 
     class BootstrapClassLoader : public ClassLoader {
     public:
-        static BootstrapClassLoader *get_class_loader();
+        static BootstrapClassLoader *get();
 
         Klass *loadClass(const String &class_name) override;
     };

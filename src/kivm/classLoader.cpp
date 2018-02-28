@@ -21,7 +21,7 @@ namespace kivm {
     Klass *ClassLoader::require_class(ClassLoader *classLoader, const String &className) {
         if (classLoader == nullptr) {
             // This is a bootstrap class
-            classLoader = BootstrapClassLoader::get_class_loader();
+            classLoader = BootstrapClassLoader::get();
         }
 
         Klass *loaded_class = classLoader == nullptr
@@ -38,7 +38,7 @@ namespace kivm {
         return loaded_class;
     }
 
-    BootstrapClassLoader *BootstrapClassLoader::get_class_loader() {
+    BootstrapClassLoader *BootstrapClassLoader::get() {
         static BootstrapClassLoader classLoader;
         return &classLoader;
     }
