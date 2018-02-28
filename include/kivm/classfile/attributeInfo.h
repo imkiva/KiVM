@@ -324,7 +324,6 @@ namespace kivm {
         u2 name_index;
         u2 signature_index;
         u2 index;
-
     };
 
     struct LocalVariableTypeTable_attribute : public attribute_info {
@@ -363,7 +362,6 @@ namespace kivm {
     struct parameters_t {
         u2 name_index;
         u2 access_flags;
-
     };
 
     struct MethodParameters_attribute : public attribute_info {

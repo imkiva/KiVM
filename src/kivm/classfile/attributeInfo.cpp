@@ -170,6 +170,12 @@ namespace kivm {
         return stream;
     }
 
+    ClassFileStream &operator>>(ClassFileStream &stream, ConstantValue_attribute &attr) {
+        stream >> *((attribute_info *) &attr);
+        attr.constant_index = stream.get_u2();
+        return stream;
+    }
+
     ClassFileStream &operator>>(ClassFileStream &stream, Exceptions_attribute &attr) {
         stream >> *((attribute_info *) &attr);
         attr.number_of_exceptions = stream.get_u2();
