@@ -17,21 +17,28 @@ public:
     }
 };
 
-#define CNI_NAME_MIXER(PREFIX, NAME) static cni_register PREFIX##NAME
-#define CNI_REGISTER(NAME, ARGS) CNI_NAME_MIXER(_cni_register_, NAME)(#NAME, NAME, ARGS);
-#define CNI_NORMAL(name) CNI_REGISTER(name, false)
-#define CNI_CONST(name) CNI_REGISTER(name, true)
+#define __CNI_NAME_MIXER(PREFIX, NAME) static cni_register PREFIX##NAME
+#define __CNI_REGISTER(NAME, ARGS) __CNI_NAME_MIXER(_cni_register_, NAME)(#NAME, NAME, ARGS);
+#define __CNI_NORMAL(name) __CNI_REGISTER(name, false)
+#define __CNI_CONST(name) __CNI_REGISTER(name, true)
+
+#define __CNI_EXPAND(MARCO, R, NAME, ...) \
+    extern R NAME(__VA_ARGS__); \
+    MARCO(NAME); \
+    R NAME(__VA_ARGS__)
+
+#define CNI_NORMAL(R, NAME, ...) __CNI_EXPAND(__CNI_NORMAL, R, NAME, ##__VA_ARGS__)
+#define CNI_CONST(R, NAME, ...) __CNI_EXPAND(__CNI_CONST, R, NAME, ##__VA_ARGS__)
 
 namespace kivm_cs {
     using kivm_holder = int;
 
-    void kivm_hello_world() {
+    CNI_NORMAL(void, hello_world) {
         printf("Hello World: CovScript\n");
     }
-    CNI_NORMAL(kivm_hello_world)
 
-    void init() {
-        // TODO: Initialize CovScript Extension
+    CNI_NORMAL(void, greeting, cs::number x) {
+        printf("Hello World: %d\n", static_cast<int>(x));
     }
 }
 
@@ -43,7 +50,6 @@ namespace cs_impl {
 }
 
 cs::extension *cs_extension() {
-    kivm_cs::init();
     return &kivm_ext;
 }
 
