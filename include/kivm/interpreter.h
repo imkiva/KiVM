@@ -1,9 +1,9 @@
 //
 // Created by kiva on 2018/2/25.
 //
+#pragma once
 
-#ifndef KIVAVM_INTERPRETER_H
-#define KIVAVM_INTERPRETER_H
+#include <kivm/kivm.h>
 
 #define OPC_NOP                           0
 #define OPC_ACONST_NULL                   1
@@ -257,5 +257,9 @@
 #define T_SHORT                 9
 #define T_INT                  10
 #define T_LONG                 11
+
+namespace kivm {
+    class Interpreter;
+}
 
 #endif //KIVAVM_INTERPRETER_H

@@ -114,5 +114,9 @@ namespace kivm {
         }
 
         void link_and_init() override;
+
+        const std::unordered_map<String, Method *> &get_vtable() const {
+            return _vtable;
+        }
     };
 }
