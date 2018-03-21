@@ -51,7 +51,7 @@ set(SOURCE_FILES
         src/kivm/oop/arrayKlass.cpp
         src/kivm/baseClassLoader.cpp)
 
-add_executable(KivaVM ${SOURCE_FILES} src/bin/main.cpp src/kivm/interpreter.cpp)
+add_executable(KivaVM ${SOURCE_FILES} src/bin/main.cpp src/kivm/interpreter.cpp include/kivm/runtime/slot.h include/kivm/runtime/stack.h src/kivm/runtime/stack.cpp)
 add_executable(javap ${SOURCE_FILES} src/bin/javap.cpp)
 
 if (DEFINED ENV{CS_SRC})
