@@ -259,7 +259,10 @@
 #define T_LONG                 11
 
 namespace kivm {
-    class Interpreter;
-}
+    class ByteCodeInterpreter {
+    public:
+        void run();
 
-#endif //KIVAVM_INTERPRETER_H
+        ByteCodeInterpreter();
+    };
+}
