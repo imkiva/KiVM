@@ -4,19 +4,34 @@
 #pragma once
 
 #include <kivm/runtime/slot.h>
-#include <cstdio>
 
 namespace kivm {
-    class Stack {
-    private:
+    class SlotArray {
+    protected:
         Slot *_elements;
         int _size;
+
+        explicit SlotArray(int size);
+
+    public:
+        virtual ~SlotArray();
+    };
+
+    class Stack : public SlotArray {
+    private:
         int _sp;
 
     public:
         explicit Stack(int size);
 
-        ~Stack();
+        ~Stack() override = default;
+    };
+
+    class Locals : public SlotArray {
+    public:
+        explicit Locals(int size);
+
+        ~Locals() override = default;
     };
 }
 
