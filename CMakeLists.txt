@@ -30,6 +30,8 @@ set(SOURCE_FILES
         include/kivm/oop/mirrorOop.h
         include/kivm/oop/arrayKlass.h
         include/kivm/oop/arrayOop.h
+        include/kivm/runtime/slot.h
+        include/kivm/runtime/stack.h
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp
@@ -42,24 +44,35 @@ set(SOURCE_FILES
         src/kivm/classLoader.cpp
         src/kivm/oop/instanceKlass.cpp
         src/kivm/method.cpp
+        src/kivm/interpreter.cpp
         src/kivm/field.cpp
+        src/kivm/baseClassLoader.cpp
         src/kivm/oop/mirrorKlass.cpp
         src/kivm/oop/instanceOop.cpp
         src/kivm/oop/primitiveOop.cpp
         src/kivm/oop/mirrorOop.cpp
         src/kivm/oop/arrayOop.cpp
         src/kivm/oop/arrayKlass.cpp
-        src/kivm/baseClassLoader.cpp)
+        src/kivm/runtime/stack.cpp)
 
-add_executable(KivaVM ${SOURCE_FILES} src/bin/main.cpp src/kivm/interpreter.cpp include/kivm/runtime/slot.h include/kivm/runtime/stack.h src/kivm/runtime/stack.cpp)
-add_executable(javap ${SOURCE_FILES} src/bin/javap.cpp)
+add_library(kivm STATIC ${SOURCE_FILES})
+add_executable(KivaVM src/bin/main.cpp)
+add_executable(javap src/bin/javap.cpp)
+
+target_link_libraries(KivaVM kivm)
+target_link_libraries(javap kivm)
 
 if (DEFINED ENV{CS_SRC})
     set(CS_SRC $ENV{CS_SRC})
     include_directories(${CS_SRC}/include)
-    add_library(covscript-kivm SHARED ${SOURCE_FILES} ext/covscript-kivm.cpp ext/extension_helper.h)
+    add_library(covscript-kivm SHARED
+            ${SOURCE_FILES}
+            ext/covscript-kivm.cpp
+            ext/extension_helper.h)
     set_target_properties(covscript-kivm PROPERTIES OUTPUT_NAME "kivm")
     set_target_properties(covscript-kivm PROPERTIES PREFIX "")
     set_target_properties(covscript-kivm PROPERTIES SUFFIX ".cse")
 endif ()
 
+add_executable(test_stack-and-frame tests/stack-and-locals.cpp)
+target_link_libraries(test_stack-and-frame kivm)

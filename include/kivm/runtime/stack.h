@@ -109,6 +109,11 @@ namespace kivm {
             _sp += 2;
         }
 
+        inline void push_long(jlong v) {
+            SlotArray::set_long(_sp, v);
+            _sp += 2;
+        }
+
         inline jint pop_int() { return SlotArray::get_int(--_sp); }
 
         inline jfloat pop_float() { return SlotArray::get_float(--_sp); }
@@ -118,6 +123,11 @@ namespace kivm {
         inline jdouble pop_double() {
             _sp -= 2;
             return SlotArray::get_double(_sp);
+        }
+
+        inline jlong pop_long() {
+            _sp -= 2;
+            return SlotArray::get_long(_sp);
         }
     };
 
