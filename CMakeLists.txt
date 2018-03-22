@@ -53,7 +53,9 @@ set(SOURCE_FILES
         src/kivm/oop/mirrorOop.cpp
         src/kivm/oop/arrayOop.cpp
         src/kivm/oop/arrayKlass.cpp
-        src/kivm/runtime/stack.cpp)
+        src/kivm/runtime/stack.cpp
+        include/kivm/runtime/frame.h
+        src/kivm/runtime/frame.cpp)
 
 add_library(kivm STATIC ${SOURCE_FILES})
 add_executable(KivaVM src/bin/main.cpp)
