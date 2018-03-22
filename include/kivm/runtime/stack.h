@@ -56,24 +56,20 @@ namespace kivm {
         inline void set_double(int position, jdouble d) {
             union _Cvt {
                 jdouble d;
-                jint i1;
-                jint i2;
+                jlong j;
             };
             _Cvt X{};
             X.d = d;
-            set_int(position, X.i1);
-            set_int(position + 1, X.i2);
+            set_long(position, X.j);
         }
 
         inline jdouble get_double(int position) {
             union _Cvt {
                 jdouble d;
-                jint i1;
-                jint i2;
+                jlong j;
             };
             _Cvt X{};
-            X.i1 = get_int(position);
-            X.i2 = get_int(position + 1);
+            X.j = get_long(position);
             return X.d;
         }
 

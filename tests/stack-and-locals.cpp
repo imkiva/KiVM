@@ -16,9 +16,8 @@ int main() {
 
     jlong j = s.pop_long();
     assert(j == 10086L);
-    // FIXME: double
-//    jdouble d = s.pop_double();
-//    assert(d == 6.28);
+    jdouble d = s.pop_double();
+    assert(d == 6.28);
     jfloat f = s.pop_float();
     assert(f == 3.14f);
     assert(s.pop_int() == 1);
