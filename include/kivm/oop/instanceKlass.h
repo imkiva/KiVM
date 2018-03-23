@@ -20,6 +20,8 @@ namespace kivm {
     class BootstrapMethods_attribute;
 
     class InstanceKlass : public Klass {
+        friend class instanceOopDesc;
+
     private:
         ClassLoader *_class_loader;
         mirrorOop _mirror_loader;
@@ -72,11 +74,6 @@ namespace kivm {
          * static fields' values.
          */
         std::vector<oop> _static_field_values;
-
-        /**
-         * instance fields' initial values.
-         */
-        std::vector<oop> _instance_field_init_values;
 
         /**
          * interfaces

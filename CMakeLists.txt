@@ -55,7 +55,7 @@ set(SOURCE_FILES
         src/kivm/oop/arrayKlass.cpp
         src/kivm/runtime/stack.cpp
         include/kivm/runtime/frame.h
-        src/kivm/runtime/frame.cpp include/kivm/runtime/thread.h)
+        src/kivm/runtime/frame.cpp include/kivm/runtime/thread.h include/kivm/oop/helper.h)
 
 add_library(kivm STATIC ${SOURCE_FILES})
 add_executable(KivaVM src/bin/main.cpp)
