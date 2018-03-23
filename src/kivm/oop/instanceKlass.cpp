@@ -173,38 +173,46 @@ namespace kivm {
         }
     }
 
+#define ND_KEY_MAKER(NAME, DESC) \
+        ((NAME) + L" " + (DESC))
+
+#define RETURN_IF(ITER, COLLECTION, KEY, SUCCESS, FAIL) \
+    const auto &ITER = (COLLECTION).find(KEY); \
+    return (ITER) != (COLLECTION).end() ? (SUCCESS) : (FAIL);
+
     int InstanceKlass::get_static_field_offset(const String &name, const String &descriptor) const {
-        const String &mixed_id = name + L" " + descriptor;
-        const auto &iter = this->_static_fields.find(mixed_id);
-        return iter != this->_static_fields.end() ? iter->second.first : -1;
+        RETURN_IF(iter, this->_static_fields,
+                  ND_KEY_MAKER(name, descriptor),
+                  iter->second.first, -1);
     }
 
     int InstanceKlass::get_instance_field_offset(const String &name, const String &descriptor) const {
-        const String &mixed_id = name + L" " + descriptor;
-        const auto &iter = this->_instance_fields.find(mixed_id);
-        return iter != this->_instance_fields.end() ? iter->second.first : -1;
+        RETURN_IF(iter, this->_instance_fields,
+                  ND_KEY_MAKER(name, descriptor),
+                  iter->second.first, -1);
     }
 
     Method *InstanceKlass::find_virtual_method(const String &name, const String &descriptor) const {
-        const String &mixed_id = name + L" " + descriptor;
-        const auto &iter = this->_vtable.find(mixed_id);
-        return iter != this->_vtable.end() ? iter->second : nullptr;
+        RETURN_IF(iter, this->_vtable,
+                  ND_KEY_MAKER(name, descriptor),
+                  iter->second, nullptr);
     }
 
     Method *InstanceKlass::find_non_virtual_method(const String &name, const String &descriptor) const {
-        const String &mixed_id = name + L" " + descriptor;
-        const auto &iter = this->_pftable.find(mixed_id);
-        return iter != this->_pftable.end() ? iter->second : nullptr;
+        RETURN_IF(iter, this->_pftable,
+                  ND_KEY_MAKER(name, descriptor),
+                  iter->second, nullptr);
     }
 
     Method *InstanceKlass::find_static_method(const String &name, const String &descriptor) const {
-        const String &mixed_id = name + L" " + descriptor;
-        const auto &iter = this->_stable.find(mixed_id);
-        return iter != this->_stable.end() ? iter->second : nullptr;
+        RETURN_IF(iter, this->_stable,
+                  ND_KEY_MAKER(name, descriptor),
+                  iter->second, nullptr);
     }
 
     InstanceKlass *InstanceKlass::find_interface(const String &interface_class_name) const {
-        const auto &iter = this->_interfaces.find(interface_class_name);
-        return iter != this->_interfaces.end() ? iter->second : nullptr;
+        RETURN_IF(iter, this->_interfaces,
+                  interface_class_name,
+                  iter->second, nullptr);
     }
 }
