@@ -34,9 +34,9 @@ namespace kivm {
                && lhs->get_descriptor() == rhs->get_descriptor();
     }
 
-    String Field::make_identity(const Field *f) {
+    String Field::make_identity(InstanceKlass *belongTo, const Field *f) {
         std::wstringstream ss;
-        ss << f->get_name() << L" " << f->get_descriptor();
+        ss << belongTo->get_name() << L" " << f->get_name() << L" " << f->get_descriptor();
         return ss.str();
     }
 

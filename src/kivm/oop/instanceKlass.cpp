@@ -14,6 +14,8 @@ namespace kivm {
         this->set_type(ClassType::INSTANCE_CLASS);
         this->_class_file = classFile;
         this->_class_loader = _class_loader;
+        this->_n_instance_fields = 0;
+        this->_n_static_fields = 0;
         this->_bm_attr = nullptr;
         this->_em_attr = nullptr;
         this->_ic_attr = nullptr;
@@ -112,24 +114,83 @@ namespace kivm {
     }
 
     void InstanceKlass::link_fields(cp_info **pool) {
-        u2 static_field_index = 0;
-        u2 instance_field_index = 0;
+        using std::make_pair;
+
+        // for a easy implementation, I just copy superclass's instance fields layout.
+        int instance_field_index = 0;
+
+        // instance fields in superclass
+        if (this->_super_class != nullptr) {
+            auto *super = (InstanceKlass *) this->_super_class;
+            for (auto &e : super->_instance_fields) {
+                D("%s: Extended instance field: #%-d %s",
+                  strings::to_std_string(get_name()).c_str(),
+                  instance_field_index,
+                  strings::to_std_string(e.first).c_str());
+                this->_instance_fields.insert(
+                        make_pair(e.first,
+                                  make_pair(instance_field_index++,
+                                            e.second.second)
+                        )
+                );
+            }
+        }
+
+        // instance fields in interfaces
+        for (auto &interface : this->_interfaces) {
+            for (auto &field : interface.second->_instance_fields) {
+                D("%s: Extended interface instance field: #%-d %s",
+                  strings::to_std_string(get_name()).c_str(),
+                  instance_field_index,
+                  strings::to_std_string(field.first).c_str());
+
+                this->_instance_fields.insert(
+                        make_pair(field.first,
+                                  make_pair(instance_field_index++,
+                                            field.second.second)
+                        )
+                );
+            }
+        }
+
+        // link our fields
+        int static_field_index = 0;
         for (int i = 0; i < _class_file->fields_count; ++i) {
             auto *field = new Field(this, _class_file->fields + i);
             field->link_field(pool);
             FieldPool::add(field);
 
-            using std::make_pair;
             if (field->is_static()) {
-                helper_init_field(_static_field_values, field);
-                _static_fields.insert(make_pair(Field::make_identity(field),
+                // static final fields should be initialized with constant values in constant pool.
+                // static non-final fields should be initialized with specified values.
+                if (!field->is_final()) {
+                    helper_init_field(_static_field_values, field);
+
+                } else if (!helper_init_static_final_field(_static_field_values, pool, field)) {
+                    // TODO: throw VerifyError: static final fields must be initialized.
+                    assert(false);
+                }
+
+                D("%s: New static field: #%-d %s",
+                  strings::to_std_string(get_name()).c_str(),
+                  static_field_index,
+                  strings::to_std_string(Field::make_identity(this, field)).c_str());
+
+                _static_fields.insert(make_pair(Field::make_identity(this, field),
                                                 make_pair(static_field_index++, field)));
             } else {
-                _instance_fields.insert(make_pair(Field::make_identity(field),
+                D("%s: New instance field: #%-d %s",
+                  strings::to_std_string(get_name()).c_str(),
+                  instance_field_index,
+                  strings::to_std_string(Field::make_identity(this, field)).c_str());
+
+                _instance_fields.insert(make_pair(Field::make_identity(this, field),
                                                   make_pair(instance_field_index++, field)));
             }
         }
         this->_static_field_values.shrink_to_fit();
+        this->_n_static_fields = static_field_index;
+        this->_n_instance_fields = instance_field_index;
     }
 
     void InstanceKlass::link_constant_pool(cp_info **constant_pool) {
@@ -173,6 +234,9 @@ namespace kivm {
         }
     }
 
+#define KEY_MAKER(CLASS, NAME, DESC) \
+        ((CLASS) + L" " + (NAME) + L" " + (DESC))
+
 #define ND_KEY_MAKER(NAME, DESC) \
         ((NAME) + L" " + (DESC))
 
@@ -180,15 +244,19 @@ namespace kivm {
     const auto &ITER = (COLLECTION).find(KEY); \
     return (ITER) != (COLLECTION).end() ? (SUCCESS) : (FAIL);
 
-    int InstanceKlass::get_static_field_offset(const String &name, const String &descriptor) const {
+    int InstanceKlass::get_static_field_offset(const String &className,
+                                               const String &name,
+                                               const String &descriptor) const {
         RETURN_IF(iter, this->_static_fields,
-                  ND_KEY_MAKER(name, descriptor),
+                  KEY_MAKER(className, name, descriptor),
                   iter->second.first, -1);
     }
 
-    int InstanceKlass::get_instance_field_offset(const String &name, const String &descriptor) const {
+    int InstanceKlass::get_instance_field_offset(const String &className,
+                                                 const String &name,
+                                                 const String &descriptor) const {
         RETURN_IF(iter, this->_instance_fields,
-                  ND_KEY_MAKER(name, descriptor),
+                  KEY_MAKER(className, name, descriptor),
                   iter->second.first, -1);
     }
 

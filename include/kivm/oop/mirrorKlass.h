@@ -14,6 +14,6 @@ namespace kivm {
 
         mirrorKlass(mirrorKlass &&) noexcept = delete;
 
-        mirrorOop *new_mirror(Klass *target, mirrorOop loader);
+        mirrorOop new_mirror(Klass *target, mirrorOop loader);
     };
 }

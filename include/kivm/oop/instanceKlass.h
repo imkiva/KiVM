@@ -60,15 +60,19 @@ namespace kivm {
 
         /**
          * static fields.
-         * map<name + " " + descriptor, <vector-offset, Field*>>
+         * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        std::unordered_map<String, std::pair<u2, Field *>> _static_fields;
+        std::unordered_map<String, std::pair<int, Field *>> _static_fields;
 
         /**
          * instance fields.
-         * map<name + " " + descriptor, <vector-offset, Field*>>
+         * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        std::unordered_map<String, std::pair<u2, Field *>> _instance_fields;
+        std::unordered_map<String, std::pair<int, Field *>> _instance_fields;
+
+        int _n_static_fields;
+
+        int _n_instance_fields;
 
         /**
          * static fields' values.
@@ -118,19 +122,25 @@ namespace kivm {
 
         /**
          * Get static field offset.
+         * @param className Where the wanted field belongs to
          * @param name Field name
          * @param descriptor Field descriptor
          * @return vector offset if found, otherwise -1
          */
-        int get_static_field_offset(const String &name, const String &descriptor) const;
+        int get_static_field_offset(const String &className,
+                                    const String &name,
+                                    const String &descriptor) const;
 
         /**
          * Get instance field offset.
+         * @param className Where the wanted field belongs to
          * @param name Field name
          * @param descriptor Field descriptor
          * @return vector offset if found, otherwise -1
          */
-        int get_instance_field_offset(const String &name, const String &descriptor) const;
+        int get_instance_field_offset(const String &className,
+                                      const String &name,
+                                      const String &descriptor) const;
 
         /**
          * Get virtual method.
@@ -161,6 +171,6 @@ namespace kivm {
          * @param interface_class_name Interface class name
          * @return Interface class representation if found, otherwise {@code nullptr}
          */
-        InstanceKlass* find_interface(const String &interface_class_name) const;
+        InstanceKlass *find_interface(const String &interface_class_name) const;
     };
 }

@@ -18,5 +18,8 @@ int main() {
     auto *e = (InstanceKlass *) BootstrapClassLoader::get()
             ->loadClass(L"[[[[[J");
 
+    auto *x = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/lang/InterruptedException");
+
     return 0;
 }

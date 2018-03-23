@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.8)
 project(KivaVM)
 
 set(CMAKE_CXX_STANDARD 11)
+if (DEFINED ENV{CS_SRC})
+    set(CMAKE_CXX_FLAGS -DKIVM_DEBUG)
+endif ()
 
 include_directories(include)
 
@@ -55,7 +58,9 @@ set(SOURCE_FILES
         src/kivm/oop/arrayKlass.cpp
         src/kivm/runtime/stack.cpp
         include/kivm/runtime/frame.h
-        src/kivm/runtime/frame.cpp include/kivm/runtime/thread.h include/kivm/oop/helper.h)
+        src/kivm/runtime/frame.cpp
+        include/kivm/runtime/thread.h
+        include/kivm/oop/helper.h)
 
 add_library(kivm STATIC ${SOURCE_FILES})
 add_executable(KivaVM src/bin/main.cpp)

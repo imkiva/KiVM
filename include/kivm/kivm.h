@@ -4,13 +4,12 @@
 
 #pragma once
 
+#include <cstdio>
 #include <cstdint>
 #include <cstddef>
 #include <cassert>
 #include <shared/types.h>
 #include <shared/string.h>
-
-
 
 /**
  * Declared public; may be accessed from outside its package.
@@ -101,6 +100,15 @@
 #define ACC_MIRANDA             0x8000
 #define ACC_REFLECT_MASK        0xffff
 
+#ifdef KIVM_DEBUG
+#define D(fmt, ...) \
+    do { \
+       (void) fprintf(stderr, "===> (KIVM DEBUG) [%s:%d]: " fmt "\n", \
+                __FILE__, __LINE__, ##__VA_ARGS__); \
+    } while (false)
+#else
+#define D(fmt, ...)
+#endif
 
 namespace kivm {
 }

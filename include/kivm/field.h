@@ -19,10 +19,12 @@ namespace kivm {
     class ConstantValue_attribute;
 
     class Field {
+        friend InstanceKlass;
+
     public:
         static bool is_same(const Field *lhs, const Field *rhs);
 
-        static String make_identity(const Field *f);
+        static String make_identity(InstanceKlass *belongTo, const Field *f);
 
     private:
         InstanceKlass *_klass;
@@ -66,6 +68,10 @@ namespace kivm {
 
         const String &get_signature() const {
             return _signature;
+        }
+
+        ConstantValue_attribute *get_constant_attribute() const {
+            return _constant_attribute;
         }
 
         u2 get_access_flag() const {
