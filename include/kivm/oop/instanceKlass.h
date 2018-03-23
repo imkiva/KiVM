@@ -117,7 +117,7 @@ namespace kivm {
         }
 
         /**
-         * Get static field offset
+         * Get static field offset.
          * @param name Field name
          * @param descriptor Field descriptor
          * @return vector offset if found, otherwise -1
@@ -125,11 +125,42 @@ namespace kivm {
         int get_static_field_offset(const String &name, const String &descriptor) const;
 
         /**
-         * Get instance field offset
+         * Get instance field offset.
          * @param name Field name
          * @param descriptor Field descriptor
          * @return vector offset if found, otherwise -1
          */
         int get_instance_field_offset(const String &name, const String &descriptor) const;
+
+        /**
+         * Get virtual method.
+         * @param name Method name
+         * @param descriptor Method descriptor
+         * @return method pointer if found, otherwise {@code nullptr}
+         */
+        Method *find_virtual_method(const String &name, const String &descriptor) const;
+
+        /**
+         * Get non-virtual method(private or final).
+         * @param name Method name
+         * @param descriptor Method descriptor
+         * @return method pointer if found, otherwise {@code nullptr}
+         */
+        Method *find_non_virtual_method(const String &name, const String &descriptor) const;
+
+        /**
+         * Get static method.
+         * @param name Method name
+         * @param descriptor Method descriptor
+         * @return method pointer if found, otherwise {@code nullptr}
+         */
+        Method *find_static_method(const String &name, const String &descriptor) const;
+
+        /**
+         * Get interface.
+         * @param interface_class_name Interface class name
+         * @return Interface class representation if found, otherwise {@code nullptr}
+         */
+        InstanceKlass* find_interface(const String &interface_class_name) const;
     };
 }

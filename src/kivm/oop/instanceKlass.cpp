@@ -184,4 +184,27 @@ namespace kivm {
         const auto &iter = this->_instance_fields.find(mixed_id);
         return iter != this->_instance_fields.end() ? iter->second.first : -1;
     }
+
+    Method *InstanceKlass::find_virtual_method(const String &name, const String &descriptor) const {
+        const String &mixed_id = name + L" " + descriptor;
+        const auto &iter = this->_vtable.find(mixed_id);
+        return iter != this->_vtable.end() ? iter->second : nullptr;
+    }
+
+    Method *InstanceKlass::find_non_virtual_method(const String &name, const String &descriptor) const {
+        const String &mixed_id = name + L" " + descriptor;
+        const auto &iter = this->_pftable.find(mixed_id);
+        return iter != this->_pftable.end() ? iter->second : nullptr;
+    }
+
+    Method *InstanceKlass::find_static_method(const String &name, const String &descriptor) const {
+        const String &mixed_id = name + L" " + descriptor;
+        const auto &iter = this->_stable.find(mixed_id);
+        return iter != this->_stable.end() ? iter->second : nullptr;
+    }
+
+    InstanceKlass *InstanceKlass::find_interface(const String &interface_class_name) const {
+        const auto &iter = this->_interfaces.find(interface_class_name);
+        return iter != this->_interfaces.end() ? iter->second : nullptr;
+    }
 }
