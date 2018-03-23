@@ -172,4 +172,16 @@ namespace kivm {
             }
         }
     }
+
+    int InstanceKlass::get_static_field_offset(const String &name, const String &descriptor) const {
+        const String &mixed_id = name + L" " + descriptor;
+        const auto &iter = this->_static_fields.find(mixed_id);
+        return iter != this->_static_fields.end() ? iter->second.first : -1;
+    }
+
+    int InstanceKlass::get_instance_field_offset(const String &name, const String &descriptor) const {
+        const String &mixed_id = name + L" " + descriptor;
+        const auto &iter = this->_instance_fields.find(mixed_id);
+        return iter != this->_instance_fields.end() ? iter->second.first : -1;
+    }
 }

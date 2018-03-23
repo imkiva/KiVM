@@ -115,5 +115,21 @@ namespace kivm {
         const std::unordered_map<String, Method *> &get_vtable() const {
             return _vtable;
         }
+
+        /**
+         * Get static field offset
+         * @param name Field name
+         * @param descriptor Field descriptor
+         * @return vector offset if found, otherwise -1
+         */
+        int get_static_field_offset(const String &name, const String &descriptor) const;
+
+        /**
+         * Get instance field offset
+         * @param name Field name
+         * @param descriptor Field descriptor
+         * @return vector offset if found, otherwise -1
+         */
+        int get_instance_field_offset(const String &name, const String &descriptor) const;
     };
 }
