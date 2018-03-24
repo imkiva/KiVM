@@ -196,32 +196,88 @@ namespace kivm {
          */
         InstanceKlass *find_interface(const String &interface_class_name) const;
 
+        /**
+         * Set static field's value.
+         * @param className Where the wanted field belongs to
+         * @param name Field name
+         * @param descriptor Field descriptor
+         * @param value field value
+         */
         void set_static_field_value(const String &className,
                                     const String &name,
                                     const String &descriptor,
                                     oop value);
 
+        /**
+         * Set static field's value.
+         * @param fieldID field descriptor
+         * @param value field value
+         */
         void set_static_field_value(const FieldID &fieldID,
                                     oop value);
 
-        oop get_static_field_value(const String &className,
-                                   const String &name,
-                                   const String &descriptor);
+        /**
+         * Get static field's value.
+         * @param className Where the wanted field belongs to
+         * @param name Field name
+         * @param descriptor Field descriptor
+         * @param result pointer to result
+         * @return {@code true} if found, otherwise {@code false}
+         */
+        bool get_static_field_value(const String &className,
+                                    const String &name,
+                                    const String &descriptor,
+                                    oop *result);
 
-        oop get_static_field_value(const FieldID &fieldID);
+        /**
+         * Get static field's value.
+         * @param fieldID field descriptor
+         * @param result pointer to result
+         * @return {@code true} if found, otherwise {@code false}
+         */
+        bool get_static_field_value(const FieldID &fieldID, oop *result);
 
+        /**
+         * Set instance field's value.
+         * @param receiver Java object that contains the wanted field
+         * @param className Where the wanted field belongs to
+         * @param name Field name
+         * @param descriptor Field descriptor
+         * @param value field value
+         */
         void set_instance_field_value(oop receiver,
                                       const String &className,
                                       const String &name,
                                       const String &descriptor,
                                       oop value);
 
+        /**
+         * Set static field's value.
+         * @param receiver Java object that contains the wanted field
+         * @param fieldID field descriptor
+         * @param value field value
+         */
         void set_instance_field_value(oop receiver, const FieldID &fieldID, oop value);
 
-        oop get_instance_field_value(oop receiver, const String &className,
-                                     const String &name,
-                                     const String &descriptor);
+        /**
+         * Get instance field's value.
+         * @param className Where the wanted field belongs to
+         * @param name Field name
+         * @param descriptor Field descriptor
+         * @param result pointer to result
+         * @return {@code true} if found, otherwise {@code false}
+         */
+        bool get_instance_field_value(oop receiver, const String &className,
+                                      const String &name,
+                                      const String &descriptor,
+                                      oop *result);
 
-        oop get_instance_field_value(oop receiver, const FieldID &fieldID);
+        /**
+         * Get instance field's value.
+         * @param fieldID field descriptor
+         * @param result pointer to result
+         * @return {@code true} if found, otherwise {@code false}
+         */
+        bool get_instance_field_value(oop receiver, const FieldID &fieldID, oop *result);
     };
 }

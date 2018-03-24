@@ -301,13 +301,6 @@ namespace kivm {
         set_static_field_value(fieldID, value);
     }
 
-    oop InstanceKlass::get_static_field_value(const String &className,
-                                              const String &name,
-                                              const String &descriptor) {
-        const auto &fieldID = get_static_field_info(className, name, descriptor);
-        return get_static_field_value(fieldID);
-    }
-
     void InstanceKlass::set_static_field_value(const FieldID &fieldID, oop value) {
         if (fieldID._field == nullptr) {
             // throw java.lang.NoSuchFieldError
@@ -326,16 +319,23 @@ namespace kivm {
         this->_static_field_values[fieldID._offset] = value;
     }
 
-    oop InstanceKlass::get_static_field_value(const FieldID &fieldID) {
-        if (fieldID._field == nullptr) {
-            // throw java.lang.NoSuchFieldError
-            assert(!"java.lang.NoSuchFieldError");
-        }
-
-        return this->_static_field_values[fieldID._offset];
+    bool InstanceKlass::get_static_field_value(const String &className,
+                                               const String &name,
+                                               const String &descriptor,
+                                               oop *result) {
+        const auto &fieldID = get_static_field_info(className, name, descriptor);
+        return get_static_field_value(fieldID, result);
     }
 
-    //////
+    bool InstanceKlass::get_static_field_value(const FieldID &fieldID, oop *result) {
+        if (fieldID._field == nullptr) {
+            return false;
+        }
+
+        *result = this->_static_field_values[fieldID._offset];
+        return true;
+    }
+
     void InstanceKlass::set_instance_field_value(oop receiver,
                                                  const String &className,
                                                  const String &name,
@@ -343,13 +343,6 @@ namespace kivm {
                                                  oop value) {
         const auto &fieldID = get_instance_field_info(className, name, descriptor);
         set_instance_field_value(receiver, fieldID, value);
-    }
-
-    oop InstanceKlass::get_instance_field_value(oop receiver, const String &className,
-                                                const String &name,
-                                                const String &descriptor) {
-        const auto &fieldID = get_instance_field_info(className, name, descriptor);
-        return get_instance_field_value(receiver, fieldID);
     }
 
     void InstanceKlass::set_instance_field_value(oop receiver, const FieldID &fieldID, oop value) {
@@ -375,10 +368,17 @@ namespace kivm {
         receiverOop->_instance_field_values[fieldID._offset] = value;
     }
 
-    oop InstanceKlass::get_instance_field_value(oop receiver, const FieldID &fieldID) {
+    bool InstanceKlass::get_instance_field_value(oop receiver, const String &className,
+                                                 const String &name,
+                                                 const String &descriptor,
+                                                 oop *result) {
+        const auto &fieldID = get_instance_field_info(className, name, descriptor);
+        return get_instance_field_value(receiver, fieldID, result);
+    }
+
+    bool InstanceKlass::get_instance_field_value(oop receiver, const FieldID &fieldID, oop *result) {
         if (fieldID._field == nullptr) {
-            // throw java.lang.NoSuchFieldError
-            assert(!"java.lang.NoSuchFieldError");
+            return false;
         }
 
         if (receiver->get_klass()->get_type() != ClassType::INSTANCE_CLASS) {
@@ -386,6 +386,7 @@ namespace kivm {
         }
 
         auto receiverOop = (instanceOop) receiver;
-        return receiverOop->_instance_field_values[fieldID._offset];
+        *result = receiverOop->_instance_field_values[fieldID._offset];
+        return true;
     }
 }
