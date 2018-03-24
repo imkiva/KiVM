@@ -50,13 +50,13 @@ namespace kivm {
                     const String &component = class_name.substr(2, class_name.size() - 3);
                     auto *component_class = (InstanceKlass *) loadClass(component);
                     return component_class != nullptr
-                           ? new ObjectArrayKlass(this, dimension, component_class)
+                           ? new ObjectArrayKlass(this, nullptr, dimension, component_class)
                            : nullptr;
                 }
 
                 // for example: LI -> I
                 ValueType component_type = parse_primitive_type(class_name[1]);
-                return new TypeArrayKlass(this, dimension, component_type);
+                return new TypeArrayKlass(this, nullptr, dimension, component_type);
             }
 
             // Load multi-dimension array recursively
@@ -81,7 +81,7 @@ namespace kivm {
         ClassFileParser classFileParser(strings::to_std_string(class_file_path).c_str());
         ClassFile *classFile = classFileParser.classFile();
         return classFile != nullptr
-               ? new InstanceKlass(classFile, this)
+               ? new InstanceKlass(classFile, this, nullptr, ClassType::INSTANCE_CLASS)
                : nullptr;
     }
 }

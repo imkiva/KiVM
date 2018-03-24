@@ -7,6 +7,7 @@
 #include <kivm/kivm.h>
 #include <kivm/classfile/classFile.h>
 #include <kivm/classLoader.h>
+#include <kivm/oop/oopfwd.h>
 
 namespace kivm {
     enum ClassType {
@@ -33,9 +34,18 @@ namespace kivm {
         String _name;
         ClassType _type;
 
+        mirrorOop _java_mirror;
         Klass *_super_class;
 
     public:
+        mirrorOop get_java_mirror() {
+            return _java_mirror;
+        }
+
+        void set_java_mirror(mirrorOop java_mirror) {
+            this->_java_mirror = java_mirror;
+        }
+
         ClassState get_state() const {
             return _state;
         }

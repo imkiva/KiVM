@@ -11,15 +11,17 @@
 #include <sstream>
 
 namespace kivm {
-    InstanceKlass::InstanceKlass(ClassFile *classFile, ClassLoader *_class_loader) {
-        this->set_type(ClassType::INSTANCE_CLASS);
-        this->_class_file = classFile;
-        this->_class_loader = _class_loader;
-        this->_n_instance_fields = 0;
-        this->_n_static_fields = 0;
-        this->_bm_attr = nullptr;
-        this->_em_attr = nullptr;
-        this->_ic_attr = nullptr;
+    InstanceKlass::InstanceKlass(ClassFile *class_file, ClassLoader *class_loader,
+                                 mirrorOop java_loader, ClassType class_type)
+            : _java_loader(java_loader),
+            _class_file(class_file),
+            _class_loader(class_loader),
+            _n_instance_fields(0),
+            _n_static_fields(0),
+            _em_attr(nullptr),
+            _bm_attr(nullptr),
+            _ic_attr(nullptr) {
+        this->set_type(class_type);
     }
 
     InstanceKlass *InstanceKlass::require_instance_class(u2 class_info_index) {

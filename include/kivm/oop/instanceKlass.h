@@ -25,7 +25,7 @@ namespace kivm {
 
     private:
         ClassLoader *_class_loader;
-        mirrorOop _mirror_loader;
+        mirrorOop _java_loader;
 
         ClassFile *_class_file;
         String _source_file;
@@ -101,7 +101,8 @@ namespace kivm {
         void link_attributes(cp_info **pool);
 
     public:
-        InstanceKlass(ClassFile *classFile, ClassLoader *class_loader);
+        InstanceKlass(ClassFile *class_file, ClassLoader *class_loader,
+                      mirrorOop java_loader, ClassType class_type);
 
         ClassLoader *get_class_loader() const {
             return _class_loader;

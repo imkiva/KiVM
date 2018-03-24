@@ -73,9 +73,9 @@ if (DEFINED ENV{CS_SRC})
     set(CS_SRC $ENV{CS_SRC})
     include_directories(${CS_SRC}/include)
     add_library(covscript-kivm SHARED
-            ${SOURCE_FILES}
             ext/covscript-kivm.cpp
             ext/extension_helper.h)
+    target_link_libraries(covscript-kivm kivm)
     set_target_properties(covscript-kivm PROPERTIES OUTPUT_NAME "kivm")
     set_target_properties(covscript-kivm PROPERTIES PREFIX "")
     set_target_properties(covscript-kivm PROPERTIES SUFFIX ".cse")
