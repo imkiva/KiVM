@@ -38,12 +38,12 @@ namespace kivm {
 
         static void deallocate(void *ptr);
 
-        static void *operator new(size_t size, bool = false) throw();
+        static void *operator new(size_t size, bool = true) noexcept;
 
-        static void *operator new(size_t size, const std::nothrow_t &) throw() { exit(-2); }        // do not use it.
-        static void *operator new[](size_t size, bool = false) throw();
+        static void *operator new(size_t size, const std::nothrow_t &) noexcept { exit(-2); }        // do not use it.
+        static void *operator new[](size_t size, bool = true) throw();
 
-        static void *operator new[](size_t size, const std::nothrow_t &) throw() { exit(-2); }        // do not use it.
+        static void *operator new[](size_t size, const std::nothrow_t &) noexcept { exit(-2); }        // do not use it.
         static void operator delete(void *ptr);
 
         static void operator delete[](void *ptr);

@@ -28,12 +28,12 @@ namespace kivm {
         free(ptr);
     }
 
-    void *oopBase::operator new(size_t size, bool dont_record) throw() {
-        return allocate(size, dont_record);
+    void *oopBase::operator new(size_t size, bool add_to_pool) throw() {
+        return allocate(size, add_to_pool);
     }
 
-    void *oopBase::operator new[](size_t size, bool dont_record) throw() {
-        return allocate(size, dont_record);
+    void *oopBase::operator new[](size_t size, bool add_to_pool) throw() {
+        return allocate(size, add_to_pool);
     }
 
     void oopBase::operator delete(void *ptr) {
