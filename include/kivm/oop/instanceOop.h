@@ -8,6 +8,8 @@
 
 namespace kivm {
     class instanceOopDesc : public oopDesc {
+        friend class InstanceKlass;
+
         std::vector<oop> _instance_field_values;
 
     public:

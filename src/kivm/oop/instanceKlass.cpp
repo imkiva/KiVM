@@ -4,6 +4,7 @@
 
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/oop/primitiveOop.h>
+#include <kivm/oop/instanceOop.h>
 #include <kivm/oop/helper.h>
 #include <kivm/method.h>
 #include <kivm/field.h>
@@ -129,10 +130,7 @@ namespace kivm {
                   strings::to_std_string(e.first).c_str());
                 this->_instance_fields.insert(
                         make_pair(e.first,
-                                  make_pair(instance_field_index++,
-                                            e.second.second)
-                        )
-                );
+                                  FieldID(instance_field_index++, e.second._field)));
             }
         }
 
@@ -146,10 +144,7 @@ namespace kivm {
 
                 this->_instance_fields.insert(
                         make_pair(field.first,
-                                  make_pair(instance_field_index++,
-                                            field.second.second)
-                        )
-                );
+                                  FieldID(instance_field_index++, field.second._field)));
             }
         }
 
@@ -177,7 +172,7 @@ namespace kivm {
                   strings::to_std_string(Field::make_identity(this, field)).c_str());
 
                 _static_fields.insert(make_pair(Field::make_identity(this, field),
-                                                make_pair(static_field_index++, field)));
+                                                FieldID(static_field_index++, field)));
             } else {
                 D("%s: New instance field: #%-d %s",
                   strings::to_std_string(get_name()).c_str(),
@@ -185,7 +180,7 @@ namespace kivm {
                   strings::to_std_string(Field::make_identity(this, field)).c_str());
 
                 _instance_fields.insert(make_pair(Field::make_identity(this, field),
-                                                  make_pair(instance_field_index++, field)));
+                                                  FieldID(instance_field_index++, field)));
             }
         }
         this->_static_field_values.shrink_to_fit();
@@ -244,20 +239,34 @@ namespace kivm {
     const auto &ITER = (COLLECTION).find(KEY); \
     return (ITER) != (COLLECTION).end() ? (SUCCESS) : (FAIL);
 
+    FieldID InstanceKlass::get_static_field_info(const String &className,
+                                                 const String &name,
+                                                 const String &descriptor) const {
+        RETURN_IF(iter, this->_static_fields,
+                  KEY_MAKER(className, name, descriptor),
+                  iter->second,
+                  FieldID(-1, nullptr));
+    }
+
+    FieldID InstanceKlass::get_instance_field_info(const String &className,
+                                                   const String &name,
+                                                   const String &descriptor) const {
+        RETURN_IF(iter, this->_instance_fields,
+                  KEY_MAKER(className, name, descriptor),
+                  iter->second,
+                  FieldID(-1, nullptr));
+    }
+
     int InstanceKlass::get_static_field_offset(const String &className,
                                                const String &name,
                                                const String &descriptor) const {
-        RETURN_IF(iter, this->_static_fields,
-                  KEY_MAKER(className, name, descriptor),
-                  iter->second.first, -1);
+        return this->get_static_field_info(className, name, descriptor)._offset;
     }
 
     int InstanceKlass::get_instance_field_offset(const String &className,
                                                  const String &name,
                                                  const String &descriptor) const {
-        RETURN_IF(iter, this->_instance_fields,
-                  KEY_MAKER(className, name, descriptor),
-                  iter->second.first, -1);
+        return this->get_instance_field_info(className, name, descriptor)._offset;
     }
 
     Method *InstanceKlass::find_virtual_method(const String &name, const String &descriptor) const {
@@ -282,5 +291,103 @@ namespace kivm {
         RETURN_IF(iter, this->_interfaces,
                   interface_class_name,
                   iter->second, nullptr);
+    }
+
+    void InstanceKlass::set_static_field_value(const String &className,
+                                               const String &name,
+                                               const String &descriptor,
+                                               oop value) {
+        const auto &fieldID = get_static_field_info(className, name, descriptor);
+        set_static_field_value(fieldID, value);
+    }
+
+    oop InstanceKlass::get_static_field_value(const String &className,
+                                              const String &name,
+                                              const String &descriptor) {
+        const auto &fieldID = get_static_field_info(className, name, descriptor);
+        return get_static_field_value(fieldID);
+    }
+
+    void InstanceKlass::set_static_field_value(const FieldID &fieldID, oop value) {
+        if (fieldID._field == nullptr) {
+            // throw java.lang.NoSuchFieldError
+            assert(!"java.lang.NoSuchFieldError");
+        }
+        if (fieldID._field->is_final()) {
+            // throw java.lang.IllegalAccessError
+            assert(!"java.lang.IllegalAccessError");
+        }
+
+        D("Set field %s::%s(%s) to %p\n",
+          strings::to_std_string(fieldID._field->get_class()->get_name()).c_str(),
+          strings::to_std_string(fieldID._field->get_name()).c_str(),
+          strings::to_std_string(fieldID._field->get_descriptor()).c_str(),
+          value);
+        this->_static_field_values[fieldID._offset] = value;
+    }
+
+    oop InstanceKlass::get_static_field_value(const FieldID &fieldID) {
+        if (fieldID._field == nullptr) {
+            // throw java.lang.NoSuchFieldError
+            assert(!"java.lang.NoSuchFieldError");
+        }
+
+        return this->_static_field_values[fieldID._offset];
+    }
+
+    //////
+    void InstanceKlass::set_instance_field_value(oop receiver,
+                                                 const String &className,
+                                                 const String &name,
+                                                 const String &descriptor,
+                                                 oop value) {
+        const auto &fieldID = get_instance_field_info(className, name, descriptor);
+        set_instance_field_value(receiver, fieldID, value);
+    }
+
+    oop InstanceKlass::get_instance_field_value(oop receiver, const String &className,
+                                                const String &name,
+                                                const String &descriptor) {
+        const auto &fieldID = get_instance_field_info(className, name, descriptor);
+        return get_instance_field_value(receiver, fieldID);
+    }
+
+    void InstanceKlass::set_instance_field_value(oop receiver, const FieldID &fieldID, oop value) {
+        if (fieldID._field == nullptr) {
+            // throw java.lang.NoSuchFieldError
+            assert(!"java.lang.NoSuchFieldError");
+        }
+        if (fieldID._field->is_final()) {
+            // throw java.lang.IllegalAccessError
+            assert(!"java.lang.IllegalAccessError");
+        }
+
+        if (receiver->get_klass()->get_type() != ClassType::INSTANCE_CLASS) {
+            // TODO: should never reached here
+            assert(false);
+        }
+
+        D("Set field %s::%s(%s) to %p\n",
+          strings::to_std_string(fieldID._field->get_class()->get_name()).c_str(),
+          strings::to_std_string(fieldID._field->get_name()).c_str(),
+          strings::to_std_string(fieldID._field->get_descriptor()).c_str(),
+          value);
+        auto receiverOop = (instanceOop) receiver;
+        receiverOop->_instance_field_values[fieldID._offset] = value;
+    }
+
+    oop InstanceKlass::get_instance_field_value(oop receiver, const FieldID &fieldID) {
+        if (fieldID._field == nullptr) {
+            // throw java.lang.NoSuchFieldError
+            assert(!"java.lang.NoSuchFieldError");
+        }
+
+        if (receiver->get_klass()->get_type() != ClassType::INSTANCE_CLASS) {
+            // TODO: should never reached here
+            assert(false);
+        }
+
+        auto receiverOop = (instanceOop) receiver;
+        return receiverOop->_instance_field_values[fieldID._offset];
     }
 }

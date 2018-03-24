@@ -5,6 +5,7 @@
 
 #include <kivm/oop/klass.h>
 #include <kivm/oop/oopfwd.h>
+#include <kivm/oop/reflection_support.h>
 #include <unordered_map>
 #include <vector>
 
@@ -62,13 +63,13 @@ namespace kivm {
          * static fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        std::unordered_map<String, std::pair<int, Field *>> _static_fields;
+        std::unordered_map<String, FieldID> _static_fields;
 
         /**
          * instance fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        std::unordered_map<String, std::pair<int, Field *>> _instance_fields;
+        std::unordered_map<String, FieldID> _instance_fields;
 
         int _n_static_fields;
 
@@ -132,6 +133,17 @@ namespace kivm {
                                     const String &descriptor) const;
 
         /**
+         * Get static field info.
+         * @param className Where the wanted field belongs to
+         * @param name Field name
+         * @param descriptor Field descriptor
+         * @return FieldID if found, otherwise {@code FieldID(-1, nullptr)}
+         */
+        FieldID get_static_field_info(const String &className,
+                                      const String &name,
+                                      const String &descriptor) const;
+
+        /**
          * Get instance field offset.
          * @param className Where the wanted field belongs to
          * @param name Field name
@@ -141,6 +153,17 @@ namespace kivm {
         int get_instance_field_offset(const String &className,
                                       const String &name,
                                       const String &descriptor) const;
+
+        /**
+         * Get instance field info.
+         * @param className Where the wanted field belongs to
+         * @param name Field name
+         * @param descriptor Field descriptor
+         * @return FieldID if found, otherwise {@code FieldID(-1, nullptr)}
+         */
+        FieldID get_instance_field_info(const String &className,
+                                        const String &name,
+                                        const String &descriptor) const;
 
         /**
          * Get virtual method.
@@ -172,5 +195,33 @@ namespace kivm {
          * @return Interface class representation if found, otherwise {@code nullptr}
          */
         InstanceKlass *find_interface(const String &interface_class_name) const;
+
+        void set_static_field_value(const String &className,
+                                    const String &name,
+                                    const String &descriptor,
+                                    oop value);
+
+        void set_static_field_value(const FieldID &fieldID,
+                                    oop value);
+
+        oop get_static_field_value(const String &className,
+                                   const String &name,
+                                   const String &descriptor);
+
+        oop get_static_field_value(const FieldID &fieldID);
+
+        void set_instance_field_value(oop receiver,
+                                      const String &className,
+                                      const String &name,
+                                      const String &descriptor,
+                                      oop value);
+
+        void set_instance_field_value(oop receiver, const FieldID &fieldID, oop value);
+
+        oop get_instance_field_value(oop receiver, const String &className,
+                                     const String &name,
+                                     const String &descriptor);
+
+        oop get_instance_field_value(oop receiver, const FieldID &fieldID);
     };
 }

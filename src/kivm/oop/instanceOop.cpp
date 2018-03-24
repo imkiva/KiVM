@@ -11,7 +11,7 @@ namespace kivm {
             : oopDesc(klass, oopType::INSTANCE_OOP) {
         this->_instance_field_values.resize(klass->_instance_fields.size());
         for (auto &e:klass->_instance_fields) {
-            helper_init_field(this->_instance_field_values, e.second.second);
+            helper_init_field(this->_instance_field_values, e.second._field);
         }
     }
 }
