@@ -1,0 +1,3 @@
+language: cpp
+install: cmake . && make -j4
+script: ./KiVM
