@@ -6,30 +6,11 @@
 #include <kivm/oop/klass.h>
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/oop/arrayKlass.h>
+#include <kivm/oop/reflection_support.h>
 #include <kivm/classfile/classFileParser.h>
 #include <sstream>
 
 namespace kivm {
-    ValueType parse_primitive_type(wchar_t c) {
-        switch (c) {
-            case L'B':    // byte
-            case L'Z':    // boolean
-            case L'S':    // short
-            case L'C':    // char
-            case L'I':    // int
-                return ValueType::INT;
-            case L'J':
-                return ValueType::LONG;
-            case L'F':    // float
-                return ValueType::FLOAT;
-            case L'D':    // double
-                return ValueType::DOUBLE;
-            default:
-                PANIC("primitive type required");
-                break;
-        }
-    }
-
     Klass *BaseClassLoader::loadClass(const String &class_name) {
         static const char *KLASSPATH_ENV = getenv("KLASSPATH");
         static String RT_DIR = KLASSPATH_ENV == nullptr
@@ -55,7 +36,7 @@ namespace kivm {
                 }
 
                 // for example: LI -> I
-                ValueType component_type = parse_primitive_type(class_name[1]);
+                ValueType component_type = primitive_type_to_value_type(class_name[1]);
                 return new TypeArrayKlass(this, nullptr, dimension, component_type);
             }
 

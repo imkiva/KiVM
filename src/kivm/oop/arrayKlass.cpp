@@ -28,34 +28,7 @@ namespace kivm {
         for (int i = 0; i < dimension; ++i) {
             ss << L"[";
         }
-        switch (component_type) {
-            case ValueType::BOOLEAN:
-                ss << L"Z";
-                break;
-            case ValueType::BYTE:
-                ss << L"B";
-                break;
-            case ValueType::CHAR:
-                ss << L"C";
-                break;
-            case ValueType::SHORT:
-                ss << L"S";
-                break;
-            case ValueType::INT:
-                ss << L"I";
-                break;
-            case ValueType::FLOAT:
-                ss << L"F";
-                break;
-            case ValueType::LONG:
-                ss << L"J";
-                break;
-            case ValueType::DOUBLE:
-                ss << L"D";
-                break;
-            default:
-                PANIC("primitive type required");
-        }
+        ss << value_type_to_primitive_type(component_type);
         this->set_name(ss.str());
     }
 
