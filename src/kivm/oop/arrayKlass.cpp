@@ -3,19 +3,19 @@
 //
 
 #include <kivm/oop/arrayKlass.h>
+#include <sstream>
 
 namespace kivm {
 
     ArrayKlass::ArrayKlass(ClassLoader *class_loader, mirrorOop java_loader,
-                           int dimension, ClassType class_type) {
-        this->_class_loader = class_loader;
-        this->_java_loader = java_loader;
-        this->_dimension = dimension;
+                           int dimension, ClassType class_type)
+            : _class_loader(class_loader),
+              _java_loader(java_loader),
+              _dimension(dimension) {
         this->set_type(class_type);
     }
 
     void ArrayKlass::link_and_init() {
-        // nothing to do.
         this->set_state(ClassState::FULLY_INITIALIZED);
     }
 
@@ -24,6 +24,39 @@ namespace kivm {
             : ArrayKlass(class_loader, java_loader, dimension, ClassType::TYPE_ARRAY_CLASS),
               _component_type(component_type),
               _down_dimension_type(nullptr) {
+        std::wstringstream ss;
+        for (int i = 0; i < dimension; ++i) {
+            ss << L"[";
+        }
+        switch (component_type) {
+            case ValueType::BOOLEAN:
+                ss << L"Z";
+                break;
+            case ValueType::BYTE:
+                ss << L"B";
+                break;
+            case ValueType::CHAR:
+                ss << L"C";
+                break;
+            case ValueType::SHORT:
+                ss << L"S";
+                break;
+            case ValueType::INT:
+                ss << L"I";
+                break;
+            case ValueType::FLOAT:
+                ss << L"F";
+                break;
+            case ValueType::LONG:
+                ss << L"J";
+                break;
+            case ValueType::DOUBLE:
+                ss << L"D";
+                break;
+            default:
+                PANIC("primitive type required");
+        }
+        this->set_name(ss.str());
     }
 
     TypeArrayKlass::TypeArrayKlass(ClassLoader *class_loader, TypeArrayKlass *down_type)
@@ -36,9 +69,15 @@ namespace kivm {
 
     ObjectArrayKlass::ObjectArrayKlass(ClassLoader *class_loader, mirrorOop java_loader,
                                        int dimension, InstanceKlass *component_type)
-            : ArrayKlass(class_loader, java_loader, dimension, ClassType::OBJECT_ARRAY_CLASS) {
-        this->_component_type = component_type;
-        this->_down_dimension_type = nullptr;
+            : ArrayKlass(class_loader, java_loader, dimension, ClassType::OBJECT_ARRAY_CLASS),
+              _component_type(component_type),
+              _down_dimension_type(nullptr) {
+        std::wstringstream ss;
+        for (int i = 0; i < dimension; ++i) {
+            ss << L"[";
+        }
+        ss << L"L" << component_type->get_name() << L";";
+        this->set_name(ss.str());
     }
 
     ObjectArrayKlass::ObjectArrayKlass(ClassLoader *class_loader, ObjectArrayKlass *down_type)
