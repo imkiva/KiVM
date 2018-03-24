@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include <kivm/kivm.h>
 #include <kivm/runtime/slot.h>
 
 namespace kivm {

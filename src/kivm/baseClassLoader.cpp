@@ -25,9 +25,8 @@ namespace kivm {
             case L'D':    // double
                 return ValueType::DOUBLE;
             default:
-                assert(false);
-                // TODO: abort VM.
-                return ValueType::SHORT;
+                PANIC("primitive type required");
+                break;
         }
     }
 

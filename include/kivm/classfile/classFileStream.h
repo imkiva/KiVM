@@ -35,8 +35,7 @@ namespace kivm {
             auto remaining = (size_t) (_buffer_end - _current);
             auto usize = (unsigned int) size;
             if (usize > remaining) {
-                // TODO: Unexpected EOF
-                assert(false);
+                PANIC("Unexpected EOF");
             }
         }
 

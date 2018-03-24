@@ -363,8 +363,7 @@ namespace kivm {
         }
 
         if (receiver->get_klass()->get_type() != ClassType::INSTANCE_CLASS) {
-            // TODO: should never reached here
-            assert(false);
+            PANIC("receiver is not an instanceOop");
         }
 
         D("Set field %s::%s(%s) to %p\n",
@@ -383,8 +382,7 @@ namespace kivm {
         }
 
         if (receiver->get_klass()->get_type() != ClassType::INSTANCE_CLASS) {
-            // TODO: should never reached here
-            assert(false);
+            PANIC("receiver is not an instanceOop");
         }
 
         auto receiverOop = (instanceOop) receiver;

@@ -110,5 +110,12 @@
 #define D(fmt, ...)
 #endif
 
+#define PANIC(fmt, ...) \
+    do { \
+       (void) fprintf(stderr, "*** (PANIC) *** [%s:%d]: " fmt "\n", \
+                __FILE__, __LINE__, ##__VA_ARGS__); \
+       for (;;) continue; \
+    } while (false)
+
 namespace kivm {
 }

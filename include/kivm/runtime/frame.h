@@ -50,8 +50,7 @@ namespace kivm {
 
         inline Frame *current() const {
             if (_size == 0 || _current == nullptr) {
-                // TODO: panic()
-                assert(false);
+                PANIC("FrameList is empty");
             }
 
             return _current;
