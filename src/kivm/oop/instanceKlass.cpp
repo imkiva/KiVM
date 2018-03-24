@@ -336,7 +336,7 @@ namespace kivm {
         return true;
     }
 
-    void InstanceKlass::set_instance_field_value(oop receiver,
+    void InstanceKlass::set_instance_field_value(instanceOop receiver,
                                                  const String &className,
                                                  const String &name,
                                                  const String &descriptor,
@@ -345,7 +345,7 @@ namespace kivm {
         set_instance_field_value(receiver, fieldID, value);
     }
 
-    void InstanceKlass::set_instance_field_value(oop receiver, const FieldID &fieldID, oop value) {
+    void InstanceKlass::set_instance_field_value(instanceOop receiver, const FieldID &fieldID, oop value) {
         if (fieldID._field == nullptr) {
             // throw java.lang.NoSuchFieldError
             assert(!"java.lang.NoSuchFieldError");
@@ -355,20 +355,15 @@ namespace kivm {
             assert(!"java.lang.IllegalAccessError");
         }
 
-        if (receiver->get_klass()->get_type() != ClassType::INSTANCE_CLASS) {
-            PANIC("receiver is not an instanceOop");
-        }
-
         D("Set field %s::%s(%s) to %p\n",
           strings::to_std_string(fieldID._field->get_class()->get_name()).c_str(),
           strings::to_std_string(fieldID._field->get_name()).c_str(),
           strings::to_std_string(fieldID._field->get_descriptor()).c_str(),
           value);
-        auto receiverOop = (instanceOop) receiver;
-        receiverOop->_instance_field_values[fieldID._offset] = value;
+        receiver->_instance_field_values[fieldID._offset] = value;
     }
 
-    bool InstanceKlass::get_instance_field_value(oop receiver, const String &className,
+    bool InstanceKlass::get_instance_field_value(instanceOop receiver, const String &className,
                                                  const String &name,
                                                  const String &descriptor,
                                                  oop *result) {
@@ -376,17 +371,13 @@ namespace kivm {
         return get_instance_field_value(receiver, fieldID, result);
     }
 
-    bool InstanceKlass::get_instance_field_value(oop receiver, const FieldID &fieldID, oop *result) {
+    bool InstanceKlass::get_instance_field_value(instanceOop receiver, const FieldID &fieldID,
+                                                 oop *result) {
         if (fieldID._field == nullptr) {
             return false;
         }
 
-        if (receiver->get_klass()->get_type() != ClassType::INSTANCE_CLASS) {
-            PANIC("receiver is not an instanceOop");
-        }
-
-        auto receiverOop = (instanceOop) receiver;
-        *result = receiverOop->_instance_field_values[fieldID._offset];
+        *result = receiver->_instance_field_values[fieldID._offset];
         return true;
     }
 }

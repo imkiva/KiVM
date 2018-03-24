@@ -12,7 +12,10 @@ namespace kivm {
         }
         auto mirror = new mirrorOopDesc(target);
         if (loader != nullptr) {
-//            mirror->set_field_value(L"java/lang/Class:classLoader:Ljava/lang/ClassLoader;", loader);
+            mirror->set_field_value(L"java/lang/Class",
+                                    L"classLoader",
+                                    L"Ljava/lang/ClassLoader;",
+                                    loader);
         }
 
         return mirror;

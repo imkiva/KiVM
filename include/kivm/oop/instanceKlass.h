@@ -245,7 +245,7 @@ namespace kivm {
          * @param descriptor Field descriptor
          * @param value field value
          */
-        void set_instance_field_value(oop receiver,
+        void set_instance_field_value(instanceOop receiver,
                                       const String &className,
                                       const String &name,
                                       const String &descriptor,
@@ -257,27 +257,29 @@ namespace kivm {
          * @param fieldID field descriptor
          * @param value field value
          */
-        void set_instance_field_value(oop receiver, const FieldID &fieldID, oop value);
+        void set_instance_field_value(instanceOop receiver, const FieldID &fieldID, oop value);
 
         /**
          * Get instance field's value.
+         * @param receiver Java object that contains the wanted field
          * @param className Where the wanted field belongs to
          * @param name Field name
          * @param descriptor Field descriptor
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        bool get_instance_field_value(oop receiver, const String &className,
+        bool get_instance_field_value(instanceOop receiver, const String &className,
                                       const String &name,
                                       const String &descriptor,
                                       oop *result);
 
         /**
          * Get instance field's value.
+         * @param receiver Java object that contains the wanted field
          * @param fieldID field descriptor
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        bool get_instance_field_value(oop receiver, const FieldID &fieldID, oop *result);
+        bool get_instance_field_value(instanceOop receiver, const FieldID &fieldID, oop *result);
     };
 }
