@@ -3,6 +3,8 @@
 //
 
 #include <kivm/oop/oop.h>
+#include <cstring>
+#include <cstdlib>
 
 namespace kivm {
     void *oopBase::allocate(size_t size, bool add_to_pool) {
