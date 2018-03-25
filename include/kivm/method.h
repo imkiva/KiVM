@@ -6,6 +6,7 @@
 #include <kivm/kivm.h>
 #include <list>
 #include <unordered_map>
+#include <kivm/classfile/attributeInfo.h>
 
 namespace kivm {
     class InstanceKlass;
@@ -110,6 +111,14 @@ namespace kivm {
 
         bool is_native() const {
             return (get_access_flag() & ACC_NATIVE) == ACC_NATIVE;
+        }
+
+        int get_max_locals() const {
+            return _code_attr != nullptr ? _code_attr->max_locals : 0;
+        }
+
+        int get_max_stack() const {
+            return _code_attr != nullptr ? _code_attr->max_stack : 0;
         }
     };
 

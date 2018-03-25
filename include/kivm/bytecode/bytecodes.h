@@ -1,9 +1,7 @@
 //
-// Created by kiva on 2018/2/25.
+// Created by kiva on 2018/3/25.
 //
 #pragma once
-
-#include <kivm/kivm.h>
 
 #define OPC_NOP                           0
 #define OPC_ACONST_NULL                   1
@@ -248,21 +246,3 @@
 #define OPC_LINKTOINTERFACE             248
 #define OPC_INVOKEINTERFACE_QUICK       249
 #define OPC_INVOKEDYNAMIC_QUICK         250
-
-#define T_BOOLEAN               4
-#define T_CHAR                  5
-#define T_FLOAT                 6
-#define T_DOUBLE                7
-#define T_BYTE                  8
-#define T_SHORT                 9
-#define T_INT                  10
-#define T_LONG                 11
-
-namespace kivm {
-    class ByteCodeInterpreter {
-    public:
-        void run();
-
-        ByteCodeInterpreter();
-    };
-}

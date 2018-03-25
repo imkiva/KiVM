@@ -7,8 +7,11 @@
 #include <cassert>
 
 namespace kivm {
+    class Method;
+
     struct Frame {
         Frame *_previous;
+        Method *_method;
         Locals _locals;
         Stack _stack;
 

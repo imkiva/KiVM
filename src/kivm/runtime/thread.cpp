@@ -2,8 +2,10 @@
 // Created by kiva on 2018/3/25.
 //
 
+#include <kivm/method.h>
 #include <kivm/runtime/thread.h>
 #include <kivm/runtime_config.h>
+#include <kivm/bytecode/interpreter.h>
 
 namespace kivm {
     Thread::Thread(Method *method, const std::list<oop> &args)
@@ -67,7 +69,16 @@ namespace kivm {
         run_method(_method, _args);
     }
 
-    void JavaThread::run_method(Method *method, const std::list<oop> &args) {
-        // TODO: run a single method
+    oop JavaThread::run_method(Method *method, const std::list<oop> &args) {
+        Frame method_frame(method->get_max_locals(), method->get_max_stack());
+        method_frame._method = method;
+
+        u8 *pc_before_call = this->_pc;
+        this->_frames.push(&method_frame);
+        oop result = ByteCodeInterpreter::interp(this);
+        this->_frames.pop();
+
+        this->_pc = pc_before_call;
+        return result;
     }
 }

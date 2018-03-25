@@ -2,7 +2,7 @@
 // Created by kiva on 2018/3/21.
 //
 
-#include <kivm/interpreter.h>
+#include <kivm/bytecode/interpreter.h>
 
 #define THREADED
 
@@ -16,9 +16,7 @@
 #endif
 
 namespace kivm {
-    ByteCodeInterpreter::ByteCodeInterpreter() = default;
-
-    void ByteCodeInterpreter::run() {
+    oop ByteCodeInterpreter::interp(JavaThread *thread) {
         int pc = 0;
 
 #ifdef THREADED
@@ -764,5 +762,6 @@ namespace kivm {
         { NEXT(labels, pc); }
 
         OPCODE_END()
+        return nullptr;
     }
 }

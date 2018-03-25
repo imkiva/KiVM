@@ -11,7 +11,7 @@ include_directories(include)
 set(SOURCE_FILES
         include/kivm/classfile/classFile.h
         include/kivm/kivm.h
-        include/kivm/interpreter.h
+        include/kivm/bytecode/interpreter.h
         include/kivm/oop/oop.h
         include/kivm/oop/klass.h
         include/kivm/oop/instanceKlass.h
@@ -47,7 +47,7 @@ set(SOURCE_FILES
         src/kivm/classLoader.cpp
         src/kivm/oop/instanceKlass.cpp
         src/kivm/method.cpp
-        src/kivm/interpreter.cpp
+        src/kivm/bytecode/interpreter.cpp
         src/kivm/field.cpp
         src/kivm/baseClassLoader.cpp
         src/kivm/oop/mirrorKlass.cpp
@@ -60,7 +60,7 @@ set(SOURCE_FILES
         include/kivm/runtime/frame.h
         src/kivm/runtime/frame.cpp
         include/kivm/runtime/thread.h
-        include/kivm/oop/helper.h include/kivm/oop/reflection_support.h src/kivm/runtime/thread.cpp include/kivm/runtime_config.h src/kivm/runtime_config.cpp)
+        include/kivm/oop/helper.h include/kivm/oop/reflection_support.h src/kivm/runtime/thread.cpp include/kivm/runtime_config.h src/kivm/runtime_config.cpp include/kivm/bytecode/bytecodes.h)
 
 add_library(kivm STATIC ${SOURCE_FILES})
 add_executable(KivaVM src/bin/main.cpp)
