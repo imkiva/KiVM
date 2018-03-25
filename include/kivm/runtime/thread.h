@@ -49,17 +49,6 @@ namespace kivm {
         }
     };
 
-    // The Java main thread
-    class JavaMainThread : public Thread {
-    public:
-        JavaMainThread();
-
-    protected:
-        void start() override;
-
-        void thread_lunched() override;
-    };
-
     // The Java app thread
     class JavaThread : public Thread {
     public:
@@ -67,6 +56,17 @@ namespace kivm {
 
     protected:
         void start() override;
+    };
+
+    // The Java main thread
+    class JavaMainThread : public JavaThread {
+    public:
+        JavaMainThread();
+
+    protected:
+        void start() override;
+
+        void thread_lunched() override;
     };
 
     class Threads {

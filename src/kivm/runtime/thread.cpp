@@ -27,12 +27,18 @@ namespace kivm {
 
     Thread::~Thread() = default;
 
+
     JavaMainThread::JavaMainThread()
-            : Thread(nullptr, {}) {
+            : JavaThread(nullptr, {}) {
     }
 
     void JavaMainThread::start() {
-        // TODO: call main(String[])
+        // TODO: find main(String[]) method and build arg list
+
+        // OK, call main() with args
+//        this->_method = main_method;
+//        this->_args = main_args;
+        JavaThread::start();
     }
 
     void JavaMainThread::thread_lunched() {
