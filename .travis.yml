@@ -6,7 +6,7 @@ compiler: g++
 
 install: cmake . && make -j4
 
-script: ./KiVM
+script: ./KivaVM
 
 addons:
   apt:
