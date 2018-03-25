@@ -63,5 +63,11 @@ namespace kivm {
     }
 
     void JavaThread::start() {
+        // Just call it
+        run_method(_method, _args);
+    }
+
+    void JavaThread::run_method(Method *method, const std::list<oop> &args) {
+        // TODO: run a single method
     }
 }

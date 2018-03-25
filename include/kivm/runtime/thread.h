@@ -56,6 +56,8 @@ namespace kivm {
 
     protected:
         void start() override;
+
+        void run_method(Method *method, const std::list<oop> &args);
     };
 
     // The Java main thread
