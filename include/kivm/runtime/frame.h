@@ -33,7 +33,7 @@ namespace kivm {
         inline void push(Frame *frame) {
             if (_size >= _max_frames) {
                 // TODO: throw java.lang.StackOverflowException
-                assert(false);
+                PANIC("java.lang.StackOverflowException");
             }
 
             frame->_previous = _current;
@@ -44,7 +44,7 @@ namespace kivm {
         inline Frame *pop() {
             if (_size == 0 || _current == nullptr) {
                 // TODO: throw java.lang.StackOverflowException
-                assert(false);
+                PANIC("java.lang.StackOverflowException");
             }
 
             Frame *current = _current;
