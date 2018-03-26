@@ -115,8 +115,4 @@ namespace kivm {
     void Threads::initializeJVM() {
         // TODO: put initialization logic here.
     }
-
-    void Threads::add(Thread *java_thread) {
-        inc_app_thread_count_locked();
-    }
 }

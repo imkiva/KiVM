@@ -82,14 +82,24 @@ namespace kivm {
             return app_thread_count;
         }
 
+        static std::list<Thread *> app_threads() {
+            static std::list<Thread *> app_threads;
+            return app_threads;
+        }
+
     public:
         static void initializeJVM();
-
-        static void add(Thread *java_thread);
 
         static Lock &get_app_thread_lock() {
             static Lock lock;
             return lock;
+        }
+
+        static void add(Thread *java_thread) {
+            get_app_thread_lock().lock();
+            app_threads().push_back(java_thread);
+            ++app_thread_count();
+            get_app_thread_lock().unlock();
         }
 
         static inline int get_app_thread_count_locked() {
