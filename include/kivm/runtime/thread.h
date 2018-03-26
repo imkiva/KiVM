@@ -27,6 +27,8 @@ namespace kivm {
 
         virtual void start() = 0;
 
+        virtual bool should_record_in_thread_table();
+
     public:
         Thread(Method *method, const std::list<oop> &args);
 
@@ -69,18 +71,25 @@ namespace kivm {
         void start() override;
 
         void thread_lunched() override;
+
+        bool should_record_in_thread_table() override;
     };
 
     class Threads {
-    public:
-        static Lock &get_app_thread_lock() {
-            static Lock lock;
-            return lock;
-        }
-
+    private:
         static int &app_thread_count() {
             static int app_thread_count;
             return app_thread_count;
+        }
+
+    public:
+        static void initializeJVM();
+
+        static void add(Thread *java_thread);
+
+        static Lock &get_app_thread_lock() {
+            static Lock lock;
+            return lock;
         }
 
         static inline int get_app_thread_count_locked() {
@@ -88,6 +97,18 @@ namespace kivm {
             int threads = Threads::app_thread_count();
             Threads::get_app_thread_lock().unlock();
             return threads;
+        }
+
+        static inline void inc_app_thread_count_locked() {
+            Threads::get_app_thread_lock().lock();
+            ++Threads::app_thread_count();
+            Threads::get_app_thread_lock().unlock();
+        }
+
+        static inline void dec_app_thread_count_locked() {
+            Threads::get_app_thread_lock().lock();
+            ++Threads::app_thread_count();
+            Threads::get_app_thread_lock().unlock();
         }
     };
 }

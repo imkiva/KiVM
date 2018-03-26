@@ -12,6 +12,11 @@ namespace kivm {
     struct Frame {
         Frame *_previous;
         Method *_method;
+
+        bool _is_native_frame;
+        bool _exception_occurred;
+        u8 *_return_pc;
+
         Locals _locals;
         Stack _stack;
 

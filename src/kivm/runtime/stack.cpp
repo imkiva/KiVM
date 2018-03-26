@@ -6,7 +6,10 @@
 namespace kivm {
 
     SlotArray::SlotArray(int size)
-            : _size(size), _elements(new Slot[size]) {
+            : _size(size), _elements(nullptr) {
+        if (size > 0) {
+            this->_elements = new Slot[size];
+        }
     }
 
     SlotArray::~SlotArray() {
