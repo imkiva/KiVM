@@ -90,35 +90,40 @@ namespace kivm {
     public:
         static void initializeJVM();
 
-        static Lock &get_app_thread_lock() {
+        static Lock &app_thread_lock() {
+            static Lock lock;
+            return lock;
+        }
+
+        static Lock &thread_state_change_lock() {
             static Lock lock;
             return lock;
         }
 
         static void add(Thread *java_thread) {
-            get_app_thread_lock().lock();
+            app_thread_lock().lock();
             app_threads().push_back(java_thread);
             ++app_thread_count();
-            get_app_thread_lock().unlock();
+            app_thread_lock().unlock();
         }
 
         static inline int get_app_thread_count_locked() {
-            Threads::get_app_thread_lock().lock();
+            Threads::app_thread_lock().lock();
             int threads = Threads::app_thread_count();
-            Threads::get_app_thread_lock().unlock();
+            Threads::app_thread_lock().unlock();
             return threads;
         }
 
         static inline void inc_app_thread_count_locked() {
-            Threads::get_app_thread_lock().lock();
+            Threads::app_thread_lock().lock();
             ++Threads::app_thread_count();
-            Threads::get_app_thread_lock().unlock();
+            Threads::app_thread_lock().unlock();
         }
 
         static inline void dec_app_thread_count_locked() {
-            Threads::get_app_thread_lock().lock();
+            Threads::app_thread_lock().lock();
             ++Threads::app_thread_count();
-            Threads::get_app_thread_lock().unlock();
+            Threads::app_thread_lock().unlock();
         }
     };
 }

@@ -91,7 +91,10 @@ namespace kivm {
         assert(_args.size() == 1);
 
         run_method(_method, _args);
+
+        Threads::thread_state_change_lock().lock();
         this->set_state(ThreadState::DIED);
+        Threads::thread_state_change_lock().unlock();
 
         if (this->should_record_in_thread_table()) {
             Threads::dec_app_thread_count_locked();
