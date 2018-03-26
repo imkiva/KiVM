@@ -51,7 +51,9 @@ namespace kivm {
         // this->_method = main_method;
         // this->_args = main_args;
         // Run method manually, we cannot use JavaThread::run()
-        // because it is designed for app threads.
+        // because it is designed for app threads,
+        // but JavaThread::run_method() is still available.
+        JavaThread::run_method(_method, _args);
     }
 
     void JavaMainThread::thread_lunched() {
