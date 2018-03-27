@@ -55,8 +55,6 @@ namespace kivm {
         link_constant_pool(pool);
         link_attributes(pool);
         this->set_state(ClassState::LINKED);
-        this->set_state(ClassState::BEING_INITIALIZED);
-        this->set_state(ClassState::FULLY_INITIALIZED);
     }
 
     void InstanceKlass::link_super_class(cp_info **pool) {

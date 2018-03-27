@@ -53,6 +53,8 @@ namespace kivm {
 
     // The Java app thread
     class JavaThread : public Thread {
+        friend class Execution;
+
     public:
         JavaThread(Method *method, const std::list<oop> &args);
 

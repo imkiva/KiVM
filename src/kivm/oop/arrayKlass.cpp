@@ -16,7 +16,7 @@ namespace kivm {
     }
 
     void ArrayKlass::link_and_init() {
-        this->set_state(ClassState::FULLY_INITIALIZED);
+        this->set_state(ClassState::LINKED);
     }
 
     TypeArrayKlass::TypeArrayKlass(ClassLoader *class_loader, mirrorOop java_loader,

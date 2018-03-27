@@ -13,7 +13,7 @@ namespace kivm {
      */
     class Execution {
     public:
-        static void invoke_clinit(InstanceKlass *klass, JavaThread *javaThread);
+        static void initialize_class(InstanceKlass *klass, JavaThread *javaThread);
 
         static bool instanceOf(Klass *ref, Klass *klass);
     };
