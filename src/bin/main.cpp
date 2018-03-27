@@ -3,6 +3,9 @@
 
 int main() {
     using namespace kivm;
+    auto *integer = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/lang/Integer");
+
     auto *a = (InstanceKlass *) BootstrapClassLoader::get()
             ->loadClass(L"java/lang/String");
 
