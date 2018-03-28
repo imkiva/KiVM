@@ -4,8 +4,10 @@
 #pragma once
 
 #include <kivm/kivm.h>
-#include <queue>
 #include <kivm/oop/oopfwd.h>
+#include <queue>
+#include <unordered_map>
+
 
 namespace kivm {
     namespace java {
@@ -16,6 +18,8 @@ namespace kivm {
                     FIXED, NOT_FIXED
                 };
 
+                static std::unordered_map<String, mirrorOop>& primitive_type_mirrors();
+
                 static std::queue<String> &delayed_mirrors();
 
                 static ClassMirrorState &mirror_state();
@@ -24,8 +28,6 @@ namespace kivm {
                 static void initialize();
 
                 static void mirror_core_classes();
-
-                static mirrorOop mirror_for_primitive_type();
             };
         }
     }
