@@ -4,6 +4,7 @@
 
 #include <unordered_map>
 #include <kivm/classLoader.h>
+#include <kivm/system.h>
 #include <kivm/oop/klass.h>
 #include <shared/lock.h>
 
@@ -11,11 +12,6 @@ namespace kivm {
     static RecursiveLock &get_bootstrap_lock() {
         static RecursiveLock lock;
         return lock;
-    }
-
-    static std::unordered_map<String, Klass *> &get_bootstrap_classes() {
-        static std::unordered_map<String, Klass *> bootstrap_classes;
-        return bootstrap_classes;
     }
 
     Klass *ClassLoader::require_class(ClassLoader *classLoader, const String &className) {
@@ -42,21 +38,20 @@ namespace kivm {
 
     Klass *BootstrapClassLoader::loadClass(const String &class_name) {
         RecursiveLockGuard guard(get_bootstrap_lock());
-        auto &cache_map = get_bootstrap_classes();
 
         // check whether class is already loaded
-        auto iter = cache_map.find(class_name);
-        if (iter != cache_map.end()) {
-            return iter->second;
+        auto iter = SystemDictionary::get()->find(class_name);
+        if (iter != nullptr) {
+            return iter;
         }
 
         // OK, let's find it!
-        auto *loaded = BaseClassLoader::loadClass(class_name);
-        if (loaded != nullptr) {
-            cache_map.insert(std::make_pair(class_name, loaded));
-            loaded->set_state(ClassState::LOADED);
-            loaded->link_and_init();
+        auto *klass = BaseClassLoader::loadClass(class_name);
+        if (klass != nullptr) {
+            SystemDictionary::get()->put(class_name, klass);
+            klass->set_state(ClassState::LOADED);
+            klass->link_and_init();
         }
-        return loaded;
+        return klass;
     }
 }

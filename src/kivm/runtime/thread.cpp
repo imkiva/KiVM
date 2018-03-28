@@ -116,8 +116,4 @@ namespace kivm {
         this->_pc = method_frame._return_pc;
         return result;
     }
-
-    void Threads::initializeJVM() {
-        // TODO: put initialization logic here.
-    }
 }

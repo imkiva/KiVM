@@ -10,20 +10,20 @@
 namespace kivm {
     namespace java {
         namespace lang {
-            enum ClassMirrorState {
-                FIXED, NOT_FIXED
-            };
-
             class Class {
             private:
-                static std::queue<String>& get_delayed_mirrors();
+                enum ClassMirrorState {
+                    FIXED, NOT_FIXED
+                };
 
-                static ClassMirrorState& get_mirror_state();
+                static std::queue<String> &delayed_mirrors();
+
+                static ClassMirrorState &mirror_state();
 
             public:
                 static void initialize();
 
-                static void fix_mirrors();
+                static void mirror_core_classes();
 
                 static mirrorOop mirror_for_primitive_type();
             };
