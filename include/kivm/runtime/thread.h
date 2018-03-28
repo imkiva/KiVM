@@ -36,6 +36,8 @@ namespace kivm {
 
         void create(instanceOop java_thread);
 
+        long get_thread_id() const;
+
         virtual void thread_lunched();
 
         inline instanceOop get_java_thread_object() const {
@@ -90,7 +92,7 @@ namespace kivm {
         }
 
     public:
-        static void initializeJVM();
+        static void initializeJVM(JavaThread *thread);
 
         static Lock &app_thread_lock() {
             static Lock lock;

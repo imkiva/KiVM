@@ -9,10 +9,10 @@
 
 namespace kivm {
     Thread::Thread(Method *method, const std::list<oop> &args)
-            : _frames(RuntimeConfig::get().threadInitialStackSize),
-              _method(method), _args(args),
-              _java_thread_object(nullptr), _native_thread(nullptr),
-              _pc(nullptr), _state(ThreadState::RUNNING) {
+        : _frames(RuntimeConfig::get().threadInitialStackSize),
+          _method(method), _args(args),
+          _java_thread_object(nullptr), _native_thread(nullptr),
+          _pc(nullptr), _state(ThreadState::RUNNING) {
     }
 
     void Thread::create(instanceOop java_thread) {
@@ -35,16 +35,20 @@ namespace kivm {
         return true;
     }
 
+    long Thread::get_thread_id() const {
+        return (long) this->_native_thread->native_handle();
+    }
+
     Thread::~Thread() = default;
 
 
     JavaMainThread::JavaMainThread()
-            : JavaThread(nullptr, {}) {
+        : JavaThread(nullptr, {}) {
     }
 
     void JavaMainThread::start() {
         // Initialize Java Virtual Machine
-        Threads::initializeJVM();
+        Threads::initializeJVM(this);
 
         // TODO: find main(String[]) method and build arg list
         // OK, call main() with args
@@ -78,7 +82,7 @@ namespace kivm {
     }
 
     JavaThread::JavaThread(Method *method, const std::list<oop> &args)
-            : Thread(method, args) {
+        : Thread(method, args) {
     }
 
     void JavaThread::start() {

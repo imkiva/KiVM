@@ -380,4 +380,8 @@ namespace kivm {
         *result = receiver->_instance_field_values[fieldID._offset];
         return true;
     }
+
+    instanceOop InstanceKlass::new_instance() {
+        return new instanceOopDesc(this);
+    }
 }

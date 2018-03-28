@@ -282,5 +282,7 @@ namespace kivm {
          * @return {@code true} if found, otherwise {@code false}
          */
         bool get_instance_field_value(instanceOop receiver, const FieldID &fieldID, oop *result);
+
+        instanceOop new_instance();
     };
 }
