@@ -60,7 +60,7 @@ set(SOURCE_FILES
         include/kivm/runtime/frame.h
         src/kivm/runtime/frame.cpp
         include/kivm/runtime/thread.h
-        include/kivm/oop/helper.h include/kivm/oop/reflection_support.h src/kivm/runtime/thread.cpp include/kivm/runtime_config.h src/kivm/runtime_config.cpp include/kivm/bytecode/bytecodes.h include/kivm/bytecode/execution.h src/kivm/bytecode/execution.cpp include/kivm/native/java_lang_Class.h src/kivm/native/java_lang_Class.cpp src/kivm/runtime/init.cpp include/kivm/system.h src/kivm/system.cpp include/kivm/native/class_names.h include/kivm/native/java_lang_Thread.h)
+        include/kivm/oop/helper.h include/kivm/oop/reflection_support.h src/kivm/runtime/thread.cpp include/kivm/runtime_config.h src/kivm/runtime_config.cpp include/kivm/bytecode/bytecodes.h include/kivm/bytecode/execution.h src/kivm/bytecode/execution.cpp include/kivm/native/java_lang_Class.h src/kivm/native/java_lang_Class.cpp src/kivm/runtime/init.cpp include/kivm/system.h src/kivm/system.cpp include/kivm/native/class_names.h include/kivm/native/java_lang_Thread.h include/kivm/native/java_lang_String.h src/kivm/native/java_lang_String.cpp)
 
 add_library(kivm STATIC ${SOURCE_FILES})
 add_executable(KivaVM src/bin/main.cpp)

@@ -5,3 +5,4 @@
 
 #define J_STRING L"java/lang/String"
 #define J_THREAD L"java/lang/Thread"
+#define J_THREAD_GROUP L"java/lang/ThreadGroup"

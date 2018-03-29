@@ -13,7 +13,9 @@ namespace kivm {
      */
     class Execution {
     public:
-        static void initialize_class(InstanceKlass *klass, JavaThread *javaThread);
+        static void initialize_class(JavaThread *javaThread, InstanceKlass *klass);
+
+        static void call_default_constructor(JavaThread *javaThread, instanceOop oop);
 
         static bool instanceOf(Klass *ref, Klass *klass);
     };

@@ -15,6 +15,8 @@ namespace kivm {
     };
 
     class Thread {
+        friend class Threads;
+
     protected:
         instanceOop _java_thread_object;
         std::thread *_native_thread;
@@ -29,6 +31,11 @@ namespace kivm {
 
         virtual bool should_record_in_thread_table();
 
+    private:
+        void set_java_thread_object(instanceOop java_thread) {
+            this->_java_thread_object = java_thread;
+        }
+
     public:
         Thread(Method *method, const std::list<oop> &args);
 
@@ -36,7 +43,7 @@ namespace kivm {
 
         void create(instanceOop java_thread);
 
-        long get_thread_id() const;
+        long get_eetop() const;
 
         virtual void thread_lunched();
 
@@ -92,7 +99,7 @@ namespace kivm {
         }
 
     public:
-        static void initializeJVM(JavaThread *thread);
+        static void initializeJVM(JavaMainThread *thread);
 
         static Lock &app_thread_lock() {
             static Lock lock;

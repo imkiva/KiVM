@@ -35,7 +35,7 @@ namespace kivm {
         return true;
     }
 
-    long Thread::get_thread_id() const {
+    long Thread::get_eetop() const {
         return (long) this->_native_thread->native_handle();
     }
 

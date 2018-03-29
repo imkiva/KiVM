@@ -32,6 +32,10 @@ namespace kivm {
 
     class arrayOopDesc;
 
+    class typeArrayOopDesc;
+
+    class objectArrayOopDesc;
+
     class intOopDesc;
 
     class longOopDesc;
@@ -44,6 +48,8 @@ namespace kivm {
     using instanceOop = instanceOopDesc *;
     using mirrorOop = mirrorOopDesc *;
     using arrayOop= arrayOopDesc *;
+    using typeArrayOop= typeArrayOopDesc *;
+    using objectArrayOop= objectArrayOopDesc *;
     using intOop = intOopDesc *;
     using longOop= longOopDesc *;
     using floatOop = floatOopDesc *;

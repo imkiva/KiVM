@@ -5,7 +5,7 @@
 #include <kivm/method.h>
 
 namespace kivm {
-    void Execution::initialize_class(InstanceKlass *klass, JavaThread *javaThread) {
+    void Execution::initialize_class(JavaThread *javaThread, InstanceKlass *klass) {
         if (klass->get_state() == ClassState::LINKED) {
             klass->set_state(ClassState::BEING_INITIALIZED);
             D("Initializing class %s",
@@ -14,7 +14,7 @@ namespace kivm {
             // Initialize super classes first.
             Klass *super_klass = klass->get_super_class();
             if (super_klass != nullptr) {
-                Execution::initialize_class((InstanceKlass *) super_klass, javaThread);
+                Execution::initialize_class(javaThread, (InstanceKlass *) super_klass);
             }
 
             auto *clinit = klass->find_virtual_method(L"<clinit>", L"()V");
@@ -28,5 +28,12 @@ namespace kivm {
             }
             klass->set_state(ClassState::FULLY_INITIALIZED);
         }
+    }
+
+    void Execution::call_default_constructor(JavaThread *javaThread, instanceOop oop) {
+        auto klass = (InstanceKlass *) oop->get_klass();
+        auto default_init = klass->find_virtual_method(L"<init>", L"()V");
+        assert(default_init != nullptr);
+        javaThread->run_method(default_init, {oop});
     }
 }
