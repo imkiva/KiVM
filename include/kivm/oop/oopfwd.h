@@ -12,6 +12,7 @@ namespace kivm {
     };
 
     enum ValueType {
+        VOID,
         BYTE,
         BOOLEAN,
         CHAR,

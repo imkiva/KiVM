@@ -28,6 +28,8 @@ namespace kivm {
                 return ValueType::FLOAT;
             case L'D':    // double
                 return ValueType::DOUBLE;
+            case L'V':    // void
+                return ValueType::VOID;
             default:
                 PANIC("primitive type required");
                 break;
@@ -52,6 +54,8 @@ namespace kivm {
                 return L'J';
             case ValueType::DOUBLE:
                 return L'D';
+            case ValueType::VOID:
+                return L'V';
             default:
                 PANIC("primitive type required");
         }
