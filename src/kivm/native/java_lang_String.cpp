@@ -41,7 +41,36 @@ namespace kivm {
             }
 
             bool String::EqualTo::operator()(instanceOop lhs, instanceOop rhs) const {
-                return false;
+                if (lhs == rhs) {
+                    return true;
+                }
+                if (lhs->get_klass() != rhs->get_klass()) {
+                    return false;
+                }
+
+                auto klass = (InstanceKlass *) lhs->get_klass();
+                FieldID value_field = klass->get_instance_field_info(J_STRING, L"value", L"[C");
+                typeArrayOop lhs_value = nullptr;
+                typeArrayOop rhs_value = nullptr;
+                if (!lhs->get_field_value(value_field, &lhs_value)
+                    || !rhs->get_field_value(value_field, &rhs_value)) {
+                    return false;
+                }
+
+                int lhs_length = lhs_value->get_length();
+                int rhs_length = rhs_value->get_length();
+                if (lhs_length != rhs_length) {
+                    return false;
+                }
+
+                for (int i = 0; i < lhs_length; ++i) {
+                    auto lhs_char = (intOop) lhs_value->get_element_at(i);
+                    auto rhs_char = (intOop) rhs_value->get_element_at(i);
+                    if (lhs_char->get_value() != rhs_char->get_value()) {
+                        return false;
+                    }
+                }
+                return true;
             }
         }
     }
