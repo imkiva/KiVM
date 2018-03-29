@@ -2,6 +2,7 @@
 // Created by kiva on 2018/3/27.
 //
 #include <kivm/bytecode/execution.h>
+#include <kivm/oop/instanceOop.h>
 #include <kivm/method.h>
 
 namespace kivm {
@@ -35,5 +36,9 @@ namespace kivm {
         auto default_init = klass->find_virtual_method(L"<init>", L"()V");
         assert(default_init != nullptr);
         javaThread->run_method(default_init, {oop});
+    }
+
+    void Execution::call_void_method(JavaThread *javaThread, Method *method, const std::list<oop> &args) {
+
     }
 }

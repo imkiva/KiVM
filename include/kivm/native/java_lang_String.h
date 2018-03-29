@@ -18,6 +18,9 @@ namespace kivm {
                 struct EqualTo {
                     bool operator()(instanceOop lhs, instanceOop rhs) const;
                 };
+
+            public:
+                static instanceOop intern(const kivm::String &string);
             };
         }
     }

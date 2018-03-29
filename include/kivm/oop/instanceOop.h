@@ -1,7 +1,7 @@
 //
 // Created by kiva on 2018/2/28.
 //
-
+#pragma once
 #include <kivm/oop/oop.h>
 #include <kivm/oop/instanceKlass.h>
 #include <vector>

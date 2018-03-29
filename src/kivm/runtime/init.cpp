@@ -7,6 +7,7 @@
 #include <kivm/native/class_names.h>
 #include <kivm/native/java_lang_Class.h>
 #include <kivm/native/java_lang_Thread.h>
+#include <kivm/native/java_lang_String.h>
 
 namespace kivm {
     static inline InstanceKlass *use(ClassLoader *cl, JavaMainThread *thread, const String &name) {
@@ -45,6 +46,9 @@ namespace kivm {
 
         // Create the main thread group
         instanceOop main_tg = tg_class->new_instance();
-
+        auto tg_ctor = tg_class->find_virtual_method(L"<init>",
+                                                     L"(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
+        Execution::call_void_method(thread, tg_ctor, {main_tg, nullptr, init_tg,
+                                                      java::lang::String::intern(L"main")});
     }
 }
