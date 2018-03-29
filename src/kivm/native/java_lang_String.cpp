@@ -30,7 +30,7 @@ namespace kivm {
                     int length = value_field->get_length();
                     int hash = 0;
                     for (int i = 0; i < length; i++) {
-                        intOop single_char = (intOop) value_field->get_element_at(i);
+                        auto single_char = (intOop) value_field->get_element_at(i);
                         hash = 31 * hash + single_char->get_value();
                     }
                     oop->set_field_value(hash_field, new intOopDesc(hash));
