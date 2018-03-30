@@ -12,7 +12,7 @@ namespace kivm {
         : _frames(RuntimeConfig::get().threadInitialStackSize),
           _method(method), _args(args),
           _java_thread_object(nullptr), _native_thread(nullptr),
-          _pc(nullptr), _state(ThreadState::RUNNING) {
+          _pc(0), _state(ThreadState::RUNNING) {
     }
 
     void Thread::create(instanceOop java_thread) {

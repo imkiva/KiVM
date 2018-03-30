@@ -1,0 +1,33 @@
+//
+// Created by kiva on 2018/3/30.
+//
+#pragma once
+
+#include <kivm/kivm.h>
+
+namespace kivm {
+    class CodeBlob {
+        friend class Method;
+
+    private:
+        u1 *_base;
+        u4 _size;
+
+        void init(u1 *base, u4 size) {
+            this->_base = base;
+            this->_size = size;
+        }
+
+    public:
+        inline bool validate() {
+            return _base != nullptr && _size > 0;
+        }
+
+        inline u1 operator[](int offset) const {
+            if (offset < _size) {
+                return *(_base + offset);
+            }
+            PANIC("Attempt to access unknown method code area");
+        }
+    };
+}

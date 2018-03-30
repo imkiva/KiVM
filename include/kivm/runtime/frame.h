@@ -15,12 +15,32 @@ namespace kivm {
 
         bool _is_native_frame;
         bool _exception_occurred;
-        u8 *_return_pc;
+        u4 _return_pc;
 
         Locals _locals;
         Stack _stack;
 
         Frame(int max_locals, int max_stacks);
+
+        Method *get_method() {
+            return _method;
+        }
+
+        bool is_is_native_frame() const {
+            return _is_native_frame;
+        }
+
+        bool is_exception_occurred() const {
+            return _exception_occurred;
+        }
+
+        Locals &get_locals() {
+            return _locals;
+        }
+
+        Stack &get_stack() {
+            return _stack;
+        }
     };
 
     struct FrameList {

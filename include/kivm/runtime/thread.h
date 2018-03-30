@@ -16,6 +16,7 @@ namespace kivm {
 
     class Thread {
         friend class Threads;
+        friend class ByteCodeInterpreter;
 
     protected:
         instanceOop _java_thread_object;
@@ -25,13 +26,17 @@ namespace kivm {
         Method *_method;
         FrameList _frames;
         std::list<oop> _args;
-        u8 *_pc;
+        u4 _pc;
 
         virtual void start() = 0;
 
         virtual bool should_record_in_thread_table();
 
-    private:
+    protected:
+        Frame * get_current_frame() {
+            return _frames.current();
+        }
+
         void set_java_thread_object(instanceOop java_thread) {
             this->_java_thread_object = java_thread;
         }

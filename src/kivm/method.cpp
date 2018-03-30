@@ -48,11 +48,10 @@ namespace kivm {
         this->_exception_attr = nullptr;
     }
 
-    bool Method::is_pc_in_method(const u1 *pc) {
+    bool Method::is_pc_in_method(u4 pc) {
         return _code_attr != nullptr
                && _code_attr->code_length > 0
-               && _code_attr->code != nullptr
-               && (pc - _code_attr->code) < _code_attr->code_length;
+               && pc < _code_attr->code_length;
     }
 
     void Method::link_method(cp_info **pool) {
@@ -121,10 +120,9 @@ namespace kivm {
         _code_attr = attr;
         // check exception handlers
         for (int i = 0; i < attr->exception_table_length; ++i) {
-            u1 *code_base = attr->code;
-            if (is_pc_in_method(code_base + attr->exception_table[i].start_pc)
-                && is_pc_in_method(code_base + attr->exception_table[i].end_pc)
-                && is_pc_in_method(code_base + attr->exception_table[i].handler_pc)) {
+            if (is_pc_in_method(attr->exception_table[i].start_pc)
+                && is_pc_in_method(attr->exception_table[i].end_pc)
+                && is_pc_in_method(attr->exception_table[i].handler_pc)) {
                 continue;
             }
             // TODO: throw VerifyError
@@ -139,7 +137,7 @@ namespace kivm {
                     auto *line_attr = (LineNumberTable_attribute *) sub_attr;
                     for (int j = 0; j < line_attr->line_number_table_length; ++j) {
                         _line_number_table[line_attr->line_number_table[j].start_pc]
-                                = line_attr->line_number_table[j].line_number;
+                            = line_attr->line_number_table[j].line_number;
                     }
                     break;
                 }
@@ -153,5 +151,7 @@ namespace kivm {
                     break;
             }
         }
+
+        _code_blob.init(_code_attr->code, _code_attr->code_length);
     }
 }

@@ -4,9 +4,10 @@
 #pragma once
 
 #include <kivm/kivm.h>
+#include <kivm/bytecode/codeblob.h>
+#include <kivm/classfile/attributeInfo.h>
 #include <list>
 #include <unordered_map>
-#include <kivm/classfile/attributeInfo.h>
 
 namespace kivm {
     class InstanceKlass;
@@ -32,6 +33,8 @@ namespace kivm {
         String _signature;
         u2 _access_flag;
 
+        CodeBlob _code_blob;
+
         method_info *_method_info;
         Exceptions_attribute *_exception_attr;
         Code_attribute *_code_attr;
@@ -50,7 +53,7 @@ namespace kivm {
 
         void link_code_attribute(cp_info **pool, Code_attribute *attr);
 
-        bool is_pc_in_method(const u1 *pc);
+        bool is_pc_in_method(u4 pc);
 
     public:
         Method(InstanceKlass *clazz, method_info *method_info);
@@ -75,6 +78,10 @@ namespace kivm {
 
         u2 get_access_flag() const {
             return _access_flag;
+        }
+
+        const CodeBlob &get_code_blob() const {
+            return _code_blob;
         }
 
         bool is_linked() const {
