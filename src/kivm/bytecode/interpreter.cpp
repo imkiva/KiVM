@@ -22,60 +22,82 @@ namespace kivm {
         const CodeBlob &code_blob = frame->get_method()->get_code_blob();
         u4 &pc = thread->_pc;
 
+        Stack &stack = frame->get_stack();
+        Locals &locals = frame->get_locals();
+
         BEGIN(code_blob, pc)
 
                 OPCODE(NOP) {
                     NEXT();
                 }
                 OPCODE(ACONST_NULL) {
+                    stack.push_ref(nullptr);
                     NEXT();
                 }
                 OPCODE(ICONST_M1) {
+                    stack.push_int(-1);
                     NEXT();
                 }
                 OPCODE(ICONST_0) {
+                    stack.push_int(0);
                     NEXT();
                 }
                 OPCODE(ICONST_1) {
+                    stack.push_int(1);
                     NEXT();
                 }
                 OPCODE(ICONST_2) {
+                    stack.push_int(2);
                     NEXT();
                 }
                 OPCODE(ICONST_3) {
+                    stack.push_int(3);
                     NEXT();
                 }
                 OPCODE(ICONST_4) {
+                    stack.push_int(4);
                     NEXT();
                 }
                 OPCODE(ICONST_5) {
+                    stack.push_int(5);
                     NEXT();
                 }
                 OPCODE(LCONST_0) {
+                    stack.push_long(0);
                     NEXT();
                 }
                 OPCODE(LCONST_1) {
+                    stack.push_long(1);
                     NEXT();
                 }
                 OPCODE(FCONST_0) {
+                    stack.push_float(0);
                     NEXT();
                 }
                 OPCODE(FCONST_1) {
+                    stack.push_float(1);
                     NEXT();
                 }
                 OPCODE(FCONST_2) {
+                    stack.push_float(2);
                     NEXT();
                 }
                 OPCODE(DCONST_0) {
+                    stack.push_double(0);
                     NEXT();
                 }
                 OPCODE(DCONST_1) {
+                    stack.push_double(1);
                     NEXT();
                 }
                 OPCODE(BIPUSH) {
+                    stack.push_int(code_blob[pc++]);
                     NEXT();
                 }
                 OPCODE(SIPUSH) {
+                    short si = code_blob[pc] << 8 | code_blob[pc + 1];
+                    pc += 2;
+                    stack.push_int(si);
                     NEXT();
                 }
                 OPCODE(LDC) {
