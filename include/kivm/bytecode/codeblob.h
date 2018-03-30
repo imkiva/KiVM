@@ -23,11 +23,12 @@ namespace kivm {
             return _base != nullptr && _size > 0;
         }
 
+        inline bool validate_offset(int offset) const {
+            return offset >= 0 && offset < _size;
+        }
+
         inline u1 operator[](int offset) const {
-            if (offset < _size) {
-                return *(_base + offset);
-            }
-            PANIC("Attempt to access unknown method code area");
+            return *(_base + offset);
         }
     };
 }
