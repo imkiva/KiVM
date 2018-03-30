@@ -101,27 +101,35 @@ namespace kivm {
                     NEXT();
                 }
                 OPCODE(LDC) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(LDC_W) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(LDC2_W) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(ILOAD) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(LLOAD) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(FLOAD) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(DLOAD) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(ALOAD) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(ILOAD_0) {
@@ -209,18 +217,23 @@ namespace kivm {
                     NEXT();
                 }
                 OPCODE(ISTORE) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(LSTORE) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(FSTORE) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(DSTORE) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(ASTORE) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(ISTORE_0) {
@@ -443,6 +456,7 @@ namespace kivm {
                     NEXT();
                 }
                 OPCODE(IINC) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(I2L) {
@@ -506,60 +520,79 @@ namespace kivm {
                     NEXT();
                 }
                 OPCODE(IFEQ) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IFNE) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IFLT) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IFGE) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IFGT) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IFLE) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IF_ICMPEQ) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IF_ICMPNE) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IF_ICMPLT) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IF_ICMPGE) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IF_ICMPGT) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IF_ICMPLE) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IF_ACMPEQ) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IF_ACMPNE) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(GOTO) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(JSR) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(RET) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(TABLESWITCH) {
+                    // var args
                     NEXT();
                 }
                 OPCODE(LOOKUPSWITCH) {
+                    // var args
                     NEXT();
                 }
                 OPCODE(IRETURN) {
@@ -581,39 +614,51 @@ namespace kivm {
                     NEXT();
                 }
                 OPCODE(GETSTATIC) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(PUTSTATIC) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(GETFIELD) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(PUTFIELD) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(INVOKEVIRTUAL) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(INVOKESPECIAL) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(INVOKESTATIC) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(INVOKEINTERFACE) {
+                    pc += 4;
                     NEXT();
                 }
                 OPCODE(INVOKEDYNAMIC) {
+                    pc += 4;
                     NEXT();
                 }
                 OPCODE(NEW) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(NEWARRAY) {
+                    pc++;
                     NEXT();
                 }
                 OPCODE(ANEWARRAY) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(ARRAYLENGTH) {
@@ -623,9 +668,11 @@ namespace kivm {
                     NEXT();
                 }
                 OPCODE(CHECKCAST) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(INSTANCEOF) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(MONITORENTER) {
@@ -638,141 +685,23 @@ namespace kivm {
                     NEXT();
                 }
                 OPCODE(MULTIANEWARRAY) {
+                    pc += 3;
                     NEXT();
                 }
                 OPCODE(IFNULL) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(IFNONNULL) {
+                    pc += 2;
                     NEXT();
                 }
                 OPCODE(GOTO_W) {
+                    pc += 4;
                     NEXT();
                 }
                 OPCODE(JSR_W) {
-                    NEXT();
-                }
-                OPCODE(LDC_QUICK) {
-                    NEXT();
-                }
-                OPCODE(LDC_W_QUICK) {
-                    NEXT();
-                }
-                OPCODE(GETFIELD_QUICK) {
-                    NEXT();
-                }
-                OPCODE(PUTFIELD_QUICK) {
-                    NEXT();
-                }
-                OPCODE(GETFIELD2_QUICK) {
-                    NEXT();
-                }
-                OPCODE(PUTFIELD2_QUICK) {
-                    NEXT();
-                }
-                OPCODE(GETSTATIC_QUICK) {
-                    NEXT();
-                }
-                OPCODE(PUTSTATIC_QUICK) {
-                    NEXT();
-                }
-                OPCODE(GETSTATIC2_QUICK) {
-                    NEXT();
-                }
-                OPCODE(PUTSTATIC2_QUICK) {
-                    NEXT();
-                }
-                OPCODE(INVOKEVIRTUAL_QUICK) {
-                    NEXT();
-                }
-                OPCODE(INVOKENONVIRTUAL_QUICK) {
-                    NEXT();
-                }
-                OPCODE(INVOKESUPER_QUICK) {
-                    NEXT();
-                }
-                OPCODE(GETFIELD_QUICK_REF) {
-                    NEXT();
-                }
-                OPCODE(PUTFIELD_QUICK_REF) {
-                    NEXT();
-                }
-                OPCODE(GETSTATIC_QUICK_REF) {
-                    NEXT();
-                }
-                OPCODE(PUTSTATIC_QUICK_REF) {
-                    NEXT();
-                }
-                OPCODE(GETFIELD_THIS_REF) {
-                    NEXT();
-                }
-                OPCODE(MIRANDA_BRIDGE) {
-                    NEXT();
-                }
-                OPCODE(ABSTRACT_METHOD_ERROR) {
-                    NEXT();
-                }
-                OPCODE(INLINE_REWRITER) {
-                    NEXT();
-                }
-                OPCODE(PROFILE_REWRITER) {
-                    NEXT();
-                }
-                OPCODE(INVOKEVIRTUAL_QUICK_W) {
-                    NEXT();
-                }
-                OPCODE(GETFIELD_QUICK_W) {
-                    NEXT();
-                }
-                OPCODE(PUTFIELD_QUICK_W) {
-                    NEXT();
-                }
-                OPCODE(GETFIELD_THIS) {
-                    NEXT();
-                }
-                OPCODE(LOCK) {
-                    NEXT();
-                }
-                OPCODE(ALOAD_THIS) {
-                    NEXT();
-                }
-                OPCODE(INVOKESTATIC_QUICK) {
-                    NEXT();
-                }
-                OPCODE(NEW_QUICK) {
-                    NEXT();
-                }
-                OPCODE(ANEWARRAY_QUICK) {
-                    NEXT();
-                }
-                OPCODE(CHECKCAST_QUICK) {
-                    NEXT();
-                }
-                OPCODE(INSTANCEOF_QUICK) {
-                    NEXT();
-                }
-                OPCODE(MULTIANEWARRAY_QUICK) {
-                    NEXT();
-                }
-                OPCODE(INVOKEHANDLE) {
-                    NEXT();
-                }
-                OPCODE(INVOKEBASIC) {
-                    NEXT();
-                }
-                OPCODE(LINKTOSPECIAL) {
-                    NEXT();
-                }
-                OPCODE(LINKTOVIRTUAL) {
-                    NEXT();
-                }
-                OPCODE(LINKTOINTERFACE) {
-                    NEXT();
-                }
-                OPCODE(INVOKEINTERFACE_QUICK) {
-                    NEXT();
-                }
-                OPCODE(INVOKEDYNAMIC_QUICK) {
+                    pc += 4;
                     NEXT();
                 }
                 OTHERWISE() {
