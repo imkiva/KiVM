@@ -35,6 +35,19 @@ set(SOURCE_FILES
         include/kivm/oop/arrayOop.h
         include/kivm/runtime/slot.h
         include/kivm/runtime/stack.h
+        include/kivm/runtime/frame.h
+        include/kivm/oop/reflection_support.h
+        include/kivm/runtime/thread.h
+        include/kivm/oop/helper.h
+        include/kivm/runtime_config.h
+        include/kivm/bytecode/bytecodes.h
+        include/kivm/bytecode/execution.h
+        include/kivm/native/java_lang_Class.h
+        include/kivm/native/class_names.h
+        include/kivm/native/java_lang_Thread.h
+        include/kivm/native/java_lang_String.h
+        include/kivm/system.h
+        include/kivm/bytecode/codeblob.h
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp
@@ -57,10 +70,15 @@ set(SOURCE_FILES
         src/kivm/oop/arrayOop.cpp
         src/kivm/oop/arrayKlass.cpp
         src/kivm/runtime/stack.cpp
-        include/kivm/runtime/frame.h
         src/kivm/runtime/frame.cpp
-        include/kivm/runtime/thread.h
-        include/kivm/oop/helper.h include/kivm/oop/reflection_support.h src/kivm/runtime/thread.cpp include/kivm/runtime_config.h src/kivm/runtime_config.cpp include/kivm/bytecode/bytecodes.h include/kivm/bytecode/execution.h src/kivm/bytecode/execution.cpp include/kivm/native/java_lang_Class.h src/kivm/native/java_lang_Class.cpp src/kivm/runtime/init.cpp include/kivm/system.h src/kivm/system.cpp include/kivm/native/class_names.h include/kivm/native/java_lang_Thread.h include/kivm/native/java_lang_String.h src/kivm/native/java_lang_String.cpp include/kivm/bytecode/codeblob.h)
+        src/kivm/runtime/thread.cpp
+        src/kivm/runtime_config.cpp
+        src/kivm/bytecode/execution.cpp
+        src/kivm/native/java_lang_Class.cpp
+        src/kivm/runtime/init.cpp
+        src/kivm/system.cpp
+        src/kivm/native/java_lang_String.cpp
+        )
 
 add_library(kivm STATIC ${SOURCE_FILES})
 add_executable(KivaVM src/bin/main.cpp)
