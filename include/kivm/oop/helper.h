@@ -6,6 +6,7 @@
 #include <vector>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/field.h>
+#include <kivm/native/java_lang_String.h>
 
 namespace kivm {
     inline void helper_init_field(std::vector<oop> &values, Field *field) {
@@ -56,8 +57,10 @@ namespace kivm {
                     break;
                 }
                 case CONSTANT_String: {
+                    // TODO: use runtime constant pool
                     auto *info = (CONSTANT_String_info *) constant_info;
-                    // TODO: init string constants
+                    auto *utf8 = (CONSTANT_Utf8_info *) pool[info->string_index];
+                    values.push_back(java::lang::String::intern(utf8->get_constant()));
                     break;
                 }
                 default: {
