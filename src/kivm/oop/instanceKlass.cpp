@@ -13,14 +13,14 @@
 namespace kivm {
     InstanceKlass::InstanceKlass(ClassFile *class_file, ClassLoader *class_loader,
                                  mirrorOop java_loader, ClassType class_type)
-            : _java_loader(java_loader),
-            _class_file(class_file),
-            _class_loader(class_loader),
-            _n_instance_fields(0),
-            _n_static_fields(0),
-            _em_attr(nullptr),
-            _bm_attr(nullptr),
-            _ic_attr(nullptr) {
+        : _java_loader(java_loader),
+          _class_file(class_file),
+          _class_loader(class_loader),
+          _n_instance_fields(0),
+          _n_static_fields(0),
+          _em_attr(nullptr),
+          _bm_attr(nullptr),
+          _ic_attr(nullptr) {
         this->set_type(class_type);
     }
 
@@ -100,11 +100,11 @@ namespace kivm {
 
             using std::make_pair;
 
-            if (method->is_final() || method->is_private()) {
-                _pftable.insert(make_pair(Method::make_identity(method), method));
-
-            } else if (method->is_static()) {
+            if (method->is_static()) {
                 _stable.insert(make_pair(Method::make_identity(method), method));
+
+            } else if (method->is_final() || method->is_private()) {
+                _pftable.insert(make_pair(Method::make_identity(method), method));
 
             } else {
                 // Do not use _vtable.insert()
@@ -129,8 +129,8 @@ namespace kivm {
                   instance_field_index,
                   strings::to_std_string(e.first).c_str());
                 this->_instance_fields.insert(
-                        make_pair(e.first,
-                                  FieldID(instance_field_index++, e.second._field)));
+                    make_pair(e.first,
+                              FieldID(instance_field_index++, e.second._field)));
             }
         }
 
@@ -143,8 +143,8 @@ namespace kivm {
                   strings::to_std_string(field.first).c_str());
 
                 this->_instance_fields.insert(
-                        make_pair(field.first,
-                                  FieldID(instance_field_index++, field.second._field)));
+                    make_pair(field.first,
+                              FieldID(instance_field_index++, field.second._field)));
             }
         }
 
