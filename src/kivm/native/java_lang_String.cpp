@@ -19,9 +19,9 @@ namespace kivm {
                 auto klass = (InstanceKlass *) string->get_klass();
                 FieldID hash_field = klass->get_instance_field_info(J_STRING, L"hash", L"I");
                 if (string->get_field_value(hash_field, &int_oop_hash)) {
-                    int cached_value = ((intOop) int_oop_hash)->get_value();
-                    if (cached_value != 0) {
-                        return static_cast<size_t>(cached_value);
+                    int cached_hash = ((intOop) int_oop_hash)->get_value();
+                    if (cached_hash != 0) {
+                        return cached_hash;
                     }
                 }
 
