@@ -62,7 +62,6 @@ namespace kivm {
         auto cl = BootstrapClassLoader::get();
 
         java::lang::Class::initialize();
-        // DO NOT USE use() directly.
         auto class_class = use(cl, thread, J_CLASS);
         java::lang::Class::mirror_core_classes();
 
