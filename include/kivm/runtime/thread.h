@@ -74,6 +74,7 @@ namespace kivm {
     };
 
     // The Java main thread
+    // implemented in src/kivm/runtime/init.cpp
     class JavaMainThread : public JavaThread {
     public:
         JavaMainThread();

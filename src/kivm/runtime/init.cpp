@@ -17,6 +17,45 @@ namespace kivm {
         return klass;
     }
 
+    JavaMainThread::JavaMainThread()
+        : JavaThread(nullptr, {}) {
+    }
+
+    void JavaMainThread::start() {
+        // Initialize Java Virtual Machine
+        Threads::initializeJVM(this);
+
+        // TODO: find main(String[]) method and build arg list
+        // OK, call main() with args
+        // this->_method = main_method;
+        // this->_args = main_args;
+        // Run method manually, we cannot use JavaThread::run()
+        // because it is designed for app threads,
+        // but JavaThread::run_method() is still available.
+        JavaThread::run_method(_method, _args);
+    }
+
+    void JavaMainThread::thread_lunched() {
+        // Start the first app thread to run main(String[])
+        this->_native_thread->join();
+
+        // Then, let's wait for all app threads to finish
+        for (;;) {
+            int threads = Threads::get_app_thread_count_locked();
+            assert(threads >= 0);
+
+            if (threads == 0) {
+                break;
+            }
+
+            sched_yield();
+        }
+    }
+
+    bool JavaMainThread::should_record_in_thread_table() {
+        return false;
+    }
+
     void Threads::initializeJVM(JavaMainThread *thread) {
         // TODO: put initialization logic here.
         auto cl = BootstrapClassLoader::get();
