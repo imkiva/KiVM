@@ -55,6 +55,8 @@ namespace kivm {
         bool is_object_array() override {
             return false;
         }
+
+        typeArrayOop new_instance(int length);
     };
 
     class ObjectArrayKlass : public ArrayKlass {

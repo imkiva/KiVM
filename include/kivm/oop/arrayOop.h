@@ -21,15 +21,17 @@ namespace kivm {
         int get_length() const;
 
         oop get_element_at(int position) const;
+
+        void set_element_at(int position, oop element);
     };
 
     class typeArrayOopDesc : public arrayOopDesc {
     public:
-        typeArrayOopDesc(ArrayKlass *array_klass, int length);
+        typeArrayOopDesc(TypeArrayKlass *array_klass, int length);
     };
 
     class objectArrayOopDesc : public arrayOopDesc {
     public:
-        objectArrayOopDesc(ArrayKlass *array_klass, int length);
+        objectArrayOopDesc(ObjectArrayKlass *array_klass, int length);
     };
 }

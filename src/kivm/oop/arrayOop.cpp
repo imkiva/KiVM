@@ -6,7 +6,7 @@
 
 namespace kivm {
     arrayOopDesc::arrayOopDesc(ArrayKlass *array_klass, oopType type, int length)
-            : oopDesc(array_klass, type) {
+        : oopDesc(array_klass, type) {
         _elements.resize(static_cast<unsigned>(length));
         _elements.shrink_to_fit();
     }
@@ -27,11 +27,19 @@ namespace kivm {
         return _elements[position];
     }
 
-    typeArrayOopDesc::typeArrayOopDesc(ArrayKlass *array_klass, int length)
-            : arrayOopDesc(array_klass, oopType::TYPE_ARRAY_OOP, length) {
+    void arrayOopDesc::set_element_at(int position, oop element) {
+        if (position < 0 || position >= get_length()) {
+            // TODO: throw ArrayIndexOutOfBoundsException
+            return;
+        }
+        _elements[position] = element;
     }
 
-    objectArrayOopDesc::objectArrayOopDesc(ArrayKlass *array_klass, int length)
-            : arrayOopDesc(array_klass, oopType::OBJECT_ARRAY_OOP, length) {
+    typeArrayOopDesc::typeArrayOopDesc(TypeArrayKlass *array_klass, int length)
+        : arrayOopDesc(array_klass, oopType::TYPE_ARRAY_OOP, length) {
+    }
+
+    objectArrayOopDesc::objectArrayOopDesc(ObjectArrayKlass *array_klass, int length)
+        : arrayOopDesc(array_klass, oopType::OBJECT_ARRAY_OOP, length) {
     }
 }

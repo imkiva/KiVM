@@ -74,8 +74,17 @@ namespace kivm {
             }
 
             instanceOop String::intern(const kivm::String &string) {
-                // TODO: intern()
-                return nullptr;
+                auto *char_array_klass = (TypeArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[C");
+                auto *string_klass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(J_STRING);
+
+                typeArrayOop chars = char_array_klass->new_instance((int) string.size());
+                for (int i = 0; i < string.size(); ++i) {
+                    chars->set_element_at(i, new intOopDesc((unsigned short) string[i]));
+                }
+
+                instanceOop java_string = string_klass->new_instance();
+                java_string->set_field_value(J_STRING, L"value", L"[C", chars);
+                return java_string;
             }
         }
     }
