@@ -7,11 +7,12 @@
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/arrayOop.h>
+#include <unordered_map>
 
 namespace kivm {
     namespace java {
         namespace lang {
-            size_t String::Hash::operator()(instanceOop string) const noexcept {
+            int String::Hash::operator()(instanceOop string) const noexcept {
                 // if has a hash_val cache, need no calculate.
                 oop int_oop_hash = nullptr;
 
@@ -34,10 +35,18 @@ namespace kivm {
                         hash = 31 * hash + single_char->get_value();
                     }
                     string->set_field_value(hash_field, new intOopDesc(hash));
-                    return static_cast<size_t>(hash);
+                    return hash;
                 }
 
                 return 0;
+            }
+
+            int String::Hash::operator()(const kivm::String &string) const {
+                int hash = 0;
+                for (wchar_t ch : string) {
+                    hash = 31 * hash + (unsigned short) ch;
+                }
+                return hash;
             }
 
             bool String::EqualTo::operator()(instanceOop lhs, instanceOop rhs) const {
@@ -74,6 +83,20 @@ namespace kivm {
             }
 
             instanceOop String::intern(const kivm::String &string) {
+                return StringTable::find_or_new(string);
+            }
+
+            instanceOop StringTable::find_or_new(const kivm::String &string) {
+                static std::unordered_map<int, instanceOop> STRING_TABLE;
+
+                // Find cached string oop
+                int hash = String::Hash()(string);
+                const auto &iter = STRING_TABLE.find(hash);
+                if (iter != STRING_TABLE.end()) {
+                    return iter->second;
+                }
+
+                // No cache, create new.
                 auto *char_array_klass = (TypeArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[C");
                 auto *string_klass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(J_STRING);
 
@@ -84,6 +107,7 @@ namespace kivm {
 
                 instanceOop java_string = string_klass->new_instance();
                 java_string->set_field_value(J_STRING, L"value", L"[C", chars);
+                STRING_TABLE.insert(std::make_pair(hash, java_string));
                 return java_string;
             }
         }

@@ -9,10 +9,17 @@
 namespace kivm {
     namespace java {
         namespace lang {
+            class StringTable {
+            public:
+                static instanceOop find_or_new(const kivm::String &string);
+            };
+
             class String {
             public:
                 struct Hash {
-                    size_t operator()(instanceOop ptr) const noexcept;
+                    int operator()(instanceOop ptr) const noexcept;
+
+                    int operator()(const kivm::String &string) const noexcept;
                 };
 
                 struct EqualTo {
