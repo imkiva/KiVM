@@ -81,6 +81,10 @@ set(SOURCE_FILES
         )
 
 add_library(kivm STATIC ${SOURCE_FILES})
+IF (UNIX)
+    target_link_libraries(kivm pthread)
+ENDIF ()
+
 add_executable(KivaVM src/bin/main.cpp)
 add_executable(javap src/bin/javap.cpp)
 
