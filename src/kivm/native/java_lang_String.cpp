@@ -41,7 +41,7 @@ namespace kivm {
                 return 0;
             }
 
-            int String::Hash::operator()(const kivm::String &string) const {
+            int String::Hash::operator()(const kivm::String &string) const noexcept {
                 int hash = 0;
                 for (wchar_t ch : string) {
                     hash = 31 * hash + (unsigned short) ch;
