@@ -306,10 +306,6 @@ namespace kivm {
             // throw java.lang.NoSuchFieldError
             assert(!"java.lang.NoSuchFieldError");
         }
-        if (fieldID._field->is_final()) {
-            // throw java.lang.IllegalAccessError
-            assert(!"java.lang.IllegalAccessError");
-        }
 
         D("Set field %s::%s(%s) to %p\n",
           strings::to_std_string(fieldID._field->get_class()->get_name()).c_str(),
