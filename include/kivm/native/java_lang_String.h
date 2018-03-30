@@ -27,7 +27,9 @@ namespace kivm {
                 };
 
             public:
-                static instanceOop intern(const kivm::String &string);
+                static inline instanceOop intern(const kivm::String &string) {
+                    return StringTable::find_or_new(string);
+                }
             };
         }
     }

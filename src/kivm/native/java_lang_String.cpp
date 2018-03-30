@@ -82,10 +82,6 @@ namespace kivm {
                 return true;
             }
 
-            instanceOop String::intern(const kivm::String &string) {
-                return StringTable::find_or_new(string);
-            }
-
             instanceOop StringTable::find_or_new(const kivm::String &string) {
                 static std::unordered_map<int, instanceOop> STRING_TABLE;
 
