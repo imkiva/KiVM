@@ -6,7 +6,7 @@ compiler: g++
 
 install: cmake . && make -j4
 
-script: ./KivaVM
+script: echo hello KiVM.
 
 addons:
   apt:
