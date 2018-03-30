@@ -8,8 +8,9 @@ namespace kivm {
         int threadInitialStackSize;
         int threadMaxStackSize;
 
-        static void init();
         static RuntimeConfig& get();
+
+        RuntimeConfig();
     };
 }
 

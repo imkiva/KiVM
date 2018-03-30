@@ -25,5 +25,7 @@ int main() {
     auto *x = (InstanceKlass *) BootstrapClassLoader::get()
             ->loadClass(L"java/lang/InterruptedException");
 
+    JavaMainThread javaMainThread;
+    javaMainThread.create(nullptr);
     return 0;
 }

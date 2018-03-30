@@ -32,6 +32,7 @@ namespace kivm {
         // Run method manually, we cannot use JavaThread::run()
         // because it is designed for app threads,
         // but JavaThread::run_method() is still available.
+        PANIC("JavaMainThread::start() not implemented.");
         JavaThread::run_method(_method, _args);
     }
 
@@ -99,8 +100,9 @@ namespace kivm {
         use(cl, thread, J_SECURITY_MANAGER);
 
         // Construct the main thread group
-        auto tg_ctor = tg_class->find_virtual_method(L"<init>",
-                                                     L"(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
+        // use find_non_virtual_method() to get a private method
+        auto tg_ctor = tg_class->find_non_virtual_method(L"<init>",
+                                                         L"(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
         Execution::call_void_method(thread, tg_ctor,
                                     {main_tg, nullptr, init_tg, java::lang::String::intern(L"main")});
 

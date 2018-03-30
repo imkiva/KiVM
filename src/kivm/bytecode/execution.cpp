@@ -39,6 +39,6 @@ namespace kivm {
     }
 
     void Execution::call_void_method(JavaThread *javaThread, Method *method, const std::list<oop> &args) {
-
+        javaThread->run_method(method, args);
     }
 }

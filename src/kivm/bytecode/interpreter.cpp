@@ -6,15 +6,24 @@
 #include <kivm/bytecode/bytecodes.h>
 #include <kivm/method.h>
 
+#define OPCODE_DEBUG
+
 #define BEGIN(code, pc) \
     while ((code).validate_offset(pc)) \
         switch ((code)[(pc)++]) {
-#define OPCODE(opcode) \
-    case OPC_##opcode:
 #define OTHERWISE() \
     default:
 #define NEXT() break
 #define END() }
+
+#ifdef OPCODE_DEBUG
+#define OPCODE(opcode) \
+    case OPC_##opcode: \
+        D("pc: %d, opcode: %d, name: %s", pc, code_blob[pc - 1], #opcode);
+#else
+#define OPCODE(opcode) \
+    case OPC_##opcode:
+#endif
 
 namespace kivm {
     oop ByteCodeInterpreter::interp(JavaThread *thread) {

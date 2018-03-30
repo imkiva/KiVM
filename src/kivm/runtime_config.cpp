@@ -9,9 +9,8 @@ namespace kivm {
         return RUNTIME_CONFIG;
     }
 
-    void RuntimeConfig::init() {
-        auto &config = RuntimeConfig::get();
-        config.threadInitialStackSize = 256;
-        config.threadMaxStackSize = 512;
+    RuntimeConfig::RuntimeConfig() {
+        threadInitialStackSize = 256;
+        threadMaxStackSize = 512;
     }
 }
