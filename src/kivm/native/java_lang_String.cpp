@@ -12,6 +12,25 @@
 namespace kivm {
     namespace java {
         namespace lang {
+            InternStringPool *InternStringPool::getGlobal() {
+                static InternStringPool global;
+                return &global;
+            }
+
+            instanceOop InternStringPool::findOrNew(const kivm::String &string) {
+                // Find cached string oop
+                int hash = java::lang::String::Hash()(string);
+                const auto &iter = _pool.find(hash);
+                if (iter != _pool.end()) {
+                    return iter->second;
+                }
+
+                // No cache, create new.
+                instanceOop java_string = String::from(string);
+                _pool.insert(std::make_pair(hash, java_string));
+                return java_string;
+            }
+
             int String::Hash::operator()(instanceOop string) const noexcept {
                 // if has a hash_val cache, need no calculate.
                 oop int_oop_hash = nullptr;
@@ -80,6 +99,20 @@ namespace kivm {
                     }
                 }
                 return true;
+            }
+
+            instanceOop String::from(const kivm::String &string) {
+                auto *char_array_klass = (TypeArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[C");
+                auto *string_klass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(J_STRING);
+
+                typeArrayOop chars = char_array_klass->newInstance((int) string.size());
+                for (int i = 0; i < string.size(); ++i) {
+                    chars->setElementAt(i, new intOopDesc((unsigned short) string[i]));
+                }
+
+                instanceOop java_string = string_klass->newInstance();
+                java_string->setFieldValue(J_STRING, L"value", L"[C", chars);
+                return java_string;
             }
         }
     }

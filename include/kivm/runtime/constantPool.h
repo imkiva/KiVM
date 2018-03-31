@@ -9,43 +9,34 @@
 #include <unordered_map>
 
 namespace kivm {
+    class Klass;
+
     class InstanceKlass;
 
-    class StringTable {
+    class RuntimeConstantPool;
+
+    template<typename T, typename Creator>
+    class ConstantTable {
+        friend class RuntimeConstantPool;
+
     private:
-        // hash -> string
-        std::unordered_map<int, instanceOop> _pool;
+        cp_info **_raw_pool = nullptr;
+
+        // constant-pool-index -> constant
+        std::unordered_map<int, T> _pool;
 
     public:
-        static StringTable *getGlobal();
-
-        instanceOop findOrNew(const kivm::String &string);
-    };
-
-    class ClassTable {
-    };
-
-    class MethodTable {
-    };
-
-    class FieldTable {
+        virtual T findOrNew(int index) = 0;
     };
 
     class RuntimeConstantPool {
     private:
-        cp_info **_constant_pool;
         ClassLoader *_class_loader;
-
-        StringTable _string_pool;
-        MethodTable _method_pool;
-        FieldTable _field_pool;
-        ClassTable _class_pool;
 
     public:
         explicit RuntimeConstantPool(InstanceKlass *instanceKlass);
 
         void attachConstantPool(cp_info **pool) {
-            this->_constant_pool = pool;
         }
     };
 }
