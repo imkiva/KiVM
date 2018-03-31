@@ -14,13 +14,16 @@ namespace kivm {
         : _class_loader(instanceKlass->getClassLoader()), _constant_pool(pool) {
     }
 
-    instanceOop StringTable::findOrNew(const kivm::String &string) {
-        static std::unordered_map<int, instanceOop> STRING_TABLE;
+    StringTable *StringTable::getGlobal() {
+        static StringTable global;
+        return &global;
+    }
 
+    instanceOop StringTable::findOrNew(const kivm::String &string) {
         // Find cached string oop
         int hash = java::lang::String::Hash()(string);
-        const auto &iter = STRING_TABLE.find(hash);
-        if (iter != STRING_TABLE.end()) {
+        const auto &iter = _pool.find(hash);
+        if (iter != _pool.end()) {
             return iter->second;
         }
 
@@ -35,7 +38,7 @@ namespace kivm {
 
         instanceOop java_string = string_klass->newInstance();
         java_string->setFieldValue(J_STRING, L"value", L"[C", chars);
-        STRING_TABLE.insert(std::make_pair(hash, java_string));
+        _pool.insert(std::make_pair(hash, java_string));
         return java_string;
     }
 }

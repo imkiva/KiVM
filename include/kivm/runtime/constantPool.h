@@ -12,8 +12,14 @@ namespace kivm {
     class InstanceKlass;
 
     class StringTable {
+    private:
+        // hash -> string
+        std::unordered_map<int, instanceOop> _pool;
+
     public:
-        static instanceOop findOrNew(const kivm::String &string);
+        static StringTable* getGlobal();
+
+        instanceOop findOrNew(const kivm::String &string);
     };
 
     class RuntimeConstantPool {
