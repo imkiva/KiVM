@@ -14,7 +14,7 @@ namespace kivm {
 
     class InstanceKlass;
 
-    namespace constant_table {
+    namespace pools {
         template<typename T, typename Creator, int CONSTANT_TAG>
         class ConstantTable {
         private:
@@ -65,8 +65,8 @@ namespace kivm {
     class RuntimeConstantPool {
     private:
         ClassLoader *_class_loader;
-        constant_table::ClassTable _class_table;
-        constant_table::StringTable _string_table;
+        pools::ClassTable _class_table;
+        pools::StringTable _string_table;
 
     public:
         explicit RuntimeConstantPool(InstanceKlass *instanceKlass);
