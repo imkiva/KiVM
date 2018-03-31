@@ -10,8 +10,8 @@
 #include <kivm/oop/primitiveOop.h>
 
 namespace kivm {
-    RuntimeConstantPool::RuntimeConstantPool(InstanceKlass *instanceKlass, cp_info **pool)
-        : _class_loader(instanceKlass->getClassLoader()), _constant_pool(pool) {
+    RuntimeConstantPool::RuntimeConstantPool(InstanceKlass *instanceKlass)
+        : _class_loader(instanceKlass->getClassLoader()) {
     }
 
     StringTable *StringTable::getGlobal() {

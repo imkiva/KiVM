@@ -6,6 +6,7 @@
 #include <kivm/oop/klass.h>
 #include <kivm/oop/oopfwd.h>
 #include <kivm/oop/reflectionSupport.h>
+#include <kivm/runtime/constantPool.h>
 #include <unordered_map>
 #include <vector>
 
@@ -34,6 +35,8 @@ namespace kivm {
         InnerClasses_attribute *_ic_attr;
         EnclosingMethod_attribute *_em_attr;
         BootstrapMethods_attribute *_bm_attr;
+
+        RuntimeConstantPool _runtime_pool;
 
         /**
          * virtual methods (public or protected methods).
@@ -80,6 +83,7 @@ namespace kivm {
          */
         std::unordered_map<String, InstanceKlass *> _interfaces;
 
+    private:
         InstanceKlass *requireInstanceClass(u2 class_info_index);
 
         void link_constant_pool(cp_info **constant_pool);
@@ -108,6 +112,10 @@ namespace kivm {
 
         const String &getSignature() const {
             return _signature;
+        }
+
+        RuntimeConstantPool &getRuntimeConstantPool() {
+            return this->_runtime_pool;
         }
 
         void linkAndInit() override;

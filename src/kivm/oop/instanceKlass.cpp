@@ -13,7 +13,8 @@
 namespace kivm {
     InstanceKlass::InstanceKlass(ClassFile *class_file, ClassLoader *class_loader,
                                  mirrorOop java_loader, ClassType class_type)
-        : _java_loader(java_loader),
+        : _runtime_pool(this),
+          _java_loader(java_loader),
           _class_file(class_file),
           _class_loader(class_loader),
           _n_instance_fields(0),
@@ -54,6 +55,7 @@ namespace kivm {
         link_fields(pool);
         link_constant_pool(pool);
         link_attributes(pool);
+        getRuntimeConstantPool().attachConstantPool(pool);
         this->setClassState(ClassState::LINKED);
     }
 

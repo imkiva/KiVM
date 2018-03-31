@@ -17,16 +17,19 @@ namespace kivm {
         std::unordered_map<int, instanceOop> _pool;
 
     public:
-        static StringTable* getGlobal();
+        static StringTable *getGlobal();
 
         instanceOop findOrNew(const kivm::String &string);
     };
 
-    class ClassTable {};
+    class ClassTable {
+    };
 
-    class MethodTable {};
+    class MethodTable {
+    };
 
-    class FieldTable {};
+    class FieldTable {
+    };
 
     class RuntimeConstantPool {
     private:
@@ -39,6 +42,10 @@ namespace kivm {
         ClassTable _class_pool;
 
     public:
-        explicit RuntimeConstantPool(InstanceKlass *instanceKlass, cp_info **pool);
+        explicit RuntimeConstantPool(InstanceKlass *instanceKlass);
+
+        void attachConstantPool(cp_info **pool) {
+            this->_constant_pool = pool;
+        }
     };
 }
