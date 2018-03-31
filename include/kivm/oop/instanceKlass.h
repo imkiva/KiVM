@@ -80,7 +80,7 @@ namespace kivm {
          */
         std::unordered_map<String, InstanceKlass *> _interfaces;
 
-        InstanceKlass *require_instance_class(u2 class_info_index);
+        InstanceKlass *requireInstanceClass(u2 class_info_index);
 
         void link_constant_pool(cp_info **constant_pool);
 

@@ -5,15 +5,11 @@
 
 #include <kivm/kivm.h>
 #include <kivm/oop/oopfwd.h>
+#include <kivm/runtime/constantPool.h>
 
 namespace kivm {
     namespace java {
         namespace lang {
-            class StringTable {
-            public:
-                static instanceOop findOrNew(const kivm::String &string);
-            };
-
             class String {
             public:
                 struct Hash {

@@ -24,7 +24,7 @@ namespace kivm {
         this->setClassType(class_type);
     }
 
-    InstanceKlass *InstanceKlass::require_instance_class(u2 class_info_index) {
+    InstanceKlass *InstanceKlass::requireInstanceClass(u2 class_info_index) {
         auto *class_info = requireConstant<CONSTANT_Class_info>(_class_file->constant_pool,
                                                                 class_info_index);
         auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(_class_file->constant_pool,
@@ -70,7 +70,7 @@ namespace kivm {
             return;
         }
 
-        auto *super_class = require_instance_class(_class_file->super_class);
+        auto *super_class = requireInstanceClass(_class_file->super_class);
         if (super_class->isFinal()) {
             // TODO: throw VerifyError
             this->setClassState(ClassState::INITIALIZATION_ERROR);
@@ -81,7 +81,7 @@ namespace kivm {
 
     void InstanceKlass::link_interfaces(cp_info **pool) {
         for (int i = 0; i < _class_file->interfaces_count; ++i) {
-            InstanceKlass *interface_class = require_instance_class(_class_file->interfaces[i]);
+            InstanceKlass *interface_class = requireInstanceClass(_class_file->interfaces[i]);
             _interfaces.insert(std::make_pair(interface_class->getName(), interface_class));
         }
     }

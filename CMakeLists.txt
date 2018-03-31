@@ -78,7 +78,7 @@ set(SOURCE_FILES
         src/kivm/runtime/init.cpp
         src/kivm/system.cpp
         src/kivm/native/java_lang_String.cpp
-        include/kivm/runtime/constantPool.h)
+        include/kivm/runtime/constantPool.h src/kivm/runtime/constantPool.cpp)
 
 add_library(kivm STATIC ${SOURCE_FILES})
 IF (UNIX)
