@@ -6,7 +6,7 @@
 #include <kivm/oop/klass.h>
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/oop/arrayKlass.h>
-#include <kivm/oop/reflection_support.h>
+#include <kivm/oop/reflectionSupport.h>
 #include <kivm/classfile/classFileParser.h>
 #include <sstream>
 
@@ -36,7 +36,7 @@ namespace kivm {
                 }
 
                 // for example: LI -> I
-                ValueType component_type = primitive_type_to_value_type(class_name[1]);
+                ValueType component_type = primitiveTypeToValueType(class_name[1]);
                 return new TypeArrayKlass(this, nullptr, dimension, component_type);
             }
 
@@ -48,7 +48,7 @@ namespace kivm {
                 return nullptr;
             }
 
-            if (down_type->is_object_array()) {
+            if (down_type->isObjectArray()) {
                 return new ObjectArrayKlass(this, (ObjectArrayKlass *) down_type);
             } else {
                 return new TypeArrayKlass(this, (TypeArrayKlass *) down_type);
@@ -60,7 +60,7 @@ namespace kivm {
         path_builder << RT_DIR << L'/' << class_name << L".class";
         const String &class_file_path = path_builder.str();
         ClassFileParser classFileParser(strings::to_std_string(class_file_path).c_str());
-        ClassFile *classFile = classFileParser.classFile();
+        ClassFile *classFile = classFileParser.getParsedClassFile();
         return classFile != nullptr
                ? new InstanceKlass(classFile, this, nullptr, ClassType::INSTANCE_CLASS)
                : nullptr;

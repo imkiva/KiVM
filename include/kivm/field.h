@@ -22,9 +22,9 @@ namespace kivm {
         friend InstanceKlass;
 
     public:
-        static bool is_same(const Field *lhs, const Field *rhs);
+        static bool isSame(const Field *lhs, const Field *rhs);
 
-        static String make_identity(InstanceKlass *belongTo, const Field *f);
+        static String makeIdentity(InstanceKlass *belongTo, const Field *f);
 
     private:
         InstanceKlass *_klass;
@@ -45,79 +45,79 @@ namespace kivm {
 
         bool _linked;
 
-        void link_attributes(cp_info **pool);
+        void linkAttributes(cp_info **pool);
 
-        void link_value_type();
+        void linkValueType();
 
     public:
         Field(InstanceKlass *clazz, field_info *field_info);
 
-        void link_field(cp_info **pool);
+        void linkField(cp_info **pool);
 
-        InstanceKlass *get_class() const {
+        InstanceKlass *getClass() const {
             return _klass;
         }
 
-        const String &get_name() const {
+        const String &getName() const {
             return _name;
         }
 
-        const String &get_descriptor() const {
+        const String &getDescriptor() const {
             return _descriptor;
         }
 
-        const String &get_signature() const {
+        const String &getSignature() const {
             return _signature;
         }
 
-        ConstantValue_attribute *get_constant_attribute() const {
+        ConstantValue_attribute *getConstantAttribute() const {
             return _constant_attribute;
         }
 
-        u2 get_access_flag() const {
+        u2 getAccessFlag() const {
             return _access_flag;
         }
 
-        ValueType get_value_type() const {
+        ValueType getValueType() const {
             return _value_type;
         }
 
-        bool is_linked() const {
+        bool isLinked() const {
             return _linked;
         }
 
-        bool is_public() const {
-            return (get_access_flag() & ACC_PUBLIC) == ACC_PUBLIC;
+        bool isPublic() const {
+            return (getAccessFlag() & ACC_PUBLIC) == ACC_PUBLIC;
         }
 
-        bool is_private() const {
-            return (get_access_flag() & ACC_PRIVATE) == ACC_PRIVATE;
+        bool isPrivate() const {
+            return (getAccessFlag() & ACC_PRIVATE) == ACC_PRIVATE;
         }
 
-        bool is_protected() const {
-            return (get_access_flag() & ACC_PROTECTED) == ACC_PROTECTED;
+        bool isProtected() const {
+            return (getAccessFlag() & ACC_PROTECTED) == ACC_PROTECTED;
         }
 
-        bool is_final() const {
-            return (get_access_flag() & ACC_FINAL) == ACC_FINAL;
+        bool isFinal() const {
+            return (getAccessFlag() & ACC_FINAL) == ACC_FINAL;
         }
 
-        bool is_static() {
-            return (get_access_flag() & ACC_STATIC) == ACC_STATIC;
+        bool isStatic() {
+            return (getAccessFlag() & ACC_STATIC) == ACC_STATIC;
         }
 
-        bool is_volatile() const {
-            return (get_access_flag() & ACC_VOLATILE) == ACC_VOLATILE;
+        bool isVolatile() const {
+            return (getAccessFlag() & ACC_VOLATILE) == ACC_VOLATILE;
         }
     };
 
     class FieldPool {
     private:
-        static std::list<Field *> &entries_internal();
+        static std::list<Field *> &getEntriesInternal();
 
     public:
         static void add(Field *method);
 
-        static const std::list<Field *> &entries();
+        static const std::list<Field *> &getEntries();
     };
 }

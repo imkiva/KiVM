@@ -38,76 +38,76 @@ namespace kivm {
         Klass *_super_class;
 
     public:
-        mirrorOop get_java_mirror() {
+        mirrorOop getJavaMirror() {
             return _java_mirror;
         }
 
-        void set_java_mirror(mirrorOop java_mirror) {
+        void setJavaMirror(mirrorOop java_mirror) {
             this->_java_mirror = java_mirror;
         }
 
-        ClassState get_state() const {
+        ClassState getClassState() const {
             return _state;
         }
 
-        void set_state(ClassState _state) {
+        void setClassState(ClassState _state) {
             this->_state = _state;
         }
 
-        u2 get_access_flag() const {
+        u2 getAccessFlag() const {
             return _access_flag;
         }
 
-        void set_access_flag(u2 _access_flag) {
+        void setAccessFlag(u2 _access_flag) {
             Klass::_access_flag = _access_flag;
         }
 
-        const String &get_name() const {
+        const String &getName() const {
             return _name;
         }
 
-        void set_name(const String &_name) {
+        void setName(const String &_name) {
             this->_name = _name;
         }
 
-        ClassType get_type() const {
+        ClassType getClassType() const {
             return _type;
         }
 
-        void set_type(ClassType _type) {
+        void setClassType(ClassType _type) {
             this->_type = _type;
         }
 
-        Klass *get_super_class() const {
+        Klass *getSuperClass() const {
             return _super_class;
         }
 
-        void set_super_class(Klass *_super_class) {
+        void setSuperClass(Klass *_super_class) {
             this->_super_class = _super_class;
         }
 
-        bool is_public() const {
-            return (get_access_flag() & ACC_PUBLIC) == ACC_PUBLIC;
+        bool isPublic() const {
+            return (getAccessFlag() & ACC_PUBLIC) == ACC_PUBLIC;
         }
 
-        bool is_private() const {
-            return (get_access_flag() & ACC_PRIVATE) == ACC_PRIVATE;
+        bool isPrivate() const {
+            return (getAccessFlag() & ACC_PRIVATE) == ACC_PRIVATE;
         }
 
-        bool is_protected() const {
-            return (get_access_flag() & ACC_PROTECTED) == ACC_PROTECTED;
+        bool isProtected() const {
+            return (getAccessFlag() & ACC_PROTECTED) == ACC_PROTECTED;
         }
 
-        bool is_final() const {
-            return (get_access_flag() & ACC_FINAL) == ACC_FINAL;
+        bool isFinal() const {
+            return (getAccessFlag() & ACC_FINAL) == ACC_FINAL;
         }
 
-        bool is_static() {
-            return (get_access_flag() & ACC_STATIC) == ACC_STATIC;
+        bool isStatic() {
+            return (getAccessFlag() & ACC_STATIC) == ACC_STATIC;
         }
 
-        bool is_abstract() {
-            return (get_access_flag() & ACC_ABSTRACT) == ACC_ABSTRACT;
+        bool isAbstract() {
+            return (getAccessFlag() & ACC_ABSTRACT) == ACC_ABSTRACT;
         }
 
     public:
@@ -115,7 +115,7 @@ namespace kivm {
 
         virtual ~Klass() = default;
 
-        virtual void link_and_init() = 0;
+        virtual void linkAndInit() = 0;
     };
 }
 

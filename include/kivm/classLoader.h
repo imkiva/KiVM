@@ -12,7 +12,7 @@ namespace kivm {
 
     class ClassLoader {
     public:
-        static Klass *require_class(ClassLoader *classLoader, const String &className);
+        static Klass *requireClass(ClassLoader *classLoader, const String &className);
 
         virtual Klass *loadClass(const String &class_name) = 0;
 

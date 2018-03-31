@@ -30,7 +30,7 @@ namespace kivm {
     }
 
     void ClassFileParser::dealloc(ClassFile *class_file) {
-        AttributeParser::dealloc_attributes(&class_file->attributes, class_file->attributes_count);
+        AttributeParser::deallocAttributes(&class_file->attributes, class_file->attributes_count);
         for (int i = 1; i < class_file->constant_pool_count; ++i) {
             u1 tag = class_file->constant_pool[i]->tag;
             delete class_file->constant_pool[i];
@@ -50,7 +50,7 @@ namespace kivm {
         _classFile = nullptr;
         _content = nullptr;
         _file = fopen(filePath, "rb");
-        _classFileStream.set_source(filePath);
+        _classFileStream.setSource(filePath);
     }
 
     ClassFileParser::~ClassFileParser() {
@@ -60,7 +60,7 @@ namespace kivm {
         delete[] _content;
     }
 
-    ClassFile *ClassFileParser::classFile() {
+    ClassFile *ClassFileParser::getParsedClassFile() {
         if (_classFile == nullptr) {
             if (_file != nullptr) {
                 _classFile = parse();
@@ -84,24 +84,24 @@ namespace kivm {
 
         _classFileStream.init(_content, size);
 
-        classFile->magic = _classFileStream.get_u4();
+        classFile->magic = _classFileStream.get4();
         if (classFile->magic != 0xCAFEBABE) {
             ClassFileParser::dealloc(classFile);
             return nullptr;
         }
 
-        classFile->major_version = _classFileStream.get_u2();
-        classFile->minor_version = _classFileStream.get_u2();
-        parse_constant_pool(classFile);
+        classFile->major_version = _classFileStream.get2();
+        classFile->minor_version = _classFileStream.get2();
+        parseConstantPool(classFile);
 
-        classFile->access_flags = _classFileStream.get_u2();
-        classFile->this_class = _classFileStream.get_u2();
-        classFile->super_class = _classFileStream.get_u2();
+        classFile->access_flags = _classFileStream.get2();
+        classFile->this_class = _classFileStream.get2();
+        classFile->super_class = _classFileStream.get2();
 
-        parse_interfaces(classFile);
-        parse_fields(classFile);
-        parse_methods(classFile);
-        parse_attributes(classFile);
+        parseInterfaces(classFile);
+        parseFields(classFile);
+        parseMethods(classFile);
+        parseAttributes(classFile);
         return classFile;
     }
 
@@ -111,8 +111,8 @@ namespace kivm {
         stream >> *(T *) pool[index];
     }
 
-    void ClassFileParser::parse_constant_pool(ClassFile *classFile) {
-        u2 count = classFile->constant_pool_count = _classFileStream.get_u2();
+    void ClassFileParser::parseConstantPool(ClassFile *classFile) {
+        u2 count = classFile->constant_pool_count = _classFileStream.get2();
 
         classFile->constant_pool = new cp_info *[count];
         cp_info **pool = classFile->constant_pool;
@@ -120,7 +120,7 @@ namespace kivm {
         // The constant_pool table is indexed
         // from 1 to count - 1
         for (int i = 1; i < count; ++i) {
-            u1 tag = _classFileStream.peek_u1();
+            u1 tag = _classFileStream.peek1();
             switch (tag) {
                 case CONSTANT_Utf8:
                     read_pool_entry<CONSTANT_Utf8_info>(pool, i, _classFileStream);
@@ -173,33 +173,33 @@ namespace kivm {
         }
     }
 
-    void ClassFileParser::parse_interfaces(ClassFile *classFile) {
-        u2 count = classFile->interfaces_count = _classFileStream.get_u2();
+    void ClassFileParser::parseInterfaces(ClassFile *classFile) {
+        u2 count = classFile->interfaces_count = _classFileStream.get2();
         classFile->interfaces = new u2[count];
         for (int i = 0; i < count; i++) {
-            classFile->interfaces[i] = _classFileStream.get_u2();
+            classFile->interfaces[i] = _classFileStream.get2();
         }
     }
 
-    void ClassFileParser::parse_fields(ClassFile *classFile) {
-        u2 count = classFile->fields_count = _classFileStream.get_u2();
+    void ClassFileParser::parseFields(ClassFile *classFile) {
+        u2 count = classFile->fields_count = _classFileStream.get2();
         classFile->fields = new field_info[count];
         for (int i = 0; i < count; ++i) {
             classFile->fields[i].init(_classFileStream, classFile->constant_pool);
         }
     }
 
-    void ClassFileParser::parse_methods(ClassFile *classFile) {
-        u2 count = classFile->methods_count = _classFileStream.get_u2();
+    void ClassFileParser::parseMethods(ClassFile *classFile) {
+        u2 count = classFile->methods_count = _classFileStream.get2();
         classFile->methods = new method_info[count];
         for (int i = 0; i < count; ++i) {
             classFile->methods[i].init(_classFileStream, classFile->constant_pool);
         }
     }
 
-    void ClassFileParser::parse_attributes(ClassFile *classFile) {
-        classFile->attributes_count = _classFileStream.get_u2();
-        AttributeParser::read_attributes(&classFile->attributes, classFile->attributes_count,
-                                         _classFileStream, classFile->constant_pool);
+    void ClassFileParser::parseAttributes(ClassFile *classFile) {
+        classFile->attributes_count = _classFileStream.get2();
+        AttributeParser::readAttributes(&classFile->attributes, classFile->attributes_count,
+                                        _classFileStream, classFile->constant_pool);
     }
 }

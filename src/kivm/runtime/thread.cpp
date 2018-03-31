@@ -4,7 +4,7 @@
 
 #include <kivm/method.h>
 #include <kivm/runtime/thread.h>
-#include <kivm/runtime_config.h>
+#include <kivm/runtime/runtimeConfig.h>
 #include <kivm/bytecode/interpreter.h>
 
 namespace kivm {
@@ -18,24 +18,24 @@ namespace kivm {
     void Thread::create(instanceOop java_thread) {
         this->_java_thread_object = java_thread;
         this->_native_thread = new std::thread([this] {
-            if (this->should_record_in_thread_table()) {
+            if (this->shouldRecordInThreadTable()) {
                 D("should_record_in_thread_table == true, recording.");
                 Threads::add(this);
             }
             this->start();
         });
-        this->thread_lunched();
+        this->onThreadLaunched();
     }
 
-    void Thread::thread_lunched() {
+    void Thread::onThreadLaunched() {
         // Do nothing.
     }
 
-    bool Thread::should_record_in_thread_table() {
+    bool Thread::shouldRecordInThreadTable() {
         return true;
     }
 
-    long Thread::get_eetop() const {
+    long Thread::getEetop() const {
         return (long) this->_native_thread->native_handle();
     }
 
@@ -51,33 +51,33 @@ namespace kivm {
         this->_native_thread->detach();
 
         // A thread must start with an empty frame
-        assert(_frames._size == 0);
+        assert(_frames.getSize() == 0);
 
         // Only one argument(this) in java.lang.Thread#run()
         assert(_args.size() == 1);
 
-        run_method(_method, _args);
+        runMethod(_method, _args);
 
-        Threads::thread_state_change_lock().lock();
-        this->set_state(ThreadState::DIED);
-        Threads::thread_state_change_lock().unlock();
+        Threads::threadStateChangeLock().lock();
+        this->setThreadState(ThreadState::DIED);
+        Threads::threadStateChangeLock().unlock();
 
-        if (this->should_record_in_thread_table()) {
-            Threads::dec_app_thread_count_locked();
+        if (this->shouldRecordInThreadTable()) {
+            Threads::decAppThreadCountLocked();
         }
     }
 
-    oop JavaThread::run_method(Method *method, const std::list<oop> &args) {
-        Frame method_frame(method->get_max_locals(), method->get_max_stack());
-        method_frame._method = method;
-        method_frame._return_pc = this->_pc;
-        method_frame._is_native_frame = method->is_native();
+    oop JavaThread::runMethod(Method *method, const std::list<oop> &args) {
+        Frame frame(method->getMaxLocals(), method->getMaxStack());
+        frame.setMethod(method);
+        frame.setReturnPc(this->_pc);
+        frame.setNativeFrame(method->isNative());
 
-        this->_frames.push(&method_frame);
+        this->_frames.push(&frame);
         oop result = ByteCodeInterpreter::interp(this);
         this->_frames.pop();
 
-        this->_pc = method_frame._return_pc;
+        this->_pc = frame.getReturnPc();
         return result;
     }
 }

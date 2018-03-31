@@ -9,7 +9,7 @@
 #define OPCODE_DEBUG
 
 #define BEGIN(code, pc) \
-    while ((code).validate_offset(pc)) \
+    while ((code).validateOffset(pc)) \
         switch ((code)[(pc)++]) {
 #define OTHERWISE() \
     default:
@@ -27,12 +27,12 @@
 
 namespace kivm {
     oop ByteCodeInterpreter::interp(JavaThread *thread) {
-        Frame *frame = thread->get_current_frame();
-        const CodeBlob &code_blob = frame->get_method()->get_code_blob();
+        Frame *frame = thread->getCurrentFrame();
+        const CodeBlob &code_blob = frame->getMethod()->getCodeBlob();
         u4 &pc = thread->_pc;
 
-        Stack &stack = frame->get_stack();
-        Locals &locals = frame->get_locals();
+        Stack &stack = frame->getStack();
+        Locals &locals = frame->getLocals();
 
         BEGIN(code_blob, pc)
 
@@ -40,73 +40,73 @@ namespace kivm {
                     NEXT();
                 }
                 OPCODE(ACONST_NULL) {
-                    stack.push_ref(nullptr);
+                    stack.pushReference(nullptr);
                     NEXT();
                 }
                 OPCODE(ICONST_M1) {
-                    stack.push_int(-1);
+                    stack.pushInt(-1);
                     NEXT();
                 }
                 OPCODE(ICONST_0) {
-                    stack.push_int(0);
+                    stack.pushInt(0);
                     NEXT();
                 }
                 OPCODE(ICONST_1) {
-                    stack.push_int(1);
+                    stack.pushInt(1);
                     NEXT();
                 }
                 OPCODE(ICONST_2) {
-                    stack.push_int(2);
+                    stack.pushInt(2);
                     NEXT();
                 }
                 OPCODE(ICONST_3) {
-                    stack.push_int(3);
+                    stack.pushInt(3);
                     NEXT();
                 }
                 OPCODE(ICONST_4) {
-                    stack.push_int(4);
+                    stack.pushInt(4);
                     NEXT();
                 }
                 OPCODE(ICONST_5) {
-                    stack.push_int(5);
+                    stack.pushInt(5);
                     NEXT();
                 }
                 OPCODE(LCONST_0) {
-                    stack.push_long(0);
+                    stack.pushLong(0);
                     NEXT();
                 }
                 OPCODE(LCONST_1) {
-                    stack.push_long(1);
+                    stack.pushLong(1);
                     NEXT();
                 }
                 OPCODE(FCONST_0) {
-                    stack.push_float(0);
+                    stack.pushFloat(0);
                     NEXT();
                 }
                 OPCODE(FCONST_1) {
-                    stack.push_float(1);
+                    stack.pushFloat(1);
                     NEXT();
                 }
                 OPCODE(FCONST_2) {
-                    stack.push_float(2);
+                    stack.pushFloat(2);
                     NEXT();
                 }
                 OPCODE(DCONST_0) {
-                    stack.push_double(0);
+                    stack.pushDouble(0);
                     NEXT();
                 }
                 OPCODE(DCONST_1) {
-                    stack.push_double(1);
+                    stack.pushDouble(1);
                     NEXT();
                 }
                 OPCODE(BIPUSH) {
-                    stack.push_int(code_blob[pc++]);
+                    stack.pushInt(code_blob[pc++]);
                     NEXT();
                 }
                 OPCODE(SIPUSH) {
                     short si = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
-                    stack.push_int(si);
+                    stack.pushInt(si);
                     NEXT();
                 }
                 OPCODE(LDC) {

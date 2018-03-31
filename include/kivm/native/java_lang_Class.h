@@ -18,16 +18,16 @@ namespace kivm {
                     FIXED, NOT_FIXED
                 };
 
-                static std::unordered_map<String, mirrorOop>& primitive_type_mirrors();
+                static std::unordered_map<String, mirrorOop>& getPrimitiveTypeMirrors();
 
-                static std::queue<String> &delayed_mirrors();
+                static std::queue<String> &getDelayedMirrors();
 
-                static ClassMirrorState &mirror_state();
+                static ClassMirrorState &getMirrorState();
 
             public:
                 static void initialize();
 
-                static void mirror_core_classes();
+                static void mirrorCoreClasses();
             };
         }
     }

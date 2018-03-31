@@ -546,13 +546,13 @@ namespace kivm {
 
     class AttributeParser {
     public:
-        static void read_attributes(attribute_info ***p, u2 count,
-                                    ClassFileStream &stream, cp_info **constant_pool);
+        static void readAttributes(attribute_info ***p, u2 count,
+                                   ClassFileStream &stream, cp_info **constant_pool);
 
-        static void dealloc_attributes(attribute_info ***p, u2 count);
+        static void deallocAttributes(attribute_info ***p, u2 count);
 
-        static u2 to_attribute_tag(u2 attribute_name_index, cp_info **constant_pool);
+        static u2 toAttributeTag(u2 attribute_name_index, cp_info **constant_pool);
 
-        static attribute_info *parse_attribute(ClassFileStream &stream, cp_info **constant_pool);
+        static attribute_info *parseAttribute(ClassFileStream &stream, cp_info **constant_pool);
     };
 }

@@ -16,27 +16,27 @@ namespace kivm {
 
     void FieldPool::add(Field *method) {
         LockGuard guard(get_method_pool_lock());
-        entries_internal().push_back(method);
+        getEntriesInternal().push_back(method);
     }
 
-    std::list<Field *> &FieldPool::entries_internal() {
+    std::list<Field *> &FieldPool::getEntriesInternal() {
         static std::list<Field *> _entries;
         return _entries;
     }
 
-    const std::list<Field *> &FieldPool::entries() {
-        return entries_internal();
+    const std::list<Field *> &FieldPool::getEntries() {
+        return getEntriesInternal();
     }
 
-    bool Field::is_same(const Field *lhs, const Field *rhs) {
+    bool Field::isSame(const Field *lhs, const Field *rhs) {
         return lhs != nullptr && rhs != nullptr
-               && lhs->get_name() == rhs->get_name()
-               && lhs->get_descriptor() == rhs->get_descriptor();
+               && lhs->getName() == rhs->getName()
+               && lhs->getDescriptor() == rhs->getDescriptor();
     }
 
-    String Field::make_identity(InstanceKlass *belongTo, const Field *f) {
+    String Field::makeIdentity(InstanceKlass *belongTo, const Field *f) {
         std::wstringstream ss;
-        ss << belongTo->get_name() << L" " << f->get_name() << L" " << f->get_descriptor();
+        ss << belongTo->getName() << L" " << f->getName() << L" " << f->getDescriptor();
         return ss.str();
     }
 
@@ -48,32 +48,32 @@ namespace kivm {
         this->_value_class_type = nullptr;
     }
 
-    void Field::link_field(cp_info **pool) {
+    void Field::linkField(cp_info **pool) {
         if (_linked) {
             return;
         }
         this->_access_flag = _field_info->access_flags;
-        auto *name_info = require_constant<CONSTANT_Utf8_info>(pool, _field_info->name_index);
-        auto *desc_info = require_constant<CONSTANT_Utf8_info>(pool, _field_info->descriptor_index);
+        auto *name_info = requireConstant<CONSTANT_Utf8_info>(pool, _field_info->name_index);
+        auto *desc_info = requireConstant<CONSTANT_Utf8_info>(pool, _field_info->descriptor_index);
         this->_name = name_info->get_constant();
         this->_descriptor = desc_info->get_constant();
-        link_attributes(pool);
-        link_value_type();
+        linkAttributes(pool);
+        linkValueType();
         this->_linked = true;
     }
 
-    void Field::link_attributes(cp_info **pool) {
+    void Field::linkAttributes(cp_info **pool) {
         for (int i = 0; i < _field_info->attributes_count; ++i) {
             attribute_info *attr = _field_info->attributes[i];
 
-            switch (AttributeParser::to_attribute_tag(attr->attribute_name_index, pool)) {
+            switch (AttributeParser::toAttributeTag(attr->attribute_name_index, pool)) {
                 case ATTRIBUTE_ConstantValue: {
                     _constant_attribute = (ConstantValue_attribute *) (attr);
                     break;
                 }
                 case ATTRIBUTE_Signature: {
                     auto *sig_attr = (Signature_attribute *) attr;
-                    auto *utf8 = require_constant<CONSTANT_Utf8_info>(pool, sig_attr->signature_index);
+                    auto *utf8 = requireConstant<CONSTANT_Utf8_info>(pool, sig_attr->signature_index);
                     _signature = utf8->get_constant();
                     break;
                 }
@@ -87,7 +87,7 @@ namespace kivm {
         }
     }
 
-    void Field::link_value_type() {
+    void Field::linkValueType() {
         switch (_descriptor[0]) {
             case L'Z':
                 _value_type = ValueType::BOOLEAN;
@@ -116,14 +116,14 @@ namespace kivm {
             case L'L': {
                 _value_type = ValueType::OBJECT;
                 const String &class_name = _descriptor.substr(1, _descriptor.size() - 2);
-                _value_class_type = ClassLoader::require_class(get_class()->get_class_loader(),
-                                                               class_name);
+                _value_class_type = ClassLoader::requireClass(getClass()->getClassLoader(),
+                                                              class_name);
                 break;
             }
             case L'[': {
                 _value_type = ValueType::ARRAY;
-                _value_class_type = ClassLoader::require_class(get_class()->get_class_loader(),
-                                                               _descriptor);
+                _value_class_type = ClassLoader::requireClass(getClass()->getClassLoader(),
+                                                              _descriptor);
                 break;
             }
             default:

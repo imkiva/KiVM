@@ -23,21 +23,21 @@ namespace kivm {
 
         ClassFile *parse();
 
-        void parse_constant_pool(ClassFile *classFile);
+        void parseConstantPool(ClassFile *classFile);
 
-        void parse_interfaces(ClassFile *classFile);
+        void parseInterfaces(ClassFile *classFile);
 
-        void parse_fields(ClassFile *classFile);
+        void parseFields(ClassFile *classFile);
 
-        void parse_methods(ClassFile *classFile);
+        void parseMethods(ClassFile *classFile);
 
-        void parse_attributes(ClassFile *classFile);
+        void parseAttributes(ClassFile *classFile);
 
     public:
         explicit ClassFileParser(const char *filePath);
 
         ~ClassFileParser();
 
-        ClassFile *classFile();
+        ClassFile *getParsedClassFile();
     };
 }

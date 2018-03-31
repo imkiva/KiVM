@@ -9,46 +9,72 @@
 namespace kivm {
     class Method;
 
-    struct Frame {
+    class Frame {
+        friend class FrameList;
+
+    private:
         Frame *_previous;
         Method *_method;
 
-        bool _is_native_frame;
+        bool _native_frame;
         bool _exception_occurred;
         u4 _return_pc;
 
         Locals _locals;
         Stack _stack;
 
-        Frame(int max_locals, int max_stacks);
+    public:
+        Frame(int maxLocals, int maxStacks);
 
-        Method *get_method() {
+        Method *getMethod() {
             return _method;
         }
 
-        bool is_is_native_frame() const {
-            return _is_native_frame;
+        bool isNativeFrame() const {
+            return _native_frame;
         }
 
-        bool is_exception_occurred() const {
+        bool isExceptionOccurred() const {
             return _exception_occurred;
         }
 
-        Locals &get_locals() {
+        Locals &getLocals() {
             return _locals;
         }
 
-        Stack &get_stack() {
+        Stack &getStack() {
             return _stack;
+        }
+
+        u4 getReturnPc() const {
+            return this->_return_pc;
+        }
+
+        void setMethod(Method *_method) {
+            this->_method = _method;
+        }
+
+        void setNativeFrame(bool _native_frame) {
+            this->_native_frame = _native_frame;
+        }
+
+        void setExceptionOccurred(bool _exception_occurred) {
+            this->_exception_occurred = _exception_occurred;
+        }
+
+        void setReturnPc(u4 _return_pc) {
+            this->_return_pc = _return_pc;
         }
     };
 
     struct FrameList {
+    private:
         int _max_frames;
         int _size;
         Frame *_current;
 
-        explicit FrameList(int max_frames);
+    public:
+        explicit FrameList(int maxFrames);
 
         inline void push(Frame *frame) {
             if (_size >= _max_frames) {
@@ -76,12 +102,16 @@ namespace kivm {
             return current;
         }
 
-        inline Frame *current() const {
+        inline Frame *getCurrentFrame() const {
             if (_size == 0 || _current == nullptr) {
                 PANIC("FrameList is empty");
             }
 
             return _current;
+        }
+
+        inline int getSize() const {
+            return this->_size;
         }
     };
 }

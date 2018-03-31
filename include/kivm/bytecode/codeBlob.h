@@ -23,7 +23,7 @@ namespace kivm {
             return _base != nullptr && _size > 0;
         }
 
-        inline bool validate_offset(int offset) const {
+        inline bool validateOffset(int offset) const {
             return offset >= 0 && offset < _size;
         }
 

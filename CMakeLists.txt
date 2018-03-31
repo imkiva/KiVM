@@ -36,10 +36,10 @@ set(SOURCE_FILES
         include/kivm/runtime/slot.h
         include/kivm/runtime/stack.h
         include/kivm/runtime/frame.h
-        include/kivm/oop/reflection_support.h
+        include/kivm/oop/reflectionSupport.h
         include/kivm/runtime/thread.h
         include/kivm/oop/helper.h
-        include/kivm/runtime_config.h
+        include/kivm/runtime/runtimeConfig.h
         include/kivm/bytecode/bytecodes.h
         include/kivm/bytecode/execution.h
         include/kivm/native/java_lang_Class.h
@@ -47,7 +47,7 @@ set(SOURCE_FILES
         include/kivm/native/java_lang_Thread.h
         include/kivm/native/java_lang_String.h
         include/kivm/system.h
-        include/kivm/bytecode/codeblob.h
+        include/kivm/bytecode/codeBlob.h
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp
@@ -72,13 +72,13 @@ set(SOURCE_FILES
         src/kivm/runtime/stack.cpp
         src/kivm/runtime/frame.cpp
         src/kivm/runtime/thread.cpp
-        src/kivm/runtime_config.cpp
+        src/kivm/runtimeConfig.cpp
         src/kivm/bytecode/execution.cpp
         src/kivm/native/java_lang_Class.cpp
         src/kivm/runtime/init.cpp
         src/kivm/system.cpp
         src/kivm/native/java_lang_String.cpp
-        )
+        include/kivm/runtime/constantPool.h)
 
 add_library(kivm STATIC ${SOURCE_FILES})
 IF (UNIX)

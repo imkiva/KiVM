@@ -13,11 +13,11 @@ namespace kivm {
      */
     class Execution {
     public:
-        static void initialize_class(JavaThread *javaThread, InstanceKlass *klass);
+        static void initializeClass(JavaThread *javaThread, InstanceKlass *klass);
 
-        static void call_default_constructor(JavaThread *javaThread, instanceOop oop);
+        static void callDefaultConstructor(JavaThread *javaThread, instanceOop oop);
 
-        static void call_void_method(JavaThread *javaThread, Method *method, const std::list<oop> &args);
+        static void callVoidMethod(JavaThread *javaThread, Method *method, const std::list<oop> &args);
 
         static bool instanceOf(Klass *ref, Klass *klass);
     };

@@ -2,6 +2,7 @@
 // Created by kiva on 2018/2/28.
 //
 #pragma once
+
 #include <kivm/oop/oop.h>
 #include <kivm/oop/instanceKlass.h>
 #include <vector>
@@ -17,8 +18,8 @@ namespace kivm {
 
         ~instanceOopDesc() override = default;
 
-        inline InstanceKlass *get_instance_class() const {
-            return (InstanceKlass *) get_klass();
+        inline InstanceKlass *getInstanceClass() const {
+            return (InstanceKlass *) getClass();
         }
 
         /**
@@ -29,11 +30,11 @@ namespace kivm {
          * @param descriptor Field descriptor
          * @param value field value
          */
-        inline void set_field_value(const String &className,
-                                             const String &name,
-                                             const String &descriptor,
-                                             oop value) {
-            get_instance_class()->set_instance_field_value(this, className, name, descriptor, value);
+        inline void setFieldValue(const String &className,
+                                  const String &name,
+                                  const String &descriptor,
+                                  oop value) {
+            getInstanceClass()->setInstanceFieldValue(this, className, name, descriptor, value);
         }
 
         /**
@@ -42,8 +43,8 @@ namespace kivm {
          * @param fieldID field descriptor
          * @param value field value
          */
-        void set_field_value(const FieldID &fieldID, oop value) {
-            get_instance_class()->set_instance_field_value(this, fieldID, value);
+        void setFieldValue(const FieldID &fieldID, oop value) {
+            getInstanceClass()->setInstanceFieldValue(this, fieldID, value);
         }
 
         /**
@@ -55,12 +56,12 @@ namespace kivm {
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        bool get_field_value(const String &className,
-                                      const String &name,
-                                      const String &descriptor,
-                                      oop *result) {
-            return get_instance_class()
-                    ->get_instance_field_value(this, className, name, descriptor, result);
+        bool getFieldValue(const String &className,
+                           const String &name,
+                           const String &descriptor,
+                           oop *result) {
+            return getInstanceClass()
+                ->getInstanceFieldValue(this, className, name, descriptor, result);
         }
 
         /**
@@ -70,8 +71,8 @@ namespace kivm {
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        bool get_field_value(const FieldID &fieldID, oop *result) {
-            return get_instance_class()->get_instance_field_value(this, fieldID, result);
+        bool getFieldValue(const FieldID &fieldID, oop *result) {
+            return getInstanceClass()->getInstanceFieldValue(this, fieldID, result);
         }
     };
 }

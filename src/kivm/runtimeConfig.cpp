@@ -1,7 +1,7 @@
 //
 // Created by kiva on 2018/3/25.
 //
-#include <kivm/runtime_config.h>
+#include <kivm/runtime/runtimeConfig.h>
 
 namespace kivm {
     RuntimeConfig &RuntimeConfig::get() {

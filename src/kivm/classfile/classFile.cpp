@@ -13,16 +13,16 @@ namespace kivm {
     }
 
     field_info::~field_info() {
-        AttributeParser::dealloc_attributes(&attributes, attributes_count);
+        AttributeParser::deallocAttributes(&attributes, attributes_count);
     }
 
     void field_info::init(ClassFileStream &stream, cp_info **constant_pool) {
-        access_flags = stream.get_u2();
-        name_index = stream.get_u2();
-        descriptor_index = stream.get_u2();
-        attributes_count = stream.get_u2();
-        AttributeParser::read_attributes(&attributes, attributes_count,
-                                         stream, constant_pool);
+        access_flags = stream.get2();
+        name_index = stream.get2();
+        descriptor_index = stream.get2();
+        attributes_count = stream.get2();
+        AttributeParser::readAttributes(&attributes, attributes_count,
+                                        stream, constant_pool);
     }
 
     method_info::method_info() {
@@ -31,15 +31,15 @@ namespace kivm {
     }
 
     method_info::~method_info() {
-        AttributeParser::dealloc_attributes(&attributes, attributes_count);
+        AttributeParser::deallocAttributes(&attributes, attributes_count);
     }
 
     void method_info::init(ClassFileStream &stream, cp_info **constant_pool) {
-        access_flags = stream.get_u2();
-        name_index = stream.get_u2();
-        descriptor_index = stream.get_u2();
-        attributes_count = stream.get_u2();
-        AttributeParser::read_attributes(&attributes, attributes_count,
-                                         stream, constant_pool);
+        access_flags = stream.get2();
+        name_index = stream.get2();
+        descriptor_index = stream.get2();
+        attributes_count = stream.get2();
+        AttributeParser::readAttributes(&attributes, attributes_count,
+                                        stream, constant_pool);
     }
 }

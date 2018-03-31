@@ -30,14 +30,14 @@ namespace kivm {
 
         virtual void start() = 0;
 
-        virtual bool should_record_in_thread_table();
+        virtual bool shouldRecordInThreadTable();
 
     protected:
-        Frame * get_current_frame() {
-            return _frames.current();
+        Frame * getCurrentFrame() {
+            return _frames.getCurrentFrame();
         }
 
-        void set_java_thread_object(instanceOop java_thread) {
+        void setJavaThreadObject(instanceOop java_thread) {
             this->_java_thread_object = java_thread;
         }
 
@@ -48,19 +48,19 @@ namespace kivm {
 
         void create(instanceOop java_thread);
 
-        long get_eetop() const;
+        long getEetop() const;
 
-        virtual void thread_lunched();
+        virtual void onThreadLaunched();
 
-        inline instanceOop get_java_thread_object() const {
+        inline instanceOop getJavaThreadObject() const {
             return _java_thread_object;
         }
 
-        ThreadState get_state() const {
+        ThreadState getThreadState() const {
             return _state;
         }
 
-        void set_state(ThreadState _state) {
+        void setThreadState(ThreadState _state) {
             Thread::_state = _state;
         }
     };
@@ -75,7 +75,7 @@ namespace kivm {
     protected:
         void start() override;
 
-        oop run_method(Method *method, const std::list<oop> &args);
+        oop runMethod(Method *method, const std::list<oop> &args);
     };
 
     // The Java main thread
@@ -87,19 +87,19 @@ namespace kivm {
     protected:
         void start() override;
 
-        void thread_lunched() override;
+        void onThreadLaunched() override;
 
-        bool should_record_in_thread_table() override;
+        bool shouldRecordInThreadTable() override;
     };
 
     class Threads {
     private:
-        static int &app_thread_count() {
+        static int &getAppThreadCount() {
             static int app_thread_count;
             return app_thread_count;
         }
 
-        static std::list<Thread *> app_threads() {
+        static std::list<Thread *> getAppThreadList() {
             static std::list<Thread *> app_threads;
             return app_threads;
         }
@@ -107,40 +107,40 @@ namespace kivm {
     public:
         static void initializeJVM(JavaMainThread *thread);
 
-        static Lock &app_thread_lock() {
+        static Lock &appThreadLock() {
             static Lock lock;
             return lock;
         }
 
-        static Lock &thread_state_change_lock() {
+        static Lock &threadStateChangeLock() {
             static Lock lock;
             return lock;
         }
 
         static void add(Thread *java_thread) {
-            app_thread_lock().lock();
-            app_threads().push_back(java_thread);
-            ++app_thread_count();
-            app_thread_lock().unlock();
+            appThreadLock().lock();
+            getAppThreadList().push_back(java_thread);
+            ++getAppThreadCount();
+            appThreadLock().unlock();
         }
 
-        static inline int get_app_thread_count_locked() {
-            Threads::app_thread_lock().lock();
-            int threads = Threads::app_thread_count();
-            Threads::app_thread_lock().unlock();
+        static inline int getAppThreadCountLocked() {
+            Threads::appThreadLock().lock();
+            int threads = Threads::getAppThreadCount();
+            Threads::appThreadLock().unlock();
             return threads;
         }
 
-        static inline void inc_app_thread_count_locked() {
-            Threads::app_thread_lock().lock();
-            ++Threads::app_thread_count();
-            Threads::app_thread_lock().unlock();
+        static inline void incAppThreadCountLocked() {
+            Threads::appThreadLock().lock();
+            ++Threads::getAppThreadCount();
+            Threads::appThreadLock().unlock();
         }
 
-        static inline void dec_app_thread_count_locked() {
-            Threads::app_thread_lock().lock();
-            ++Threads::app_thread_count();
-            Threads::app_thread_lock().unlock();
+        static inline void decAppThreadCountLocked() {
+            Threads::appThreadLock().lock();
+            ++Threads::getAppThreadCount();
+            Threads::appThreadLock().unlock();
         }
     };
 }

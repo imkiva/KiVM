@@ -24,7 +24,7 @@ namespace kivm {
 
     class oopBase {
     private:
-        static Lock &mem_lock() {
+        static Lock &getOopMemoryLock() {
             static Lock mem_lock;
             return mem_lock;
         }
@@ -59,11 +59,11 @@ namespace kivm {
     public:
         markOopDesc(oopType type);
 
-        oopType type() const { return _type; }
+        oopType getOopType() const { return _type; }
 
-        void enter_monitor() { _monitor.enter(); }
+        void enterMonitor() { _monitor.enter(); }
 
-        void leave_monitor() { _monitor.leave(); }
+        void leaveMonitor() { _monitor.leave(); }
 
         void wait() { _monitor.wait(); }
 
@@ -71,9 +71,9 @@ namespace kivm {
 
         void notify() { _monitor.notify(); }
 
-        void notify_all() { _monitor.notify_all(); }
+        void notifyAll() { _monitor.notify_all(); }
 
-        void force_unlock_when_athrow() { _monitor.force_unlock_when_athrow(); }
+        void forceUnlockWhenExceptionOccurred() { _monitor.force_unlock_when_athrow(); }
     };
 
     typedef markOopDesc *markOop;
@@ -88,8 +88,8 @@ namespace kivm {
 
         ~oopDesc() override;
 
-        markOop get_mark() const { return _mark; }
+        markOop getMarkOop() const { return _mark; }
 
-        Klass *get_klass() const { return _klass; }
+        Klass *getClass() const { return _klass; }
     };
 }

@@ -11,7 +11,7 @@ namespace kivm {
         namespace lang {
             class StringTable {
             public:
-                static instanceOop find_or_new(const kivm::String &string);
+                static instanceOop findOrNew(const kivm::String &string);
             };
 
             class String {
@@ -28,7 +28,7 @@ namespace kivm {
 
             public:
                 static inline instanceOop intern(const kivm::String &string) {
-                    return StringTable::find_or_new(string);
+                    return StringTable::findOrNew(string);
                 }
             };
         }

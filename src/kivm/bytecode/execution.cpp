@@ -6,39 +6,39 @@
 #include <kivm/method.h>
 
 namespace kivm {
-    void Execution::initialize_class(JavaThread *javaThread, InstanceKlass *klass) {
-        if (klass->get_state() == ClassState::LINKED) {
-            klass->set_state(ClassState::BEING_INITIALIZED);
+    void Execution::initializeClass(JavaThread *javaThread, InstanceKlass *klass) {
+        if (klass->getClassState() == ClassState::LINKED) {
+            klass->setClassState(ClassState::BEING_INITIALIZED);
             D("Initializing class %s",
-              strings::to_std_string(klass->get_name()).c_str());
+              strings::to_std_string(klass->getName()).c_str());
 
             // Initialize super classes first.
-            Klass *super_klass = klass->get_super_class();
+            Klass *super_klass = klass->getSuperClass();
             if (super_klass != nullptr) {
-                Execution::initialize_class(javaThread, (InstanceKlass *) super_klass);
+                Execution::initializeClass(javaThread, (InstanceKlass *) super_klass);
             }
 
-            auto *clinit = klass->find_virtual_method(L"<clinit>", L"()V");
-            if (clinit != nullptr && clinit->get_class() == klass) {
+            auto *clinit = klass->findVirtualMethod(L"<clinit>", L"()V");
+            if (clinit != nullptr && clinit->getClass() == klass) {
                 D("<clinit> found in %s, invoking.",
-                  strings::to_std_string(klass->get_name()).c_str());
-                javaThread->run_method(clinit, {});
+                  strings::to_std_string(klass->getName()).c_str());
+                javaThread->runMethod(clinit, {});
             } else {
                 D("<clinit> not found in %s, skipping.",
-                  strings::to_std_string(klass->get_name()).c_str());
+                  strings::to_std_string(klass->getName()).c_str());
             }
-            klass->set_state(ClassState::FULLY_INITIALIZED);
+            klass->setClassState(ClassState::FULLY_INITIALIZED);
         }
     }
 
-    void Execution::call_default_constructor(JavaThread *javaThread, instanceOop oop) {
-        auto klass = (InstanceKlass *) oop->get_klass();
-        auto default_init = klass->find_virtual_method(L"<init>", L"()V");
+    void Execution::callDefaultConstructor(JavaThread *javaThread, instanceOop oop) {
+        auto klass = (InstanceKlass *) oop->getClass();
+        auto default_init = klass->findVirtualMethod(L"<init>", L"()V");
         assert(default_init != nullptr);
-        javaThread->run_method(default_init, {oop});
+        javaThread->runMethod(default_init, {oop});
     }
 
-    void Execution::call_void_method(JavaThread *javaThread, Method *method, const std::list<oop> &args) {
-        javaThread->run_method(method, args);
+    void Execution::callVoidMethod(JavaThread *javaThread, Method *method, const std::list<oop> &args) {
+        javaThread->runMethod(method, args);
     }
 }

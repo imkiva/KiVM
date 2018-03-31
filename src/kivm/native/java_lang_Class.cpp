@@ -10,24 +10,24 @@
 namespace kivm {
     namespace java {
         namespace lang {
-            std::queue<String> &Class::delayed_mirrors() {
+            std::queue<String> &Class::getDelayedMirrors() {
                 static std::queue<String> mirrors;
                 return mirrors;
             }
 
-            Class::ClassMirrorState &Class::mirror_state() {
+            Class::ClassMirrorState &Class::getMirrorState() {
                 static ClassMirrorState state = NOT_FIXED;
                 return state;
             }
 
-            std::unordered_map<String, mirrorOop> &Class::primitive_type_mirrors() {
+            std::unordered_map<String, mirrorOop> &Class::getPrimitiveTypeMirrors() {
                 static std::unordered_map<String, mirrorOop> mirrors;
                 return mirrors;
             }
 
             void Class::initialize() {
                 BootstrapClassLoader::get()->loadClass(L"java/lang/Class");
-                auto &m = delayed_mirrors();
+                auto &m = getDelayedMirrors();
                 m.push(L"I");
                 m.push(L"Z");
                 m.push(L"B");
@@ -45,14 +45,14 @@ namespace kivm {
                 m.push(L"[F");
                 m.push(L"[J");
                 m.push(L"[D");
-                mirror_state() = ClassMirrorState::NOT_FIXED;
+                getMirrorState() = ClassMirrorState::NOT_FIXED;
             }
 
-            void Class::mirror_core_classes() {
-                assert(mirror_state() != ClassMirrorState::FIXED);
+            void Class::mirrorCoreClasses() {
+                assert(getMirrorState() != ClassMirrorState::FIXED);
                 assert(SystemDictionary::get()->find(L"java/lang/Class") != nullptr);
 
-                auto &M = delayed_mirrors();
+                auto &M = getDelayedMirrors();
                 for (int i = 0; i < M.size(); ++i) {
                     const auto &name = M.front();
                     M.pop();
@@ -67,10 +67,10 @@ namespace kivm {
                     if (name.size() > 2) {
                         Klass *klass = SystemDictionary::get()->find(name);
                         assert(klass != nullptr);
-                        assert(klass->get_java_mirror() == nullptr);
+                        assert(klass->getJavaMirror() == nullptr);
 
-                        mirrorOop mirror = mirrorKlass::new_mirror(klass, nullptr);
-                        klass->set_java_mirror(mirror);
+                        mirrorOop mirror = mirrorKlass::newMirror(klass, nullptr);
+                        klass->setJavaMirror(mirror);
 
                     } else {
                         if (primitive_type == L'V' && is_primitive_array) {
@@ -87,16 +87,16 @@ namespace kivm {
                             case L'J':
                             case L'D':
                             case L'V': {
-                                mirrorOop mirror = mirrorKlass::new_mirror(nullptr, nullptr);
-                                primitive_type_mirrors().insert(std::make_pair(name, mirror));
+                                mirrorOop mirror = mirrorKlass::newMirror(nullptr, nullptr);
+                                getPrimitiveTypeMirrors().insert(std::make_pair(name, mirror));
 
                                 if (is_primitive_array) {
                                     // Only arrays need them.
                                     auto *array_klass = BootstrapClassLoader::get()->loadClass(name);
-                                    mirror->set_mirror_target(array_klass);
-                                    array_klass->set_java_mirror(mirror);
+                                    mirror->setMirrorTarget(array_klass);
+                                    array_klass->setJavaMirror(mirror);
                                 } else {
-                                    mirror->set_mirroring_primitive_type(primitive_type_to_value_type(primitive_type));
+                                    mirror->setMirroringPrimitiveType(primitiveTypeToValueType(primitive_type));
                                 }
 
                                 break;
@@ -106,7 +106,7 @@ namespace kivm {
                         }
                     }
                 }
-                mirror_state() = ClassMirrorState::FIXED;
+                getMirrorState() = ClassMirrorState::FIXED;
             }
         }
     }

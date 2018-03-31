@@ -14,7 +14,7 @@ namespace kivm {
         FieldID(int _offset, Field *_field) : _offset(_offset), _field(_field) {}
     };
 
-    inline ValueType primitive_type_to_value_type(wchar_t c) {
+    inline ValueType primitiveTypeToValueType(wchar_t c) {
         switch (c) {
             case L'B':    // byte
             case L'Z':    // boolean
@@ -36,7 +36,7 @@ namespace kivm {
         }
     }
 
-    inline wchar_t value_type_to_primitive_type(ValueType v) {
+    inline wchar_t valueTypeToPrimitiveType(ValueType v) {
         switch (v) {
             case ValueType::BOOLEAN:
                 return L'Z';

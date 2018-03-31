@@ -6,6 +6,6 @@
 
 namespace kivm {
     Klass::Klass() {
-        this->_state = ClassState::ALLOCATED;
+        setClassState(ClassState::ALLOCATED);
     }
 }

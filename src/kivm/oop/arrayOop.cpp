@@ -11,24 +11,24 @@ namespace kivm {
         _elements.shrink_to_fit();
     }
 
-    int arrayOopDesc::get_dimension() const {
-        return ((ArrayKlass *) get_klass())->get_dimension();
+    int arrayOopDesc::getDimension() const {
+        return ((ArrayKlass *) getClass())->getDimension();
     }
 
-    int arrayOopDesc::get_length() const {
+    int arrayOopDesc::getLength() const {
         return static_cast<int>(_elements.size());
     }
 
-    oop arrayOopDesc::get_element_at(int position) const {
-        if (position < 0 || position >= get_length()) {
+    oop arrayOopDesc::getElementAt(int position) const {
+        if (position < 0 || position >= getLength()) {
             // TODO: throw ArrayIndexOutOfBoundsException
             return nullptr;
         }
         return _elements[position];
     }
 
-    void arrayOopDesc::set_element_at(int position, oop element) {
-        if (position < 0 || position >= get_length()) {
+    void arrayOopDesc::setElementAt(int position, oop element) {
+        if (position < 0 || position >= getLength()) {
             // TODO: throw ArrayIndexOutOfBoundsException
             return;
         }

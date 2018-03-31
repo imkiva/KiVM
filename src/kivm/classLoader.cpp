@@ -14,7 +14,7 @@ namespace kivm {
         return lock;
     }
 
-    Klass *ClassLoader::require_class(ClassLoader *classLoader, const String &className) {
+    Klass *ClassLoader::requireClass(ClassLoader *classLoader, const String &className) {
         if (classLoader == nullptr) {
             // This is a bootstrap class
             classLoader = BootstrapClassLoader::get();
@@ -49,8 +49,8 @@ namespace kivm {
         auto *klass = BaseClassLoader::loadClass(class_name);
         if (klass != nullptr) {
             SystemDictionary::get()->put(class_name, klass);
-            klass->set_state(ClassState::LOADED);
-            klass->link_and_init();
+            klass->setClassState(ClassState::LOADED);
+            klass->linkAndInit();
         }
         return klass;
     }

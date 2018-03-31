@@ -9,8 +9,8 @@
 #include <kivm/native/java_lang_String.h>
 
 namespace kivm {
-    inline void helper_init_field(std::vector<oop> &values, Field *field) {
-        switch (field->get_value_type()) {
+    inline void helperInitField(std::vector<oop> &values, Field *field) {
+        switch (field->getValueType()) {
             case ValueType::INT:
                 values.push_back(new intOopDesc(0));
                 break;
@@ -29,10 +29,10 @@ namespace kivm {
         }
     }
 
-    inline bool helper_init_static_final_field(std::vector<oop> &values,
-                                               cp_info **pool,
-                                               Field *field) {
-        ConstantValue_attribute *attr = field->get_constant_attribute();
+    inline bool helperInitConstantField(std::vector<oop> &values,
+                                        cp_info **pool,
+                                        Field *field) {
+        ConstantValue_attribute *attr = field->getConstantAttribute();
         if (attr != nullptr) {
             cp_info *constant_info = pool[attr->constant_index];
             switch (constant_info->tag) {

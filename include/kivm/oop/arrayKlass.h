@@ -18,21 +18,21 @@ namespace kivm {
         ArrayKlass(ClassLoader *class_loader, mirrorOop java_loader,
                    int dimension, ClassType class_type);
 
-        ClassLoader *get_class_loader() const {
+        ClassLoader *getClassLoader() const {
             return _class_loader;
         }
 
-        int get_dimension() const {
+        int getDimension() const {
             return _dimension;
         }
 
-        mirrorOop get_java_loader() {
+        mirrorOop getJavaMirror() {
             return _java_loader;
         }
 
-        void link_and_init() override;
+        void linkAndInit() override;
 
-        virtual bool is_object_array() = 0;
+        virtual bool isObjectArray() = 0;
     };
 
     class TypeArrayKlass : public ArrayKlass {
@@ -48,15 +48,15 @@ namespace kivm {
 
         TypeArrayKlass(ClassLoader *class_loader, TypeArrayKlass *down_type);
 
-        ValueType get_component_type() const {
+        ValueType getComponentType() const {
             return _component_type;
         }
 
-        bool is_object_array() override {
+        bool isObjectArray() override {
             return false;
         }
 
-        typeArrayOop new_instance(int length);
+        typeArrayOop newInstance(int length);
     };
 
     class ObjectArrayKlass : public ArrayKlass {
@@ -72,11 +72,11 @@ namespace kivm {
 
         ObjectArrayKlass(ClassLoader *class_loader, ObjectArrayKlass *down_type);
 
-        InstanceKlass *get_component_type() const {
+        InstanceKlass *getComponentType() const {
             return _component_type;
         }
 
-        bool is_object_array() override {
+        bool isObjectArray() override {
             return true;
         }
     };

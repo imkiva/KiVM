@@ -16,13 +16,13 @@ namespace kivm {
     public:
         explicit arrayOopDesc(ArrayKlass *array_klass, oopType type, int length);
 
-        int get_dimension() const;
+        int getDimension() const;
 
-        int get_length() const;
+        int getLength() const;
 
-        oop get_element_at(int position) const;
+        oop getElementAt(int position) const;
 
-        void set_element_at(int position, oop element);
+        void setElementAt(int position, oop element);
     };
 
     class typeArrayOopDesc : public arrayOopDesc {

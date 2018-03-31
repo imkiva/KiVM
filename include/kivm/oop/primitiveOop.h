@@ -7,34 +7,34 @@
 
 namespace kivm {
     template<typename T>
-    struct primitive_helper {
-        constexpr static ValueType get_value_type() = delete;
+    struct PrimitiveHelper {
+        constexpr static ValueType getValueType() = delete;
     };
 
     template<>
-    struct primitive_helper<int> {
-        constexpr static ValueType get_value_type() {
+    struct PrimitiveHelper<int> {
+        constexpr static ValueType getValueType() {
             return ValueType::INT;
         }
     };
 
     template<>
-    struct primitive_helper<long> {
-        constexpr static ValueType get_value_type() {
+    struct PrimitiveHelper<long> {
+        constexpr static ValueType getValueType() {
             return ValueType::LONG;
         };
     };
 
     template<>
-    struct primitive_helper<float> {
-        constexpr static ValueType get_value_type() {
+    struct PrimitiveHelper<float> {
+        constexpr static ValueType getValueType() {
             return ValueType::FLOAT;
         };
     };
 
     template<>
-    struct primitive_helper<double> {
-        constexpr static ValueType get_value_type() {
+    struct PrimitiveHelper<double> {
+        constexpr static ValueType getValueType() {
             return ValueType::DOUBLE;
         }
     };
@@ -49,11 +49,11 @@ namespace kivm {
                 : oopDesc(nullptr, oopType::PRIMITIVE_OOP), _value(value) {
         }
 
-        ValueType get_primitive_type() const {
-            return primitive_helper<T>::get_value_type();
+        ValueType getPrimitiveType() const {
+            return PrimitiveHelper<T>::getValueType();
         }
 
-        T get_value() const {
+        T getValue() const {
             return _value;
         }
     };

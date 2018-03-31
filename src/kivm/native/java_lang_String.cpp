@@ -16,10 +16,10 @@ namespace kivm {
                 // if has a hash_val cache, need no calculate.
                 oop int_oop_hash = nullptr;
 
-                auto klass = (InstanceKlass *) string->get_klass();
-                FieldID hash_field = klass->get_instance_field_info(J_STRING, L"hash", L"I");
-                if (string->get_field_value(hash_field, &int_oop_hash)) {
-                    int cached_hash = ((intOop) int_oop_hash)->get_value();
+                auto klass = (InstanceKlass *) string->getClass();
+                FieldID hash_field = klass->getInstanceFieldInfo(J_STRING, L"hash", L"I");
+                if (string->getFieldValue(hash_field, &int_oop_hash)) {
+                    int cached_hash = ((intOop) int_oop_hash)->getValue();
                     if (cached_hash != 0) {
                         return cached_hash;
                     }
@@ -27,14 +27,14 @@ namespace kivm {
 
                 // get string's content which is typed `TypeArrayOop` and calculate hash value.
                 typeArrayOop value_field = nullptr;
-                if (string->get_field_value(J_STRING, L"value", L"[C", (oop *) &value_field)) {
-                    int length = value_field->get_length();
+                if (string->getFieldValue(J_STRING, L"value", L"[C", (oop *) &value_field)) {
+                    int length = value_field->getLength();
                     int hash = 0;
                     for (int i = 0; i < length; i++) {
-                        auto single_char = (intOop) value_field->get_element_at(i);
-                        hash = 31 * hash + single_char->get_value();
+                        auto single_char = (intOop) value_field->getElementAt(i);
+                        hash = 31 * hash + single_char->getValue();
                     }
-                    string->set_field_value(hash_field, new intOopDesc(hash));
+                    string->setFieldValue(hash_field, new intOopDesc(hash));
                     return hash;
                 }
 
@@ -53,36 +53,36 @@ namespace kivm {
                 if (lhs == rhs) {
                     return true;
                 }
-                if (lhs->get_klass() != rhs->get_klass()) {
+                if (lhs->getClass() != rhs->getClass()) {
                     return false;
                 }
 
-                auto klass = (InstanceKlass *) lhs->get_klass();
-                FieldID value_field = klass->get_instance_field_info(J_STRING, L"value", L"[C");
+                auto klass = (InstanceKlass *) lhs->getClass();
+                FieldID value_field = klass->getInstanceFieldInfo(J_STRING, L"value", L"[C");
                 typeArrayOop lhs_value = nullptr;
                 typeArrayOop rhs_value = nullptr;
-                if (!lhs->get_field_value(value_field, (oop *) &lhs_value)
-                    || !rhs->get_field_value(value_field, (oop *) &rhs_value)) {
+                if (!lhs->getFieldValue(value_field, (oop *) &lhs_value)
+                    || !rhs->getFieldValue(value_field, (oop *) &rhs_value)) {
                     return false;
                 }
 
-                int lhs_length = lhs_value->get_length();
-                int rhs_length = rhs_value->get_length();
+                int lhs_length = lhs_value->getLength();
+                int rhs_length = rhs_value->getLength();
                 if (lhs_length != rhs_length) {
                     return false;
                 }
 
                 for (int i = 0; i < lhs_length; ++i) {
-                    auto lhs_char = (intOop) lhs_value->get_element_at(i);
-                    auto rhs_char = (intOop) rhs_value->get_element_at(i);
-                    if (lhs_char->get_value() != rhs_char->get_value()) {
+                    auto lhs_char = (intOop) lhs_value->getElementAt(i);
+                    auto rhs_char = (intOop) rhs_value->getElementAt(i);
+                    if (lhs_char->getValue() != rhs_char->getValue()) {
                         return false;
                     }
                 }
                 return true;
             }
 
-            instanceOop StringTable::find_or_new(const kivm::String &string) {
+            instanceOop StringTable::findOrNew(const kivm::String &string) {
                 static std::unordered_map<int, instanceOop> STRING_TABLE;
 
                 // Find cached string oop
@@ -96,13 +96,13 @@ namespace kivm {
                 auto *char_array_klass = (TypeArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[C");
                 auto *string_klass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(J_STRING);
 
-                typeArrayOop chars = char_array_klass->new_instance((int) string.size());
+                typeArrayOop chars = char_array_klass->newInstance((int) string.size());
                 for (int i = 0; i < string.size(); ++i) {
-                    chars->set_element_at(i, new intOopDesc((unsigned short) string[i]));
+                    chars->setElementAt(i, new intOopDesc((unsigned short) string[i]));
                 }
 
-                instanceOop java_string = string_klass->new_instance();
-                java_string->set_field_value(J_STRING, L"value", L"[C", chars);
+                instanceOop java_string = string_klass->newInstance();
+                java_string->setFieldValue(J_STRING, L"value", L"[C", chars);
                 STRING_TABLE.insert(std::make_pair(hash, java_string));
                 return java_string;
             }

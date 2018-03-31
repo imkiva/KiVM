@@ -358,84 +358,84 @@ namespace kivm {
     };
 
     template<typename T>
-    struct constant_helper {
+    struct ConstantHelper {
         constexpr static u2 get_tag() = delete;
     };
 
     template<>
-    struct constant_helper<CONSTANT_Utf8_info> {
+    struct ConstantHelper<CONSTANT_Utf8_info> {
         constexpr static u2 get_tag() { return CONSTANT_Utf8; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_Integer_info> {
+    struct ConstantHelper<CONSTANT_Integer_info> {
         constexpr static u2 get_tag() { return CONSTANT_Integer; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_Float_info> {
+    struct ConstantHelper<CONSTANT_Float_info> {
         constexpr static u2 get_tag() { return CONSTANT_Float; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_Long_info> {
+    struct ConstantHelper<CONSTANT_Long_info> {
         constexpr static u2 get_tag() { return CONSTANT_Long; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_Double_info> {
+    struct ConstantHelper<CONSTANT_Double_info> {
         constexpr static u2 get_tag() { return CONSTANT_Double; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_Class_info> {
+    struct ConstantHelper<CONSTANT_Class_info> {
         constexpr static u2 get_tag() { return CONSTANT_Class; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_String_info> {
+    struct ConstantHelper<CONSTANT_String_info> {
         constexpr static u2 get_tag() { return CONSTANT_String; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_Fieldref_info> {
+    struct ConstantHelper<CONSTANT_Fieldref_info> {
         constexpr static u2 get_tag() { return CONSTANT_Fieldref; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_Methodref_info> {
+    struct ConstantHelper<CONSTANT_Methodref_info> {
         constexpr static u2 get_tag() { return CONSTANT_Methodref; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_InterfaceMethodref_info> {
+    struct ConstantHelper<CONSTANT_InterfaceMethodref_info> {
         constexpr static u2 get_tag() { return CONSTANT_InterfaceMethodref; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_NameAndType_info> {
+    struct ConstantHelper<CONSTANT_NameAndType_info> {
         constexpr static u2 get_tag() { return CONSTANT_NameAndType; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_MethodHandle_info> {
+    struct ConstantHelper<CONSTANT_MethodHandle_info> {
         constexpr static u2 get_tag() { return CONSTANT_MethodHandle; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_MethodType_info> {
+    struct ConstantHelper<CONSTANT_MethodType_info> {
         constexpr static u2 get_tag() { return CONSTANT_MethodType; }
     };
 
     template<>
-    struct constant_helper<CONSTANT_InvokeDynamic_info> {
+    struct ConstantHelper<CONSTANT_InvokeDynamic_info> {
         constexpr static u2 get_tag() { return CONSTANT_InvokeDynamic; }
     };
 
     template<typename T>
-    T *require_constant(cp_info **pool, u2 index) {
+    T *requireConstant(cp_info **pool, u2 index) {
         cp_info *info = pool[index];
-        if (info->tag != constant_helper<T>::get_tag()) {
+        if (info->tag != ConstantHelper<T>::get_tag()) {
             // TODO: throw VerifyError
             assert(false);
             return nullptr;

@@ -159,7 +159,7 @@ int main(int argc, const char **argv) {
     }
 
     ClassFileParser parser(argv[1]);
-    ClassFile *classFile = parser.classFile();
+    ClassFile *classFile = parser.getParsedClassFile();
     if (classFile != nullptr) {
         print_constant_pool(classFile);
         ClassFileParser::dealloc(classFile);

@@ -15,70 +15,70 @@ namespace kivm {
         explicit SlotArray(int size);
 
     public:
-        inline void set_int(int position, jint i) {
+        inline void setInt(int position, jint i) {
             _elements[position].i32 = i;
         }
 
-        inline jint get_int(int position) {
+        inline jint getInt(int position) {
             return _elements[position].i32;
         }
 
-        inline void set_long(int position, jlong j) {
-            set_int(position, static_cast<jint>(j));
-            set_int(position + 1, static_cast<jint>(j >> 32));
+        inline void setLong(int position, jlong j) {
+            setInt(position, static_cast<jint>(j));
+            setInt(position + 1, static_cast<jint>(j >> 32));
         }
 
-        inline jlong get_long(int position) {
-            jint low = get_int(position);
-            jint high = get_int(position + 1);
+        inline jlong getLong(int position) {
+            jint low = getInt(position);
+            jint high = getInt(position + 1);
             return static_cast<jlong>(high) << 32 | low;
         }
 
-        inline void set_float(int position, jfloat f) {
+        inline void setFloat(int position, jfloat f) {
             union _Cvt {
                 jfloat f;
                 jint i32;
             };
             _Cvt X{};
             X.f = f;
-            set_int(position, X.i32);
+            setInt(position, X.i32);
         }
 
-        inline jfloat get_float(int position) {
+        inline jfloat getFloat(int position) {
             union _Cvt {
                 jfloat f;
                 jint i32;
             };
             _Cvt X{};
-            X.i32 = get_int(position);
+            X.i32 = getInt(position);
             return X.f;
         }
 
-        inline void set_double(int position, jdouble d) {
+        inline void setDouble(int position, jdouble d) {
             union _Cvt {
                 jdouble d;
                 jlong j;
             };
             _Cvt X{};
             X.d = d;
-            set_long(position, X.j);
+            setLong(position, X.j);
         }
 
-        inline jdouble get_double(int position) {
+        inline jdouble getDouble(int position) {
             union _Cvt {
                 jdouble d;
                 jlong j;
             };
             _Cvt X{};
-            X.j = get_long(position);
+            X.j = getLong(position);
             return X.d;
         }
 
-        inline void set_ref(int position, jobject l) {
+        inline void setReference(int position, jobject l) {
             _elements[position].ref = l;
         }
 
-        inline jobject get_ref(int position) {
+        inline jobject getReference(int position) {
             return _elements[position].ref;
         }
 
@@ -95,36 +95,36 @@ namespace kivm {
 
         ~Stack() override = default;
 
-        inline void push_int(jint v) { SlotArray::set_int(_sp++, v); }
+        inline void pushInt(jint v) { SlotArray::setInt(_sp++, v); }
 
-        inline void push_float(jfloat v) { SlotArray::set_float(_sp++, v); }
+        inline void pushFloat(jfloat v) { SlotArray::setFloat(_sp++, v); }
 
-        inline void push_ref(jobject v) { SlotArray::set_ref(_sp++, v); }
+        inline void pushReference(jobject v) { SlotArray::setReference(_sp++, v); }
 
-        inline void push_double(jdouble v) {
-            SlotArray::set_double(_sp, v);
+        inline void pushDouble(jdouble v) {
+            SlotArray::setDouble(_sp, v);
             _sp += 2;
         }
 
-        inline void push_long(jlong v) {
-            SlotArray::set_long(_sp, v);
+        inline void pushLong(jlong v) {
+            SlotArray::setLong(_sp, v);
             _sp += 2;
         }
 
-        inline jint pop_int() { return SlotArray::get_int(--_sp); }
+        inline jint popInt() { return SlotArray::getInt(--_sp); }
 
-        inline jfloat pop_float() { return SlotArray::get_float(--_sp); }
+        inline jfloat popFloat() { return SlotArray::getFloat(--_sp); }
 
-        inline jobject pop_ref() { return SlotArray::get_ref(--_sp); }
+        inline jobject popReference() { return SlotArray::getReference(--_sp); }
 
-        inline jdouble pop_double() {
+        inline jdouble popDouble() {
             _sp -= 2;
-            return SlotArray::get_double(_sp);
+            return SlotArray::getDouble(_sp);
         }
 
-        inline jlong pop_long() {
+        inline jlong popLong() {
             _sp -= 2;
-            return SlotArray::get_long(_sp);
+            return SlotArray::getLong(_sp);
         }
     };
 

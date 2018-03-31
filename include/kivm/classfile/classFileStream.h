@@ -31,7 +31,7 @@ namespace kivm {
         const char *_source;       // Source of stream (directory name, ZIP/JAR archive name)
         bool _need_verify;  // True if verification is on for the class file
 
-        void guarantee_more(int size) {
+        void guaranteeMore(int size) {
             auto remaining = (size_t) (_buffer_end - _current);
             auto usize = (unsigned int) size;
             if (usize > remaining) {
@@ -45,42 +45,42 @@ namespace kivm {
         void init(u1 *buffer, size_t length);
 
         // Buffer access
-        u1 *buffer() const { return _buffer_start; }
+        u1 *getBufferStart() const { return _buffer_start; }
 
-        size_t length() const { return static_cast<size_t>(_buffer_end - _buffer_start); }
+        size_t getLength() const { return static_cast<size_t>(_buffer_end - _buffer_start); }
 
-        u1 *current() const { return _current; }
+        u1 *getCurrent() const { return _current; }
 
-        void set_current(u1 *pos) { _current = pos; }
+        void setCurrent(u1 *pos) { _current = pos; }
 
-        const char *source() const { return _source; }
+        const char *getSource() const { return _source; }
 
-        void set_verify(bool flag) { _need_verify = flag; }
+        void setNeedVerify(bool flag) { _need_verify = flag; }
 
-        void set_source(const char *source) { _source = source; }
+        void setSource(const char *source) { _source = source; }
 
         // Peek u1
-        u1 peek_u1() const {
+        u1 peek1() const {
             return *_current;
         }
 
-        u2 peek_u2() const {
+        u2 peek2() const {
             u2 res;
             READ_U2(res, _current);
             return res;
         }
 
         // Read u1 from stream
-        u1 get_u1();
+        u1 get1();
 
-        u1 get_u1_fast() {
+        u1 get1Fast() {
             return *_current++;
         }
 
         // Read u2 from stream
-        u2 get_u2();
+        u2 get2();
 
-        u2 get_u2_fast() {
+        u2 get2Fast() {
             u2 res;
             READ_U2(res, _current);
             _current += 2;
@@ -88,9 +88,9 @@ namespace kivm {
         }
 
         // Read u4 from stream
-        u4 get_u4();
+        u4 get4();
 
-        u4 get_u4_fast() {
+        u4 get4Fast() {
             u4 res;
             READ_U4(res, _current);
             _current += 4;
@@ -98,9 +98,9 @@ namespace kivm {
         }
 
         // Read u8 from stream
-        u8 get_u8();
+        u8 get8();
 
-        u8 get_u8_fast() {
+        u8 get8Fast() {
             u8 res;
             READ_U8(res, _current);
             _current += 8;
@@ -108,40 +108,40 @@ namespace kivm {
         }
 
         // Copy `count` u1 bytes from current position to `to`
-        void get_u1_bytes(u1 *to, int count);
+        void getBytes(u1 *to, int count);
 
         // Get direct pointer into stream at current position.
         // Returns NULL if length elements are not remaining. The caller is
         // responsible for calling skip below if buffer contents is used.
-        u1 *get_u1_buffer() {
+        u1 *asU1Buffer() {
             return _current;
         }
 
-        u2 *get_u2_buffer() {
+        u2 *asU2Buffer() {
             return (u2 *) _current;
         }
 
         // Skip length u1 or u2 elements from stream
-        void skip_u1(int length);
+        void skip1(int length);
 
-        void skip_u1_fast(int length) {
+        void skip1Fast(int length) {
             _current += length;
         }
 
-        void skip_u2(int length);
+        void skip2(int length);
 
-        void skip_u2_fast(int length) {
+        void skip2Fast(int length) {
             _current += 2 * length;
         }
 
-        void skip_u4(int length);
+        void skip4(int length);
 
-        void skip_u4_fast(int length) {
+        void skip4Fast(int length) {
             _current += 4 * length;
         }
 
         // Tells whether eos is reached
-        bool at_eos() const { return _current == _buffer_end; }
+        bool isEnded() const { return _current == _buffer_end; }
 
         // Yeah...
         ClassFileStream &operator>>(CONSTANT_Utf8_info &info);

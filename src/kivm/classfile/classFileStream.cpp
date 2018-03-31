@@ -19,70 +19,70 @@ namespace kivm {
     void ClassFileStream::init(u1 *buffer, size_t length) {
         this->_buffer_start = buffer;
         this->_buffer_end = buffer + length;
-        set_verify(false);
-        set_current(buffer);
+        setNeedVerify(false);
+        setCurrent(buffer);
     }
 
-    u1 ClassFileStream::get_u1() {
+    u1 ClassFileStream::get1() {
         if (_need_verify) {
-            guarantee_more(1);
+            guaranteeMore(1);
         } else {
             assert(1 <= _buffer_end - _current);
         }
-        return get_u1_fast();
+        return get1Fast();
     }
 
-    u2 ClassFileStream::get_u2() {
+    u2 ClassFileStream::get2() {
         if (_need_verify) {
-            guarantee_more(2);
+            guaranteeMore(2);
         } else {
             assert(2 <= _buffer_end - _current);
         }
-        return get_u2_fast();
+        return get2Fast();
     }
 
-    u4 ClassFileStream::get_u4() {
+    u4 ClassFileStream::get4() {
         if (_need_verify) {
-            guarantee_more(4);
+            guaranteeMore(4);
         } else {
             assert(4 <= _buffer_end - _current);
         }
-        return get_u4_fast();
+        return get4Fast();
     }
 
-    u8 ClassFileStream::get_u8() {
+    u8 ClassFileStream::get8() {
         if (_need_verify) {
-            guarantee_more(8);
+            guaranteeMore(8);
         } else {
             assert(8 <= _buffer_end - _current);
         }
-        return get_u8_fast();
+        return get8Fast();
     }
 
-    void ClassFileStream::skip_u1(int length) {
+    void ClassFileStream::skip1(int length) {
         if (_need_verify) {
-            guarantee_more(length);
+            guaranteeMore(length);
         }
         _current += length;
     }
 
-    void ClassFileStream::skip_u2(int length) {
+    void ClassFileStream::skip2(int length) {
         if (_need_verify) {
-            guarantee_more(length * 2);
+            guaranteeMore(length * 2);
         }
         _current += length * 2;
     }
 
-    void ClassFileStream::skip_u4(int length) {
+    void ClassFileStream::skip4(int length) {
         if (_need_verify) {
-            guarantee_more(length * 4);
+            guaranteeMore(length * 4);
         }
         _current += length * 4;
     }
 
-    void ClassFileStream::get_u1_bytes(u1 *to, int count) {
-        u1 *from = get_u1_buffer();
-        skip_u1(count);
+    void ClassFileStream::getBytes(u1 *to, int count) {
+        u1 *from = asU1Buffer();
+        skip1(count);
 
         int n = (count + 7) / 8;
         switch (count % 8) {
@@ -108,96 +108,96 @@ namespace kivm {
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_Utf8_info &info) {
-        info.tag = get_u1();
-        info.length = get_u2();
+        info.tag = get1();
+        info.length = get2();
         info.bytes = new u1[info.length];
-        get_u1_bytes(info.bytes, info.length);
+        getBytes(info.bytes, info.length);
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_Class_info &info) {
-        info.tag = get_u1();
-        info.name_index = get_u2();
+        info.tag = get1();
+        info.name_index = get2();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_Double_info &info) {
-        info.tag = get_u1();
-        info.high_bytes = get_u4();
-        info.low_bytes = get_u4();
+        info.tag = get1();
+        info.high_bytes = get4();
+        info.low_bytes = get4();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_Float_info &info) {
-        info.tag = get_u1();
-        info.bytes = get_u4();
+        info.tag = get1();
+        info.bytes = get4();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_Long_info &info) {
-        info.tag = get_u1();
-        info.high_bytes = get_u4();
-        info.low_bytes = get_u4();
+        info.tag = get1();
+        info.high_bytes = get4();
+        info.low_bytes = get4();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_Fieldref_info &info) {
-        info.tag = get_u1();
-        info.class_index = get_u2();
-        info.name_and_type_index = get_u2();
+        info.tag = get1();
+        info.class_index = get2();
+        info.name_and_type_index = get2();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_Integer_info &info) {
-        info.tag = get_u1();
-        info.bytes = get_u4();
+        info.tag = get1();
+        info.bytes = get4();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_String_info &info) {
-        info.tag = get_u1();
-        info.string_index = get_u2();
+        info.tag = get1();
+        info.string_index = get2();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_Methodref_info &info) {
-        info.tag = get_u1();
-        info.class_index = get_u2();
-        info.name_and_type_index = get_u2();
+        info.tag = get1();
+        info.class_index = get2();
+        info.name_and_type_index = get2();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_InterfaceMethodref_info &info) {
-        info.tag = get_u1();
-        info.class_index = get_u2();
-        info.name_and_type_index = get_u2();
+        info.tag = get1();
+        info.class_index = get2();
+        info.name_and_type_index = get2();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_MethodHandle_info &info) {
-        info.tag = get_u1();
-        info.reference_kind = get_u1();
-        info.reference_index = get_u2();
+        info.tag = get1();
+        info.reference_kind = get1();
+        info.reference_index = get2();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_MethodType_info &info) {
-        info.tag = get_u1();
-        info.descriptor_index = get_u2();
+        info.tag = get1();
+        info.descriptor_index = get2();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_NameAndType_info &info) {
-        info.tag = get_u1();
-        info.name_index = get_u2();
-        info.descriptor_index = get_u2();
+        info.tag = get1();
+        info.name_index = get2();
+        info.descriptor_index = get2();
         return *this;
     }
 
     ClassFileStream &ClassFileStream::operator>>(CONSTANT_InvokeDynamic_info &info) {
-        info.tag = get_u1();
-        info.bootstrap_method_attr_index = get_u2();
-        info.name_and_type_index = get_u2();
+        info.tag = get1();
+        info.bootstrap_method_attr_index = get2();
+        info.name_and_type_index = get2();
         return *this;
     }
 }

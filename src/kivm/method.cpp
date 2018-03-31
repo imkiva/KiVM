@@ -16,27 +16,27 @@ namespace kivm {
 
     void MethodPool::add(Method *method) {
         LockGuard guard(get_method_pool_lock());
-        entries_internal().push_back(method);
+        getEntriesInternal().push_back(method);
     }
 
-    std::list<Method *> &MethodPool::entries_internal() {
+    std::list<Method *> &MethodPool::getEntriesInternal() {
         static std::list<Method *> _entries;
         return _entries;
     }
 
-    const std::list<Method *> &MethodPool::entries() {
-        return entries_internal();
+    const std::list<Method *> &MethodPool::getEntries() {
+        return getEntriesInternal();
     }
 
-    bool Method::is_same(const Method *lhs, const Method *rhs) {
+    bool Method::isSame(const Method *lhs, const Method *rhs) {
         return lhs != nullptr && rhs != nullptr
-               && lhs->get_name() == rhs->get_name()
-               && lhs->get_descriptor() == rhs->get_descriptor();
+               && lhs->getName() == rhs->getName()
+               && lhs->getDescriptor() == rhs->getDescriptor();
     }
 
-    String Method::make_identity(const Method *m) {
+    String Method::makeIdentity(const Method *m) {
         std::wstringstream ss;
-        ss << m->get_name() << L" " << m->get_descriptor();
+        ss << m->getName() << L" " << m->getDescriptor();
         return ss.str();
     }
 
@@ -48,42 +48,42 @@ namespace kivm {
         this->_exception_attr = nullptr;
     }
 
-    bool Method::is_pc_in_method(u4 pc) {
+    bool Method::isPcCorrect(u4 pc) {
         return _code_attr != nullptr
                && _code_attr->code_length > 0
                && pc < _code_attr->code_length;
     }
 
-    void Method::link_method(cp_info **pool) {
+    void Method::linkMethod(cp_info **pool) {
         if (_linked) {
             return;
         }
 
         this->_access_flag = _method_info->access_flags;
-        auto *name_info = require_constant<CONSTANT_Utf8_info>(pool, _method_info->name_index);
-        auto *desc_info = require_constant<CONSTANT_Utf8_info>(pool, _method_info->descriptor_index);
+        auto *name_info = requireConstant<CONSTANT_Utf8_info>(pool, _method_info->name_index);
+        auto *desc_info = requireConstant<CONSTANT_Utf8_info>(pool, _method_info->descriptor_index);
         this->_name = name_info->get_constant();
         this->_descriptor = desc_info->get_constant();
-        link_attributes(pool);
+        linkAttributes(pool);
         _linked = true;
     }
 
-    void Method::link_attributes(cp_info **pool) {
+    void Method::linkAttributes(cp_info **pool) {
         for (int i = 0; i < _method_info->attributes_count; ++i) {
             attribute_info *attr = _method_info->attributes[i];
 
-            switch (AttributeParser::to_attribute_tag(attr->attribute_name_index, pool)) {
+            switch (AttributeParser::toAttributeTag(attr->attribute_name_index, pool)) {
                 case ATTRIBUTE_Code: {
-                    link_code_attribute(pool, (Code_attribute *) attr);
+                    linkCodeAttribute(pool, (Code_attribute *) attr);
                     break;
                 }
                 case ATTRIBUTE_Exceptions: {
-                    link_exception_attribute(pool, (Exceptions_attribute *) attr);
+                    linkExceptionAttribute(pool, (Exceptions_attribute *) attr);
                     break;
                 }
                 case ATTRIBUTE_Signature: {
                     auto *sig_attr = (Signature_attribute *) attr;
-                    auto *utf8 = require_constant<CONSTANT_Utf8_info>(pool, sig_attr->signature_index);
+                    auto *utf8 = requireConstant<CONSTANT_Utf8_info>(pool, sig_attr->signature_index);
                     _signature = utf8->get_constant();
                     break;
                 }
@@ -98,14 +98,14 @@ namespace kivm {
         }
     }
 
-    void Method::link_exception_attribute(cp_info **pool, Exceptions_attribute *attr) {
+    void Method::linkExceptionAttribute(cp_info **pool, Exceptions_attribute *attr) {
         for (int i = 0; i < attr->number_of_exceptions; ++i) {
             u2 exception_index = attr->exception_index_table[i];
-            auto *class_info = require_constant<CONSTANT_Class_info>(pool, exception_index);
-            auto *utf8_info = require_constant<CONSTANT_Utf8_info>(pool, class_info->name_index);
-            Klass *loaded = ClassLoader::require_class(get_class()->get_class_loader(),
-                                                       utf8_info->get_constant());
-            if (loaded->get_type() != ClassType::INSTANCE_CLASS) {
+            auto *class_info = requireConstant<CONSTANT_Class_info>(pool, exception_index);
+            auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(pool, class_info->name_index);
+            Klass *loaded = ClassLoader::requireClass(getClass()->getClassLoader(),
+                                                      utf8_info->get_constant());
+            if (loaded->getClassType() != ClassType::INSTANCE_CLASS) {
                 // TODO: throw VerifyError
                 assert(false);
                 continue;
@@ -116,13 +116,13 @@ namespace kivm {
         }
     }
 
-    void Method::link_code_attribute(cp_info **pool, Code_attribute *attr) {
+    void Method::linkCodeAttribute(cp_info **pool, Code_attribute *attr) {
         _code_attr = attr;
         // check exception handlers
         for (int i = 0; i < attr->exception_table_length; ++i) {
-            if (is_pc_in_method(attr->exception_table[i].start_pc)
-                && is_pc_in_method(attr->exception_table[i].end_pc)
-                && is_pc_in_method(attr->exception_table[i].handler_pc)) {
+            if (isPcCorrect(attr->exception_table[i].start_pc)
+                && isPcCorrect(attr->exception_table[i].end_pc)
+                && isPcCorrect(attr->exception_table[i].handler_pc)) {
                 continue;
             }
             // TODO: throw VerifyError
@@ -132,7 +132,7 @@ namespace kivm {
         // link attributes
         for (int i = 0; i < attr->attributes_count; ++i) {
             attribute_info *sub_attr = attr->attributes[i];
-            switch (AttributeParser::to_attribute_tag(sub_attr->attribute_name_index, pool)) {
+            switch (AttributeParser::toAttributeTag(sub_attr->attribute_name_index, pool)) {
                 case ATTRIBUTE_LineNumberTable: {
                     auto *line_attr = (LineNumberTable_attribute *) sub_attr;
                     for (int j = 0; j < line_attr->line_number_table_length; ++j) {

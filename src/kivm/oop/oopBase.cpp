@@ -17,7 +17,7 @@ namespace kivm {
 
         // add it to the oopPoll
         if (add_to_pool) {
-            LockGuard lg(mem_lock());
+            LockGuard lg(getOopMemoryLock());
             oopPool::oop_handler_pool().push_back((oop) ptr);
         }
 
@@ -45,7 +45,7 @@ namespace kivm {
     }
 
     void oopBase::cleanup() {
-        LockGuard lg(mem_lock());
+        LockGuard lg(getOopMemoryLock());
         for (auto iter : oopPool::oop_handler_pool()) {
             delete iter;
         }
