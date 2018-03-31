@@ -104,7 +104,9 @@
 #define D(fmt, ...) \
     do { \
        (void) fprintf(stderr, "===> (KIVM DEBUG) [%s:%d]: " fmt "\n", \
-                __FILE__, __LINE__, ##__VA_ARGS__); \
+                __FILE__, \
+                __LINE__, \
+                ##__VA_ARGS__); \
     } while (false)
 #else
 #define D(fmt, ...)
@@ -112,7 +114,7 @@
 
 #define PANIC(fmt, ...) \
     do { \
-       (void) fprintf(stderr, "*** (PANIC) *** [%s:%d]: " fmt "\n", \
+       (void) fprintf(stderr, "\n\n\n*** (PANIC) *** [%s:%d]: " fmt "\n\n\n", \
                 __FILE__, __LINE__, ##__VA_ARGS__); \
        for (;;) continue; \
     } while (false)
