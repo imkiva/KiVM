@@ -10,8 +10,8 @@
 namespace kivm {
     namespace java {
         namespace lang {
-            std::queue<String> &Class::getDelayedMirrors() {
-                static std::queue<String> mirrors;
+            std::queue<kivm::String> &Class::getDelayedMirrors() {
+                static std::queue<kivm::String> mirrors;
                 return mirrors;
             }
 
@@ -20,8 +20,8 @@ namespace kivm {
                 return state;
             }
 
-            std::unordered_map<String, mirrorOop> &Class::getPrimitiveTypeMirrors() {
-                static std::unordered_map<String, mirrorOop> mirrors;
+            std::unordered_map<kivm::String, mirrorOop> &Class::getPrimitiveTypeMirrors() {
+                static std::unordered_map<kivm::String, mirrorOop> mirrors;
                 return mirrors;
             }
 

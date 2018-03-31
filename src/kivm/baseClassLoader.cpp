@@ -15,7 +15,7 @@ namespace kivm {
         static const char *KLASSPATH_ENV = getenv("KLASSPATH");
         static String RT_DIR = KLASSPATH_ENV == nullptr
                                ? L""
-                               : strings::from_std_string(KLASSPATH_ENV);
+                               : strings::fromStdString(KLASSPATH_ENV);
 
         // Load array class
         if (class_name[0] == L'[') {
@@ -59,7 +59,7 @@ namespace kivm {
         std::wstringstream path_builder;
         path_builder << RT_DIR << L'/' << class_name << L".class";
         const String &class_file_path = path_builder.str();
-        ClassFileParser classFileParser(strings::to_std_string(class_file_path).c_str());
+        ClassFileParser classFileParser(strings::toStdString(class_file_path).c_str());
         ClassFile *classFile = classFileParser.getParsedClassFile();
         return classFile != nullptr
                ? new InstanceKlass(classFile, this, nullptr, ClassType::INSTANCE_CLASS)

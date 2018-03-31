@@ -11,25 +11,25 @@
 namespace kivm {
     namespace strings {
         // $ 4.4.7
-        static bool is_first_type(const u1 *bytes, size_t length, int position) {
+        static bool isFirstType(const u1 *bytes, size_t length, int position) {
             assert(position + 1 <= length);
             return (bytes[position] & 0x80) == 0;
         }
 
-        static bool is_second_type(const u1 *bytes, size_t length, int position) {
+        static bool isSecondType(const u1 *bytes, size_t length, int position) {
             assert(position + 2 <= length);
             return (bytes[position] & 0xE0) == 0xC0
                    && (bytes[position + 1] & 0xC0) == 0x80;
         }
 
-        static bool is_third_type(const u1 *bytes, size_t length, int position) {
+        static bool isThirdType(const u1 *bytes, size_t length, int position) {
             assert(position + 3 <= length);
             return (bytes[position] & 0xF0) == 0xE0
                    && (bytes[position + 1] & 0xC0) == 0x80
                    && (bytes[position + 2] & 0xC0) == 0x80;
         }
 
-        static bool is_forth_type(const u1 *bytes, size_t length, int position) {
+        static bool isForthType(const u1 *bytes, size_t length, int position) {
             assert(position + 6 <= length);
             return (bytes[position] == 0xED)
                    && (bytes[position + 1] & 0xF0) == 0xA0
@@ -39,22 +39,22 @@ namespace kivm {
                    && (bytes[position + 5] & 0xC0) == 0x80;
         }
 
-        static u2 get_first_type(const u1 *bytes, size_t length, int position) {
+        static u2 getFirstType(const u1 *bytes, size_t length, int position) {
             return bytes[position];
         }
 
-        static u2 get_second_type(const u1 *bytes, size_t length, int position) {
+        static u2 getSecondType(const u1 *bytes, size_t length, int position) {
             return static_cast<u2>(((bytes[position] & 0x1f) << 6)
                                    + (bytes[position + 1] & 0x3f));
         }
 
-        static u2 get_third_type(const u1 *bytes, size_t length, int position) {
+        static u2 getThirdType(const u1 *bytes, size_t length, int position) {
             return static_cast<u2>(((bytes[position] & 0xf) << 12)
                                    + ((bytes[position + 1] & 0x3f) << 6)
                                    + (bytes[position + 2] & 0x3f));
         }
 
-        static u2 get_forth_type(const u1 *bytes, size_t length, int position) {
+        static u2 getForthType(const u1 *bytes, size_t length, int position) {
             return static_cast<u2>(0x10000
                                    + ((bytes[position + 1] & 0x0f) << 16)
                                    + ((bytes[position + 2] & 0x3f) << 10)
@@ -62,24 +62,24 @@ namespace kivm {
                                    + (bytes[position + 5] & 0x3f));
         }
 
-        String from_bytes(u1 *bytes, size_t length) {
+        String fromBytes(u1 *bytes, size_t length) {
             std::vector<u2> buffer;
 
             for (int pos = 0; pos < length;) {
-                if (is_first_type(bytes, length, pos)) {
-                    buffer.push_back(get_first_type(bytes, length, pos));
+                if (isFirstType(bytes, length, pos)) {
+                    buffer.push_back(getFirstType(bytes, length, pos));
                     pos += 1;
 
-                } else if (is_second_type(bytes, length, pos)) {
-                    buffer.push_back(get_second_type(bytes, length, pos));
+                } else if (isSecondType(bytes, length, pos)) {
+                    buffer.push_back(getSecondType(bytes, length, pos));
                     pos += 2;
 
-                } else if (is_third_type(bytes, length, pos)) {
-                    buffer.push_back(get_third_type(bytes, length, pos));
+                } else if (isThirdType(bytes, length, pos)) {
+                    buffer.push_back(getThirdType(bytes, length, pos));
                     pos += 3;
 
-                } else if (is_forth_type(bytes, length, pos)) {
-                    buffer.push_back(get_forth_type(bytes, length, pos));
+                } else if (isForthType(bytes, length, pos)) {
+                    buffer.push_back(getForthType(bytes, length, pos));
                     pos += 6;
 
                 } else {
@@ -90,12 +90,12 @@ namespace kivm {
             return String(buffer.begin(), buffer.end());
         }
 
-        String from_std_string(const std::string &str) {
+        String fromStdString(const std::string &str) {
             std::wstring_convert<std::codecvt_utf8<wchar_t >> convert;
             return convert.from_bytes(str);
         }
 
-        std::string to_std_string(const String &str) {
+        std::string toStdString(const String &str) {
             std::wstring_convert<std::codecvt_utf8<wchar_t>> convert;
             return convert.to_bytes(str);
         }

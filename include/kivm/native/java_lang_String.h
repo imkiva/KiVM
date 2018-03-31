@@ -5,7 +5,7 @@
 
 #include <kivm/kivm.h>
 #include <kivm/oop/oopfwd.h>
-#include <kivm/runtime/constantPool.h>
+#include <unordered_map>
 
 namespace kivm {
     namespace java {
@@ -34,7 +34,7 @@ namespace kivm {
                 };
 
             public:
-                static inline instanceOop from(const kivm::String &string);
+                static instanceOop from(const kivm::String &string);
 
                 static inline instanceOop intern(const kivm::String &string) {
                     return InternStringPool::getGlobal()->findOrNew(string);

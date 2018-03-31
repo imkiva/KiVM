@@ -92,7 +92,7 @@ void print_constant_pool(ClassFile *classFile) {
             case CONSTANT_Utf8: {
                 auto *target = (CONSTANT_Utf8_info *) pool[i];
                 printf("    #%4d = Utf8 %16s ", i, "");
-                printf("%s\n", strings::to_std_string(target->get_constant()).c_str());
+                printf("%s\n", strings::toStdString(target->get_constant()).c_str());
                 break;
             }
             case CONSTANT_MethodHandle: {

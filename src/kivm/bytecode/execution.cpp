@@ -10,7 +10,7 @@ namespace kivm {
         if (klass->getClassState() == ClassState::LINKED) {
             klass->setClassState(ClassState::BEING_INITIALIZED);
             D("Initializing class %s",
-              strings::to_std_string(klass->getName()).c_str());
+              strings::toStdString(klass->getName()).c_str());
 
             // Initialize super classes first.
             Klass *super_klass = klass->getSuperClass();
@@ -21,11 +21,11 @@ namespace kivm {
             auto *clinit = klass->findVirtualMethod(L"<clinit>", L"()V");
             if (clinit != nullptr && clinit->getClass() == klass) {
                 D("<clinit> found in %s, invoking.",
-                  strings::to_std_string(klass->getName()).c_str());
+                  strings::toStdString(klass->getName()).c_str());
                 javaThread->runMethod(clinit, {});
             } else {
                 D("<clinit> not found in %s, skipping.",
-                  strings::to_std_string(klass->getName()).c_str());
+                  strings::toStdString(klass->getName()).c_str());
             }
             klass->setClassState(ClassState::FULLY_INITIALIZED);
         }

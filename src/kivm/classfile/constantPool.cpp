@@ -59,7 +59,7 @@ namespace kivm {
     String CONSTANT_Utf8_info::get_constant() {
         // UTF-8 Strings in Java needs to be Unicode in C++
         if (!_cached) {
-            _cached_string = kivm::strings::from_bytes(bytes, length);
+            _cached_string = kivm::strings::fromBytes(bytes, length);
             _cached = true;
         }
 

@@ -8,7 +8,6 @@
 #include <queue>
 #include <unordered_map>
 
-
 namespace kivm {
     namespace java {
         namespace lang {
@@ -18,9 +17,9 @@ namespace kivm {
                     FIXED, NOT_FIXED
                 };
 
-                static std::unordered_map<String, mirrorOop>& getPrimitiveTypeMirrors();
+                static std::unordered_map<kivm::String, mirrorOop>& getPrimitiveTypeMirrors();
 
-                static std::queue<String> &getDelayedMirrors();
+                static std::queue<kivm::String> &getDelayedMirrors();
 
                 static ClassMirrorState &getMirrorState();
 

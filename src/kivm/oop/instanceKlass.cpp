@@ -127,9 +127,9 @@ namespace kivm {
             auto *super = (InstanceKlass *) this->_super_class;
             for (auto &e : super->_instance_fields) {
                 D("%s: Extended instance field: #%-d %s",
-                  strings::to_std_string(getName()).c_str(),
+                  strings::toStdString(getName()).c_str(),
                   instance_field_index,
-                  strings::to_std_string(e.first).c_str());
+                  strings::toStdString(e.first).c_str());
                 this->_instance_fields.insert(
                     make_pair(e.first,
                               FieldID(instance_field_index++, e.second._field)));
@@ -140,9 +140,9 @@ namespace kivm {
         for (auto &interface : this->_interfaces) {
             for (auto &field : interface.second->_instance_fields) {
                 D("%s: Extended interface instance field: #%-d %s",
-                  strings::to_std_string(getName()).c_str(),
+                  strings::toStdString(getName()).c_str(),
                   instance_field_index,
-                  strings::to_std_string(field.first).c_str());
+                  strings::toStdString(field.first).c_str());
 
                 this->_instance_fields.insert(
                     make_pair(field.first,
@@ -169,17 +169,17 @@ namespace kivm {
                 }
 
                 D("%s: New static field: #%-d %s",
-                  strings::to_std_string(getName()).c_str(),
+                  strings::toStdString(getName()).c_str(),
                   static_field_index,
-                  strings::to_std_string(Field::makeIdentity(this, field)).c_str());
+                  strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
                 _static_fields.insert(make_pair(Field::makeIdentity(this, field),
                                                 FieldID(static_field_index++, field)));
             } else {
                 D("%s: New instance field: #%-d %s",
-                  strings::to_std_string(getName()).c_str(),
+                  strings::toStdString(getName()).c_str(),
                   instance_field_index,
-                  strings::to_std_string(Field::makeIdentity(this, field)).c_str());
+                  strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
                 _instance_fields.insert(make_pair(Field::makeIdentity(this, field),
                                                   FieldID(instance_field_index++, field)));
@@ -310,9 +310,9 @@ namespace kivm {
         }
 
         D("Set field %s::%s(%s) to %p\n",
-          strings::to_std_string(fieldID._field->getClass()->getName()).c_str(),
-          strings::to_std_string(fieldID._field->getName()).c_str(),
-          strings::to_std_string(fieldID._field->getDescriptor()).c_str(),
+          strings::toStdString(fieldID._field->getClass()->getName()).c_str(),
+          strings::toStdString(fieldID._field->getName()).c_str(),
+          strings::toStdString(fieldID._field->getDescriptor()).c_str(),
           value);
         this->_static_field_values[fieldID._offset] = value;
     }
@@ -350,9 +350,9 @@ namespace kivm {
         }
 
         D("Set field %s::%s(%s) to %p\n",
-          strings::to_std_string(fieldID._field->getClass()->getName()).c_str(),
-          strings::to_std_string(fieldID._field->getName()).c_str(),
-          strings::to_std_string(fieldID._field->getDescriptor()).c_str(),
+          strings::toStdString(fieldID._field->getClass()->getName()).c_str(),
+          strings::toStdString(fieldID._field->getName()).c_str(),
+          strings::toStdString(fieldID._field->getDescriptor()).c_str(),
           value);
         receiver->_instance_field_values[fieldID._offset] = value;
     }
