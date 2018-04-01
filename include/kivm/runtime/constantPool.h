@@ -111,7 +111,7 @@ namespace kivm {
             return _method_pool.findOrNew(methodIndex);
         }
 
-        Field* get_field(int fieldIndex) {
+        Field *get_field(int fieldIndex) {
             assert(this->_raw_pool != nullptr);
             return _field_pool.findOrNew(fieldIndex);
         }
