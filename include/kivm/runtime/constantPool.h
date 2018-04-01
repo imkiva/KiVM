@@ -6,6 +6,8 @@
 #include <kivm/classfile/constantPool.h>
 #include <kivm/oop/oopfwd.h>
 #include <kivm/classLoader.h>
+#include <kivm/method.h>
+#include <kivm/field.h>
 #include <kivm/native/java_lang_String.h>
 #include <unordered_map>
 
@@ -58,34 +60,60 @@ namespace kivm {
             }
         };
 
-        using ClassTable = ConstantTable<Klass *, ClassCreator, CONSTANT_Class>;
-        using StringTable = ConstantTable<instanceOop, StringCreator, CONSTANT_String>;
+        struct MethodCreator {
+            Method *operator()(cp_info **pool, int index) {
+                return nullptr;
+            }
+        };
+
+        struct FieldCreator {
+            Field *operator()(cp_info **pool, int index) {
+                return nullptr;
+            }
+        };
+
+        using ClassPool = ConstantTable<Klass *, ClassCreator, CONSTANT_Class>;
+        using StringPool = ConstantTable<instanceOop, StringCreator, CONSTANT_String>;
+        using MethodPool = ConstantTable<Method *, MethodCreator, CONSTANT_Methodref>;
+        using FieldPool = ConstantTable<Field *, FieldCreator, CONSTANT_Fieldref>;
     }
 
     class RuntimeConstantPool {
     private:
         ClassLoader *_class_loader;
         cp_info **_raw_pool;
-        pools::ClassTable _class_table;
-        pools::StringTable _string_table;
+        pools::ClassPool _class_pool;
+        pools::StringPool _string_pool;
+        pools::MethodPool _method_pool;
+        pools::FieldPool _field_pool;
 
     public:
         explicit RuntimeConstantPool(InstanceKlass *instanceKlass);
 
         void attachConstantPool(cp_info **pool) {
             this->_raw_pool = pool;
-            _class_table.setRawPool(pool);
-            _string_table.setRawPool(pool);
+            _class_pool.setRawPool(pool);
+            _string_pool.setRawPool(pool);
         }
 
         inline Klass *get_class(int classIndex) {
             assert(this->_raw_pool != nullptr);
-            return _class_table.findOrNew(classIndex);
+            return _class_pool.findOrNew(classIndex);
         }
 
         instanceOop get_string(int stringIndex) {
             assert(this->_raw_pool != nullptr);
-            return _string_table.findOrNew(stringIndex);
+            return _string_pool.findOrNew(stringIndex);
+        }
+
+        inline Method *get_method(int methodIndex) {
+            assert(this->_raw_pool != nullptr);
+            return _method_pool.findOrNew(methodIndex);
+        }
+
+        Field* get_field(int fieldIndex) {
+            assert(this->_raw_pool != nullptr);
+            return _field_pool.findOrNew(fieldIndex);
         }
     };
 }
