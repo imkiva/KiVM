@@ -38,7 +38,7 @@ namespace kivm {
                 if (iter != _pool.end()) {
                     return iter->second;
                 }
-                T created = Creator(_raw_pool, index);
+                T created = Creator()(_raw_pool, index);
                 _pool.insert(std::make_pair(index, created));
                 return created;
             }
