@@ -65,6 +65,7 @@ namespace kivm {
     class RuntimeConstantPool {
     private:
         ClassLoader *_class_loader;
+        cp_info **_raw_pool;
         pools::ClassTable _class_table;
         pools::StringTable _string_table;
 
@@ -72,8 +73,19 @@ namespace kivm {
         explicit RuntimeConstantPool(InstanceKlass *instanceKlass);
 
         void attachConstantPool(cp_info **pool) {
+            this->_raw_pool = pool;
             _class_table.setRawPool(pool);
             _string_table.setRawPool(pool);
+        }
+
+        inline Klass *get_class(int classIndex) {
+            assert(this->_raw_pool != nullptr);
+            return _class_table.findOrNew(classIndex);
+        }
+
+        instanceOop get_string(int stringIndex) {
+            assert(this->_raw_pool != nullptr);
+            return _string_table.findOrNew(stringIndex);
         }
     };
 }
