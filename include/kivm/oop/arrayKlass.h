@@ -26,7 +26,7 @@ namespace kivm {
             return _dimension;
         }
 
-        mirrorOop getJavaMirror() {
+        mirrorOop getJavaLoader() {
             return _java_loader;
         }
 
