@@ -39,6 +39,12 @@ namespace kivm {
         RuntimeConstantPool _runtime_pool;
 
         /**
+         * all methods in this class.
+         * map<name + " " + descriptor, method>
+         */
+        std::unordered_map<String, Method *> _all_methods;
+
+        /**
          * virtual methods (public or protected methods).
          * map<name + " " + descriptor, method>
          */
@@ -86,17 +92,17 @@ namespace kivm {
     private:
         InstanceKlass *requireInstanceClass(u2 class_info_index);
 
-        void link_constant_pool(cp_info **constant_pool);
+        void linkConstantPool(cp_info **constant_pool);
 
-        void link_super_class(cp_info **pool);
+        void linkSuperClass(cp_info **pool);
 
-        void link_methods(cp_info **pool);
+        void linkMethods(cp_info **pool);
 
-        void link_interfaces(cp_info **pool);
+        void linkInterfaces(cp_info **pool);
 
-        void link_fields(cp_info **pool);
+        void linkFields(cp_info **pool);
 
-        void link_attributes(cp_info **pool);
+        void linkAttributes(cp_info **pool);
 
     public:
         InstanceKlass(ClassFile *class_file, ClassLoader *class_loader,
@@ -167,6 +173,14 @@ namespace kivm {
         FieldID getInstanceFieldInfo(const String &className,
                                      const String &name,
                                      const String &descriptor) const;
+
+        /**
+         * Search method in this class.
+         * @param name Method name
+         * @param descriptor Method descriptor
+         * @return method pointer if found, otherwise {@code nullptr}
+         */
+        Method *findThisClassMethod(const String &name, const String &descriptor) const;
 
         /**
          * Get virtual method.

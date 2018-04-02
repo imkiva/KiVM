@@ -49,17 +49,17 @@ namespace kivm {
         auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(pool, class_info->name_index);
         this->setName(utf8_info->get_constant());
 
-        link_super_class(pool);
-        link_interfaces(pool);
-        link_methods(pool);
-        link_fields(pool);
-        link_constant_pool(pool);
-        link_attributes(pool);
+        linkSuperClass(pool);
+        linkInterfaces(pool);
+        linkMethods(pool);
+        linkFields(pool);
+        linkConstantPool(pool);
+        linkAttributes(pool);
         getRuntimeConstantPool().attachConstantPool(pool);
         this->setClassState(ClassState::LINKED);
     }
 
-    void InstanceKlass::link_super_class(cp_info **pool) {
+    void InstanceKlass::linkSuperClass(cp_info **pool) {
         if (_class_file->super_class == 0) {
             // java.lang.Object
             if (getName() != L"java/lang/Object") {
@@ -81,14 +81,16 @@ namespace kivm {
         setSuperClass(super_class);
     }
 
-    void InstanceKlass::link_interfaces(cp_info **pool) {
+    void InstanceKlass::linkInterfaces(cp_info **pool) {
         for (int i = 0; i < _class_file->interfaces_count; ++i) {
             InstanceKlass *interface_class = requireInstanceClass(_class_file->interfaces[i]);
             _interfaces.insert(std::make_pair(interface_class->getName(), interface_class));
         }
     }
 
-    void InstanceKlass::link_methods(cp_info **pool) {
+    void InstanceKlass::linkMethods(cp_info **pool) {
+        using std::make_pair;
+
         // for a easy implementation, I just copy superclass's vtable.
         if (getSuperClass() != nullptr) {
             auto *sc = (InstanceKlass *) getSuperClass();
@@ -100,23 +102,25 @@ namespace kivm {
             method->linkMethod(pool);
             MethodPool::add(method);
 
-            using std::make_pair;
+            const auto &id = Method::makeIdentity(method);
+            const auto &pair = make_pair(id, method);
+            _all_methods.insert(pair);
 
             if (method->isStatic()) {
-                _stable.insert(make_pair(Method::makeIdentity(method), method));
+                _stable.insert(pair);
 
             } else if (method->isFinal() || method->isPrivate()) {
-                _pftable.insert(make_pair(Method::makeIdentity(method), method));
+                _pftable.insert(pair);
 
             } else {
                 // Do not use _vtable.insert()
                 // This may override superclass's virtual methods.
-                _vtable[Method::makeIdentity(method)] = method;
+                _vtable[id] = method;
             }
         }
     }
 
-    void InstanceKlass::link_fields(cp_info **pool) {
+    void InstanceKlass::linkFields(cp_info **pool) {
         using std::make_pair;
 
         // for a easy implementation, I just copy superclass's instance fields layout.
@@ -190,12 +194,12 @@ namespace kivm {
         this->_n_instance_fields = instance_field_index;
     }
 
-    void InstanceKlass::link_constant_pool(cp_info **constant_pool) {
+    void InstanceKlass::linkConstantPool(cp_info **constant_pool) {
         // TODO: Implement runtime constant pool
         // currently, we use cp_info as runtime constant pool
     }
 
-    void InstanceKlass::link_attributes(cp_info **pool) {
+    void InstanceKlass::linkAttributes(cp_info **pool) {
         for (int i = 0; i < _class_file->attributes_count; ++i) {
             attribute_info *attr = _class_file->attributes[i];
 
@@ -241,6 +245,18 @@ namespace kivm {
     const auto &ITER = (COLLECTION).find(KEY); \
     return (ITER) != (COLLECTION).end() ? (SUCCESS) : (FAIL);
 
+    int InstanceKlass::getStaticFieldOffset(const String &className,
+                                            const String &name,
+                                            const String &descriptor) const {
+        return this->getStaticFieldInfo(className, name, descriptor)._offset;
+    }
+
+    int InstanceKlass::getInstanceFieldOffset(const String &className,
+                                              const String &name,
+                                              const String &descriptor) const {
+        return this->getInstanceFieldInfo(className, name, descriptor)._offset;
+    }
+
     FieldID InstanceKlass::getStaticFieldInfo(const String &className,
                                               const String &name,
                                               const String &descriptor) const {
@@ -259,16 +275,10 @@ namespace kivm {
                   FieldID(-1, nullptr));
     }
 
-    int InstanceKlass::getStaticFieldOffset(const String &className,
-                                            const String &name,
-                                            const String &descriptor) const {
-        return this->getStaticFieldInfo(className, name, descriptor)._offset;
-    }
-
-    int InstanceKlass::getInstanceFieldOffset(const String &className,
-                                              const String &name,
-                                              const String &descriptor) const {
-        return this->getInstanceFieldInfo(className, name, descriptor)._offset;
+    Method *InstanceKlass::findThisClassMethod(const String &name, const String &descriptor) const {
+        RETURN_IF(iter, this->_all_methods,
+                  ND_KEY_MAKER(name, descriptor),
+                  iter->second, nullptr);
     }
 
     Method *InstanceKlass::findVirtualMethod(const String &name, const String &descriptor) const {

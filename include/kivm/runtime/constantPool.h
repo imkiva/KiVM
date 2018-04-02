@@ -3,19 +3,20 @@
 //
 #pragma once
 
-#include <kivm/classfile/constantPool.h>
 #include <kivm/oop/oopfwd.h>
-#include <kivm/oop/instanceKlass.h>
+#include <kivm/classfile/constantPool.h>
+#include <kivm/native/java_lang_String.h>
 #include <kivm/classLoader.h>
 #include <kivm/method.h>
 #include <kivm/field.h>
-#include <kivm/native/java_lang_String.h>
 #include <unordered_map>
 
 namespace kivm {
     class Klass;
 
     class InstanceKlass;
+
+    class RuntimeConstantPool;
 
     namespace pools {
         template<typename T, typename Creator, int CONSTANT_TAG>
@@ -45,59 +46,20 @@ namespace kivm {
             }
         };
 
-        struct CreatorHelper {
-            static const String &
-            getUtf8(cp_info **pool, int utf8Index) {
-                auto *utf8 = (CONSTANT_Utf8_info *) pool[utf8Index];
-                return utf8->get_constant();
-            }
-
-            static const std::pair<const String &, const String &> &
-            getNameAndType(cp_info **pool, int nameAndTypeIndex) {
-                auto nameAndType = (CONSTANT_NameAndType_info *) pool[nameAndTypeIndex];
-                return std::make_pair(getUtf8(pool, nameAndType->name_index),
-                                      getUtf8(pool, nameAndType->descriptor_index));
-            }
-        };
-
         struct ClassCreator {
-            Klass *operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-                auto classInfo = (CONSTANT_Class_info *) pool[index];
-                return BootstrapClassLoader::get()->loadClass(
-                    CreatorHelper::getUtf8(pool, classInfo->name_index));
-            }
+            Klass *operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
         struct StringCreator {
-            instanceOop operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-                auto classInfo = (CONSTANT_String_info *) pool[index];
-                return java::lang::String::from(
-                    CreatorHelper::getUtf8(pool, classInfo->string_index));
-            }
+            instanceOop operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
         struct MethodCreator {
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCDFAInspection"
-
-            Method *operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-                auto methodRef = (CONSTANT_Methodref_info *) pool[index];
-                Klass *klass = rt->get_class(methodRef->class_index);
-                if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
-                    auto instanceKlass = (InstanceKlass *) klass;
-                    const auto &nameAndType = CreatorHelper::getNameAndType(
-                        pool, methodRef->name_and_type_index);
-                }
-                return nullptr;
-            }
-
-#pragma clang diagnostic pop
+            Method *operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
         struct FieldCreator {
-            Field *operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-                return nullptr;
-            }
+            Field *operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
         using ClassPool = ConstantTable<Klass *, ClassCreator, CONSTANT_Class>;
