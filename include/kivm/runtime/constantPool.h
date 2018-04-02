@@ -28,11 +28,11 @@ namespace kivm {
             std::unordered_map<int, T> _pool;
 
         public:
-            void setRawPool(cp_info **pool) {
+            inline void setRawPool(cp_info **pool) {
                 this->_raw_pool = pool;
             }
 
-            T findOrNew(RuntimeConstantPool *rt, int index) {
+            inline T findOrNew(RuntimeConstantPool *rt, int index) {
                 if (_raw_pool[index]->tag != CONSTANT_TAG) {
                     PANIC("Accessing an incompatible constant entry");
                 }
@@ -91,7 +91,7 @@ namespace kivm {
             return _class_pool.findOrNew(this, classIndex);
         }
 
-        instanceOop get_string(int stringIndex) {
+        inline instanceOop get_string(int stringIndex) {
             assert(this->_raw_pool != nullptr);
             return _string_pool.findOrNew(this, stringIndex);
         }
@@ -101,7 +101,7 @@ namespace kivm {
             return _method_pool.findOrNew(this, methodIndex);
         }
 
-        Field *get_field(int fieldIndex) {
+        inline Field *get_field(int fieldIndex) {
             assert(this->_raw_pool != nullptr);
             return _field_pool.findOrNew(this, fieldIndex);
         }
