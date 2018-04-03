@@ -24,19 +24,19 @@ namespace kivm {
     }
 
     /********************** pools ***********************/
-    Klass *pools::ClassCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+    pools::ClassPoolEnteyType pools::ClassCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto classInfo = (CONSTANT_Class_info *) pool[index];
         return BootstrapClassLoader::get()->loadClass(
             getUtf8(pool, classInfo->name_index));
     }
 
-    instanceOop pools::StringCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+    pools::StringPoolEntryType pools::StringCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto classInfo = (CONSTANT_String_info *) pool[index];
         return java::lang::String::from(
             getUtf8(pool, classInfo->string_index));
     }
 
-    Method *pools::MethodCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+    pools::MethodPoolEntryType pools::MethodCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto methodRef = (CONSTANT_Methodref_info *) pool[index];
         Klass *klass = rt->get_class(methodRef->class_index);
         if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
@@ -49,7 +49,7 @@ namespace kivm {
         return nullptr;
     }
 
-    FieldID pools::FieldCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+    pools::FieldPoolEntryType pools::FieldCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto fieldRef = (CONSTANT_Fieldref_info *) pool[index];
         Klass *klass = rt->get_class(fieldRef->class_index);
         if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
@@ -59,7 +59,7 @@ namespace kivm {
             return instanceKlass->getThisClassField(nameAndType.first, nameAndType.second);
         }
         PANIC("Unsupported field & class type.");
-        return FieldID(-1, nullptr);
+        return {-1, nullptr};
     }
     /********************** pools ***********************/
 }

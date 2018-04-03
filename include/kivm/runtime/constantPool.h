@@ -4,6 +4,7 @@
 #pragma once
 
 #include <kivm/oop/oopfwd.h>
+#include <kivm/oop/reflectionSupport.h>
 #include <kivm/classfile/constantPool.h>
 #include <kivm/native/java_lang_String.h>
 #include <kivm/classLoader.h>
@@ -62,10 +63,15 @@ namespace kivm {
             FieldID operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
-        using ClassPool = ConstantTable<Klass *, ClassCreator, CONSTANT_Class>;
-        using StringPool = ConstantTable<instanceOop, StringCreator, CONSTANT_String>;
-        using MethodPool = ConstantTable<Method *, MethodCreator, CONSTANT_Methodref>;
-        using FieldPool = ConstantTable<FieldID, FieldCreator, CONSTANT_Fieldref>;
+        using ClassPoolEnteyType = Klass *;
+        using StringPoolEntryType = instanceOop;
+        using MethodPoolEntryType = Method *;
+        using FieldPoolEntryType = FieldID;
+
+        using ClassPool = ConstantTable<ClassPoolEnteyType, ClassCreator, CONSTANT_Class>;
+        using StringPool = ConstantTable<StringPoolEntryType, StringCreator, CONSTANT_String>;
+        using MethodPool = ConstantTable<MethodPoolEntryType, MethodCreator, CONSTANT_Methodref>;
+        using FieldPool = ConstantTable<FieldPoolEntryType, FieldCreator, CONSTANT_Fieldref>;
     }
 
     class RuntimeConstantPool {
@@ -86,22 +92,22 @@ namespace kivm {
             _string_pool.setRawPool(pool);
         }
 
-        inline Klass *get_class(int classIndex) {
+        inline pools::ClassPoolEnteyType get_class(int classIndex) {
             assert(this->_raw_pool != nullptr);
             return _class_pool.findOrNew(this, classIndex);
         }
 
-        inline instanceOop get_string(int stringIndex) {
+        inline pools::StringPoolEntryType get_string(int stringIndex) {
             assert(this->_raw_pool != nullptr);
             return _string_pool.findOrNew(this, stringIndex);
         }
 
-        inline Method *get_method(int methodIndex) {
+        inline pools::MethodPoolEntryType get_method(int methodIndex) {
             assert(this->_raw_pool != nullptr);
             return _method_pool.findOrNew(this, methodIndex);
         }
 
-        inline Field *get_field(int fieldIndex) {
+        inline pools::FieldPoolEntryType get_field(int fieldIndex) {
             assert(this->_raw_pool != nullptr);
             return _field_pool.findOrNew(this, fieldIndex);
         }
