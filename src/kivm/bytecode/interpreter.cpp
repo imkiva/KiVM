@@ -151,7 +151,6 @@ namespace kivm {
                     pc += 2;
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
                                             stack, constantIndex);
-                    pc += 2;
                     NEXT();
                 }
                 OPCODE(ILOAD)
