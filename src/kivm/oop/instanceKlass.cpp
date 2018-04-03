@@ -55,7 +55,7 @@ namespace kivm {
         linkFields(pool);
         linkConstantPool(pool);
         linkAttributes(pool);
-        getRuntimeConstantPool().attachConstantPool(pool);
+        getRuntimeConstantPool()->attachConstantPool(pool);
         this->setClassState(ClassState::LINKED);
     }
 

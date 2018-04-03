@@ -41,4 +41,7 @@ namespace kivm {
     void Execution::callVoidMethod(JavaThread *javaThread, Method *method, const std::list<oop> &args) {
         javaThread->runMethod(method, args);
     }
+
+    void Execution::loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+    }
 }

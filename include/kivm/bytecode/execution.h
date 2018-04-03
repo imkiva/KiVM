@@ -5,6 +5,8 @@
 
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/runtime/thread.h>
+#include <kivm/runtime/stack.h>
+#include <kivm/runtime/constantPool.h>
 
 namespace kivm {
     /**
@@ -13,6 +15,8 @@ namespace kivm {
      */
     class Execution {
     public:
+        static void loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex);
+
         static void initializeClass(JavaThread *javaThread, InstanceKlass *klass);
 
         static void callDefaultConstructor(JavaThread *javaThread, instanceOop oop);

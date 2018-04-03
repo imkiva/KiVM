@@ -4,6 +4,7 @@
 
 #include <kivm/bytecode/interpreter.h>
 #include <kivm/bytecode/bytecodes.h>
+#include <kivm/bytecode/execution.h>
 #include <kivm/method.h>
 
 #define OPCODE_DEBUG
@@ -27,689 +28,898 @@
 
 namespace kivm {
     oop ByteCodeInterpreter::interp(JavaThread *thread) {
-        Frame *frame = thread->getCurrentFrame();
-        const CodeBlob &code_blob = frame->getMethod()->getCodeBlob();
+        Frame *currentFrame = thread->getCurrentFrame();
+        auto currentMethod = currentFrame->getMethod();
+        auto currentClass = currentMethod->getClass();
+        const CodeBlob &code_blob = currentMethod->getCodeBlob();
         u4 &pc = thread->_pc;
 
-        Stack &stack = frame->getStack();
-        Locals &locals = frame->getLocals();
+        Stack &stack = currentFrame->getStack();
+        Locals &locals = currentFrame->getLocals();
 
         BEGIN(code_blob, pc)
 
-                OPCODE(NOP) {
+                OPCODE(NOP)
+                {
                     NEXT();
                 }
-                OPCODE(ACONST_NULL) {
+                OPCODE(ACONST_NULL)
+                {
                     stack.pushReference(nullptr);
                     NEXT();
                 }
-                OPCODE(ICONST_M1) {
+                OPCODE(ICONST_M1)
+                {
                     stack.pushInt(-1);
                     NEXT();
                 }
-                OPCODE(ICONST_0) {
+                OPCODE(ICONST_0)
+                {
                     stack.pushInt(0);
                     NEXT();
                 }
-                OPCODE(ICONST_1) {
+                OPCODE(ICONST_1)
+                {
                     stack.pushInt(1);
                     NEXT();
                 }
-                OPCODE(ICONST_2) {
+                OPCODE(ICONST_2)
+                {
                     stack.pushInt(2);
                     NEXT();
                 }
-                OPCODE(ICONST_3) {
+                OPCODE(ICONST_3)
+                {
                     stack.pushInt(3);
                     NEXT();
                 }
-                OPCODE(ICONST_4) {
+                OPCODE(ICONST_4)
+                {
                     stack.pushInt(4);
                     NEXT();
                 }
-                OPCODE(ICONST_5) {
+                OPCODE(ICONST_5)
+                {
                     stack.pushInt(5);
                     NEXT();
                 }
-                OPCODE(LCONST_0) {
+                OPCODE(LCONST_0)
+                {
                     stack.pushLong(0);
                     NEXT();
                 }
-                OPCODE(LCONST_1) {
+                OPCODE(LCONST_1)
+                {
                     stack.pushLong(1);
                     NEXT();
                 }
-                OPCODE(FCONST_0) {
+                OPCODE(FCONST_0)
+                {
                     stack.pushFloat(0);
                     NEXT();
                 }
-                OPCODE(FCONST_1) {
+                OPCODE(FCONST_1)
+                {
                     stack.pushFloat(1);
                     NEXT();
                 }
-                OPCODE(FCONST_2) {
+                OPCODE(FCONST_2)
+                {
                     stack.pushFloat(2);
                     NEXT();
                 }
-                OPCODE(DCONST_0) {
+                OPCODE(DCONST_0)
+                {
                     stack.pushDouble(0);
                     NEXT();
                 }
-                OPCODE(DCONST_1) {
+                OPCODE(DCONST_1)
+                {
                     stack.pushDouble(1);
                     NEXT();
                 }
-                OPCODE(BIPUSH) {
+                OPCODE(BIPUSH)
+                {
                     stack.pushInt(code_blob[pc++]);
                     NEXT();
                 }
-                OPCODE(SIPUSH) {
+                OPCODE(SIPUSH)
+                {
                     short si = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
                     stack.pushInt(si);
                     NEXT();
                 }
-                OPCODE(LDC) {
+                OPCODE(LDC)
+                {
+                    int constantIndex = pc++;
+                    Execution::loadConstant(currentClass->getRuntimeConstantPool(),
+                                            stack, constantIndex);
+                    NEXT();
+                }
+                OPCODE(LDC_W)
+                {
+                    int constantIndex = pc << 8 | pc + 1;
+                    pc += 2;
+                    Execution::loadConstant(currentClass->getRuntimeConstantPool(),
+                                            stack, constantIndex);
+                    NEXT();
+                }
+                OPCODE(LDC2_W)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(ILOAD)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(LDC_W) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(LDC2_W) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(ILOAD) {
+                OPCODE(LLOAD)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(LLOAD) {
+                OPCODE(FLOAD)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(FLOAD) {
+                OPCODE(DLOAD)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(DLOAD) {
+                OPCODE(ALOAD)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(ALOAD) {
+                OPCODE(ILOAD_0)
+                {
+                    NEXT();
+                }
+                OPCODE(ILOAD_1)
+                {
+                    NEXT();
+                }
+                OPCODE(ILOAD_2)
+                {
+                    NEXT();
+                }
+                OPCODE(ILOAD_3)
+                {
+                    NEXT();
+                }
+                OPCODE(LLOAD_0)
+                {
+                    NEXT();
+                }
+                OPCODE(LLOAD_1)
+                {
+                    NEXT();
+                }
+                OPCODE(LLOAD_2)
+                {
+                    NEXT();
+                }
+                OPCODE(LLOAD_3)
+                {
+                    NEXT();
+                }
+                OPCODE(FLOAD_0)
+                {
+                    NEXT();
+                }
+                OPCODE(FLOAD_1)
+                {
+                    NEXT();
+                }
+                OPCODE(FLOAD_2)
+                {
+                    NEXT();
+                }
+                OPCODE(FLOAD_3)
+                {
+                    NEXT();
+                }
+                OPCODE(DLOAD_0)
+                {
+                    NEXT();
+                }
+                OPCODE(DLOAD_1)
+                {
+                    NEXT();
+                }
+                OPCODE(DLOAD_2)
+                {
+                    NEXT();
+                }
+                OPCODE(DLOAD_3)
+                {
+                    NEXT();
+                }
+                OPCODE(ALOAD_0)
+                {
+                    NEXT();
+                }
+                OPCODE(ALOAD_1)
+                {
+                    NEXT();
+                }
+                OPCODE(ALOAD_2)
+                {
+                    NEXT();
+                }
+                OPCODE(ALOAD_3)
+                {
+                    NEXT();
+                }
+                OPCODE(IALOAD)
+                {
+                    NEXT();
+                }
+                OPCODE(LALOAD)
+                {
+                    NEXT();
+                }
+                OPCODE(FALOAD)
+                {
+                    NEXT();
+                }
+                OPCODE(DALOAD)
+                {
+                    NEXT();
+                }
+                OPCODE(AALOAD)
+                {
+                    NEXT();
+                }
+                OPCODE(BALOAD)
+                {
+                    NEXT();
+                }
+                OPCODE(CALOAD)
+                {
+                    NEXT();
+                }
+                OPCODE(SALOAD)
+                {
+                    NEXT();
+                }
+                OPCODE(ISTORE)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(ILOAD_0) {
-                    NEXT();
-                }
-                OPCODE(ILOAD_1) {
-                    NEXT();
-                }
-                OPCODE(ILOAD_2) {
-                    NEXT();
-                }
-                OPCODE(ILOAD_3) {
-                    NEXT();
-                }
-                OPCODE(LLOAD_0) {
-                    NEXT();
-                }
-                OPCODE(LLOAD_1) {
-                    NEXT();
-                }
-                OPCODE(LLOAD_2) {
-                    NEXT();
-                }
-                OPCODE(LLOAD_3) {
-                    NEXT();
-                }
-                OPCODE(FLOAD_0) {
-                    NEXT();
-                }
-                OPCODE(FLOAD_1) {
-                    NEXT();
-                }
-                OPCODE(FLOAD_2) {
-                    NEXT();
-                }
-                OPCODE(FLOAD_3) {
-                    NEXT();
-                }
-                OPCODE(DLOAD_0) {
-                    NEXT();
-                }
-                OPCODE(DLOAD_1) {
-                    NEXT();
-                }
-                OPCODE(DLOAD_2) {
-                    NEXT();
-                }
-                OPCODE(DLOAD_3) {
-                    NEXT();
-                }
-                OPCODE(ALOAD_0) {
-                    NEXT();
-                }
-                OPCODE(ALOAD_1) {
-                    NEXT();
-                }
-                OPCODE(ALOAD_2) {
-                    NEXT();
-                }
-                OPCODE(ALOAD_3) {
-                    NEXT();
-                }
-                OPCODE(IALOAD) {
-                    NEXT();
-                }
-                OPCODE(LALOAD) {
-                    NEXT();
-                }
-                OPCODE(FALOAD) {
-                    NEXT();
-                }
-                OPCODE(DALOAD) {
-                    NEXT();
-                }
-                OPCODE(AALOAD) {
-                    NEXT();
-                }
-                OPCODE(BALOAD) {
-                    NEXT();
-                }
-                OPCODE(CALOAD) {
-                    NEXT();
-                }
-                OPCODE(SALOAD) {
-                    NEXT();
-                }
-                OPCODE(ISTORE) {
+                OPCODE(LSTORE)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(LSTORE) {
+                OPCODE(FSTORE)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(FSTORE) {
+                OPCODE(DSTORE)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(DSTORE) {
+                OPCODE(ASTORE)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(ASTORE) {
+                OPCODE(ISTORE_0)
+                {
+                    NEXT();
+                }
+                OPCODE(ISTORE_1)
+                {
+                    NEXT();
+                }
+                OPCODE(ISTORE_2)
+                {
+                    NEXT();
+                }
+                OPCODE(ISTORE_3)
+                {
+                    NEXT();
+                }
+                OPCODE(LSTORE_0)
+                {
+                    NEXT();
+                }
+                OPCODE(LSTORE_1)
+                {
+                    NEXT();
+                }
+                OPCODE(LSTORE_2)
+                {
+                    NEXT();
+                }
+                OPCODE(LSTORE_3)
+                {
+                    NEXT();
+                }
+                OPCODE(FSTORE_0)
+                {
+                    NEXT();
+                }
+                OPCODE(FSTORE_1)
+                {
+                    NEXT();
+                }
+                OPCODE(FSTORE_2)
+                {
+                    NEXT();
+                }
+                OPCODE(FSTORE_3)
+                {
+                    NEXT();
+                }
+                OPCODE(DSTORE_0)
+                {
+                    NEXT();
+                }
+                OPCODE(DSTORE_1)
+                {
+                    NEXT();
+                }
+                OPCODE(DSTORE_2)
+                {
+                    NEXT();
+                }
+                OPCODE(DSTORE_3)
+                {
+                    NEXT();
+                }
+                OPCODE(ASTORE_0)
+                {
+                    NEXT();
+                }
+                OPCODE(ASTORE_1)
+                {
+                    NEXT();
+                }
+                OPCODE(ASTORE_2)
+                {
+                    NEXT();
+                }
+                OPCODE(ASTORE_3)
+                {
+                    NEXT();
+                }
+                OPCODE(IASTORE)
+                {
+                    NEXT();
+                }
+                OPCODE(LASTORE)
+                {
+                    NEXT();
+                }
+                OPCODE(FASTORE)
+                {
+                    NEXT();
+                }
+                OPCODE(DASTORE)
+                {
+                    NEXT();
+                }
+                OPCODE(AASTORE)
+                {
+                    NEXT();
+                }
+                OPCODE(BASTORE)
+                {
+                    NEXT();
+                }
+                OPCODE(CASTORE)
+                {
+                    NEXT();
+                }
+                OPCODE(SASTORE)
+                {
+                    NEXT();
+                }
+                OPCODE(POP)
+                {
+                    NEXT();
+                }
+                OPCODE(POP2)
+                {
+                    NEXT();
+                }
+                OPCODE(DUP)
+                {
+                    NEXT();
+                }
+                OPCODE(DUP_X1)
+                {
+                    NEXT();
+                }
+                OPCODE(DUP_X2)
+                {
+                    NEXT();
+                }
+                OPCODE(DUP2)
+                {
+                    NEXT();
+                }
+                OPCODE(DUP2_X1)
+                {
+                    NEXT();
+                }
+                OPCODE(DUP2_X2)
+                {
+                    NEXT();
+                }
+                OPCODE(SWAP)
+                {
+                    NEXT();
+                }
+                OPCODE(IADD)
+                {
+                    NEXT();
+                }
+                OPCODE(LADD)
+                {
+                    NEXT();
+                }
+                OPCODE(FADD)
+                {
+                    NEXT();
+                }
+                OPCODE(DADD)
+                {
+                    NEXT();
+                }
+                OPCODE(ISUB)
+                {
+                    NEXT();
+                }
+                OPCODE(LSUB)
+                {
+                    NEXT();
+                }
+                OPCODE(FSUB)
+                {
+                    NEXT();
+                }
+                OPCODE(DSUB)
+                {
+                    NEXT();
+                }
+                OPCODE(IMUL)
+                {
+                    NEXT();
+                }
+                OPCODE(LMUL)
+                {
+                    NEXT();
+                }
+                OPCODE(FMUL)
+                {
+                    NEXT();
+                }
+                OPCODE(DMUL)
+                {
+                    NEXT();
+                }
+                OPCODE(IDIV)
+                {
+                    NEXT();
+                }
+                OPCODE(LDIV)
+                {
+                    NEXT();
+                }
+                OPCODE(FDIV)
+                {
+                    NEXT();
+                }
+                OPCODE(DDIV)
+                {
+                    NEXT();
+                }
+                OPCODE(IREM)
+                {
+                    NEXT();
+                }
+                OPCODE(LREM)
+                {
+                    NEXT();
+                }
+                OPCODE(FREM)
+                {
+                    NEXT();
+                }
+                OPCODE(DREM)
+                {
+                    NEXT();
+                }
+                OPCODE(INEG)
+                {
+                    NEXT();
+                }
+                OPCODE(LNEG)
+                {
+                    NEXT();
+                }
+                OPCODE(FNEG)
+                {
+                    NEXT();
+                }
+                OPCODE(DNEG)
+                {
+                    NEXT();
+                }
+                OPCODE(ISHL)
+                {
+                    NEXT();
+                }
+                OPCODE(LSHL)
+                {
+                    NEXT();
+                }
+                OPCODE(ISHR)
+                {
+                    NEXT();
+                }
+                OPCODE(LSHR)
+                {
+                    NEXT();
+                }
+                OPCODE(IUSHR)
+                {
+                    NEXT();
+                }
+                OPCODE(LUSHR)
+                {
+                    NEXT();
+                }
+                OPCODE(IAND)
+                {
+                    NEXT();
+                }
+                OPCODE(LAND)
+                {
+                    NEXT();
+                }
+                OPCODE(IOR)
+                {
+                    NEXT();
+                }
+                OPCODE(LOR)
+                {
+                    NEXT();
+                }
+                OPCODE(IXOR)
+                {
+                    NEXT();
+                }
+                OPCODE(LXOR)
+                {
+                    NEXT();
+                }
+                OPCODE(IINC)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(I2L)
+                {
+                    NEXT();
+                }
+                OPCODE(I2F)
+                {
+                    NEXT();
+                }
+                OPCODE(I2D)
+                {
+                    NEXT();
+                }
+                OPCODE(L2I)
+                {
+                    NEXT();
+                }
+                OPCODE(L2F)
+                {
+                    NEXT();
+                }
+                OPCODE(L2D)
+                {
+                    NEXT();
+                }
+                OPCODE(F2I)
+                {
+                    NEXT();
+                }
+                OPCODE(F2L)
+                {
+                    NEXT();
+                }
+                OPCODE(F2D)
+                {
+                    NEXT();
+                }
+                OPCODE(D2I)
+                {
+                    NEXT();
+                }
+                OPCODE(D2L)
+                {
+                    NEXT();
+                }
+                OPCODE(D2F)
+                {
+                    NEXT();
+                }
+                OPCODE(I2B)
+                {
+                    NEXT();
+                }
+                OPCODE(I2C)
+                {
+                    NEXT();
+                }
+                OPCODE(I2S)
+                {
+                    NEXT();
+                }
+                OPCODE(LCMP)
+                {
+                    NEXT();
+                }
+                OPCODE(FCMPL)
+                {
+                    NEXT();
+                }
+                OPCODE(FCMPG)
+                {
+                    NEXT();
+                }
+                OPCODE(DCMPL)
+                {
+                    NEXT();
+                }
+                OPCODE(DCMPG)
+                {
+                    NEXT();
+                }
+                OPCODE(IFEQ)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IFNE)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IFLT)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IFGE)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IFGT)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IFLE)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IF_ICMPEQ)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IF_ICMPNE)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IF_ICMPLT)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IF_ICMPGE)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IF_ICMPGT)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IF_ICMPLE)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IF_ACMPEQ)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(IF_ACMPNE)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(GOTO)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(JSR)
+                {
+                    pc += 2;
+                    NEXT();
+                }
+                OPCODE(RET)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(ISTORE_0) {
-                    NEXT();
-                }
-                OPCODE(ISTORE_1) {
-                    NEXT();
-                }
-                OPCODE(ISTORE_2) {
-                    NEXT();
-                }
-                OPCODE(ISTORE_3) {
-                    NEXT();
-                }
-                OPCODE(LSTORE_0) {
-                    NEXT();
-                }
-                OPCODE(LSTORE_1) {
-                    NEXT();
-                }
-                OPCODE(LSTORE_2) {
-                    NEXT();
-                }
-                OPCODE(LSTORE_3) {
-                    NEXT();
-                }
-                OPCODE(FSTORE_0) {
-                    NEXT();
-                }
-                OPCODE(FSTORE_1) {
-                    NEXT();
-                }
-                OPCODE(FSTORE_2) {
-                    NEXT();
-                }
-                OPCODE(FSTORE_3) {
-                    NEXT();
-                }
-                OPCODE(DSTORE_0) {
-                    NEXT();
-                }
-                OPCODE(DSTORE_1) {
-                    NEXT();
-                }
-                OPCODE(DSTORE_2) {
-                    NEXT();
-                }
-                OPCODE(DSTORE_3) {
-                    NEXT();
-                }
-                OPCODE(ASTORE_0) {
-                    NEXT();
-                }
-                OPCODE(ASTORE_1) {
-                    NEXT();
-                }
-                OPCODE(ASTORE_2) {
-                    NEXT();
-                }
-                OPCODE(ASTORE_3) {
-                    NEXT();
-                }
-                OPCODE(IASTORE) {
-                    NEXT();
-                }
-                OPCODE(LASTORE) {
-                    NEXT();
-                }
-                OPCODE(FASTORE) {
-                    NEXT();
-                }
-                OPCODE(DASTORE) {
-                    NEXT();
-                }
-                OPCODE(AASTORE) {
-                    NEXT();
-                }
-                OPCODE(BASTORE) {
-                    NEXT();
-                }
-                OPCODE(CASTORE) {
-                    NEXT();
-                }
-                OPCODE(SASTORE) {
-                    NEXT();
-                }
-                OPCODE(POP) {
-                    NEXT();
-                }
-                OPCODE(POP2) {
-                    NEXT();
-                }
-                OPCODE(DUP) {
-                    NEXT();
-                }
-                OPCODE(DUP_X1) {
-                    NEXT();
-                }
-                OPCODE(DUP_X2) {
-                    NEXT();
-                }
-                OPCODE(DUP2) {
-                    NEXT();
-                }
-                OPCODE(DUP2_X1) {
-                    NEXT();
-                }
-                OPCODE(DUP2_X2) {
-                    NEXT();
-                }
-                OPCODE(SWAP) {
-                    NEXT();
-                }
-                OPCODE(IADD) {
-                    NEXT();
-                }
-                OPCODE(LADD) {
-                    NEXT();
-                }
-                OPCODE(FADD) {
-                    NEXT();
-                }
-                OPCODE(DADD) {
-                    NEXT();
-                }
-                OPCODE(ISUB) {
-                    NEXT();
-                }
-                OPCODE(LSUB) {
-                    NEXT();
-                }
-                OPCODE(FSUB) {
-                    NEXT();
-                }
-                OPCODE(DSUB) {
-                    NEXT();
-                }
-                OPCODE(IMUL) {
-                    NEXT();
-                }
-                OPCODE(LMUL) {
-                    NEXT();
-                }
-                OPCODE(FMUL) {
-                    NEXT();
-                }
-                OPCODE(DMUL) {
-                    NEXT();
-                }
-                OPCODE(IDIV) {
-                    NEXT();
-                }
-                OPCODE(LDIV) {
-                    NEXT();
-                }
-                OPCODE(FDIV) {
-                    NEXT();
-                }
-                OPCODE(DDIV) {
-                    NEXT();
-                }
-                OPCODE(IREM) {
-                    NEXT();
-                }
-                OPCODE(LREM) {
-                    NEXT();
-                }
-                OPCODE(FREM) {
-                    NEXT();
-                }
-                OPCODE(DREM) {
-                    NEXT();
-                }
-                OPCODE(INEG) {
-                    NEXT();
-                }
-                OPCODE(LNEG) {
-                    NEXT();
-                }
-                OPCODE(FNEG) {
-                    NEXT();
-                }
-                OPCODE(DNEG) {
-                    NEXT();
-                }
-                OPCODE(ISHL) {
-                    NEXT();
-                }
-                OPCODE(LSHL) {
-                    NEXT();
-                }
-                OPCODE(ISHR) {
-                    NEXT();
-                }
-                OPCODE(LSHR) {
-                    NEXT();
-                }
-                OPCODE(IUSHR) {
-                    NEXT();
-                }
-                OPCODE(LUSHR) {
-                    NEXT();
-                }
-                OPCODE(IAND) {
-                    NEXT();
-                }
-                OPCODE(LAND) {
-                    NEXT();
-                }
-                OPCODE(IOR) {
-                    NEXT();
-                }
-                OPCODE(LOR) {
-                    NEXT();
-                }
-                OPCODE(IXOR) {
-                    NEXT();
-                }
-                OPCODE(LXOR) {
-                    NEXT();
-                }
-                OPCODE(IINC) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(I2L) {
-                    NEXT();
-                }
-                OPCODE(I2F) {
-                    NEXT();
-                }
-                OPCODE(I2D) {
-                    NEXT();
-                }
-                OPCODE(L2I) {
-                    NEXT();
-                }
-                OPCODE(L2F) {
-                    NEXT();
-                }
-                OPCODE(L2D) {
-                    NEXT();
-                }
-                OPCODE(F2I) {
-                    NEXT();
-                }
-                OPCODE(F2L) {
-                    NEXT();
-                }
-                OPCODE(F2D) {
-                    NEXT();
-                }
-                OPCODE(D2I) {
-                    NEXT();
-                }
-                OPCODE(D2L) {
-                    NEXT();
-                }
-                OPCODE(D2F) {
-                    NEXT();
-                }
-                OPCODE(I2B) {
-                    NEXT();
-                }
-                OPCODE(I2C) {
-                    NEXT();
-                }
-                OPCODE(I2S) {
-                    NEXT();
-                }
-                OPCODE(LCMP) {
-                    NEXT();
-                }
-                OPCODE(FCMPL) {
-                    NEXT();
-                }
-                OPCODE(FCMPG) {
-                    NEXT();
-                }
-                OPCODE(DCMPL) {
-                    NEXT();
-                }
-                OPCODE(DCMPG) {
-                    NEXT();
-                }
-                OPCODE(IFEQ) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IFNE) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IFLT) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IFGE) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IFGT) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IFLE) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IF_ICMPEQ) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IF_ICMPNE) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IF_ICMPLT) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IF_ICMPGE) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IF_ICMPGT) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IF_ICMPLE) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IF_ACMPEQ) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(IF_ACMPNE) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(GOTO) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(JSR) {
-                    pc += 2;
-                    NEXT();
-                }
-                OPCODE(RET) {
-                    pc++;
-                    NEXT();
-                }
-                OPCODE(TABLESWITCH) {
+                OPCODE(TABLESWITCH)
+                {
                     // var args
                     NEXT();
                 }
-                OPCODE(LOOKUPSWITCH) {
+                OPCODE(LOOKUPSWITCH)
+                {
                     // var args
                     NEXT();
                 }
-                OPCODE(IRETURN) {
+                OPCODE(IRETURN)
+                {
                     NEXT();
                 }
-                OPCODE(LRETURN) {
+                OPCODE(LRETURN)
+                {
                     NEXT();
                 }
-                OPCODE(FRETURN) {
+                OPCODE(FRETURN)
+                {
                     NEXT();
                 }
-                OPCODE(DRETURN) {
+                OPCODE(DRETURN)
+                {
                     NEXT();
                 }
-                OPCODE(ARETURN) {
+                OPCODE(ARETURN)
+                {
                     NEXT();
                 }
-                OPCODE(RETURN) {
+                OPCODE(RETURN)
+                {
                     NEXT();
                 }
-                OPCODE(GETSTATIC) {
+                OPCODE(GETSTATIC)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(PUTSTATIC) {
+                OPCODE(PUTSTATIC)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(GETFIELD) {
+                OPCODE(GETFIELD)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(PUTFIELD) {
+                OPCODE(PUTFIELD)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(INVOKEVIRTUAL) {
+                OPCODE(INVOKEVIRTUAL)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(INVOKESPECIAL) {
+                OPCODE(INVOKESPECIAL)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(INVOKESTATIC) {
+                OPCODE(INVOKESTATIC)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(INVOKEINTERFACE) {
+                OPCODE(INVOKEINTERFACE)
+                {
                     pc += 4;
                     NEXT();
                 }
-                OPCODE(INVOKEDYNAMIC) {
+                OPCODE(INVOKEDYNAMIC)
+                {
                     pc += 4;
                     NEXT();
                 }
-                OPCODE(NEW) {
+                OPCODE(NEW)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(NEWARRAY) {
+                OPCODE(NEWARRAY)
+                {
                     pc++;
                     NEXT();
                 }
-                OPCODE(ANEWARRAY) {
+                OPCODE(ANEWARRAY)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(ARRAYLENGTH) {
+                OPCODE(ARRAYLENGTH)
+                {
                     NEXT();
                 }
-                OPCODE(ATHROW) {
+                OPCODE(ATHROW)
+                {
                     NEXT();
                 }
-                OPCODE(CHECKCAST) {
+                OPCODE(CHECKCAST)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(INSTANCEOF) {
+                OPCODE(INSTANCEOF)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(MONITORENTER) {
+                OPCODE(MONITORENTER)
+                {
                     NEXT();
                 }
-                OPCODE(MONITOREXIT) {
+                OPCODE(MONITOREXIT)
+                {
                     NEXT();
                 }
-                OPCODE(WIDE) {
+                OPCODE(WIDE)
+                {
                     NEXT();
                 }
-                OPCODE(MULTIANEWARRAY) {
+                OPCODE(MULTIANEWARRAY)
+                {
                     pc += 3;
                     NEXT();
                 }
-                OPCODE(IFNULL) {
+                OPCODE(IFNULL)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(IFNONNULL) {
+                OPCODE(IFNONNULL)
+                {
                     pc += 2;
                     NEXT();
                 }
-                OPCODE(GOTO_W) {
+                OPCODE(GOTO_W)
+                {
                     pc += 4;
                     NEXT();
                 }
-                OPCODE(JSR_W) {
+                OPCODE(JSR_W)
+                {
                     pc += 4;
                     NEXT();
                 }

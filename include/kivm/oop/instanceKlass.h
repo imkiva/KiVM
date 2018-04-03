@@ -120,8 +120,8 @@ namespace kivm {
             return _signature;
         }
 
-        RuntimeConstantPool &getRuntimeConstantPool() {
-            return this->_runtime_pool;
+        RuntimeConstantPool *getRuntimeConstantPool() {
+            return &this->_runtime_pool;
         }
 
         void linkAndInit() override;
