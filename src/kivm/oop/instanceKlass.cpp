@@ -257,6 +257,13 @@ namespace kivm {
         return this->getInstanceFieldInfo(className, name, descriptor)._offset;
     }
 
+    FieldID InstanceKlass::getThisClassField(const String &name, const String &descriptor) const {
+        const auto &id = getInstanceFieldInfo(getName(), name, descriptor);
+        return id._field != nullptr
+               ? id
+               : getStaticFieldInfo(getName(), name, descriptor);
+    }
+
     FieldID InstanceKlass::getStaticFieldInfo(const String &className,
                                               const String &name,
                                               const String &descriptor) const {
@@ -275,31 +282,31 @@ namespace kivm {
                   FieldID(-1, nullptr));
     }
 
-    Method *InstanceKlass::findThisClassMethod(const String &name, const String &descriptor) const {
+    Method *InstanceKlass::getThisClassMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_all_methods,
                   ND_KEY_MAKER(name, descriptor),
                   iter->second, nullptr);
     }
 
-    Method *InstanceKlass::findVirtualMethod(const String &name, const String &descriptor) const {
+    Method *InstanceKlass::getVirtualMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_vtable,
                   ND_KEY_MAKER(name, descriptor),
                   iter->second, nullptr);
     }
 
-    Method *InstanceKlass::findNonVirtualMethod(const String &name, const String &descriptor) const {
+    Method *InstanceKlass::getNonVirtualMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_pftable,
                   ND_KEY_MAKER(name, descriptor),
                   iter->second, nullptr);
     }
 
-    Method *InstanceKlass::findStaticMethod(const String &name, const String &descriptor) const {
+    Method *InstanceKlass::getStaticMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_stable,
                   ND_KEY_MAKER(name, descriptor),
                   iter->second, nullptr);
     }
 
-    InstanceKlass *InstanceKlass::findInterface(const String &interfaceClassName) const {
+    InstanceKlass *InstanceKlass::getInterface(const String &interfaceClassName) const {
         RETURN_IF(iter, this->_interfaces,
                   interfaceClassName,
                   iter->second, nullptr);

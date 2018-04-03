@@ -23,6 +23,7 @@ namespace kivm {
                               getUtf8(pool, nameAndType->descriptor_index));
     }
 
+    /********************** pools ***********************/
     Klass *pools::ClassCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto classInfo = (CONSTANT_Class_info *) pool[index];
         return BootstrapClassLoader::get()->loadClass(
@@ -42,14 +43,24 @@ namespace kivm {
             auto instanceKlass = (InstanceKlass *) klass;
             const auto &nameAndType = getNameAndType(
                 pool, methodRef->name_and_type_index);
-            return instanceKlass->findThisClassMethod(nameAndType.first, nameAndType.second);
+            return instanceKlass->getThisClassMethod(nameAndType.first, nameAndType.second);
         }
         PANIC("Unsupported method & class type.");
         return nullptr;
     }
 
-    Field *pools::FieldCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-        return nullptr;
+    FieldID pools::FieldCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+        auto fieldRef = (CONSTANT_Fieldref_info *) pool[index];
+        Klass *klass = rt->get_class(fieldRef->class_index);
+        if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
+            auto instanceKlass = (InstanceKlass *) klass;
+            const auto &nameAndType = getNameAndType(
+                pool, fieldRef->name_and_type_index);
+            return instanceKlass->getThisClassField(nameAndType.first, nameAndType.second);
+        }
+        PANIC("Unsupported field & class type.");
+        return FieldID(-1, nullptr);
     }
+    /********************** pools ***********************/
 }
 

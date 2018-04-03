@@ -131,6 +131,15 @@ namespace kivm {
         }
 
         /**
+         * Search field in this class.
+         * @param name Field name
+         * @param descriptor Field descriptor
+         * @return FieldID if found, otherwise {@code FieldID(-1, nullptr)}
+         */
+        FieldID getThisClassField(const String &name,
+                                  const String &descriptor) const;
+
+        /**
          * Get static field offset.
          * @param className Where the wanted field belongs to
          * @param name Field name
@@ -180,7 +189,7 @@ namespace kivm {
          * @param descriptor Method descriptor
          * @return method pointer if found, otherwise {@code nullptr}
          */
-        Method *findThisClassMethod(const String &name, const String &descriptor) const;
+        Method *getThisClassMethod(const String &name, const String &descriptor) const;
 
         /**
          * Get virtual method.
@@ -188,7 +197,7 @@ namespace kivm {
          * @param descriptor Method descriptor
          * @return method pointer if found, otherwise {@code nullptr}
          */
-        Method *findVirtualMethod(const String &name, const String &descriptor) const;
+        Method *getVirtualMethod(const String &name, const String &descriptor) const;
 
         /**
          * Get non-virtual method(private or final).
@@ -196,7 +205,7 @@ namespace kivm {
          * @param descriptor Method descriptor
          * @return method pointer if found, otherwise {@code nullptr}
          */
-        Method *findNonVirtualMethod(const String &name, const String &descriptor) const;
+        Method *getNonVirtualMethod(const String &name, const String &descriptor) const;
 
         /**
          * Get static method.
@@ -204,14 +213,14 @@ namespace kivm {
          * @param descriptor Method descriptor
          * @return method pointer if found, otherwise {@code nullptr}
          */
-        Method *findStaticMethod(const String &name, const String &descriptor) const;
+        Method *getStaticMethod(const String &name, const String &descriptor) const;
 
         /**
          * Get interface.
          * @param interfaceClassName Interface class name
          * @return Interface class representation if found, otherwise {@code nullptr}
          */
-        InstanceKlass *findInterface(const String &interfaceClassName) const;
+        InstanceKlass *getInterface(const String &interfaceClassName) const;
 
         /**
          * Set static field's value.

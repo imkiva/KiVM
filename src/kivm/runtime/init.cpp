@@ -99,9 +99,9 @@ namespace kivm {
         use(cl, thread, J_SECURITY_MANAGER);
 
         // Construct the main thread group
-        // use findThisClassMethod() to get a private method
-        auto tg_ctor = tg_class->findThisClassMethod(L"<init>",
-                                                     L"(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
+        // use getThisClassMethod() to get a private method
+        auto tg_ctor = tg_class->getThisClassMethod(L"<init>",
+                                                    L"(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
         Execution::callVoidMethod(thread, tg_ctor,
                                   {main_tg, nullptr, init_tg, java::lang::String::intern(L"main")});
 
@@ -111,14 +111,14 @@ namespace kivm {
         sunDebug_class->setClassState(ClassState::BEING_INITIALIZED);
 
         // Construct the init thread by attaching the main thread group to it.
-        auto thread_ctor = thread_class->findThisClassMethod(L"<init>",
-                                                             L"(Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
+        auto thread_ctor = thread_class->getThisClassMethod(L"<init>",
+                                                            L"(Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
         Execution::callVoidMethod(thread, thread_ctor,
                                   {init_thread, main_tg, java::lang::String::intern(L"main")});
 
 
         // Initialize system classes.
-        auto init_system_classes = system_class->findStaticMethod(L"initializeSystemClass", L"()V");
+        auto init_system_classes = system_class->getStaticMethod(L"initializeSystemClass", L"()V");
         Execution::callVoidMethod(thread, init_system_classes, {});
 
         // re-enable sun.security.util.Debug

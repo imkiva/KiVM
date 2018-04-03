@@ -59,13 +59,13 @@ namespace kivm {
         };
 
         struct FieldCreator {
-            Field *operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
+            FieldID operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
         using ClassPool = ConstantTable<Klass *, ClassCreator, CONSTANT_Class>;
         using StringPool = ConstantTable<instanceOop, StringCreator, CONSTANT_String>;
         using MethodPool = ConstantTable<Method *, MethodCreator, CONSTANT_Methodref>;
-        using FieldPool = ConstantTable<Field *, FieldCreator, CONSTANT_Fieldref>;
+        using FieldPool = ConstantTable<FieldID, FieldCreator, CONSTANT_Fieldref>;
     }
 
     class RuntimeConstantPool {

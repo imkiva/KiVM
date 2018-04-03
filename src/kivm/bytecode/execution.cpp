@@ -18,7 +18,7 @@ namespace kivm {
                 Execution::initializeClass(javaThread, (InstanceKlass *) super_klass);
             }
 
-            auto *clinit = klass->findVirtualMethod(L"<clinit>", L"()V");
+            auto *clinit = klass->getVirtualMethod(L"<clinit>", L"()V");
             if (clinit != nullptr && clinit->getClass() == klass) {
                 D("<clinit> found in %s, invoking.",
                   strings::toStdString(klass->getName()).c_str());
@@ -33,7 +33,7 @@ namespace kivm {
 
     void Execution::callDefaultConstructor(JavaThread *javaThread, instanceOop oop) {
         auto klass = (InstanceKlass *) oop->getClass();
-        auto default_init = klass->findVirtualMethod(L"<init>", L"()V");
+        auto default_init = klass->getVirtualMethod(L"<init>", L"()V");
         assert(default_init != nullptr);
         javaThread->runMethod(default_init, {oop});
     }
