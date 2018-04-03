@@ -65,7 +65,7 @@ namespace kivm {
         auto class_class = use(cl, thread, J_CLASS);
         java::lang::Class::mirrorCoreClasses();
 
-        auto string_class = use(cl, thread, J_STRING);
+        use(cl, thread, J_STRING);
         auto thread_class = use(cl, thread, J_THREAD);
         auto tg_class = use(cl, thread, J_THREAD_GROUP);
 
