@@ -147,6 +147,10 @@ namespace kivm {
                 }
                 OPCODE(LDC2_W)
                 {
+                    int constantIndex = pc << 8 | pc + 1;
+                    pc += 2;
+                    Execution::loadConstant(currentClass->getRuntimeConstantPool(),
+                                            stack, constantIndex);
                     pc += 2;
                     NEXT();
                 }
