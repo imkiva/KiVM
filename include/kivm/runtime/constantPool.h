@@ -92,22 +92,26 @@ namespace kivm {
             _string_pool.setRawPool(pool);
         }
 
-        inline pools::ClassPoolEnteyType get_class(int classIndex) {
+        inline int getConstantTag(int index) {
+            return _raw_pool[index]->tag;
+        }
+
+        inline pools::ClassPoolEnteyType getClass(int classIndex) {
             assert(this->_raw_pool != nullptr);
             return _class_pool.findOrNew(this, classIndex);
         }
 
-        inline pools::StringPoolEntryType get_string(int stringIndex) {
+        inline pools::StringPoolEntryType getString(int stringIndex) {
             assert(this->_raw_pool != nullptr);
             return _string_pool.findOrNew(this, stringIndex);
         }
 
-        inline pools::MethodPoolEntryType get_method(int methodIndex) {
+        inline pools::MethodPoolEntryType getMethod(int methodIndex) {
             assert(this->_raw_pool != nullptr);
             return _method_pool.findOrNew(this, methodIndex);
         }
 
-        inline pools::FieldPoolEntryType get_field(int fieldIndex) {
+        inline pools::FieldPoolEntryType getField(int fieldIndex) {
             assert(this->_raw_pool != nullptr);
             return _field_pool.findOrNew(this, fieldIndex);
         }

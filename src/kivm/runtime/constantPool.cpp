@@ -38,7 +38,7 @@ namespace kivm {
 
     pools::MethodPoolEntryType pools::MethodCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto methodRef = (CONSTANT_Methodref_info *) pool[index];
-        Klass *klass = rt->get_class(methodRef->class_index);
+        Klass *klass = rt->getClass(methodRef->class_index);
         if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
             auto instanceKlass = (InstanceKlass *) klass;
             const auto &nameAndType = getNameAndType(
@@ -51,7 +51,7 @@ namespace kivm {
 
     pools::FieldPoolEntryType pools::FieldCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto fieldRef = (CONSTANT_Fieldref_info *) pool[index];
-        Klass *klass = rt->get_class(fieldRef->class_index);
+        Klass *klass = rt->getClass(fieldRef->class_index);
         if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
             auto instanceKlass = (InstanceKlass *) klass;
             const auto &nameAndType = getNameAndType(
