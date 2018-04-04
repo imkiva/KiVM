@@ -113,7 +113,7 @@ namespace kivm {
     public:
         explicit RuntimeConstantPool(InstanceKlass *instanceKlass);
 
-        void attachConstantPool(cp_info **pool) {
+        inline void attachConstantPool(cp_info **pool) {
             this->_raw_pool = pool;
             _class_pool.setRawPool(pool);
             _string_pool.setRawPool(pool);
@@ -159,6 +159,26 @@ namespace kivm {
         inline pools::NameAndTypePoolEntry getNameAndType(int index) {
             assert(this->_raw_pool != nullptr);
             return _name_and_type_pool.findOrNew(this, index);
+        }
+
+        inline jint getInt(int index) {
+            assert(this->_raw_pool != nullptr);
+            return _int_pool.findOrNew(this, index);
+        }
+
+        inline jlong getLong(int index) {
+            assert(this->_raw_pool != nullptr);
+            return _long_pool.findOrNew(this, index);
+        }
+
+        inline jfloat getFloat(int index) {
+            assert(this->_raw_pool != nullptr);
+            return _float_pool.findOrNew(this, index);
+        }
+
+        inline jdouble getDouble(int index) {
+            assert(this->_raw_pool != nullptr);
+            return _double_pool.findOrNew(this, index);
         }
     };
 }
