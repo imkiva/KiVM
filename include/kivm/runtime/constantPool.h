@@ -94,6 +94,10 @@ namespace kivm {
         pools::StringPool _string_pool;
         pools::MethodPool _method_pool;
         pools::FieldPool _field_pool;
+        pools::IntegerPool _int_pool;
+        pools::FloatPool _float_pool;
+        pools::LongPool _long_pool;
+        pools::DoublePool _double_pool;
 
     public:
         explicit RuntimeConstantPool(InstanceKlass *instanceKlass);
@@ -104,6 +108,10 @@ namespace kivm {
             _string_pool.setRawPool(pool);
             _method_pool.setRawPool(pool);
             _field_pool.setRawPool(pool);
+            _int_pool.setRawPool(pool);
+            _float_pool.setRawPool(pool);
+            _long_pool.setRawPool(pool);
+            _double_pool.setRawPool(pool);
         }
 
         inline int getConstantTag(int index) {
