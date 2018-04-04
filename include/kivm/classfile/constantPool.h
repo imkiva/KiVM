@@ -172,7 +172,7 @@ namespace kivm {
          */
         u4 bytes;
 
-        int get_constant() const;
+        jint get_constant() const;
     };
 
     struct CONSTANT_Float_info : public cp_info {
@@ -184,7 +184,7 @@ namespace kivm {
          */
         u4 bytes;
 
-        float get_constant() const;
+        jfloat get_constant() const;
     };
 
     struct CONSTANT_Long_info : public cp_info {
@@ -199,7 +199,7 @@ namespace kivm {
         u4 high_bytes;
         u4 low_bytes;
 
-        long get_constant() const;
+        jlong get_constant() const;
     };
 
     struct CONSTANT_Double_info : public cp_info {
@@ -213,7 +213,7 @@ namespace kivm {
         u4 high_bytes;
         u4 low_bytes;
 
-        double get_constant() const;
+        jdouble get_constant() const;
     };
 
     struct CONSTANT_NameAndType_info : public cp_info {

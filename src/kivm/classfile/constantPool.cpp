@@ -6,11 +6,11 @@
 #include <cmath>
 
 namespace kivm {
-    int CONSTANT_Integer_info::get_constant() const {
-        return static_cast<int>(bytes);
+    jint CONSTANT_Integer_info::get_constant() const {
+        return static_cast<jint>(bytes);
     }
 
-    float CONSTANT_Float_info::get_constant() const {
+    jfloat CONSTANT_Float_info::get_constant() const {
         if (FLOAT_IS_POSITIVE_INFINITY(bytes)) {
             return _FLOAT_POSITIVE_INFINITY;
 
@@ -26,16 +26,16 @@ namespace kivm {
             int m = (e == 0)
                     ? (bytes & 0x7fffff) << 1
                     : (bytes & 0x7fffff) | 0x800000;
-            return static_cast<float>(s * m * pow(2, e - 150));
+            return static_cast<jfloat>(s * m * pow(2, e - 150));
         }
     }
 
-    long CONSTANT_Long_info::get_constant() const {
-        return ((long) high_bytes << 32) + low_bytes;
+    jlong CONSTANT_Long_info::get_constant() const {
+        return ((jlong) high_bytes << 32) + low_bytes;
     }
 
-    double CONSTANT_Double_info::get_constant() const {
-        long bits = ((long) high_bytes << 32) + low_bytes;
+    jdouble CONSTANT_Double_info::get_constant() const {
+        jlong bits = ((jlong) high_bytes << 32) + low_bytes;
 
         if (DOUBLE_IS_POSITIVE_INFINITY(bits)) {
             return _DOUBLE_POSITIVE_INFINITY;

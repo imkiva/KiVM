@@ -47,6 +47,14 @@ namespace kivm {
             }
         };
 
+        template<typename PrimitiveType, typename EntryType>
+        struct PrimitiveConstantCreator {
+            inline PrimitiveType operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+                auto primitiveInfo = (EntryType *) pool[index];
+                return (PrimitiveType) primitiveInfo->get_constant();
+            }
+        };
+
         struct ClassCreator {
             Klass *operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
@@ -72,6 +80,10 @@ namespace kivm {
         using StringPool = Pool<StringPoolEntryType, StringCreator, CONSTANT_String>;
         using MethodPool = Pool<MethodPoolEntryType, MethodCreator, CONSTANT_Methodref>;
         using FieldPool = Pool<FieldPoolEntryType, FieldCreator, CONSTANT_Fieldref>;
+        using IntegerPool = Pool<jint, PrimitiveConstantCreator<jint, CONSTANT_Integer_info>, CONSTANT_Integer>;
+        using FloatPool = Pool<jfloat, PrimitiveConstantCreator<jfloat, CONSTANT_Float_info>, CONSTANT_Float>;
+        using LongPool = Pool<jlong, PrimitiveConstantCreator<jlong, CONSTANT_Long_info>, CONSTANT_Long>;
+        using DoublePool = Pool<jdouble, PrimitiveConstantCreator<jdouble, CONSTANT_Double_info>, CONSTANT_Double>;
     }
 
     class RuntimeConstantPool {
