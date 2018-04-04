@@ -11,56 +11,50 @@ namespace kivm {
         : _class_loader(instanceKlass->getClassLoader()) {
     }
 
-    static String getUtf8(cp_info **pool, int utf8Index) {
-        auto *utf8 = (CONSTANT_Utf8_info *) pool[utf8Index];
-        return utf8->get_constant();
-    }
-
-    static std::pair<const String &, const String &>
-    getNameAndType(cp_info **pool, int nameAndTypeIndex) {
-        auto nameAndType = (CONSTANT_NameAndType_info *) pool[nameAndTypeIndex];
-        return std::make_pair(getUtf8(pool, nameAndType->name_index),
-                              getUtf8(pool, nameAndType->descriptor_index));
-    }
-
     /********************** pools ***********************/
-    pools::ClassPoolEnteyType pools::ClassCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+    pools::ClassPoolEntey pools::ClassCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto classInfo = (CONSTANT_Class_info *) pool[index];
         return BootstrapClassLoader::get()->loadClass(
-            getUtf8(pool, classInfo->name_index));
+            rt->getUtf8(classInfo->name_index));
     }
 
-    pools::StringPoolEntryType pools::StringCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+    pools::StringPoolEntry pools::StringCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto classInfo = (CONSTANT_String_info *) pool[index];
         return java::lang::String::from(
-            getUtf8(pool, classInfo->string_index));
+            rt->getUtf8(classInfo->string_index));
     }
 
-    pools::MethodPoolEntryType pools::MethodCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+    pools::MethodPoolEntry pools::MethodCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto methodRef = (CONSTANT_Methodref_info *) pool[index];
         Klass *klass = rt->getClass(methodRef->class_index);
         if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
             auto instanceKlass = (InstanceKlass *) klass;
-            const auto &nameAndType = getNameAndType(
-                pool, methodRef->name_and_type_index);
+            const auto &nameAndType = rt->getNameAndType(methodRef->name_and_type_index);
             return instanceKlass->getThisClassMethod(nameAndType.first, nameAndType.second);
         }
         PANIC("Unsupported method & class type.");
         return nullptr;
     }
 
-    pools::FieldPoolEntryType pools::FieldCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+    pools::FieldPoolEntry pools::FieldCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto fieldRef = (CONSTANT_Fieldref_info *) pool[index];
         Klass *klass = rt->getClass(fieldRef->class_index);
         if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
             auto instanceKlass = (InstanceKlass *) klass;
-            const auto &nameAndType = getNameAndType(
-                pool, fieldRef->name_and_type_index);
+            const auto &nameAndType = rt->getNameAndType(fieldRef->name_and_type_index);
             return instanceKlass->getThisClassField(nameAndType.first, nameAndType.second);
         }
         PANIC("Unsupported field & class type.");
         return {-1, nullptr};
     }
+
+    pools::NameAndTypePoolEntry
+    pools::NameAndTypeCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+        auto nameAndType = (CONSTANT_NameAndType_info *) pool[index];
+        return std::make_pair(rt->getUtf8(nameAndType->name_index),
+                              rt->getUtf8(nameAndType->descriptor_index));
+    }
+
     /********************** pools ***********************/
 }
 

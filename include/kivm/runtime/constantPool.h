@@ -20,6 +20,13 @@ namespace kivm {
     class RuntimeConstantPool;
 
     namespace pools {
+        using ClassPoolEntey = Klass *;
+        using StringPoolEntry = instanceOop;
+        using MethodPoolEntry = Method *;
+        using FieldPoolEntry = FieldID;
+        using Utf8PoolEntry = String;
+        using NameAndTypePoolEntry = std::pair<Utf8PoolEntry, Utf8PoolEntry>;
+
         template<typename T, typename Creator, int CONSTANT_TAG>
         class Pool {
         private:
@@ -56,34 +63,36 @@ namespace kivm {
         };
 
         struct ClassCreator {
-            Klass *operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
+            ClassPoolEntey operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
         struct StringCreator {
-            instanceOop operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
+            StringPoolEntry operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
         struct MethodCreator {
-            Method *operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
+            MethodPoolEntry operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
         struct FieldCreator {
-            FieldID operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
+            FieldPoolEntry operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
-        using ClassPoolEnteyType = Klass *;
-        using StringPoolEntryType = instanceOop;
-        using MethodPoolEntryType = Method *;
-        using FieldPoolEntryType = FieldID;
+        struct NameAndTypeCreator {
+            NameAndTypePoolEntry operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
+        };
 
-        using ClassPool = Pool<ClassPoolEnteyType, ClassCreator, CONSTANT_Class>;
-        using StringPool = Pool<StringPoolEntryType, StringCreator, CONSTANT_String>;
-        using MethodPool = Pool<MethodPoolEntryType, MethodCreator, CONSTANT_Methodref>;
-        using FieldPool = Pool<FieldPoolEntryType, FieldCreator, CONSTANT_Fieldref>;
         using IntegerPool = Pool<jint, PrimitiveConstantCreator<jint, CONSTANT_Integer_info>, CONSTANT_Integer>;
         using FloatPool = Pool<jfloat, PrimitiveConstantCreator<jfloat, CONSTANT_Float_info>, CONSTANT_Float>;
         using LongPool = Pool<jlong, PrimitiveConstantCreator<jlong, CONSTANT_Long_info>, CONSTANT_Long>;
         using DoublePool = Pool<jdouble, PrimitiveConstantCreator<jdouble, CONSTANT_Double_info>, CONSTANT_Double>;
+        using Utf8Pool = Pool<Utf8PoolEntry, PrimitiveConstantCreator<Utf8PoolEntry, CONSTANT_Utf8_info>, CONSTANT_Utf8>;
+        using NameAndTypePool = Pool<NameAndTypePoolEntry, NameAndTypeCreator, CONSTANT_NameAndType>;
+
+        using ClassPool = Pool<ClassPoolEntey, ClassCreator, CONSTANT_Class>;
+        using StringPool = Pool<StringPoolEntry, StringCreator, CONSTANT_String>;
+        using MethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_Methodref>;
+        using FieldPool = Pool<FieldPoolEntry, FieldCreator, CONSTANT_Fieldref>;
     }
 
     class RuntimeConstantPool {
@@ -94,6 +103,8 @@ namespace kivm {
         pools::StringPool _string_pool;
         pools::MethodPool _method_pool;
         pools::FieldPool _field_pool;
+        pools::NameAndTypePool _name_and_type_pool;
+        pools::Utf8Pool _utf8_pool;
         pools::IntegerPool _int_pool;
         pools::FloatPool _float_pool;
         pools::LongPool _long_pool;
@@ -112,30 +123,42 @@ namespace kivm {
             _float_pool.setRawPool(pool);
             _long_pool.setRawPool(pool);
             _double_pool.setRawPool(pool);
+            _utf8_pool.setRawPool(pool);
+            _name_and_type_pool.setRawPool(pool);
         }
 
         inline int getConstantTag(int index) {
             return _raw_pool[index]->tag;
         }
 
-        inline pools::ClassPoolEnteyType getClass(int classIndex) {
+        inline pools::ClassPoolEntey getClass(int index) {
             assert(this->_raw_pool != nullptr);
-            return _class_pool.findOrNew(this, classIndex);
+            return _class_pool.findOrNew(this, index);
         }
 
-        inline pools::StringPoolEntryType getString(int stringIndex) {
+        inline pools::StringPoolEntry getString(int index) {
             assert(this->_raw_pool != nullptr);
-            return _string_pool.findOrNew(this, stringIndex);
+            return _string_pool.findOrNew(this, index);
         }
 
-        inline pools::MethodPoolEntryType getMethod(int methodIndex) {
+        inline pools::MethodPoolEntry getMethod(int index) {
             assert(this->_raw_pool != nullptr);
-            return _method_pool.findOrNew(this, methodIndex);
+            return _method_pool.findOrNew(this, index);
         }
 
-        inline pools::FieldPoolEntryType getField(int fieldIndex) {
+        inline pools::FieldPoolEntry getField(int index) {
             assert(this->_raw_pool != nullptr);
-            return _field_pool.findOrNew(this, fieldIndex);
+            return _field_pool.findOrNew(this, index);
+        }
+
+        inline pools::Utf8PoolEntry getUtf8(int index) {
+            assert(this->_raw_pool != nullptr);
+            return _utf8_pool.findOrNew(this, index);
+        }
+
+        inline pools::NameAndTypePoolEntry getNameAndType(int index) {
+            assert(this->_raw_pool != nullptr);
+            return _name_and_type_pool.findOrNew(this, index);
         }
     };
 }
