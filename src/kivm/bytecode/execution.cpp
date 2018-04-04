@@ -44,8 +44,38 @@ namespace kivm {
 
     void Execution::loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
         switch (rt->getConstantTag(constantIndex)) {
+            case CONSTANT_Integer: {
+                stack.pushInt(rt->getInt(constantIndex));
+                break;
+            }
+            case CONSTANT_Float: {
+                stack.pushFloat(rt->getFloat(constantIndex));
+                break;
+            }
+            case CONSTANT_Long: {
+                stack.pushLong(rt->getLong(constantIndex));
+                break;
+            }
+            case CONSTANT_Double: {
+                stack.pushDouble(rt->getDouble(constantIndex));
+                break;
+            }
+            case CONSTANT_String: {
+                stack.pushReference(rt->getString(constantIndex));
+                break;
+            }
+            case CONSTANT_Class: {
+                Klass *klass = rt->getClass(constantIndex);
+                auto mirror = klass->getJavaMirror();
+                if (mirror == nullptr) {
+                    PANIC("Pushing null classes");
+                }
+                stack.pushReference(mirror);
+                break;
+            }
             default: {
                 PANIC("Unsupported constant tag");
+                break;
             }
         }
     }
