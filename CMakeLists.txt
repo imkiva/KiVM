@@ -48,6 +48,7 @@ set(SOURCE_FILES
         include/kivm/native/java_lang_String.h
         include/kivm/system.h
         include/kivm/bytecode/codeBlob.h
+        include/kivm/runtime/constantPool.h
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp
@@ -78,7 +79,7 @@ set(SOURCE_FILES
         src/kivm/runtime/init.cpp
         src/kivm/system.cpp
         src/kivm/native/java_lang_String.cpp
-        include/kivm/runtime/constantPool.h src/kivm/runtime/constantPool.cpp)
+        src/kivm/runtime/constantPool.cpp)
 
 add_library(kivm STATIC ${SOURCE_FILES})
 IF (UNIX)
