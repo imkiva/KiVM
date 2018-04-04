@@ -90,6 +90,8 @@ namespace kivm {
             this->_raw_pool = pool;
             _class_pool.setRawPool(pool);
             _string_pool.setRawPool(pool);
+            _method_pool.setRawPool(pool);
+            _field_pool.setRawPool(pool);
         }
 
         inline int getConstantTag(int index) {

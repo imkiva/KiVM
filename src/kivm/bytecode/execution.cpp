@@ -43,6 +43,10 @@ namespace kivm {
     }
 
     void Execution::loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
-
+        switch (rt->getConstantTag(constantIndex)) {
+            default: {
+                PANIC("Unsupported constant tag");
+            }
+        }
     }
 }
