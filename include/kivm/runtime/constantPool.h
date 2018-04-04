@@ -21,7 +21,7 @@ namespace kivm {
 
     namespace pools {
         template<typename T, typename Creator, int CONSTANT_TAG>
-        class ConstantTable {
+        class Pool {
         private:
             cp_info **_raw_pool = nullptr;
 
@@ -68,10 +68,10 @@ namespace kivm {
         using MethodPoolEntryType = Method *;
         using FieldPoolEntryType = FieldID;
 
-        using ClassPool = ConstantTable<ClassPoolEnteyType, ClassCreator, CONSTANT_Class>;
-        using StringPool = ConstantTable<StringPoolEntryType, StringCreator, CONSTANT_String>;
-        using MethodPool = ConstantTable<MethodPoolEntryType, MethodCreator, CONSTANT_Methodref>;
-        using FieldPool = ConstantTable<FieldPoolEntryType, FieldCreator, CONSTANT_Fieldref>;
+        using ClassPool = Pool<ClassPoolEnteyType, ClassCreator, CONSTANT_Class>;
+        using StringPool = Pool<StringPoolEntryType, StringCreator, CONSTANT_String>;
+        using MethodPool = Pool<MethodPoolEntryType, MethodCreator, CONSTANT_Methodref>;
+        using FieldPool = Pool<FieldPoolEntryType, FieldCreator, CONSTANT_Fieldref>;
     }
 
     class RuntimeConstantPool {
