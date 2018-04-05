@@ -20,7 +20,7 @@ namespace kivm {
 
     pools::StringPoolEntry pools::StringCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         auto classInfo = (CONSTANT_String_info *) pool[index];
-        return java::lang::String::from(
+        return java::lang::String::intern(
             rt->getUtf8(classInfo->string_index));
     }
 
