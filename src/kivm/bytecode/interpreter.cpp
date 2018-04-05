@@ -277,6 +277,7 @@ namespace kivm {
                 OPCODE(AALOAD)
                 {
                     int index = stack.popInt();
+                    auto object = Resolver::tryResolveObjectArray(stack.popReference());
                     NEXT();
                 }
                 OPCODE(BALOAD)

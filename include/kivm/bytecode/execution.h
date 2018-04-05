@@ -25,4 +25,17 @@ namespace kivm {
 
         static bool instanceOf(Klass *ref, Klass *klass);
     };
+
+    class Resolver {
+    public:
+        static oop resolveJObject(jobject obj);
+
+        static instanceOop tryResolveInstance(jobject obj);
+
+        static arrayOop tryResolveArray(jobject obj);
+
+        static typeArrayOop tryResolveTypeArray(jobject obj);
+
+        static objectArrayOop tryResolveObjectArray(jobject object);
+    };
 }

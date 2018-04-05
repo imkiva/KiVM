@@ -79,4 +79,8 @@ namespace kivm {
             }
         }
     }
+
+    bool Execution::instanceOf(Klass *ref, Klass *klass) {
+        return false;
+    }
 }
