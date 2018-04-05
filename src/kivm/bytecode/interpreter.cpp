@@ -5,6 +5,10 @@
 #include <kivm/bytecode/interpreter.h>
 #include <kivm/bytecode/bytecodes.h>
 #include <kivm/bytecode/execution.h>
+#include <kivm/oop/instanceOop.h>
+#include <kivm/oop/arrayOop.h>
+#include <kivm/oop/primitiveOop.h>
+#include <kivm/oop/mirrorOop.h>
 #include <kivm/method.h>
 
 #define OPCODE_DEBUG
@@ -277,7 +281,19 @@ namespace kivm {
                 OPCODE(AALOAD)
                 {
                     int index = stack.popInt();
-                    auto object = Resolver::tryResolveObjectArray(stack.popReference());
+                    jobject ref = stack.popReference();
+                    if (ref == nullptr) {
+                        // TODO: throw NullPointerException
+                        PANIC("java.lang.NullPointerException");
+                    }
+
+                    auto array = Resolver::tryResolveObjectArray(ref);
+                    if (array == nullptr) {
+                        // TODO: throw ClassCastException
+                        PANIC("java.lang.ClassCastException");
+                    }
+
+                    stack.pushReference(array->getElementAt(index));
                     NEXT();
                 }
                 OPCODE(BALOAD)

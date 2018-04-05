@@ -3,25 +3,38 @@
 //
 
 #include <kivm/bytecode/execution.h>
+#include <kivm/oop/instanceOop.h>
+#include <kivm/oop/arrayOop.h>
+#include <kivm/oop/primitiveOop.h>
+#include <kivm/oop/mirrorOop.h>
 
 namespace kivm {
     oop Resolver::resolveJObject(jobject obj) {
-        return nullptr;
+        // TODO: check whether obj is an oop
+        return (oop) obj;
     }
 
     instanceOop Resolver::tryResolveInstance(jobject obj) {
-        return nullptr;
-    }
-
-    arrayOop Resolver::tryResolveArray(jobject obj) {
+        auto n = resolveJObject(obj);
+        if (n->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
+            return (instanceOop) n;
+        }
         return nullptr;
     }
 
     typeArrayOop Resolver::tryResolveTypeArray(jobject obj) {
+        auto n = resolveJObject(obj);
+        if (n->getClass()->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
+            return (typeArrayOop) n;
+        }
         return nullptr;
     }
 
-    objectArrayOop Resolver::tryResolveObjectArray(jobject object) {
+    objectArrayOop Resolver::tryResolveObjectArray(jobject obj) {
+        auto n = resolveJObject(obj);
+        if (n->getClass()->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
+            return (objectArrayOop) n;
+        }
         return nullptr;
     }
 }
