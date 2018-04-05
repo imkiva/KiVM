@@ -16,25 +16,30 @@ namespace kivm {
 
     public:
         inline void setInt(int position, jint i) {
+            _elements[position].valueType = ValueType::INT;
             _elements[position].i32 = i;
         }
 
         inline jint getInt(int position) {
+            assert(_elements[position].valueType == ValueType::INT);
             return _elements[position].i32;
         }
 
         inline void setLong(int position, jlong j) {
+            _elements[position].valueType = ValueType::LONG;
             setInt(position, static_cast<jint>(j));
             setInt(position + 1, static_cast<jint>(j >> 32));
         }
 
         inline jlong getLong(int position) {
+            assert(_elements[position].valueType == ValueType::LONG);
             jint low = getInt(position);
             jint high = getInt(position + 1);
             return static_cast<jlong>(high) << 32 | low;
         }
 
         inline void setFloat(int position, jfloat f) {
+            _elements[position].valueType = ValueType::FLOAT;
             union _Cvt {
                 jfloat f;
                 jint i32;
@@ -45,6 +50,7 @@ namespace kivm {
         }
 
         inline jfloat getFloat(int position) {
+            assert(_elements[position].valueType == ValueType::FLOAT);
             union _Cvt {
                 jfloat f;
                 jint i32;
@@ -55,6 +61,7 @@ namespace kivm {
         }
 
         inline void setDouble(int position, jdouble d) {
+            _elements[position].valueType = ValueType::DOUBLE;
             union _Cvt {
                 jdouble d;
                 jlong j;
@@ -65,6 +72,7 @@ namespace kivm {
         }
 
         inline jdouble getDouble(int position) {
+            assert(_elements[position].valueType == ValueType::DOUBLE);
             union _Cvt {
                 jdouble d;
                 jlong j;
@@ -75,10 +83,12 @@ namespace kivm {
         }
 
         inline void setReference(int position, jobject l) {
+            _elements[position].valueType = ValueType::OBJECT;
             _elements[position].ref = l;
         }
 
         inline jobject getReference(int position) {
+            assert(_elements[position].valueType == ValueType::OBJECT);
             return _elements[position].ref;
         }
 

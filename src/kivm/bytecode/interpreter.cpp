@@ -276,6 +276,7 @@ namespace kivm {
                 }
                 OPCODE(AALOAD)
                 {
+                    int index = stack.popInt();
                     NEXT();
                 }
                 OPCODE(BALOAD)
