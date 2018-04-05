@@ -11,6 +11,5 @@ namespace kivm {
             jint i32;
             jobject ref;
         };
-        ValueType valueType;
     };
 }
