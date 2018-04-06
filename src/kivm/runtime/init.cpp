@@ -32,6 +32,7 @@ namespace kivm {
         // Run method manually, we cannot use JavaThread::run()
         // because it is designed for app threads,
         // but JavaThread::run_method() is still available.
+        D("Threads::initializeJVM() succeed. Lunching main()");
         PANIC("JavaMainThread::start() not implemented.");
         JavaThread::runMethod(_method, _args);
     }

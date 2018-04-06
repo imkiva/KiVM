@@ -140,14 +140,14 @@ namespace kivm {
                 }
                 OPCODE(LDC)
                 {
-                    int constantIndex = pc++;
+                    int constantIndex = code_blob[pc++];
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
                                             stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(LDC_W)
                 {
-                    int constantIndex = pc << 8 | pc + 1;
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
                                             stack, constantIndex);
@@ -155,7 +155,7 @@ namespace kivm {
                 }
                 OPCODE(LDC2_W)
                 {
-                    int constantIndex = pc << 8 | pc + 1;
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
                                             stack, constantIndex);
@@ -163,31 +163,31 @@ namespace kivm {
                 }
                 OPCODE(ILOAD)
                 {
-                    int index = pc++;
+                    int index = code_blob[pc++];
                     stack.pushInt(locals.getInt(index));
                     NEXT();
                 }
                 OPCODE(LLOAD)
                 {
-                    int index = pc++;
+                    int index = code_blob[pc++];
                     stack.pushLong(locals.getLong(index));
                     NEXT();
                 }
                 OPCODE(FLOAD)
                 {
-                    int index = pc++;
+                    int index = code_blob[pc++];
                     stack.pushFloat(locals.getFloat(index));
                     NEXT();
                 }
                 OPCODE(DLOAD)
                 {
-                    int index = pc++;
+                    int index = code_blob[pc++];
                     stack.pushDouble(locals.getDouble(index));
                     NEXT();
                 }
                 OPCODE(ALOAD)
                 {
-                    int index = pc++;
+                    int index = code_blob[pc++];
                     stack.pushReference(locals.getReference(index));
                     NEXT();
                 }
