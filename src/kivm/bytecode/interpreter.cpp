@@ -159,22 +159,26 @@ namespace kivm {
                 }
                 OPCODE(ILOAD)
                 {
-                    pc++;
+                    int index = pc++;
+                    stack.pushInt(locals.getInt(index));
                     NEXT();
                 }
                 OPCODE(LLOAD)
                 {
-                    pc++;
+                    int index = pc++;
+                    stack.pushLong(locals.getLong(index));
                     NEXT();
                 }
                 OPCODE(FLOAD)
                 {
-                    pc++;
+                    int index = pc++;
+                    stack.pushFloat(locals.getFloat(index));
                     NEXT();
                 }
                 OPCODE(DLOAD)
                 {
-                    pc++;
+                    int index = pc++;
+                    stack.pushDouble(locals.getDouble(index));
                     NEXT();
                 }
                 OPCODE(ALOAD)
@@ -185,98 +189,174 @@ namespace kivm {
                 }
                 OPCODE(ILOAD_0)
                 {
+                    stack.pushInt(locals.getInt(0));
                     NEXT();
                 }
                 OPCODE(ILOAD_1)
                 {
+                    stack.pushInt(locals.getInt(1));
                     NEXT();
                 }
                 OPCODE(ILOAD_2)
                 {
+                    stack.pushInt(locals.getInt(2));
                     NEXT();
                 }
                 OPCODE(ILOAD_3)
                 {
+                    stack.pushInt(locals.getInt(3));
                     NEXT();
                 }
                 OPCODE(LLOAD_0)
                 {
+                    stack.pushLong(locals.getLong(0));
                     NEXT();
                 }
                 OPCODE(LLOAD_1)
                 {
+                    stack.pushLong(locals.getLong(1));
                     NEXT();
                 }
                 OPCODE(LLOAD_2)
                 {
+                    stack.pushLong(locals.getLong(2));
                     NEXT();
                 }
                 OPCODE(LLOAD_3)
                 {
+                    stack.pushLong(locals.getLong(3));
                     NEXT();
                 }
                 OPCODE(FLOAD_0)
                 {
+                    stack.pushFloat(locals.getFloat(0));
                     NEXT();
                 }
                 OPCODE(FLOAD_1)
                 {
+                    stack.pushFloat(locals.getFloat(1));
                     NEXT();
                 }
                 OPCODE(FLOAD_2)
                 {
+                    stack.pushFloat(locals.getFloat(2));
                     NEXT();
                 }
                 OPCODE(FLOAD_3)
                 {
+                    stack.pushFloat(locals.getFloat(3));
                     NEXT();
                 }
                 OPCODE(DLOAD_0)
                 {
+                    stack.pushDouble(locals.getDouble(0));
                     NEXT();
                 }
                 OPCODE(DLOAD_1)
                 {
+                    stack.pushDouble(locals.getDouble(1));
                     NEXT();
                 }
                 OPCODE(DLOAD_2)
                 {
+                    stack.pushDouble(locals.getDouble(2));
                     NEXT();
                 }
                 OPCODE(DLOAD_3)
                 {
+                    stack.pushDouble(locals.getDouble(3));
                     NEXT();
                 }
                 OPCODE(ALOAD_0)
                 {
+                    stack.pushReference(locals.getReference(0));
                     NEXT();
                 }
                 OPCODE(ALOAD_1)
                 {
+                    stack.pushReference(locals.getReference(1));
                     NEXT();
                 }
                 OPCODE(ALOAD_2)
                 {
+                    stack.pushReference(locals.getReference(2));
                     NEXT();
                 }
                 OPCODE(ALOAD_3)
                 {
+                    stack.pushReference(locals.getReference(3));
                     NEXT();
                 }
                 OPCODE(IALOAD)
                 {
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
+                    if (ref == nullptr) {
+                        // TODO: throw NullPointerException
+                        PANIC("java.lang.NullPointerException");
+                    }
+                    auto array = Resolver::tryResolveTypeArray(ref);
+                    if (array == nullptr) {
+                        // TODO: throw ClassCastException
+                        PANIC("java.lang.ClassCastException");
+                    }
+
+                    auto element = (intOop) array->getElementAt(index);
+                    stack.pushInt(element->getValue());
                     NEXT();
                 }
                 OPCODE(LALOAD)
                 {
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
+                    if (ref == nullptr) {
+                        // TODO: throw NullPointerException
+                        PANIC("java.lang.NullPointerException");
+                    }
+                    auto array = Resolver::tryResolveTypeArray(ref);
+                    if (array == nullptr) {
+                        // TODO: throw ClassCastException
+                        PANIC("java.lang.ClassCastException");
+                    }
+
+                    auto element = (longOop) array->getElementAt(index);
+                    stack.pushLong(element->getValue());
                     NEXT();
                 }
                 OPCODE(FALOAD)
                 {
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
+                    if (ref == nullptr) {
+                        // TODO: throw NullPointerException
+                        PANIC("java.lang.NullPointerException");
+                    }
+                    auto array = Resolver::tryResolveTypeArray(ref);
+                    if (array == nullptr) {
+                        // TODO: throw ClassCastException
+                        PANIC("java.lang.ClassCastException");
+                    }
+
+                    auto element = (floatOop) array->getElementAt(index);
+                    stack.pushFloat(element->getValue());
                     NEXT();
                 }
                 OPCODE(DALOAD)
                 {
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
+                    if (ref == nullptr) {
+                        // TODO: throw NullPointerException
+                        PANIC("java.lang.NullPointerException");
+                    }
+                    auto array = Resolver::tryResolveTypeArray(ref);
+                    if (array == nullptr) {
+                        // TODO: throw ClassCastException
+                        PANIC("java.lang.ClassCastException");
+                    }
+
+                    auto element = (doubleOop) array->getElementAt(index);
+                    stack.pushDouble(element->getValue());
                     NEXT();
                 }
                 OPCODE(AALOAD)
