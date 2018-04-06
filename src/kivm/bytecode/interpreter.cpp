@@ -179,7 +179,8 @@ namespace kivm {
                 }
                 OPCODE(ALOAD)
                 {
-                    pc++;
+                    int index = pc++;
+                    stack.pushReference(locals.getReference(index));
                     NEXT();
                 }
                 OPCODE(ILOAD_0)
