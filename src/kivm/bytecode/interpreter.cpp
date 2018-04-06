@@ -41,6 +41,10 @@ namespace kivm {
         Stack &stack = currentFrame->getStack();
         Locals &locals = currentFrame->getLocals();
 
+        D("currentMethod: %s.%s",
+          strings::toStdString(currentClass->getName()).c_str(),
+          strings::toStdString(currentMethod->getName()).c_str());
+
         BEGIN(code_blob, pc)
 
                 OPCODE(NOP)

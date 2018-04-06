@@ -23,7 +23,10 @@ int main() {
             ->loadClass(L"[[[[[J");
 
     auto *x = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass(L"java/lang/InterruptedException");
+        ->loadClass(L"java/lang/InterruptedException");
+
+    auto *y = (InstanceKlass *) BootstrapClassLoader::get()
+        ->loadClass(L"java/lang/System");
 
     JavaMainThread javaMainThread;
     javaMainThread.create(nullptr);

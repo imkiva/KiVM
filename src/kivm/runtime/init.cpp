@@ -102,8 +102,16 @@ namespace kivm {
         // use getThisClassMethod() to get a private method
         auto tg_ctor = tg_class->getThisClassMethod(L"<init>",
                                                     L"(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
-        Execution::callVoidMethod(thread, tg_ctor,
-                                  {main_tg, nullptr, init_tg, java::lang::String::intern(L"main")});
+        {
+            std::list<oop> args;
+            args.push_back(main_tg);
+            // we need to push `nullptr` into list
+            // so do not use something like {nullptr, ...}
+            args.push_back(nullptr);
+            args.push_back(init_tg);
+            args.push_back(java::lang::String::intern(L"main"));
+            Execution::callVoidMethod(thread, tg_ctor, args);
+        }
 
 
         // disable sun.security.util.Debug for the following operations

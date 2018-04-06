@@ -13,7 +13,8 @@ namespace kivm {
     }
 
     SlotArray::~SlotArray() {
-        delete[] this->_elements;
+        // FIXME
+//        delete[] this->_elements;
     }
 
     Stack::Stack(int size)

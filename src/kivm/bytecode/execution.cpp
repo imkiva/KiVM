@@ -43,28 +43,35 @@ namespace kivm {
     }
 
     void Execution::loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+        D("constant index: %d, tag: %d", constantIndex, rt->getConstantTag(constantIndex));
         switch (rt->getConstantTag(constantIndex)) {
             case CONSTANT_Integer: {
+                D("load: CONSTANT_Integer");
                 stack.pushInt(rt->getInt(constantIndex));
                 break;
             }
             case CONSTANT_Float: {
+                D("load: CONSTANT_Float");
                 stack.pushFloat(rt->getFloat(constantIndex));
                 break;
             }
             case CONSTANT_Long: {
+                D("load: CONSTANT_Long");
                 stack.pushLong(rt->getLong(constantIndex));
                 break;
             }
             case CONSTANT_Double: {
+                D("load: CONSTANT_Double");
                 stack.pushDouble(rt->getDouble(constantIndex));
                 break;
             }
             case CONSTANT_String: {
+                D("load: CONSTANT_String");
                 stack.pushReference(rt->getString(constantIndex));
                 break;
             }
             case CONSTANT_Class: {
+                D("load: CONSTANT_Class");
                 Klass *klass = rt->getClass(constantIndex);
                 auto mirror = klass->getJavaMirror();
                 if (mirror == nullptr) {
