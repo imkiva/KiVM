@@ -66,13 +66,13 @@ namespace kivm {
          * static fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        std::unordered_map<String, FieldID> _static_fields;
+        std::unordered_map<String, FieldID *> _static_fields;
 
         /**
          * instance fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        std::unordered_map<String, FieldID> _instance_fields;
+        std::unordered_map<String, FieldID *> _instance_fields;
 
         int _n_static_fields;
 
@@ -136,8 +136,8 @@ namespace kivm {
          * @param descriptor Field descriptor
          * @return FieldID if found, otherwise {@code FieldID(-1, nullptr)}
          */
-        FieldID getThisClassField(const String &name,
-                                  const String &descriptor) const;
+        FieldID *getThisClassField(const String &name,
+                                   const String &descriptor) const;
 
         /**
          * Get static field offset.
@@ -157,9 +157,9 @@ namespace kivm {
          * @param descriptor Field descriptor
          * @return FieldID if found, otherwise {@code FieldID(-1, nullptr)}
          */
-        FieldID getStaticFieldInfo(const String &className,
-                                   const String &name,
-                                   const String &descriptor) const;
+        FieldID *getStaticFieldInfo(const String &className,
+                                    const String &name,
+                                    const String &descriptor) const;
 
         /**
          * Get instance field offset.
@@ -179,9 +179,9 @@ namespace kivm {
          * @param descriptor Field descriptor
          * @return FieldID if found, otherwise {@code FieldID(-1, nullptr)}
          */
-        FieldID getInstanceFieldInfo(const String &className,
-                                     const String &name,
-                                     const String &descriptor) const;
+        FieldID *getInstanceFieldInfo(const String &className,
+                                      const String &name,
+                                      const String &descriptor) const;
 
         /**
          * Search method in this class.
@@ -239,7 +239,7 @@ namespace kivm {
          * @param fieldID field descriptor
          * @param value field value
          */
-        void setStaticFieldValue(const FieldID &fieldID,
+        void setStaticFieldValue(FieldID *fieldID,
                                  oop value);
 
         /**
@@ -261,7 +261,7 @@ namespace kivm {
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        bool getStaticFieldValue(const FieldID &fieldID, oop *result);
+        bool getStaticFieldValue(FieldID *fieldID, oop *result);
 
         /**
          * Set instance field's value.
@@ -283,7 +283,7 @@ namespace kivm {
          * @param fieldID field descriptor
          * @param value field value
          */
-        void setInstanceFieldValue(instanceOop receiver, const FieldID &fieldID, oop value);
+        void setInstanceFieldValue(instanceOop receiver, FieldID *fieldID, oop value);
 
         /**
          * Get instance field's value.
@@ -306,7 +306,7 @@ namespace kivm {
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        bool getInstanceFieldValue(instanceOop receiver, const FieldID &fieldID, oop *result);
+        bool getInstanceFieldValue(instanceOop receiver, FieldID *fieldID, oop *result);
 
         instanceOop newInstance();
     };

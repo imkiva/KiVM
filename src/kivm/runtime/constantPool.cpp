@@ -45,7 +45,7 @@ namespace kivm {
             return instanceKlass->getThisClassField(nameAndType.first, nameAndType.second);
         }
         PANIC("Unsupported field & class type.");
-        return {-1, nullptr};
+        return nullptr;
     }
 
     pools::NameAndTypePoolEntry

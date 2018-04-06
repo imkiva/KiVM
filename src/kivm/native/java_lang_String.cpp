@@ -36,7 +36,7 @@ namespace kivm {
                 oop int_oop_hash = nullptr;
 
                 auto klass = (InstanceKlass *) string->getClass();
-                FieldID hash_field = klass->getInstanceFieldInfo(J_STRING, L"hash", L"I");
+                FieldID *hash_field = klass->getInstanceFieldInfo(J_STRING, L"hash", L"I");
                 if (string->getFieldValue(hash_field, &int_oop_hash)) {
                     int cached_hash = ((intOop) int_oop_hash)->getValue();
                     if (cached_hash != 0) {
@@ -77,7 +77,7 @@ namespace kivm {
                 }
 
                 auto klass = (InstanceKlass *) lhs->getClass();
-                FieldID value_field = klass->getInstanceFieldInfo(J_STRING, L"value", L"[C");
+                FieldID *value_field = klass->getInstanceFieldInfo(J_STRING, L"value", L"[C");
                 typeArrayOop lhs_value = nullptr;
                 typeArrayOop rhs_value = nullptr;
                 if (!lhs->getFieldValue(value_field, (oop *) &lhs_value)

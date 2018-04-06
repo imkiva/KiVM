@@ -23,7 +23,7 @@ namespace kivm {
         using ClassPoolEntey = Klass *;
         using StringPoolEntry = instanceOop;
         using MethodPoolEntry = Method *;
-        using FieldPoolEntry = FieldID;
+        using FieldPoolEntry = FieldID *;
         using Utf8PoolEntry = String;
         using NameAndTypePoolEntry = std::pair<Utf8PoolEntry, Utf8PoolEntry>;
 

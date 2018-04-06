@@ -43,7 +43,7 @@ namespace kivm {
          * @param fieldID field descriptor
          * @param value field value
          */
-        void setFieldValue(const FieldID &fieldID, oop value) {
+        void setFieldValue(FieldID *fieldID, oop value) {
             getInstanceClass()->setInstanceFieldValue(this, fieldID, value);
         }
 
@@ -71,7 +71,7 @@ namespace kivm {
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        bool getFieldValue(const FieldID &fieldID, oop *result) {
+        bool getFieldValue(FieldID *fieldID, oop *result) {
             return getInstanceClass()->getInstanceFieldValue(this, fieldID, result);
         }
     };
