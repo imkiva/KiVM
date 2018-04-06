@@ -9,6 +9,17 @@
 #include <kivm/runtime/constantPool.h>
 
 namespace kivm {
+    class Resolver {
+    public:
+        static oop resolveJObject(jobject obj);
+
+        static instanceOop tryResolveInstance(jobject obj);
+
+        static typeArrayOop tryResolveTypeArray(jobject obj);
+
+        static objectArrayOop tryResolveObjectArray(jobject object);
+    };
+
     /**
      * Each country has an execution officer,
      * and virtual machines are no exception.
@@ -24,16 +35,5 @@ namespace kivm {
         static void callVoidMethod(JavaThread *javaThread, Method *method, const std::list<oop> &args);
 
         static bool instanceOf(Klass *ref, Klass *klass);
-    };
-
-    class Resolver {
-    public:
-        static oop resolveJObject(jobject obj);
-
-        static instanceOop tryResolveInstance(jobject obj);
-
-        static typeArrayOop tryResolveTypeArray(jobject obj);
-
-        static objectArrayOop tryResolveObjectArray(jobject object);
     };
 }
