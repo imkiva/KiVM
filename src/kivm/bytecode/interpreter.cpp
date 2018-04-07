@@ -874,6 +874,7 @@ namespace kivm {
                 OPCODE(JSR)
                 {
                     pc += 2;
+                    PANIC("jsr should not appear!");
                     NEXT();
                 }
                 OPCODE(RET)
