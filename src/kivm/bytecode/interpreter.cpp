@@ -874,12 +874,13 @@ namespace kivm {
                 OPCODE(JSR)
                 {
                     pc += 2;
-                    PANIC("jsr should not appear!");
+                    PANIC("jsr should not appear in instructions!");
                     NEXT();
                 }
                 OPCODE(RET)
                 {
                     pc++;
+                    PANIC("ret should not appear in instructions!");
                     NEXT();
                 }
                 OPCODE(TABLESWITCH)
@@ -1029,7 +1030,7 @@ namespace kivm {
                 OPCODE(JSR_W)
                 {
                     pc += 4;
-                    PANIC("jsr_w should not appear!");
+                    PANIC("jsr_w should not appear in instructions!");
                     NEXT();
                 }
                 OTHERWISE() {
