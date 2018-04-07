@@ -134,8 +134,9 @@ namespace kivm {
         }
 
         inline void dup() {
-            jint top = _array.getInt(_sp - 1);
-            pushInt(top);
+            // they are union
+            jobject top = _array.getReference(_sp - 1);
+            pushReference(top);
         }
     };
 
