@@ -35,6 +35,8 @@ namespace kivm {
             // constant-pool-index -> constant
             std::unordered_map<int, T> _pool;
 
+            Creator _creator;
+
         public:
             inline void setRawPool(cp_info **pool) {
                 this->_raw_pool = pool;
@@ -48,7 +50,7 @@ namespace kivm {
                 if (iter != _pool.end()) {
                     return iter->second;
                 }
-                T created = Creator()(rt, _raw_pool, index);
+                T created = _creator(rt, _raw_pool, index);
                 _pool.insert(std::make_pair(index, created));
                 return created;
             }

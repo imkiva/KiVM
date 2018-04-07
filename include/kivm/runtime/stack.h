@@ -13,9 +13,9 @@ namespace kivm {
         Slot *_elements;
         int _size;
 
+    public:
         explicit SlotArray(int size);
 
-    public:
         inline void setInt(int position, jint i) {
             _elements[position].i32 = i;
         }
@@ -87,53 +87,97 @@ namespace kivm {
         virtual ~SlotArray();
     };
 
-    class Stack : public SlotArray {
+    class Stack {
     private:
+        SlotArray _array;
         int _sp;
 
     public:
         explicit Stack(int size);
 
-        ~Stack() override = default;
+        ~Stack() = default;
 
-        inline void pushInt(jint v) { SlotArray::setInt(_sp++, v); }
+        inline void pushInt(jint v) { _array.setInt(_sp++, v); }
 
-        inline void pushFloat(jfloat v) { SlotArray::setFloat(_sp++, v); }
+        inline void pushFloat(jfloat v) { _array.setFloat(_sp++, v); }
 
-        inline void pushReference(jobject v) { SlotArray::setReference(_sp++, v); }
+        inline void pushReference(jobject v) { _array.setReference(_sp++, v); }
 
         inline void pushDouble(jdouble v) {
-            SlotArray::setDouble(_sp, v);
+            _array.setDouble(_sp, v);
             _sp += 2;
         }
 
         inline void pushLong(jlong v) {
-            SlotArray::setLong(_sp, v);
+            _array.setLong(_sp, v);
             _sp += 2;
         }
 
-        inline jint popInt() { return SlotArray::getInt(--_sp); }
+        inline jint popInt() { return _array.getInt(--_sp); }
 
-        inline jfloat popFloat() { return SlotArray::getFloat(--_sp); }
+        inline jfloat popFloat() { return _array.getFloat(--_sp); }
 
-        inline jobject popReference() { return SlotArray::getReference(--_sp); }
+        inline jobject popReference() { return _array.getReference(--_sp); }
 
         inline jdouble popDouble() {
             _sp -= 2;
-            return SlotArray::getDouble(_sp);
+            return _array.getDouble(_sp);
         }
 
         inline jlong popLong() {
             _sp -= 2;
-            return SlotArray::getLong(_sp);
+            return _array.getLong(_sp);
         }
     };
 
-    class Locals : public SlotArray {
+    class Locals {
+    private:
+        SlotArray _array;
+
     public:
         explicit Locals(int size);
 
-        ~Locals() override = default;
+        ~Locals() = default;
+
+        inline void setInt(int position, jint i) {
+            _array.setInt(position, i);
+        }
+
+        inline jint getInt(int position) {
+            return _array.getInt(position);
+        }
+
+        inline void setLong(int position, jlong j) {
+            _array.setLong(position, j);
+        }
+
+        inline jlong getLong(int position) {
+            return _array.getLong(position);
+        }
+
+        inline void setFloat(int position, jfloat f) {
+            _array.setFloat(position, f);
+        }
+
+        inline jfloat getFloat(int position) {
+            return _array.getFloat(position);
+        }
+
+        inline void setDouble(int position, jdouble d) {
+            _array.setDouble(position, d);
+        }
+
+        inline jdouble getDouble(int position) {
+            return _array.getDouble(position);
+        }
+
+        inline void setReference(int position, jobject l) {
+            _array.setReference(position, l);
+        }
+
+        inline jobject getReference(int position) {
+            return _array.getReference(position);
+        }
     };
 }
 
