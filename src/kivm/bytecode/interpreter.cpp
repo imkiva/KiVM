@@ -1028,6 +1028,7 @@ namespace kivm {
                 OPCODE(JSR_W)
                 {
                     pc += 4;
+                    PANIC("jsr_w should not appear!");
                     NEXT();
                 }
                 OTHERWISE() {
