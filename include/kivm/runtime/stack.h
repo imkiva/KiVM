@@ -132,6 +132,11 @@ namespace kivm {
         inline void dropTop() {
             --_sp;
         }
+
+        inline void dup() {
+            jint top = _array.getInt(_sp - 1);
+            pushInt(top);
+        }
     };
 
     class Locals {

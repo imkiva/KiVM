@@ -571,6 +571,7 @@ namespace kivm {
                 }
                 OPCODE(DUP)
                 {
+                    currentFrame->getStack().dup();
                     NEXT();
                 }
                 OPCODE(DUP_X1)
