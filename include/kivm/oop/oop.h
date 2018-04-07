@@ -16,9 +16,9 @@
 namespace kivm {
     class oopPool {
     public:
-        static std::list<oop> &oop_handler_pool() {
-            static std::list<oop> oop_handler_pool;
-            return oop_handler_pool;
+        static std::list<oop> &getOopHandlerPool() {
+            static std::list<oop> handlerPool;
+            return handlerPool;
         }
     };
 

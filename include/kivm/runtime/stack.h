@@ -128,6 +128,10 @@ namespace kivm {
             _sp -= 2;
             return _array.getLong(_sp);
         }
+
+        inline void dropTop() {
+            --_sp;
+        }
     };
 
     class Locals {

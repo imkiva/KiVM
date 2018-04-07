@@ -16,10 +16,10 @@ namespace kivm {
 
     SlotArray::~SlotArray() {
         // FIXME: incorrect checksum for freed object - object was probably modified after being freed.
-//        if (this->_elements != nullptr) {
-//            delete[] this->_elements;
-//            this->_elements = nullptr;
-//        }
+        if (this->_elements != nullptr) {
+            delete[] this->_elements;
+            this->_elements = nullptr;
+        }
     }
 
     Stack::Stack(int size)

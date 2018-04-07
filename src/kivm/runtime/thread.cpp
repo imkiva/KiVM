@@ -68,7 +68,7 @@ namespace kivm {
     }
 
     oop JavaThread::runMethod(Method *method, const std::list<oop> &args) {
-        D("### JavaThread::runMethod()");
+        D("### JavaThread::runMethod(), maxLocals: %d, maxStack: %d", method->getMaxLocals(), method->getMaxStack());
         Frame frame(method->getMaxLocals(), method->getMaxStack());
         D("### Stack is at %p, locals is at %p", &frame.getStack(), &frame.getLocals());
 

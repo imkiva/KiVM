@@ -13,27 +13,29 @@ namespace kivm {
         }
 
         void *ptr = malloc(size);
-        memset(ptr, 0, size);
+        memset(ptr, '\0', size);
 
         // add it to the oopPoll
         if (add_to_pool) {
             LockGuard lg(getOopMemoryLock());
-            oopPool::oop_handler_pool().push_back((oop) ptr);
+            oopPool::getOopHandlerPool().push_back((oop) ptr);
         }
 
         return ptr;
     }
 
     void oopBase::deallocate(void *ptr) {
-        free(ptr);
+        if (ptr != nullptr) {
+            free(ptr);
+        }
     }
 
-    void *oopBase::operator new(size_t size, bool add_to_pool) throw() {
-        return allocate(size, add_to_pool);
+    void *oopBase::operator new(size_t size, bool addToPool) throw() {
+        return allocate(size, addToPool);
     }
 
-    void *oopBase::operator new[](size_t size, bool add_to_pool) throw() {
-        return allocate(size, add_to_pool);
+    void *oopBase::operator new[](size_t size, bool addToPool) throw() {
+        return allocate(size, addToPool);
     }
 
     void oopBase::operator delete(void *ptr) {
@@ -46,7 +48,7 @@ namespace kivm {
 
     void oopBase::cleanup() {
         LockGuard lg(getOopMemoryLock());
-        for (auto iter : oopPool::oop_handler_pool()) {
+        for (auto iter : oopPool::getOopHandlerPool()) {
             delete iter;
         }
     }
