@@ -586,66 +586,114 @@ namespace kivm {
                 }
                 OPCODE(IADD)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    stack.pushInt(v1 + v2);
                     NEXT();
                 }
                 OPCODE(LADD)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    stack.pushLong(v1 + v2);
                     NEXT();
                 }
                 OPCODE(FADD)
                 {
+                    auto v2 = stack.popFloat();
+                    auto v1 = stack.popFloat();
+                    stack.pushFloat(v1 + v2);
                     NEXT();
                 }
                 OPCODE(DADD)
                 {
+                    auto v2 = stack.popDouble();
+                    auto v1 = stack.popDouble();
+                    stack.pushDouble(v1 + v2);
                     NEXT();
                 }
                 OPCODE(ISUB)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    stack.pushInt(v1 - v2);
                     NEXT();
                 }
                 OPCODE(LSUB)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    stack.pushLong(v1 - v2);
                     NEXT();
                 }
                 OPCODE(FSUB)
                 {
+                    auto v2 = stack.popFloat();
+                    auto v1 = stack.popFloat();
+                    stack.pushFloat(v1 - v2);
                     NEXT();
                 }
                 OPCODE(DSUB)
                 {
+                    auto v2 = stack.popDouble();
+                    auto v1 = stack.popDouble();
+                    stack.pushDouble(v1 - v2);
                     NEXT();
                 }
                 OPCODE(IMUL)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    stack.pushInt(v1 * v2);
                     NEXT();
                 }
                 OPCODE(LMUL)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    stack.pushLong(v1 * v2);
                     NEXT();
                 }
                 OPCODE(FMUL)
                 {
+                    auto v2 = stack.popFloat();
+                    auto v1 = stack.popFloat();
+                    stack.pushFloat(v1 * v2);
                     NEXT();
                 }
                 OPCODE(DMUL)
                 {
+                    auto v2 = stack.popDouble();
+                    auto v1 = stack.popDouble();
+                    stack.pushDouble(v1 * v2);
                     NEXT();
                 }
                 OPCODE(IDIV)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    stack.pushInt(v1 / v2);
                     NEXT();
                 }
                 OPCODE(LDIV)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    stack.pushLong(v1 / v2);
                     NEXT();
                 }
                 OPCODE(FDIV)
                 {
+                    auto v2 = stack.popFloat();
+                    auto v1 = stack.popFloat();
+                    stack.pushFloat(v1 / v2);
                     NEXT();
                 }
                 OPCODE(DDIV)
                 {
+                    auto v2 = stack.popDouble();
+                    auto v1 = stack.popDouble();
+                    stack.pushDouble(v1 / v2);
                     NEXT();
                 }
                 OPCODE(IREM)
