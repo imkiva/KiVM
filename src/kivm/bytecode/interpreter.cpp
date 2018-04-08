@@ -637,6 +637,10 @@ namespace kivm {
                 }
                 OPCODE(SWAP)
                 {
+                    auto v1 = stack.popReference();
+                    auto v2 = stack.popReference();
+                    stack.pushReference(v1);
+                    stack.pushReference(v2);
                     NEXT();
                 }
                 OPCODE(IADD)
