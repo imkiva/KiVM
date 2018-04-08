@@ -1172,6 +1172,7 @@ namespace kivm {
                 OPCODE(GOTO_W)
                 {
                     pc += 4;
+                    PANIC("goto_w should not appear in instructions!");
                     NEXT();
                 }
                 OPCODE(JSR_W)
