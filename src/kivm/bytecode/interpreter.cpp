@@ -43,6 +43,9 @@ namespace kivm {
           strings::toStdString(currentMethod->getName()).c_str(),
           strings::toStdString(currentMethod->getDescriptor()).c_str());
 
+        Stack &stack = currentFrame->getStack();
+        Locals &locals = currentFrame->getLocals();
+
         BEGIN(code_blob, pc)
 
                 OPCODE(NOP)
@@ -51,96 +54,96 @@ namespace kivm {
                 }
                 OPCODE(ACONST_NULL)
                 {
-                    currentFrame->getStack().pushReference(nullptr);
+                    stack.pushReference(nullptr);
                     NEXT();
                 }
                 OPCODE(ICONST_M1)
                 {
-                    currentFrame->getStack().pushInt(-1);
+                    stack.pushInt(-1);
                     NEXT();
                 }
                 OPCODE(ICONST_0)
                 {
-                    currentFrame->getStack().pushInt(0);
+                    stack.pushInt(0);
                     NEXT();
                 }
                 OPCODE(ICONST_1)
                 {
-                    currentFrame->getStack().pushInt(1);
+                    stack.pushInt(1);
                     NEXT();
                 }
                 OPCODE(ICONST_2)
                 {
-                    currentFrame->getStack().pushInt(2);
+                    stack.pushInt(2);
                     NEXT();
                 }
                 OPCODE(ICONST_3)
                 {
-                    currentFrame->getStack().pushInt(3);
+                    stack.pushInt(3);
                     NEXT();
                 }
                 OPCODE(ICONST_4)
                 {
-                    currentFrame->getStack().pushInt(4);
+                    stack.pushInt(4);
                     NEXT();
                 }
                 OPCODE(ICONST_5)
                 {
-                    currentFrame->getStack().pushInt(5);
+                    stack.pushInt(5);
                     NEXT();
                 }
                 OPCODE(LCONST_0)
                 {
-                    currentFrame->getStack().pushLong(0);
+                    stack.pushLong(0);
                     NEXT();
                 }
                 OPCODE(LCONST_1)
                 {
-                    currentFrame->getStack().pushLong(1);
+                    stack.pushLong(1);
                     NEXT();
                 }
                 OPCODE(FCONST_0)
                 {
-                    currentFrame->getStack().pushFloat(0);
+                    stack.pushFloat(0);
                     NEXT();
                 }
                 OPCODE(FCONST_1)
                 {
-                    currentFrame->getStack().pushFloat(1);
+                    stack.pushFloat(1);
                     NEXT();
                 }
                 OPCODE(FCONST_2)
                 {
-                    currentFrame->getStack().pushFloat(2);
+                    stack.pushFloat(2);
                     NEXT();
                 }
                 OPCODE(DCONST_0)
                 {
-                    currentFrame->getStack().pushDouble(0);
+                    stack.pushDouble(0);
                     NEXT();
                 }
                 OPCODE(DCONST_1)
                 {
-                    currentFrame->getStack().pushDouble(1);
+                    stack.pushDouble(1);
                     NEXT();
                 }
                 OPCODE(BIPUSH)
                 {
-                    currentFrame->getStack().pushInt(code_blob[pc++]);
+                    stack.pushInt(code_blob[pc++]);
                     NEXT();
                 }
                 OPCODE(SIPUSH)
                 {
                     short si = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
-                    currentFrame->getStack().pushInt(si);
+                    stack.pushInt(si);
                     NEXT();
                 }
                 OPCODE(LDC)
                 {
                     int constantIndex = code_blob[pc++];
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
-                                            currentFrame->getStack(), constantIndex);
+                                            stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(LDC_W)
@@ -148,7 +151,7 @@ namespace kivm {
                     int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
-                                            currentFrame->getStack(), constantIndex);
+                                            stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(LDC2_W)
@@ -156,143 +159,143 @@ namespace kivm {
                     int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
-                                            currentFrame->getStack(), constantIndex);
+                                            stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(ILOAD)
                 {
                     int index = code_blob[pc++];
-                    currentFrame->getStack().pushInt(currentFrame->getLocals().getInt(index));
+                    stack.pushInt(locals.getInt(index));
                     NEXT();
                 }
                 OPCODE(LLOAD)
                 {
                     int index = code_blob[pc++];
-                    currentFrame->getStack().pushLong(currentFrame->getLocals().getLong(index));
+                    stack.pushLong(locals.getLong(index));
                     NEXT();
                 }
                 OPCODE(FLOAD)
                 {
                     int index = code_blob[pc++];
-                    currentFrame->getStack().pushFloat(currentFrame->getLocals().getFloat(index));
+                    stack.pushFloat(locals.getFloat(index));
                     NEXT();
                 }
                 OPCODE(DLOAD)
                 {
                     int index = code_blob[pc++];
-                    currentFrame->getStack().pushDouble(currentFrame->getLocals().getDouble(index));
+                    stack.pushDouble(locals.getDouble(index));
                     NEXT();
                 }
                 OPCODE(ALOAD)
                 {
                     int index = code_blob[pc++];
-                    currentFrame->getStack().pushReference(currentFrame->getLocals().getReference(index));
+                    stack.pushReference(locals.getReference(index));
                     NEXT();
                 }
                 OPCODE(ILOAD_0)
                 {
-                    currentFrame->getStack().pushInt(currentFrame->getLocals().getInt(0));
+                    stack.pushInt(locals.getInt(0));
                     NEXT();
                 }
                 OPCODE(ILOAD_1)
                 {
-                    currentFrame->getStack().pushInt(currentFrame->getLocals().getInt(1));
+                    stack.pushInt(locals.getInt(1));
                     NEXT();
                 }
                 OPCODE(ILOAD_2)
                 {
-                    currentFrame->getStack().pushInt(currentFrame->getLocals().getInt(2));
+                    stack.pushInt(locals.getInt(2));
                     NEXT();
                 }
                 OPCODE(ILOAD_3)
                 {
-                    currentFrame->getStack().pushInt(currentFrame->getLocals().getInt(3));
+                    stack.pushInt(locals.getInt(3));
                     NEXT();
                 }
                 OPCODE(LLOAD_0)
                 {
-                    currentFrame->getStack().pushLong(currentFrame->getLocals().getLong(0));
+                    stack.pushLong(locals.getLong(0));
                     NEXT();
                 }
                 OPCODE(LLOAD_1)
                 {
-                    currentFrame->getStack().pushLong(currentFrame->getLocals().getLong(1));
+                    stack.pushLong(locals.getLong(1));
                     NEXT();
                 }
                 OPCODE(LLOAD_2)
                 {
-                    currentFrame->getStack().pushLong(currentFrame->getLocals().getLong(2));
+                    stack.pushLong(locals.getLong(2));
                     NEXT();
                 }
                 OPCODE(LLOAD_3)
                 {
-                    currentFrame->getStack().pushLong(currentFrame->getLocals().getLong(3));
+                    stack.pushLong(locals.getLong(3));
                     NEXT();
                 }
                 OPCODE(FLOAD_0)
                 {
-                    currentFrame->getStack().pushFloat(currentFrame->getLocals().getFloat(0));
+                    stack.pushFloat(locals.getFloat(0));
                     NEXT();
                 }
                 OPCODE(FLOAD_1)
                 {
-                    currentFrame->getStack().pushFloat(currentFrame->getLocals().getFloat(1));
+                    stack.pushFloat(locals.getFloat(1));
                     NEXT();
                 }
                 OPCODE(FLOAD_2)
                 {
-                    currentFrame->getStack().pushFloat(currentFrame->getLocals().getFloat(2));
+                    stack.pushFloat(locals.getFloat(2));
                     NEXT();
                 }
                 OPCODE(FLOAD_3)
                 {
-                    currentFrame->getStack().pushFloat(currentFrame->getLocals().getFloat(3));
+                    stack.pushFloat(locals.getFloat(3));
                     NEXT();
                 }
                 OPCODE(DLOAD_0)
                 {
-                    currentFrame->getStack().pushDouble(currentFrame->getLocals().getDouble(0));
+                    stack.pushDouble(locals.getDouble(0));
                     NEXT();
                 }
                 OPCODE(DLOAD_1)
                 {
-                    currentFrame->getStack().pushDouble(currentFrame->getLocals().getDouble(1));
+                    stack.pushDouble(locals.getDouble(1));
                     NEXT();
                 }
                 OPCODE(DLOAD_2)
                 {
-                    currentFrame->getStack().pushDouble(currentFrame->getLocals().getDouble(2));
+                    stack.pushDouble(locals.getDouble(2));
                     NEXT();
                 }
                 OPCODE(DLOAD_3)
                 {
-                    currentFrame->getStack().pushDouble(currentFrame->getLocals().getDouble(3));
+                    stack.pushDouble(locals.getDouble(3));
                     NEXT();
                 }
                 OPCODE(ALOAD_0)
                 {
-                    currentFrame->getStack().pushReference(currentFrame->getLocals().getReference(0));
+                    stack.pushReference(locals.getReference(0));
                     NEXT();
                 }
                 OPCODE(ALOAD_1)
                 {
-                    currentFrame->getStack().pushReference(currentFrame->getLocals().getReference(1));
+                    stack.pushReference(locals.getReference(1));
                     NEXT();
                 }
                 OPCODE(ALOAD_2)
                 {
-                    currentFrame->getStack().pushReference(currentFrame->getLocals().getReference(2));
+                    stack.pushReference(locals.getReference(2));
                     NEXT();
                 }
                 OPCODE(ALOAD_3)
                 {
-                    currentFrame->getStack().pushReference(currentFrame->getLocals().getReference(3));
+                    stack.pushReference(locals.getReference(3));
                     NEXT();
                 }
                 OPCODE(IALOAD)
                 {
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
@@ -304,13 +307,13 @@ namespace kivm {
                     }
 
                     auto element = (intOop) array->getElementAt(index);
-                    currentFrame->getStack().pushInt(element->getValue());
+                    stack.pushInt(element->getValue());
                     NEXT();
                 }
                 OPCODE(LALOAD)
                 {
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
@@ -322,13 +325,13 @@ namespace kivm {
                     }
 
                     auto element = (longOop) array->getElementAt(index);
-                    currentFrame->getStack().pushLong(element->getValue());
+                    stack.pushLong(element->getValue());
                     NEXT();
                 }
                 OPCODE(FALOAD)
                 {
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
@@ -340,13 +343,13 @@ namespace kivm {
                     }
 
                     auto element = (floatOop) array->getElementAt(index);
-                    currentFrame->getStack().pushFloat(element->getValue());
+                    stack.pushFloat(element->getValue());
                     NEXT();
                 }
                 OPCODE(DALOAD)
                 {
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
@@ -358,13 +361,13 @@ namespace kivm {
                     }
 
                     auto element = (doubleOop) array->getElementAt(index);
-                    currentFrame->getStack().pushDouble(element->getValue());
+                    stack.pushDouble(element->getValue());
                     NEXT();
                 }
                 OPCODE(AALOAD)
                 {
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
@@ -376,25 +379,25 @@ namespace kivm {
                         PANIC("java.lang.ClassCastException");
                     }
 
-                    currentFrame->getStack().pushReference(array->getElementAt(index));
+                    stack.pushReference(array->getElementAt(index));
                     NEXT();
                 }
                 OPCODE(BALOAD)
                 {
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(CALOAD)
                 {
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(SALOAD)
                 {
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(ISTORE)
@@ -504,94 +507,132 @@ namespace kivm {
                 }
                 OPCODE(IASTORE)
                 {
-                    jobject value = currentFrame->getStack().popReference();
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    jobject value = stack.popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(LASTORE)
                 {
-                    jobject value = currentFrame->getStack().popReference();
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    jobject value = stack.popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(FASTORE)
                 {
-                    jobject value = currentFrame->getStack().popReference();
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    jobject value = stack.popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(DASTORE)
                 {
-                    jobject value = currentFrame->getStack().popReference();
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    jobject value = stack.popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(AASTORE)
                 {
-                    jobject value = currentFrame->getStack().popReference();
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    jobject value = stack.popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(BASTORE)
                 {
-                    jobject value = currentFrame->getStack().popReference();
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    jobject value = stack.popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(CASTORE)
                 {
-                    jobject value = currentFrame->getStack().popReference();
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    jobject value = stack.popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(SASTORE)
                 {
-                    jobject value = currentFrame->getStack().popReference();
-                    int index = currentFrame->getStack().popInt();
-                    jobject ref = currentFrame->getStack().popReference();
+                    jobject value = stack.popReference();
+                    int index = stack.popInt();
+                    jobject ref = stack.popReference();
                     NEXT();
                 }
                 OPCODE(POP)
                 {
-                    currentFrame->getStack().dropTop();
+                    stack.dropTop();
                     NEXT();
                 }
                 OPCODE(POP2)
                 {
-                    currentFrame->getStack().dropTop();
-                    currentFrame->getStack().dropTop();
+                    stack.dropTop();
+                    stack.dropTop();
                     NEXT();
                 }
                 OPCODE(DUP)
                 {
-                    currentFrame->getStack().dup();
+                    auto top = stack.popReference();
+                    stack.pushReference(top);
+                    stack.pushReference(top);
                     NEXT();
                 }
                 OPCODE(DUP_X1)
                 {
+                    auto v1 = stack.popReference();
+                    auto v2 = stack.popReference();
+                    stack.pushReference(v1);
+                    stack.pushReference(v2);
+                    stack.pushReference(v1);
                     NEXT();
                 }
                 OPCODE(DUP_X2)
                 {
+                    auto v1 = stack.popReference();
+                    auto v2 = stack.popReference();
+                    auto v3 = stack.popReference();
+                    stack.pushReference(v1);
+                    stack.pushReference(v3);
+                    stack.pushReference(v2);
+                    stack.pushReference(v1);
                     NEXT();
                 }
                 OPCODE(DUP2)
                 {
+                    auto v1 = stack.popReference();
+                    auto v2 = stack.popReference();
+                    stack.pushReference(v2);
+                    stack.pushReference(v1);
+                    stack.pushReference(v2);
+                    stack.pushReference(v1);
                     NEXT();
                 }
                 OPCODE(DUP2_X1)
                 {
+                    auto v1 = stack.popReference();
+                    auto v2 = stack.popReference();
+                    auto v3 = stack.popReference();
+                    stack.pushReference(v2);
+                    stack.pushReference(v1);
+                    stack.pushReference(v3);
+                    stack.pushReference(v2);
+                    stack.pushReference(v1);
                     NEXT();
                 }
                 OPCODE(DUP2_X2)
                 {
+                    auto v1 = stack.popReference();
+                    auto v2 = stack.popReference();
+                    auto v3 = stack.popReference();
+                    auto v4 = stack.popReference();
+                    stack.pushReference(v2);
+                    stack.pushReference(v1);
+                    stack.pushReference(v4);
+                    stack.pushReference(v3);
+                    stack.pushReference(v2);
+                    stack.pushReference(v1);
                     NEXT();
                 }
                 OPCODE(SWAP)

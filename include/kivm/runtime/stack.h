@@ -132,12 +132,6 @@ namespace kivm {
         inline void dropTop() {
             --_sp;
         }
-
-        inline void dup() {
-            // they are union
-            jobject top = _array.getReference(_sp - 1);
-            pushReference(top);
-        }
     };
 
     class Locals {
