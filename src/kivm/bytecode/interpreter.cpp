@@ -865,62 +865,92 @@ namespace kivm {
                 }
                 OPCODE(I2L)
                 {
+                    auto v1 = stack.popInt();
+                    stack.pushLong((jlong) v1);
                     NEXT();
                 }
                 OPCODE(I2F)
                 {
+                    auto v1 = stack.popInt();
+                    stack.pushFloat((jfloat) v1);
                     NEXT();
                 }
                 OPCODE(I2D)
                 {
+                    auto v1 = stack.popInt();
+                    stack.pushDouble((jdouble) v1);
                     NEXT();
                 }
                 OPCODE(L2I)
                 {
+                    auto v1 = stack.popLong();
+                    stack.pushInt((jint) v1);
                     NEXT();
                 }
                 OPCODE(L2F)
                 {
+                    auto v1 = stack.popLong();
+                    stack.pushFloat((jfloat) v1);
                     NEXT();
                 }
                 OPCODE(L2D)
                 {
+                    auto v1 = stack.popLong();
+                    stack.pushDouble((jdouble) v1);
                     NEXT();
                 }
                 OPCODE(F2I)
                 {
+                    auto v1 = stack.popFloat();
+                    stack.pushInt((jint) v1);
                     NEXT();
                 }
                 OPCODE(F2L)
                 {
+                    auto v1 = stack.popFloat();
+                    stack.pushLong((jlong) v1);
                     NEXT();
                 }
                 OPCODE(F2D)
                 {
+                    auto v1 = stack.popFloat();
+                    stack.pushDouble((jdouble) v1);
                     NEXT();
                 }
                 OPCODE(D2I)
                 {
+                    auto v1 = stack.popDouble();
+                    stack.pushInt((jint) v1);
                     NEXT();
                 }
                 OPCODE(D2L)
                 {
+                    auto v1 = stack.popDouble();
+                    stack.pushLong((jlong) v1);
                     NEXT();
                 }
                 OPCODE(D2F)
                 {
+                    auto v1 = stack.popDouble();
+                    stack.pushFloat((jfloat) v1);
                     NEXT();
                 }
                 OPCODE(I2B)
                 {
+                    auto v1 = stack.popInt();
+                    stack.pushInt((jbyte) v1);
                     NEXT();
                 }
                 OPCODE(I2C)
                 {
+                    auto v1 = stack.popInt();
+                    stack.pushInt((jchar) v1);
                     NEXT();
                 }
                 OPCODE(I2S)
                 {
+                    auto v1 = stack.popInt();
+                    stack.pushInt((jshort) v1);
                     NEXT();
                 }
                 OPCODE(LCMP)
