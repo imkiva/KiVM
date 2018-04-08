@@ -736,10 +736,12 @@ namespace kivm {
                 }
                 OPCODE(FREM)
                 {
+                    PANIC("frem is not supported yet");
                     NEXT();
                 }
                 OPCODE(DREM)
                 {
+                    PANIC("drem is not supported yet");
                     NEXT();
                 }
                 OPCODE(INEG)
@@ -754,10 +756,12 @@ namespace kivm {
                 }
                 OPCODE(FNEG)
                 {
+                    PANIC("fneg is not supported yet");
                     NEXT();
                 }
                 OPCODE(DNEG)
                 {
+                    PANIC("dneg is not supported yet");
                     NEXT();
                 }
                 OPCODE(ISHL)
@@ -902,13 +906,29 @@ namespace kivm {
                 OPCODE(F2I)
                 {
                     auto v1 = stack.popFloat();
-                    stack.pushInt((jint) v1);
+                    if (FLOAT_IS_NAN(v1)) {
+                        stack.pushInt(0);
+                    } else if (FLOAT_IS_POSITIVE_INFINITY(v1)) {
+                        stack.pushInt(INT_MAX);
+                    } else if (FLOAT_IS_NEGATIVE_INFINITY(v1)) {
+                        stack.pushInt(INT_MIN);
+                    } else {
+                        stack.pushInt((jint) v1);
+                    }
                     NEXT();
                 }
                 OPCODE(F2L)
                 {
                     auto v1 = stack.popFloat();
-                    stack.pushLong((jlong) v1);
+                    if (FLOAT_IS_NAN(v1)) {
+                        stack.pushLong(0);
+                    } else if (FLOAT_IS_POSITIVE_INFINITY(v1)) {
+                        stack.pushLong(LONG_MAX);
+                    } else if (FLOAT_IS_NEGATIVE_INFINITY(v1)) {
+                        stack.pushLong(LONG_MIN);
+                    } else {
+                        stack.pushLong((jlong) v1);
+                    }
                     NEXT();
                 }
                 OPCODE(F2D)
@@ -920,13 +940,29 @@ namespace kivm {
                 OPCODE(D2I)
                 {
                     auto v1 = stack.popDouble();
-                    stack.pushInt((jint) v1);
+                    if (DOUBLE_IS_NAN(v1)) {
+                        stack.pushInt(0);
+                    } else if (DOUBLE_IS_POSITIVE_INFINITY(v1)) {
+                        stack.pushInt(INT_MAX);
+                    } else if (DOUBLE_IS_NEGATIVE_INFINITY(v1)) {
+                        stack.pushInt(INT_MIN);
+                    } else {
+                        stack.pushInt((jint) v1);
+                    }
                     NEXT();
                 }
                 OPCODE(D2L)
                 {
                     auto v1 = stack.popDouble();
-                    stack.pushLong((jlong) v1);
+                    if (DOUBLE_IS_NAN(v1)) {
+                        stack.pushLong(0);
+                    } else if (DOUBLE_IS_POSITIVE_INFINITY(v1)) {
+                        stack.pushLong(LONG_MAX);
+                    } else if (DOUBLE_IS_NEGATIVE_INFINITY(v1)) {
+                        stack.pushLong(LONG_MIN);
+                    } else {
+                        stack.pushLong((jlong) v1);
+                    }
                     NEXT();
                 }
                 OPCODE(D2F)
