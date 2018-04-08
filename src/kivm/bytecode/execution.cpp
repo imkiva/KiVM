@@ -3,6 +3,8 @@
 //
 #include <kivm/bytecode/execution.h>
 #include <kivm/oop/instanceOop.h>
+#include <kivm/oop/primitiveOop.h>
+#include <kivm/oop/arrayOop.h>
 #include <kivm/method.h>
 
 namespace kivm {
@@ -89,5 +91,90 @@ namespace kivm {
 
     bool Execution::instanceOf(Klass *ref, Klass *klass) {
         return false;
+    }
+
+    void Execution::loadIntArrayElement(Stack &stack) {
+        int index = stack.popInt();
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            // TODO: throw NullPointerException
+            PANIC("java.lang.NullPointerException");
+        }
+        auto array = Resolver::tryResolveTypeArray(ref);
+        if (array == nullptr) {
+            // TODO: throw ClassCastException
+            PANIC("java.lang.ClassCastException");
+        }
+
+        auto element = (intOop) array->getElementAt(index);
+        stack.pushInt(element->getValue());
+    }
+
+    void Execution::loadFloatArrayElement(Stack &stack) {
+        int index = stack.popInt();
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            // TODO: throw NullPointerException
+            PANIC("java.lang.NullPointerException");
+        }
+        auto array = Resolver::tryResolveTypeArray(ref);
+        if (array == nullptr) {
+            // TODO: throw ClassCastException
+            PANIC("java.lang.ClassCastException");
+        }
+
+        auto element = (floatOop) array->getElementAt(index);
+        stack.pushFloat(element->getValue());
+    }
+
+    void Execution::loadDoubleArrayElement(Stack &stack) {
+        int index = stack.popInt();
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            // TODO: throw NullPointerException
+            PANIC("java.lang.NullPointerException");
+        }
+        auto array = Resolver::tryResolveTypeArray(ref);
+        if (array == nullptr) {
+            // TODO: throw ClassCastException
+            PANIC("java.lang.ClassCastException");
+        }
+
+        auto element = (doubleOop) array->getElementAt(index);
+        stack.pushDouble(element->getValue());
+    }
+
+    void Execution::loadLongArrayElement(Stack &stack) {
+        int index = stack.popInt();
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            // TODO: throw NullPointerException
+            PANIC("java.lang.NullPointerException");
+        }
+        auto array = Resolver::tryResolveTypeArray(ref);
+        if (array == nullptr) {
+            // TODO: throw ClassCastException
+            PANIC("java.lang.ClassCastException");
+        }
+
+        auto element = (longOop) array->getElementAt(index);
+        stack.pushLong(element->getValue());
+    }
+
+    void Execution::loadObjectArrayElement(Stack &stack) {
+        int index = stack.popInt();
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            // TODO: throw NullPointerException
+            PANIC("java.lang.NullPointerException");
+        }
+
+        auto array = Resolver::tryResolveObjectArray(ref);
+        if (array == nullptr) {
+            // TODO: throw ClassCastException
+            PANIC("java.lang.ClassCastException");
+        }
+
+        stack.pushReference(array->getElementAt(index));
     }
 }

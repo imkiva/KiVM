@@ -26,6 +26,16 @@ namespace kivm {
      */
     class Execution {
     public:
+        static void loadIntArrayElement(Stack &stack);
+
+        static void loadFloatArrayElement(Stack &stack);
+
+        static void loadDoubleArrayElement(Stack &stack);
+
+        static void loadLongArrayElement(Stack &stack);
+
+        static void loadObjectArrayElement(Stack &stack);
+
         static void loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex);
 
         static void initializeClass(JavaThread *javaThread, InstanceKlass *klass);

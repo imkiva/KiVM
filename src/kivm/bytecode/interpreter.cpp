@@ -294,110 +294,42 @@ namespace kivm {
                 }
                 OPCODE(IALOAD)
                 {
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
-                    if (ref == nullptr) {
-                        // TODO: throw NullPointerException
-                        PANIC("java.lang.NullPointerException");
-                    }
-                    auto array = Resolver::tryResolveTypeArray(ref);
-                    if (array == nullptr) {
-                        // TODO: throw ClassCastException
-                        PANIC("java.lang.ClassCastException");
-                    }
-
-                    auto element = (intOop) array->getElementAt(index);
-                    stack.pushInt(element->getValue());
+                    Execution::loadIntArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(LALOAD)
                 {
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
-                    if (ref == nullptr) {
-                        // TODO: throw NullPointerException
-                        PANIC("java.lang.NullPointerException");
-                    }
-                    auto array = Resolver::tryResolveTypeArray(ref);
-                    if (array == nullptr) {
-                        // TODO: throw ClassCastException
-                        PANIC("java.lang.ClassCastException");
-                    }
-
-                    auto element = (longOop) array->getElementAt(index);
-                    stack.pushLong(element->getValue());
+                    Execution::loadLongArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(FALOAD)
                 {
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
-                    if (ref == nullptr) {
-                        // TODO: throw NullPointerException
-                        PANIC("java.lang.NullPointerException");
-                    }
-                    auto array = Resolver::tryResolveTypeArray(ref);
-                    if (array == nullptr) {
-                        // TODO: throw ClassCastException
-                        PANIC("java.lang.ClassCastException");
-                    }
-
-                    auto element = (floatOop) array->getElementAt(index);
-                    stack.pushFloat(element->getValue());
+                    Execution::loadFloatArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(DALOAD)
                 {
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
-                    if (ref == nullptr) {
-                        // TODO: throw NullPointerException
-                        PANIC("java.lang.NullPointerException");
-                    }
-                    auto array = Resolver::tryResolveTypeArray(ref);
-                    if (array == nullptr) {
-                        // TODO: throw ClassCastException
-                        PANIC("java.lang.ClassCastException");
-                    }
-
-                    auto element = (doubleOop) array->getElementAt(index);
-                    stack.pushDouble(element->getValue());
+                    Execution::loadDoubleArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(AALOAD)
                 {
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
-                    if (ref == nullptr) {
-                        // TODO: throw NullPointerException
-                        PANIC("java.lang.NullPointerException");
-                    }
-
-                    auto array = Resolver::tryResolveObjectArray(ref);
-                    if (array == nullptr) {
-                        // TODO: throw ClassCastException
-                        PANIC("java.lang.ClassCastException");
-                    }
-
-                    stack.pushReference(array->getElementAt(index));
+                    Execution::loadObjectArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(BALOAD)
                 {
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::loadIntArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(CALOAD)
                 {
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::loadIntArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(SALOAD)
                 {
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::loadIntArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(ISTORE)
