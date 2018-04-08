@@ -464,58 +464,42 @@ namespace kivm {
                 }
                 OPCODE(IASTORE)
                 {
-                    jobject value = stack.popReference();
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::storeIntArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(LASTORE)
                 {
-                    jobject value = stack.popReference();
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::storeLongArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(FASTORE)
                 {
-                    jobject value = stack.popReference();
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::storeFloatArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(DASTORE)
                 {
-                    jobject value = stack.popReference();
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::storeDoubleArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(AASTORE)
                 {
-                    jobject value = stack.popReference();
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::storeObjectArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(BASTORE)
                 {
-                    jobject value = stack.popReference();
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::storeIntArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(CASTORE)
                 {
-                    jobject value = stack.popReference();
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::storeIntArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(SASTORE)
                 {
-                    jobject value = stack.popReference();
-                    int index = stack.popInt();
-                    jobject ref = stack.popReference();
+                    Execution::storeIntArrayElement(stack);
                     NEXT();
                 }
                 OPCODE(POP)
