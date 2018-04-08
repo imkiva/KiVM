@@ -698,10 +698,24 @@ namespace kivm {
                 }
                 OPCODE(IREM)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    if (v2 == 0) {
+                        // TODO: throw java.lang.ArithmeticException
+                        PANIC("java.lang.ArithmeticException");
+                    }
+                    stack.pushInt(v1 - (v1 / v2) * v2);
                     NEXT();
                 }
                 OPCODE(LREM)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    if (v2 == 0) {
+                        // TODO: throw java.lang.ArithmeticException
+                        PANIC("java.lang.ArithmeticException");
+                    }
+                    stack.pushLong(v1 - (v1 / v2) * v2);
                     NEXT();
                 }
                 OPCODE(FREM)
@@ -714,10 +728,12 @@ namespace kivm {
                 }
                 OPCODE(INEG)
                 {
+                    stack.pushInt(-stack.popInt());
                     NEXT();
                 }
                 OPCODE(LNEG)
                 {
+                    stack.pushLong(-stack.popLong());
                     NEXT();
                 }
                 OPCODE(FNEG)
@@ -730,50 +746,100 @@ namespace kivm {
                 }
                 OPCODE(ISHL)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    auto s = v2 & 0x1F;
+                    stack.pushInt(v1 << s);
                     NEXT();
                 }
                 OPCODE(LSHL)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    auto s = v2 & 0x3F;
+                    stack.pushLong(v1 << s);
                     NEXT();
                 }
                 OPCODE(ISHR)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    auto s = v2 & 0x1F;
+                    stack.pushInt(v1 >> s);
                     NEXT();
                 }
                 OPCODE(LSHR)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    auto s = v2 & 0x3F;
+                    stack.pushLong(v1 >> s);
                     NEXT();
                 }
                 OPCODE(IUSHR)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    auto s = v2 & 0x1F;
+                    if (v1 >= 0) {
+                        stack.pushInt(v1 >> s);
+                    } else {
+                        stack.pushInt((v1 >> s) + (2 << ~s));
+                    }
                     NEXT();
                 }
                 OPCODE(LUSHR)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    auto s = v2 & 0x3F;
+                    if (v1 >= 0) {
+                        stack.pushLong(v1 >> s);
+                    } else {
+                        stack.pushLong((v1 >> s) + (2 << ~s));
+                    }
                     NEXT();
                 }
                 OPCODE(IAND)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    stack.pushInt(v1 & v2);
                     NEXT();
                 }
                 OPCODE(LAND)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    stack.pushLong(v1 & v2);
                     NEXT();
                 }
                 OPCODE(IOR)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    stack.pushInt(v1 | v2);
                     NEXT();
                 }
                 OPCODE(LOR)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    stack.pushLong(v1 | v2);
                     NEXT();
                 }
                 OPCODE(IXOR)
                 {
+                    auto v2 = stack.popInt();
+                    auto v1 = stack.popInt();
+                    stack.pushInt(v1 ^ v2);
                     NEXT();
                 }
                 OPCODE(LXOR)
                 {
+                    auto v2 = stack.popLong();
+                    auto v1 = stack.popLong();
+                    stack.pushLong(v1 ^ v2);
                     NEXT();
                 }
                 OPCODE(IINC)
