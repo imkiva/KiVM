@@ -30,9 +30,8 @@
     case OPC_##opcode:
 #endif
 
-
-#define IF_GOTO(occupied, op) \
-                    if (stack.popInt() op 0) { \
+#define __IF_GOTO_FACTORY(func, target, occupied, op) \
+                    if (stack.func() op target) { \
                         short branch = code_blob[pc] << 8 | code_blob[pc + 1]; \
                         pc += branch; \
                     } else { \
@@ -48,6 +47,9 @@
                     } else { \
                         pc += (occupied); \
                     }
+
+#define IF_GOTO(occupied, op) __IF_GOTO_FACTORY(popInt, 0, occupied, op)
+#define IF_NULLCMP_GOTO(occupied, op) __IF_GOTO_FACTORY(popReference, nullptr, occupied, op)
 
 #define IF_ICMP_GOTO(occupied, op) __IF_CMP_GOTO_FACTORY(popInt, occupied, op)
 #define IF_ACMP_GOTO(occupied, op) __IF_CMP_GOTO_FACTORY(popReference, occupied, op)
@@ -1307,12 +1309,12 @@ namespace kivm {
                 }
                 OPCODE(IFNULL)
                 {
-                    pc += 2;
+                    IF_NULLCMP_GOTO(2, ==);
                     NEXT();
                 }
                 OPCODE(IFNONNULL)
                 {
-                    pc += 2;
+                    IF_NULLCMP_GOTO(2, !=);
                     NEXT();
                 }
                 OPCODE(GOTO_W)
