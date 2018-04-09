@@ -864,7 +864,11 @@ namespace kivm {
                 }
                 OPCODE(IINC)
                 {
+                    int index = code_blob[pc];
+                    int factor = code_blob[pc + 1];
                     pc += 2;
+
+                    locals.setInt(index, locals.getInt(index) + factor);
                     NEXT();
                 }
                 OPCODE(I2L)
