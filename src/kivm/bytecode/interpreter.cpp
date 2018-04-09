@@ -30,6 +30,28 @@
     case OPC_##opcode:
 #endif
 
+
+#define IF_GOTO(occupied, op) \
+                    if (stack.popInt() op 0) { \
+                        short branch = code_blob[pc] << 8 | code_blob[pc + 1]; \
+                        pc += branch; \
+                    } else { \
+                        pc += (occupied); \
+                    }
+
+#define __IF_CMP_GOTO_FACTORY(func, occupied, op) \
+                    auto v2 = stack.func(); \
+                    auto v1 = stack.func(); \
+                    if (v1 op v2) { \
+                        short branch = code_blob[pc] << 8 | code_blob[pc + 1]; \
+                        pc += branch; \
+                    } else { \
+                        pc += (occupied); \
+                    }
+
+#define IF_ICMP_GOTO(occupied, op) __IF_CMP_GOTO_FACTORY(popInt, occupied, op)
+#define IF_ACMP_GOTO(occupied, op) __IF_CMP_GOTO_FACTORY(popReference, occupied, op)
+
 namespace kivm {
     oop ByteCodeInterpreter::interp(JavaThread *thread) {
         Frame *currentFrame = thread->getCurrentFrame();
@@ -1068,72 +1090,72 @@ namespace kivm {
                 }
                 OPCODE(IFEQ)
                 {
-                    pc += 2;
+                    IF_GOTO(2, ==);
                     NEXT();
                 }
                 OPCODE(IFNE)
                 {
-                    pc += 2;
+                    IF_GOTO(2, !=);
                     NEXT();
                 }
                 OPCODE(IFLT)
                 {
-                    pc += 2;
+                    IF_GOTO(2, <);
                     NEXT();
                 }
                 OPCODE(IFGE)
                 {
-                    pc += 2;
+                    IF_GOTO(2, >=);
                     NEXT();
                 }
                 OPCODE(IFGT)
                 {
-                    pc += 2;
+                    IF_GOTO(2, >);
                     NEXT();
                 }
                 OPCODE(IFLE)
                 {
-                    pc += 2;
+                    IF_GOTO(2, <=);
                     NEXT();
                 }
                 OPCODE(IF_ICMPEQ)
                 {
-                    pc += 2;
+                    IF_ICMP_GOTO(2, ==);
                     NEXT();
                 }
                 OPCODE(IF_ICMPNE)
                 {
-                    pc += 2;
+                    IF_ICMP_GOTO(2, !=);
                     NEXT();
                 }
                 OPCODE(IF_ICMPLT)
                 {
-                    pc += 2;
+                    IF_ICMP_GOTO(2, <);
                     NEXT();
                 }
                 OPCODE(IF_ICMPGE)
                 {
-                    pc += 2;
+                    IF_ICMP_GOTO(2, >=);
                     NEXT();
                 }
                 OPCODE(IF_ICMPGT)
                 {
-                    pc += 2;
+                    IF_ICMP_GOTO(2, >);
                     NEXT();
                 }
                 OPCODE(IF_ICMPLE)
                 {
-                    pc += 2;
+                    IF_ICMP_GOTO(2, <=);
                     NEXT();
                 }
                 OPCODE(IF_ACMPEQ)
                 {
-                    pc += 2;
+                    IF_ACMP_GOTO(2, ==);
                     NEXT();
                 }
                 OPCODE(IF_ACMPNE)
                 {
-                    pc += 2;
+                    IF_ACMP_GOTO(2, !=);
                     NEXT();
                 }
                 OPCODE(GOTO)
