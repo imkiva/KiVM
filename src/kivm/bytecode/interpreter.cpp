@@ -1085,7 +1085,8 @@ namespace kivm {
                 }
                 OPCODE(GOTO)
                 {
-                    pc += 2;
+                    short branch = code_blob[pc] << 8 | code_blob[pc + 1];
+                    pc += branch;
                     NEXT();
                 }
                 OPCODE(JSR)
