@@ -995,22 +995,75 @@ namespace kivm {
                 }
                 OPCODE(LCMP)
                 {
+                    auto v1 = stack.popLong();
+                    auto v2 = stack.popLong();
+                    if (v1 > v2) {
+                        stack.pushInt(-1);
+                    } else if (v1 < v2) {
+                        stack.pushInt(1);
+                    } else {
+                        stack.pushInt(0);
+                    }
                     NEXT();
                 }
                 OPCODE(FCMPL)
                 {
+                    auto v1 = stack.popFloat();
+                    auto v2 = stack.popFloat();
+                    if (FLOAT_IS_NAN(v1) || FLOAT_IS_NAN(v2)) {
+                        stack.pushInt(-1);
+                    } else if (v1 > v2) {
+                        stack.pushInt(-1);
+                    } else if (v1 < v2) {
+                        stack.pushInt(1);
+                    } else {
+                        stack.pushInt(0);
+                    }
                     NEXT();
                 }
                 OPCODE(FCMPG)
                 {
+                    auto v1 = stack.popFloat();
+                    auto v2 = stack.popFloat();
+                    if (FLOAT_IS_NAN(v1) || FLOAT_IS_NAN(v2)) {
+                        stack.pushInt(1);
+                    } else if (v1 > v2) {
+                        stack.pushInt(-1);
+                    } else if (v1 < v2) {
+                        stack.pushInt(1);
+                    } else {
+                        stack.pushInt(0);
+                    }
                     NEXT();
                 }
                 OPCODE(DCMPL)
                 {
+                    auto v1 = stack.popDouble();
+                    auto v2 = stack.popDouble();
+                    if (DOUBLE_IS_NAN(v1) || DOUBLE_IS_NAN(v2)) {
+                        stack.pushInt(-1);
+                    } else if (v1 > v2) {
+                        stack.pushInt(-1);
+                    } else if (v1 < v2) {
+                        stack.pushInt(1);
+                    } else {
+                        stack.pushInt(0);
+                    }
                     NEXT();
                 }
                 OPCODE(DCMPG)
                 {
+                    auto v1 = stack.popDouble();
+                    auto v2 = stack.popDouble();
+                    if (DOUBLE_IS_NAN(v1) || DOUBLE_IS_NAN(v2)) {
+                        stack.pushInt(1);
+                    } else if (v1 > v2) {
+                        stack.pushInt(-1);
+                    } else if (v1 < v2) {
+                        stack.pushInt(1);
+                    } else {
+                        stack.pushInt(0);
+                    }
                     NEXT();
                 }
                 OPCODE(IFEQ)
