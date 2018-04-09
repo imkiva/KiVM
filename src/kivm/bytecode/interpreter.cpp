@@ -30,10 +30,13 @@
     case OPC_##opcode:
 #endif
 
+#define GOTO_UNCONDITIONALLY() \
+                    short branch = code_blob[pc] << 8 | code_blob[pc + 1]; \
+                    pc += branch
+
 #define __IF_GOTO_FACTORY(func, target, occupied, op) \
                     if (stack.func() op target) { \
-                        short branch = code_blob[pc] << 8 | code_blob[pc + 1]; \
-                        pc += branch; \
+                        GOTO_UNCONDITIONALLY(); \
                     } else { \
                         pc += (occupied); \
                     }
@@ -42,8 +45,7 @@
                     auto v2 = stack.func(); \
                     auto v1 = stack.func(); \
                     if (v1 op v2) { \
-                        short branch = code_blob[pc] << 8 | code_blob[pc + 1]; \
-                        pc += branch; \
+                        GOTO_UNCONDITIONALLY(); \
                     } else { \
                         pc += (occupied); \
                     }
@@ -1162,8 +1164,7 @@ namespace kivm {
                 }
                 OPCODE(GOTO)
                 {
-                    short branch = code_blob[pc] << 8 | code_blob[pc + 1];
-                    pc += branch;
+                    GOTO_UNCONDITIONALLY();
                     NEXT();
                 }
                 OPCODE(JSR)
