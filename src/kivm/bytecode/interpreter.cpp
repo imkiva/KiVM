@@ -2,6 +2,7 @@
 // Created by kiva on 2018/3/21.
 //
 
+#include <climits>
 #include <kivm/bytecode/interpreter.h>
 #include <kivm/bytecode/bytecodes.h>
 #include <kivm/bytecode/execution.h>
