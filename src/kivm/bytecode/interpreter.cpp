@@ -1273,21 +1273,25 @@ namespace kivm {
                 }
                 OPCODE(GETSTATIC)
                 {
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
                     NEXT();
                 }
                 OPCODE(PUTSTATIC)
                 {
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
                     NEXT();
                 }
                 OPCODE(GETFIELD)
                 {
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
                     NEXT();
                 }
                 OPCODE(PUTFIELD)
                 {
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
                     NEXT();
                 }
