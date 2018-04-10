@@ -1241,26 +1241,34 @@ namespace kivm {
                 }
                 OPCODE(IRETURN)
                 {
+                    return new intOopDesc(stack.popInt());
                     NEXT();
                 }
                 OPCODE(LRETURN)
                 {
+                    return new longOopDesc(stack.popLong());
                     NEXT();
                 }
                 OPCODE(FRETURN)
                 {
+                    return new floatOopDesc(stack.popFloat());
                     NEXT();
                 }
                 OPCODE(DRETURN)
                 {
+                    return new doubleOopDesc(stack.popDouble());
                     NEXT();
                 }
                 OPCODE(ARETURN)
                 {
+                    return Resolver::resolveJObject(stack.popReference());
                     NEXT();
                 }
                 OPCODE(RETURN)
                 {
+                    if (currentMethod->isSynchronized()) {
+                        // TODO: monitor
+                    }
                     NEXT();
                 }
                 OPCODE(GETSTATIC)
