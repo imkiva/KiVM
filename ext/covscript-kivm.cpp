@@ -20,6 +20,6 @@ CS_EXTENSION(kivm)
         printf("Hello World: x = %d, y = %d\n", static_cast<int>(x), static_cast<int>(y));
     }
 
-    CS_ENABLE_THIS(kivm, kivm_holder)
+    CS_DECLARE_AS_OBJECT(kivm, kivm_holder)
 
 CS_EXTENSION_END()

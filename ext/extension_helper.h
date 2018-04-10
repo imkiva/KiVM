@@ -37,7 +37,7 @@
 
 #define CS_EXTENSION_END() }
 
-#define CS_ENABLE_THIS(NAME, TYPE) \
+#define CS_DECLARE_AS_OBJECT(NAME, TYPE) \
     } \
     namespace cs_impl { \
         template<> \
