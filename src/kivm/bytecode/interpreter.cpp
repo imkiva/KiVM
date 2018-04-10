@@ -31,9 +31,12 @@
     case OPC_##opcode:
 #endif
 
+#define GOTO_PC(branch) \
+                    pc += branch
+
 #define GOTO_UNCONDITIONALLY() \
                     short branch = code_blob[pc] << 8 | code_blob[pc + 1]; \
-                    pc += branch
+                    GOTO_PC(branch)
 
 #define __IF_GOTO_FACTORY(func, target, occupied, op) \
                     if (stack.func() op target) { \
@@ -1183,6 +1186,52 @@ namespace kivm {
                 OPCODE(TABLESWITCH)
                 {
                     // var args
+                    int bc = pc;
+                    int originBc = bc;
+                    if (bc % 4 != 0) {
+                        bc += (4 - bc % 4);
+                    } else {
+                        bc += 4;
+                    }
+                    int ptr = bc;
+
+                    int defaultByte = ((code_blob[ptr] << 24)
+                                       | (code_blob[ptr + 1] << 16)
+                                       | (code_blob[ptr + 2] << 8)
+                                       | (code_blob[ptr + 3]));
+                    int lowByte = ((code_blob[ptr + 4] << 24)
+                                   | (code_blob[ptr + 5] << 16)
+                                   | (code_blob[ptr + 6] << 8)
+                                   | (code_blob[ptr + 7]));
+                    int highByte = ((code_blob[ptr + 8] << 24)
+                                    | (code_blob[ptr + 9] << 16)
+                                    | (code_blob[ptr + 10] << 8)
+                                    | (code_blob[ptr + 11]));
+                    int num = highByte - lowByte + 1;
+                    ptr += 12;
+
+                    // switch-case jump table
+                    std::vector<int> jumpTable;
+                    for (int pos = 0; pos < num; pos++) {
+                        int jump_pos = ((code_blob[ptr] << 24)
+                                        | (code_blob[ptr + 1] << 16)
+                                        | (code_blob[ptr + 2] << 8)
+                                        | (code_blob[ptr + 3]))
+                                       + originBc;
+                        ptr += 4;
+                        jumpTable.push_back(jump_pos);
+                    }
+                    // default
+                    jumpTable.push_back(defaultByte + originBc);
+
+                    int topValue = stack.popInt();
+                    if (topValue > (int) (jumpTable.size() - 1 + lowByte)
+                        || topValue < lowByte) {
+                        // jump to default
+                        GOTO_PC(static_cast<u4>(jumpTable.back()));
+                    } else {
+                        GOTO_PC(static_cast<u4>(jumpTable[topValue - lowByte]));
+                    }
                     NEXT();
                 }
                 OPCODE(LOOKUPSWITCH)
