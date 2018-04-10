@@ -5,7 +5,8 @@
 #include "extension_helper.h"
 
 CS_EXTENSION(kivm) // NOLINT
-    struct kivm_holder {
+    CS_OBJECT(kivm, kivm_holder) {
+        int x;
     };
 
     CNI_NORMAL(void, hello_world) { // NOLINT
@@ -19,7 +20,5 @@ CS_EXTENSION(kivm) // NOLINT
     CNI_NORMAL(void, greet2, cs::number x, cs::number y) { // NOLINT
         printf("Hello World: x = %d, y = %d\n", static_cast<int>(x), static_cast<int>(y));
     }
-
-    CS_DECLARE_AS_OBJECT(kivm, kivm_holder)
 
 CS_EXTENSION_END()

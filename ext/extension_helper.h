@@ -47,6 +47,11 @@
     } \
     namespace __CS_EXTENSION_NS_NAME(NAME) {
 
+#define CS_OBJECT(EXT, NAME) \
+    struct NAME; \
+    CS_DECLARE_AS_OBJECT(EXT, NAME) \
+    struct NAME
+
 #define CNI_NORMAL(R, NAME, ...) __CNI_EXPAND(__CNI_NORMAL, R, NAME, ##__VA_ARGS__)
 #define CNI_CONST(R, NAME, ...) __CNI_EXPAND(__CNI_CONST, R, NAME, ##__VA_ARGS__)
 
