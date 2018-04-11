@@ -263,13 +263,13 @@ namespace kivm {
         array->setElementAt(index, Resolver::resolveJObject(value));
     }
 
-    void Execution::getField(InstanceKlass *instanceKlass, instanceOop receiver, Stack &stack, int constantIndex) {
-        auto rt = instanceKlass->getRuntimeConstantPool();
+    void Execution::getField(RuntimeConstantPool *rt, instanceOop receiver, Stack &stack, int constantIndex) {
         auto field = rt->getField(constantIndex);
         if (field == nullptr) {
             PANIC("FieldID is null, constantIndex: %d", constantIndex);
         }
 
+        auto instanceKlass = field->_field->getClass();
         oop fieldValue = nullptr;
 
         // We are getting a static field.
@@ -313,6 +313,44 @@ namespace kivm {
             case ValueType::LONG: {
                 auto longObject = (longOop) fieldValue;
                 stack.pushLong(longObject->getValue());
+                break;
+            }
+
+            case ValueType::VOID:
+                PANIC("Field cannot be typed void");
+                break;
+            default:
+                PANIC("Unrecognized field value type");
+                break;
+        }
+    }
+
+    void Execution::putField(RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+        auto field = rt->getField(constantIndex);
+        if (field == nullptr) {
+            PANIC("FieldID is null, constantIndex: %d", constantIndex);
+        }
+
+        switch (field->_field->getValueType()) {
+            case ValueType::OBJECT:
+            case ValueType::ARRAY:
+                break;
+
+            case ValueType::INT:
+            case ValueType::SHORT:
+            case ValueType::CHAR:
+            case ValueType::BOOLEAN:
+            case ValueType::BYTE: {
+                break;
+            }
+
+            case ValueType::FLOAT: {
+                break;
+            }
+            case ValueType::DOUBLE: {
+                break;
+            }
+            case ValueType::LONG: {
                 break;
             }
 

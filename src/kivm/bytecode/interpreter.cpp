@@ -1321,7 +1321,8 @@ namespace kivm {
                 {
                     int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
-                    Execution::getField(currentClass, nullptr, stack, constantIndex);
+                    Execution::getField(currentClass->getRuntimeConstantPool(),
+                                        nullptr, stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(PUTSTATIC)
@@ -1343,7 +1344,8 @@ namespace kivm {
                     if (receiver == nullptr) {
                         PANIC("Not an instance oop");
                     }
-                    Execution::getField(currentClass, receiver, stack, constantIndex);
+                    Execution::getField(currentClass->getRuntimeConstantPool(),
+                                        receiver, stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(PUTFIELD)
