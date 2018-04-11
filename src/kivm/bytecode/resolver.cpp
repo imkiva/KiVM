@@ -10,12 +10,20 @@
 
 namespace kivm {
     oop Resolver::resolveJObject(jobject obj) {
+        if (obj == nullptr) {
+            return nullptr;
+        }
+
         // TODO: check whether obj is an oop
         return (oop) obj;
     }
 
     instanceOop Resolver::tryResolveInstance(jobject obj) {
         auto n = resolveJObject(obj);
+        if (n == nullptr) {
+            return nullptr;
+        }
+
         if (n->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
             return (instanceOop) n;
         }
@@ -24,6 +32,10 @@ namespace kivm {
 
     typeArrayOop Resolver::tryResolveTypeArray(jobject obj) {
         auto n = resolveJObject(obj);
+        if (n == nullptr) {
+            return nullptr;
+        }
+
         if (n->getClass()->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
             return (typeArrayOop) n;
         }
@@ -32,6 +44,10 @@ namespace kivm {
 
     objectArrayOop Resolver::tryResolveObjectArray(jobject obj) {
         auto n = resolveJObject(obj);
+        if (n == nullptr) {
+            return nullptr;
+        }
+
         if (n->getClass()->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
             return (objectArrayOop) n;
         }
