@@ -286,9 +286,10 @@ namespace kivm {
 
         switch (field->_field->getValueType()) {
             case ValueType::OBJECT:
-            case ValueType::ARRAY:
+            case ValueType::ARRAY: {
                 stack.pushReference(fieldValue);
                 break;
+            }
 
             case ValueType::INT:
             case ValueType::SHORT:
@@ -305,11 +306,13 @@ namespace kivm {
                 stack.pushFloat(floatObject->getValue());
                 break;
             }
+
             case ValueType::DOUBLE: {
                 auto doubleObject = (doubleOop) fieldValue;
                 stack.pushDouble(doubleObject->getValue());
                 break;
             }
+
             case ValueType::LONG: {
                 auto longObject = (longOop) fieldValue;
                 stack.pushLong(longObject->getValue());
@@ -331,26 +334,58 @@ namespace kivm {
             PANIC("FieldID is null, constantIndex: %d", constantIndex);
         }
 
+        auto instanceKlass = field->_field->getClass();
+        bool isStatic = field->_field->isStatic();
+
+#define PUTFIELD(value) \
+        if (isStatic) { \
+            instanceKlass->setStaticFieldValue(field, value); \
+        } else { \
+            jobject receiverRef = stack.popReference(); \
+            if (receiverRef == nullptr) { \
+                PANIC("java.lang.NullPointerException"); \
+            } \
+            instanceOop receiver = Resolver::tryResolveInstance(receiverRef); \
+            if (receiver == nullptr) { \
+                PANIC("Not an instance oop"); \
+            } \
+            instanceKlass->setInstanceFieldValue(receiver, field, value); \
+        }
+
         switch (field->_field->getValueType()) {
             case ValueType::OBJECT:
-            case ValueType::ARRAY:
+            case ValueType::ARRAY: {
+                jobject ref = stack.popReference();
+                oop value = Resolver::resolveJObject(ref);
+                PUTFIELD(value);
                 break;
+            }
 
             case ValueType::INT:
             case ValueType::SHORT:
             case ValueType::CHAR:
             case ValueType::BOOLEAN:
             case ValueType::BYTE: {
+                auto intObject = new intOopDesc(stack.popInt());
+                PUTFIELD(intObject);
                 break;
             }
 
             case ValueType::FLOAT: {
+                auto floatObject = new floatOopDesc(stack.popFloat());
+                PUTFIELD(floatObject);
                 break;
             }
+
             case ValueType::DOUBLE: {
+                auto doubleObject = new doubleOopDesc(stack.popDouble());
+                PUTFIELD(doubleObject);
                 break;
             }
+
             case ValueType::LONG: {
+                auto longObject = new longOopDesc(stack.popLong());
+                PUTFIELD(longObject);
                 break;
             }
 
