@@ -12,6 +12,10 @@ namespace kivm {
     inline void helperInitField(std::vector<oop> &values, Field *field) {
         switch (field->getValueType()) {
             case ValueType::INT:
+            case ValueType::SHORT:
+            case ValueType::CHAR:
+            case ValueType::BOOLEAN:
+            case ValueType::BYTE:
                 values.push_back(new intOopDesc(0));
                 break;
             case ValueType::LONG:
