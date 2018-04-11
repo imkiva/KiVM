@@ -1340,75 +1340,91 @@ namespace kivm {
                 OPCODE(INVOKEVIRTUAL)
                 {
                     pc += 2;
+                    PANIC("INVOKEVIRTUAL");
                     NEXT();
                 }
                 OPCODE(INVOKESPECIAL)
                 {
                     pc += 2;
+                    PANIC("INVOKESPECIAL");
                     NEXT();
                 }
                 OPCODE(INVOKESTATIC)
                 {
                     pc += 2;
+                    PANIC("INVOKESTATIC");
                     NEXT();
                 }
                 OPCODE(INVOKEINTERFACE)
                 {
                     pc += 4;
+                    PANIC("INVOKEINTERFACE");
                     NEXT();
                 }
                 OPCODE(INVOKEDYNAMIC)
                 {
                     pc += 4;
+                    PANIC("INVOKEDYNAMIC");
                     NEXT();
                 }
                 OPCODE(NEW)
                 {
                     pc += 2;
+                    PANIC("NEW");
                     NEXT();
                 }
                 OPCODE(NEWARRAY)
                 {
                     pc++;
+                    PANIC("NEWARRAY");
                     NEXT();
                 }
                 OPCODE(ANEWARRAY)
                 {
                     pc += 2;
+                    PANIC("ANEWARRAY");
                     NEXT();
                 }
                 OPCODE(ARRAYLENGTH)
                 {
                     NEXT();
+                    PANIC("ARRAYLENGTH");
                 }
                 OPCODE(ATHROW)
                 {
                     NEXT();
+                    PANIC("ATHROW");
                 }
                 OPCODE(CHECKCAST)
                 {
                     pc += 2;
+                    PANIC("CHECKCAST");
                     NEXT();
                 }
                 OPCODE(INSTANCEOF)
                 {
                     pc += 2;
+                    PANIC("INSTANCEOF");
                     NEXT();
                 }
                 OPCODE(MONITORENTER)
                 {
+                    PANIC("MONITORENTER");
                     NEXT();
                 }
                 OPCODE(MONITOREXIT)
                 {
+                    PANIC("MONITOREXIT");
                     NEXT();
                 }
                 OPCODE(WIDE)
                 {
+                    PANIC("WIDE");
                     NEXT();
                 }
                 OPCODE(MULTIANEWARRAY)
                 {
+                    PANIC("MULTIANEWARRAY");
                     pc += 3;
                     NEXT();
                 }
