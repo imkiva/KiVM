@@ -11,6 +11,7 @@
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/method.h>
+#include <unordered_map>
 
 #define OPCODE_DEBUG
 
@@ -1185,7 +1186,6 @@ namespace kivm {
                 }
                 OPCODE(TABLESWITCH)
                 {
-                    // var args
                     int bc = pc;
                     int originBc = bc;
                     if (bc % 4 != 0) {
@@ -1236,7 +1236,49 @@ namespace kivm {
                 }
                 OPCODE(LOOKUPSWITCH)
                 {
-                    // var args
+                    int bc = pc;
+                    int originBc = bc;
+                    if (bc % 4 != 0) {
+                        bc += (4 - bc % 4);
+                    } else {
+                        bc += 4;
+                    }
+                    int ptr = bc;
+
+                    int defaultByte = ((code_blob[ptr] << 24)
+                                       | (code_blob[ptr + 1] << 16)
+                                       | (code_blob[ptr + 2] << 8)
+                                       | (code_blob[ptr + 3]));
+                    int count = ((code_blob[ptr + 4] << 24)
+                                 | (code_blob[ptr + 5] << 16)
+                                 | (code_blob[ptr + 6] << 8)
+                                 | (code_blob[ptr + 7]));
+                    ptr += 8;
+
+                    // jump_table
+                    std::unordered_map<int, int> jumpTable;
+                    for (int i = 0; i < count; i++) {
+                        int value = ((code_blob[ptr] << 24)
+                                     | (code_blob[ptr + 1] << 16)
+                                     | (code_blob[ptr + 2] << 8)
+                                     | (code_blob[ptr + 3]));
+                        int position = ((code_blob[ptr + 4] << 24)
+                                        | (code_blob[ptr + 5] << 16)
+                                        | (code_blob[ptr + 6] << 8)
+                                        | (code_blob[ptr + 7]))
+                                       + originBc;
+                        ptr += 8;
+                        jumpTable[value] = position;
+                    }
+
+                    int topValue = stack.popInt();
+                    auto iter = jumpTable.find(topValue);
+                    if (iter == jumpTable.end()) {
+                        GOTO_PC(defaultByte + originBc);
+                    } else {
+                        GOTO_PC(iter->second);
+                    }
+                    break;
                     NEXT();
                 }
                 OPCODE(IRETURN)
