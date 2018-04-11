@@ -27,8 +27,15 @@ namespace kivm {
             case ValueType::DOUBLE:
                 values.push_back(new doubleOopDesc(0.0));
                 break;
-            default:
+            case ValueType::OBJECT:
+            case ValueType::ARRAY:
                 values.push_back(nullptr);
+
+            case ValueType::VOID:
+                PANIC("Field cannot be typed void");
+                break;
+            default:
+                PANIC("Unrecognized field value type");
                 break;
         }
     }
