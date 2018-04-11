@@ -128,7 +128,8 @@ namespace kivm {
             }
             default:
                 // TODO: throw VerifyError
-                assert(false);
+                PANIC("java.lang.VerifyError");
+                break;
         }
     }
 }

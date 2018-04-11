@@ -262,4 +262,66 @@ namespace kivm {
 
         array->setElementAt(index, Resolver::resolveJObject(value));
     }
+
+    void Execution::getField(InstanceKlass *instanceKlass, instanceOop receiver, Stack &stack, int constantIndex) {
+        auto rt = instanceKlass->getRuntimeConstantPool();
+        auto field = rt->getField(constantIndex);
+        if (field == nullptr) {
+            PANIC("FieldID is null, constantIndex: %d", constantIndex);
+        }
+
+        oop fieldValue = nullptr;
+
+        // We are getting a static field.
+        if (receiver == nullptr) {
+            if (!instanceKlass->getStaticFieldValue(field, &fieldValue)) {
+                PANIC("Cannot get static field value, constantIndex: %d", constantIndex);
+            }
+        } else {
+            // We are getting an instance field.
+            if (!instanceKlass->getInstanceFieldValue(receiver, field, &fieldValue)) {
+                PANIC("Cannot get instance field value, constantIndex: %d", constantIndex);
+            }
+        }
+
+        switch (field->_field->getValueType()) {
+            case ValueType::OBJECT:
+            case ValueType::ARRAY:
+                stack.pushReference(fieldValue);
+                break;
+
+            case ValueType::INT:
+            case ValueType::SHORT:
+            case ValueType::CHAR:
+            case ValueType::BOOLEAN:
+            case ValueType::BYTE: {
+                auto intObject = (intOop) fieldValue;
+                stack.pushInt(intObject->getValue());
+                break;
+            }
+
+            case ValueType::FLOAT: {
+                auto floatObject = (floatOop) fieldValue;
+                stack.pushFloat(floatObject->getValue());
+                break;
+            }
+            case ValueType::DOUBLE: {
+                auto doubleObject = (doubleOop) fieldValue;
+                stack.pushDouble(doubleObject->getValue());
+                break;
+            }
+            case ValueType::LONG: {
+                auto longObject = (longOop) fieldValue;
+                stack.pushLong(longObject->getValue());
+                break;
+            }
+
+            case ValueType::VOID:
+                PANIC("Field cannot be typed void");
+                break;
+            default:
+                PANIC("Unrecognized field value type");
+                break;
+        }
+    }
 }

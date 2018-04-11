@@ -26,6 +26,8 @@ namespace kivm {
      */
     class Execution {
     public:
+        static void getField(InstanceKlass *instanceKlass, instanceOop receiver, Stack &stack, int constantIndex);
+
         static void loadIntArrayElement(Stack &stack);
 
         static void loadFloatArrayElement(Stack &stack);

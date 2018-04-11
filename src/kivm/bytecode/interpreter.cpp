@@ -1321,6 +1321,7 @@ namespace kivm {
                 {
                     int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
+                    Execution::getField(currentClass, nullptr, stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(PUTSTATIC)
@@ -1333,6 +1334,16 @@ namespace kivm {
                 {
                     int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
+                    jobject ref = stack.popReference();
+                    if (ref == nullptr) {
+                        // TODO: throw NullPointerException
+                        PANIC("java.lang.NullPointerException");
+                    }
+                    instanceOop receiver = Resolver::tryResolveInstance(ref);
+                    if (receiver == nullptr) {
+                        PANIC("Not an instance oop");
+                    }
+                    Execution::getField(currentClass, receiver, stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(PUTFIELD)
