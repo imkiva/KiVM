@@ -30,6 +30,7 @@ namespace kivm {
             case ValueType::OBJECT:
             case ValueType::ARRAY:
                 values.push_back(nullptr);
+                break;
 
             case ValueType::VOID:
                 PANIC("Field cannot be typed void");
