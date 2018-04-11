@@ -1329,6 +1329,8 @@ namespace kivm {
                 {
                     int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
+                    Execution::putField(thread, currentClass->getRuntimeConstantPool(),
+                                        stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(GETFIELD)
@@ -1352,6 +1354,8 @@ namespace kivm {
                 {
                     int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
+                    Execution::putField(thread, currentClass->getRuntimeConstantPool(),
+                                        stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(INVOKEVIRTUAL)
