@@ -263,13 +263,16 @@ namespace kivm {
         array->setElementAt(index, Resolver::resolveJObject(value));
     }
 
-    void Execution::getField(RuntimeConstantPool *rt, instanceOop receiver, Stack &stack, int constantIndex) {
+    void Execution::getField(JavaThread *thread, RuntimeConstantPool *rt, instanceOop receiver, Stack &stack,
+                             int constantIndex) {
         auto field = rt->getField(constantIndex);
         if (field == nullptr) {
             PANIC("FieldID is null, constantIndex: %d", constantIndex);
         }
 
         auto instanceKlass = field->_field->getClass();
+        Execution::initializeClass(thread, instanceKlass);
+
         oop fieldValue = nullptr;
 
         // We are getting a static field.
@@ -328,13 +331,15 @@ namespace kivm {
         }
     }
 
-    void Execution::putField(RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+    void Execution::putField(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
         auto field = rt->getField(constantIndex);
         if (field == nullptr) {
             PANIC("FieldID is null, constantIndex: %d", constantIndex);
         }
 
         auto instanceKlass = field->_field->getClass();
+        Execution::initializeClass(thread, instanceKlass);
+
         bool isStatic = field->_field->isStatic();
 
 #define PUTFIELD(value) \
