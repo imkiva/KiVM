@@ -77,6 +77,10 @@ namespace kivm {
         Stack &stack = currentFrame->getStack();
         Locals &locals = currentFrame->getLocals();
 
+        if (currentMethod->isSynchronized()) {
+            // TODO: enter monitor
+        }
+
         BEGIN(code_blob, pc)
 
                 OPCODE(NOP)
@@ -1309,7 +1313,7 @@ namespace kivm {
                 OPCODE(RETURN)
                 {
                     if (currentMethod->isSynchronized()) {
-                        // TODO: monitor
+                        // TODO: exit monitor
                     }
                     NEXT();
                 }
