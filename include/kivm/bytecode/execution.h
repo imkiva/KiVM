@@ -15,6 +15,8 @@ namespace kivm {
 
         static instanceOop tryResolveInstance(jobject obj);
 
+        static arrayOop tryResolveArray(jobject obj);
+
         static typeArrayOop tryResolveTypeArray(jobject obj);
 
         static objectArrayOop tryResolveObjectArray(jobject object);

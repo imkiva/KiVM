@@ -1408,13 +1408,22 @@ namespace kivm {
                 }
                 OPCODE(ARRAYLENGTH)
                 {
+                    jobject ref = stack.popReference();
+                    if (ref == nullptr) {
+                        // TODO: throw NullPointerException
+                        PANIC("java.lang.NullPointerException");
+                    }
+                    arrayOop array = Resolver::tryResolveArray(ref);
+                    if (array == nullptr) {
+                        PANIC("Attempt to use arraylength on non-array objects");
+                    }
+                    stack.pushInt(array->getLength());
                     NEXT();
-                    PANIC("ARRAYLENGTH");
                 }
                 OPCODE(ATHROW)
                 {
-                    NEXT();
                     PANIC("ATHROW");
+                    NEXT();
                 }
                 OPCODE(CHECKCAST)
                 {

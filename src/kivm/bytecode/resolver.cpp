@@ -30,6 +30,19 @@ namespace kivm {
         return nullptr;
     }
 
+    arrayOop Resolver::tryResolveArray(jobject obj) {
+        auto n = resolveJObject(obj);
+        if (n == nullptr) {
+            return nullptr;
+        }
+
+        if (n->getClass()->getClassType() == ClassType::OBJECT_ARRAY_CLASS
+            || n->getClass()->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
+            return (arrayOop) n;
+        }
+        return nullptr;
+    }
+
     typeArrayOop Resolver::tryResolveTypeArray(jobject obj) {
         auto n = resolveJObject(obj);
         if (n == nullptr) {
