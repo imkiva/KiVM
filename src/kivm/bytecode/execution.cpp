@@ -9,7 +9,11 @@
 
 namespace kivm {
     void Execution::invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
-        PANIC("Execution::invokeSpecial not implemented");
+        PANIC("Execution::invokeSpecial() not implemented");
+    }
+
+    void Execution::invokeStatic(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+        PANIC("Execution::invokeStatic() not implemented");
     }
 
     void Execution::initializeClass(JavaThread *javaThread, InstanceKlass *klass) {

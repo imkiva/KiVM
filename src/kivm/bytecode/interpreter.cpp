@@ -1371,8 +1371,8 @@ namespace kivm {
                 {
                     int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
-                    Execution::invokeSpecial(thread, currentClass->getRuntimeConstantPool(),
-                                             stack, constantIndex);
+                    Execution::invokeStatic(thread, currentClass->getRuntimeConstantPool(),
+                                            stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(INVOKEINTERFACE)
