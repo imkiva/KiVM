@@ -367,131 +367,131 @@ namespace kivm {
                 OPCODE(ISTORE)
                 {
                     int localIndex = pc++;
-                    stack.pushInt(locals.getInt(localIndex));
+                    locals.setInt(localIndex, stack.popInt());
                     NEXT();
                 }
                 OPCODE(LSTORE)
                 {
                     int localIndex = pc++;
-                    stack.pushLong(locals.getLong(localIndex));
+                    locals.setLong(localIndex, stack.popLong());
                     NEXT();
                 }
                 OPCODE(FSTORE)
                 {
                     int localIndex = pc++;
-                    stack.pushFloat(locals.getFloat(localIndex));
+                    locals.setFloat(localIndex, stack.popFloat());
                     NEXT();
                 }
                 OPCODE(DSTORE)
                 {
                     int localIndex = pc++;
-                    stack.pushDouble(locals.getDouble(localIndex));
+                    locals.setDouble(localIndex, stack.popDouble());
                     NEXT();
                 }
                 OPCODE(ASTORE)
                 {
                     int localIndex = pc++;
-                    stack.pushReference(locals.getReference(localIndex));
+                    locals.setReference(localIndex, stack.popReference());
                     NEXT();
                 }
                 OPCODE(ISTORE_0)
                 {
-                    stack.pushInt(locals.getInt(0));
+                    locals.setInt(0, stack.popInt());
                     NEXT();
                 }
                 OPCODE(ISTORE_1)
                 {
-                    stack.pushInt(locals.getInt(1));
+                    locals.setInt(1, stack.popInt());
                     NEXT();
                 }
                 OPCODE(ISTORE_2)
                 {
-                    stack.pushInt(locals.getInt(2));
+                    locals.setInt(2, stack.popInt());
                     NEXT();
                 }
                 OPCODE(ISTORE_3)
                 {
-                    stack.pushInt(locals.getInt(3));
+                    locals.setInt(3, stack.popInt());
                     NEXT();
                 }
                 OPCODE(LSTORE_0)
                 {
-                    stack.pushLong(locals.getLong(0));
+                    locals.setLong(0, stack.popLong());
                     NEXT();
                 }
                 OPCODE(LSTORE_1)
                 {
-                    stack.pushLong(locals.getLong(1));
+                    locals.setLong(1, stack.popLong());
                     NEXT();
                 }
                 OPCODE(LSTORE_2)
                 {
-                    stack.pushLong(locals.getLong(2));
+                    locals.setLong(2, stack.popLong());
                     NEXT();
                 }
                 OPCODE(LSTORE_3)
                 {
-                    stack.pushLong(locals.getLong(3));
+                    locals.setLong(3, stack.popLong());
                     NEXT();
                 }
                 OPCODE(FSTORE_0)
                 {
-                    stack.pushFloat(locals.getFloat(0));
+                    locals.setFloat(0, stack.popFloat());
                     NEXT();
                 }
                 OPCODE(FSTORE_1)
                 {
-                    stack.pushFloat(locals.getFloat(1));
+                    locals.setFloat(1, stack.popFloat());
                     NEXT();
                 }
                 OPCODE(FSTORE_2)
                 {
-                    stack.pushFloat(locals.getFloat(2));
+                    locals.setFloat(2, stack.popFloat());
                     NEXT();
                 }
                 OPCODE(FSTORE_3)
                 {
-                    stack.pushFloat(locals.getFloat(3));
+                    locals.setFloat(3, stack.popFloat());
                     NEXT();
                 }
                 OPCODE(DSTORE_0)
                 {
-                    stack.pushDouble(locals.getDouble(0));
+                    locals.setDouble(0, stack.popDouble());
                     NEXT();
                 }
                 OPCODE(DSTORE_1)
                 {
-                    stack.pushDouble(locals.getDouble(1));
+                    locals.setDouble(1, stack.popDouble());
                     NEXT();
                 }
                 OPCODE(DSTORE_2)
                 {
-                    stack.pushDouble(locals.getDouble(2));
+                    locals.setDouble(2, stack.popDouble());
                     NEXT();
                 }
                 OPCODE(DSTORE_3)
                 {
-                    stack.pushDouble(locals.getDouble(3));
+                    locals.setDouble(3, stack.popDouble());
                     NEXT();
                 }
                 OPCODE(ASTORE_0)
                 {
-                    stack.pushReference(locals.getReference(0));
+                    locals.setReference(0, stack.popReference());
                     NEXT();
                 }
                 OPCODE(ASTORE_1)
                 {
-                    stack.pushReference(locals.getReference(1));
+                    locals.setReference(1, stack.popReference());
                     NEXT();
                 }
                 OPCODE(ASTORE_2)
                 {
-                    stack.pushReference(locals.getReference(2));
+                    locals.setReference(2, stack.popReference());
                     NEXT();
                 }
                 OPCODE(ASTORE_3)
                 {
-                    stack.pushReference(locals.getReference(3));
+                    locals.setReference(3, stack.popReference());
                     NEXT();
                 }
                 OPCODE(IASTORE)

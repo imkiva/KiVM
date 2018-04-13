@@ -90,28 +90,36 @@ namespace kivm {
                 case oopType::INSTANCE_OOP:
                 case oopType::OBJECT_ARRAY_OOP:
                 case oopType::TYPE_ARRAY_OOP:
-                    D("Copying reference: %p", arg);
+                    D("Copying reference: #%d - %p", localVariableIndex, arg);
                     locals.setReference(localVariableIndex++, arg);
                     break;
 
                 case oopType::PRIMITIVE_OOP: {
                     switch (descriptorMap[localVariableIndex]) {
-                        case ValueType::INT:
-                            D("Copying int");
-                            locals.setInt(localVariableIndex++, ((intOop) arg)->getValue());
+                        case ValueType::INT: {
+                            int value = ((intOop) arg)->getValue();
+                            D("Copying int: #%d - %d", localVariableIndex, value);
+                            locals.setInt(localVariableIndex++, value);
                             break;
-                        case ValueType::FLOAT:
-                            D("Copying float");
-                            locals.setFloat(localVariableIndex++, ((floatOop) arg)->getValue());
+                        }
+                        case ValueType::FLOAT: {
+                            float value = ((floatOop) arg)->getValue();
+                            D("Copying float: #%d - %f", localVariableIndex, value);
+                            locals.setFloat(localVariableIndex++, value);
                             break;
-                        case ValueType::DOUBLE:
-                            D("Copying double");
-                            locals.setDouble(localVariableIndex++, ((doubleOop) arg)->getValue());
+                        }
+                        case ValueType::DOUBLE: {
+                            double value = ((doubleOop) arg)->getValue();
+                            D("Copying double: #%d - %lf", localVariableIndex, value);
+                            locals.setDouble(localVariableIndex++, value);
                             break;
-                        case ValueType::LONG:
-                            D("Copying long");
-                            locals.setLong(localVariableIndex++, ((longOop) arg)->getValue());
+                        }
+                        case ValueType::LONG: {
+                            long value = ((longOop) arg)->getValue();
+                            D("Copying long: #%d - %ld", localVariableIndex, value);
+                            locals.setLong(localVariableIndex++, value);
                             break;
+                        }
                         default:
                             PANIC("Unknown value type");
                             break;
