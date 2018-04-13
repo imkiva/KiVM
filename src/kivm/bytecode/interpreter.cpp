@@ -1519,7 +1519,7 @@ namespace kivm {
                     NEXT();
                 }
                 OTHERWISE() {
-                    PANIC("Unrecognized bytecode: %d", code_blob[pc - 1]);
+                    PANIC("Unrecognized bytecode: %d at %d", code_blob[pc - 1], pc - 1);
                     NEXT();
                 }
             END()
