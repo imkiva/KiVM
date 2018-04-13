@@ -8,6 +8,10 @@
 #include <kivm/method.h>
 
 namespace kivm {
+    void Execution::invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+        PANIC("Execution::invokeSpecial not implemented");
+    }
+
     void Execution::initializeClass(JavaThread *javaThread, InstanceKlass *klass) {
         if (klass->getClassState() == ClassState::LINKED) {
             klass->setClassState(ClassState::BEING_INITIALIZED);

@@ -39,10 +39,13 @@ namespace kivm {
      */
     class Execution {
     public:
-        static void putField(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
+        static void invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
 
-        static void
-        getField(JavaThread *thread, RuntimeConstantPool *rt, instanceOop receiver, Stack &stack, int constantIndex);
+        static void putField(JavaThread *thread, RuntimeConstantPool *rt,
+                             Stack &stack, int constantIndex);
+
+        static void getField(JavaThread *thread, RuntimeConstantPool *rt,
+                             instanceOop receiver, Stack &stack, int constantIndex);
 
         static void loadIntArrayElement(Stack &stack);
 
