@@ -7,6 +7,7 @@
 #include <kivm/runtime/thread.h>
 #include <kivm/runtime/stack.h>
 #include <kivm/runtime/constantPool.h>
+#include <deque>
 
 /* used in NEWARRAY */
 #define T_BOOLEAN               4
@@ -40,7 +41,8 @@ namespace kivm {
     public:
         static void putField(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
 
-        static void getField(JavaThread *thread, RuntimeConstantPool *rt, instanceOop receiver, Stack &stack, int constantIndex);
+        static void
+        getField(JavaThread *thread, RuntimeConstantPool *rt, instanceOop receiver, Stack &stack, int constantIndex);
 
         static void loadIntArrayElement(Stack &stack);
 
@@ -64,8 +66,6 @@ namespace kivm {
 
         static void loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex);
 
-        static void newInstance(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
-
         static void initializeClass(JavaThread *javaThread, InstanceKlass *klass);
 
         static void callDefaultConstructor(JavaThread *javaThread, instanceOop oop);
@@ -74,10 +74,15 @@ namespace kivm {
 
         static bool instanceOf(Klass *ref, Klass *klass);
 
-        static void newPrimitiveArray(JavaThread *thread, Stack &stack,
-                                      int arrayType, int length, int dimension);
+        static instanceOop newInstance(JavaThread *thread, RuntimeConstantPool *rt, int constantIndex);
 
-        static void newObjectArray(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
-                                   int constantIndex, int length, int dimension);
+        static typeArrayOop newPrimitiveArray(JavaThread *thread,
+                                              int arrayType, int length);
+
+        static objectArrayOop newObjectArray(JavaThread *thread, RuntimeConstantPool *rt,
+                                             int constantIndex, int length);
+
+        static arrayOop newMultiObjectArray(JavaThread *thread, RuntimeConstantPool *rt,
+                                            int constantIndex, int dimension, const std::deque<int> &length);
     };
 }

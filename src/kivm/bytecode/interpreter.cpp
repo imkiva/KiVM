@@ -2,7 +2,6 @@
 // Created by kiva on 2018/3/21.
 //
 
-#include <climits>
 #include <kivm/bytecode/interpreter.h>
 #include <kivm/bytecode/bytecodes.h>
 #include <kivm/bytecode/execution.h>
@@ -11,7 +10,9 @@
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/method.h>
+#include <climits>
 #include <unordered_map>
+#include <deque>
 
 #define OPCODE_DEBUG
 
@@ -1392,15 +1393,15 @@ namespace kivm {
                 {
                     int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
-                    Execution::newInstance(thread, currentClass->getRuntimeConstantPool(),
-                                           stack, constantIndex);
+                    stack.pushReference(Execution::newInstance(thread, currentClass->getRuntimeConstantPool(),
+                                                               constantIndex));
                     NEXT();
                 }
                 OPCODE(NEWARRAY)
                 {
                     int arrayType = code_blob[pc++];
                     int length = stack.popInt();
-                    Execution::newPrimitiveArray(thread, stack, arrayType, length, 1);
+                    stack.pushReference(Execution::newPrimitiveArray(thread, arrayType, length));
                     NEXT();
                 }
                 OPCODE(ANEWARRAY)
@@ -1408,8 +1409,8 @@ namespace kivm {
                     int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
                     int length = stack.popInt();
-                    Execution::newObjectArray(thread, currentClass->getRuntimeConstantPool(),
-                                              stack, constantIndex, length, 1);
+                    stack.pushReference(Execution::newObjectArray(thread, currentClass->getRuntimeConstantPool(),
+                                                                  constantIndex, length));
                     NEXT();
                 }
                 OPCODE(ARRAYLENGTH)
@@ -1460,8 +1461,21 @@ namespace kivm {
                 }
                 OPCODE(MULTIANEWARRAY)
                 {
-                    PANIC("MULTIANEWARRAY");
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int dimension = code_blob[pc + 2];
                     pc += 3;
+                    std::deque<int> length;
+                    for (int i = 0; i < dimension; ++i) {
+                        int sub = stack.popInt();
+                        if (sub < 0) {
+                            // TODO: NegativeArraySizeException
+                            PANIC("java.lang.NegativeArraySizeException");
+                        }
+                        length.push_back(sub);
+                    }
+                    stack.pushReference(Execution::newMultiObjectArray(thread,
+                                                                       currentClass->getRuntimeConstantPool(),
+                                                                       constantIndex, dimension, length));
                     NEXT();
                 }
                 OPCODE(IFNULL)

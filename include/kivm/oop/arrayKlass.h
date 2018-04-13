@@ -56,6 +56,10 @@ namespace kivm {
             return false;
         }
 
+        TypeArrayKlass *getDownDimensionType() const {
+            return _down_dimension_type;
+        }
+
         typeArrayOop newInstance(int length);
     };
 
@@ -78,6 +82,10 @@ namespace kivm {
 
         bool isObjectArray() override {
             return true;
+        }
+
+        ObjectArrayKlass *getDownDimensionType() const {
+            return _down_dimension_type;
         }
 
         objectArrayOop newInstance(int length);

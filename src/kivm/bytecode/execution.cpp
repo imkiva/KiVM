@@ -403,7 +403,7 @@ namespace kivm {
         }
     }
 
-    void Execution::newInstance(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+    instanceOop Execution::newInstance(JavaThread *thread, RuntimeConstantPool *rt, int constantIndex) {
         auto klass = rt->getClass(constantIndex);
         if (klass == nullptr) {
             PANIC("Cannot get class info from constant pool");
@@ -415,14 +415,10 @@ namespace kivm {
 
         auto instanceKlass = (InstanceKlass *) klass;
         Execution::initializeClass(thread, instanceKlass);
-        stack.pushReference(instanceKlass->newInstance());
+        return instanceKlass->newInstance();
     }
 
-    void Execution::newPrimitiveArray(JavaThread *thread, Stack &stack, int arrayType, int length, int dimension) {
-        if (dimension < 1) {
-            PANIC("array dimension cannot be less than 1");
-        }
-
+    typeArrayOop Execution::newPrimitiveArray(JavaThread *thread, int arrayType, int length) {
         if (length < 0) {
             // TODO: NegativeArraySizeException
             PANIC("java.lang.NegativeArraySizeException");
@@ -465,15 +461,11 @@ namespace kivm {
         }
 
         auto typeArrayClass = (TypeArrayKlass *) arrayClass;
-        stack.pushReference(typeArrayClass->newInstance(length));
+        return typeArrayClass->newInstance(length);
     }
 
-    void Execution::newObjectArray(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
-                                   int constantIndex, int length, int dimension) {
-        if (dimension < 1) {
-            PANIC("array dimension cannot be less than 1");
-        }
-
+    objectArrayOop Execution::newObjectArray(JavaThread *thread, RuntimeConstantPool *rt,
+                                             int constantIndex, int length) {
         if (length < 0) {
             // TODO: NegativeArraySizeException
             PANIC("java.lang.NegativeArraySizeException");
@@ -528,6 +520,86 @@ namespace kivm {
         if (objectArrayKlass == nullptr) {
             PANIC("Cannot get component type of an object array");
         }
-        stack.pushReference(objectArrayKlass->newInstance(length));
+
+        return objectArrayKlass->newInstance(length);
+    }
+
+    static arrayOop newMultiObjectArrayHelper(ArrayKlass *arrayKlass,
+                                              const std::deque<int> &length,
+                                              int lengthIndex);
+
+    arrayOop Execution::newMultiObjectArray(JavaThread *thread, RuntimeConstantPool *rt, int constantIndex,
+                                            int dimension, const std::deque<int> &length) {
+        if (length.size() != dimension) {
+            PANIC("some sub arrays cannot be created due to lack of length");
+        }
+
+        auto klass = rt->getClass(constantIndex);
+        ClassType classType = klass->getClassType();
+
+        ArrayKlass *arrayKlass = nullptr;
+
+        if (classType == ClassType::INSTANCE_CLASS) {
+            // XXX: What does this mean?
+            // The JVM Specification says this could be an instance class
+            // but HotSpot says this must be array class
+            PANIC("wtf");
+
+        } else if (classType == ClassType::OBJECT_ARRAY_CLASS) {
+            arrayKlass = (ArrayKlass *) klass;
+
+        } else if (classType == ClassType::TYPE_ARRAY_CLASS) {
+            arrayKlass = (TypeArrayKlass *) klass;
+        }
+
+        if (arrayKlass == nullptr || arrayKlass->getDimension() != dimension) {
+            PANIC("invalid dimension");
+        }
+
+        return newMultiObjectArrayHelper(arrayKlass, length, 0);
+    }
+
+    static arrayOop newMultiObjectArrayHelper(ArrayKlass *arrayKlass,
+                                              const std::deque<int> &length,
+                                              int lengthIndex) {
+        int arrayLength = length[lengthIndex];
+        arrayOop array = nullptr;
+        ArrayKlass *downDimensionType = nullptr;
+
+        if (arrayKlass->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
+            auto typeArrayKlass = (TypeArrayKlass *) arrayKlass;
+            downDimensionType = typeArrayKlass->getDownDimensionType();
+            array = typeArrayKlass->newInstance(arrayLength);
+
+        } else if (arrayKlass->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
+            auto objectArrayKlass = (ObjectArrayKlass *) arrayKlass;
+            downDimensionType = objectArrayKlass->getDownDimensionType();
+            array = objectArrayKlass->newInstance(arrayLength);
+
+        } else {
+            PANIC("Expected type array or object array");
+        }
+
+        if (array == nullptr) {
+            PANIC("Failed to allocate array");
+        }
+
+        if (lengthIndex < length.size() - 1) {
+            if (downDimensionType == nullptr) {
+                PANIC("downDimensionType is null, expected non-null to create subarrays");
+            }
+            for (int i = 0; i < array->getLength(); ++i) {
+                arrayOop elementArray = newMultiObjectArrayHelper(downDimensionType, length, lengthIndex + 1);
+                array->setElementAt(i, elementArray);
+            }
+
+        } else {
+            // arrayKlass->getDimension() must be 1 as we have met the last dimension
+            if (arrayKlass->getDimension() != 1) {
+                PANIC("Expected the last dimension to be 1");
+            }
+        }
+
+        return array;
     }
 }

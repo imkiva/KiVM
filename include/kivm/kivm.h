@@ -116,7 +116,7 @@
     do { \
        (void) fprintf(stderr, "\n\n\n*** (PANIC) *** [%s:%d]: " fmt "\n\n\n", \
                 __FILE__, __LINE__, ##__VA_ARGS__); \
-       for (;;) continue; \
+       exit(1); \
     } while (false)
 
 namespace kivm {
