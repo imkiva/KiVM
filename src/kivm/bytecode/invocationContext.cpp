@@ -24,8 +24,7 @@ namespace kivm {
             PANIC("Cannot invoke native method currently");
         }
 
-        std::list<ValueType> descriptorMap = _method->getArgumentValueTypes();
-        descriptorMap.reverse();
+        std::vector<ValueType> descriptorMap = _method->getArgumentValueTypes();
 
         D("invokeTarget: %s.%s:%s, hasThis: %s, nargs: %zd",
           strings::toStdString(_instanceKlass->getName()).c_str(),
@@ -35,7 +34,8 @@ namespace kivm {
           descriptorMap.size());
 
         std::list<oop> callingArgs;
-        std::for_each(descriptorMap.begin(), descriptorMap.end(), [&](ValueType valueType) {
+        for (int i = static_cast<int>(descriptorMap.size() - 1); i >= 0; ++i) {
+            ValueType valueType = descriptorMap[i];
             switch (valueType) {
                 case ValueType::INT:
                     callingArgs.push_front(new intOopDesc(_stack.popInt()));
@@ -55,7 +55,7 @@ namespace kivm {
                 default:
                     PANIC("Unknown value type");
             }
-        });
+        }
 
         oop thisObj = nullptr;
         if (hasThis) {

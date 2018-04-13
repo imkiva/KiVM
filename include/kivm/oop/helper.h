@@ -9,27 +9,30 @@
 #include <kivm/native/java_lang_String.h>
 
 namespace kivm {
-    inline void helperInitField(std::vector<oop> &values, Field *field) {
+    inline void helperInitField(std::vector<oop> &values, int offset, Field *field) {
+        if (values.size() <= offset) {
+            values.resize(offset + 1);
+        }
         switch (field->getValueType()) {
             case ValueType::INT:
             case ValueType::SHORT:
             case ValueType::CHAR:
             case ValueType::BOOLEAN:
             case ValueType::BYTE:
-                values.push_back(new intOopDesc(0));
+                values[offset] = new intOopDesc(0);
                 break;
             case ValueType::LONG:
-                values.push_back(new longOopDesc(0L));
+                values[offset] = new longOopDesc(0L);
                 break;
             case ValueType::FLOAT:
-                values.push_back(new floatOopDesc(0.0f));
+                values[offset] = new floatOopDesc(0.0f);
                 break;
             case ValueType::DOUBLE:
-                values.push_back(new doubleOopDesc(0.0));
+                values[offset] = new doubleOopDesc(0.0);
                 break;
             case ValueType::OBJECT:
             case ValueType::ARRAY:
-                values.push_back(nullptr);
+                values[offset] = nullptr;
                 break;
 
             case ValueType::VOID:

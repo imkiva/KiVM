@@ -9,6 +9,7 @@
 #include <kivm/classfile/attributeInfo.h>
 #include <list>
 #include <unordered_map>
+#include <vector>
 
 namespace kivm {
     class InstanceKlass;
@@ -48,7 +49,7 @@ namespace kivm {
         /** map<start-pc, line-number> **/
         std::unordered_map<u2, u2> _line_number_table;
 
-        std::list<ValueType> _argument_value_types;
+        std::vector<ValueType> _argument_value_types;
 
         bool _argument_value_types_resolved;
 
@@ -69,7 +70,7 @@ namespace kivm {
 
         void linkMethod(cp_info **pool);
 
-        const std::list<ValueType> &getArgumentValueTypes();
+        const std::vector<ValueType> &getArgumentValueTypes();
 
         ValueType getReturnType();
 

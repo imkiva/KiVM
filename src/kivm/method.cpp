@@ -157,7 +157,7 @@ namespace kivm {
         _code_blob.init(_code_attr->code, _code_attr->code_length);
     }
 
-    const std::list<ValueType> &Method::getArgumentValueTypes() {
+    const std::vector<ValueType> &Method::getArgumentValueTypes() {
         if (_argument_value_types_resolved) {
             return _argument_value_types;
         }

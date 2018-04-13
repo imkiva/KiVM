@@ -6,6 +6,7 @@
 #include <kivm/runtime/thread.h>
 #include <kivm/runtime/runtimeConfig.h>
 #include <kivm/bytecode/interpreter.h>
+#include <kivm/oop/primitiveOop.h>
 
 namespace kivm {
     Thread::Thread(Method *method, const std::list<oop> &args)
@@ -70,8 +71,59 @@ namespace kivm {
     oop JavaThread::runMethod(Method *method, const std::list<oop> &args) {
         D("### JavaThread::runMethod(), maxLocals: %d, maxStack: %d", method->getMaxLocals(), method->getMaxStack());
         Frame frame(method->getMaxLocals(), method->getMaxStack());
-        D("### Stack is at %p, locals is at %p", &frame.getStack(), &frame.getLocals());
+        Locals &locals = frame.getLocals();
+        D("### Stack is at %p, locals is at %p", &frame.getStack(), &locals);
 
+        // copy args to local variable table
+        int localVariableIndex = 0;
+        const std::vector<ValueType> descriptorMap = method->getArgumentValueTypes();
+
+        D("Copying arguments to local variable table");
+        std::for_each(args.begin(), args.end(), [&](oop arg) {
+            if (arg == nullptr) {
+                D("Copying null");
+                locals.setReference(localVariableIndex++, nullptr);
+                return;
+            }
+
+            switch (arg->getMarkOop()->getOopType()) {
+                case oopType::INSTANCE_OOP:
+                case oopType::OBJECT_ARRAY_OOP:
+                case oopType::TYPE_ARRAY_OOP:
+                    D("Copying reference: %p", arg);
+                    locals.setReference(localVariableIndex++, arg);
+                    break;
+
+                case oopType::PRIMITIVE_OOP: {
+                    switch (descriptorMap[localVariableIndex]) {
+                        case ValueType::INT:
+                            D("Copying int");
+                            locals.setInt(localVariableIndex++, ((intOop) arg)->getValue());
+                            break;
+                        case ValueType::FLOAT:
+                            D("Copying float");
+                            locals.setFloat(localVariableIndex++, ((floatOop) arg)->getValue());
+                            break;
+                        case ValueType::DOUBLE:
+                            D("Copying double");
+                            locals.setDouble(localVariableIndex++, ((doubleOop) arg)->getValue());
+                            break;
+                        case ValueType::LONG:
+                            D("Copying long");
+                            locals.setLong(localVariableIndex++, ((longOop) arg)->getValue());
+                            break;
+                        default:
+                            PANIC("Unknown value type");
+                            break;
+                    }
+                }
+
+                default:
+                    PANIC("Unknown oop type");
+            }
+        });
+
+        // give them to interpreter
         frame.setMethod(method);
         frame.setReturnPc(this->_pc);
         frame.setNativeFrame(method->isNative());

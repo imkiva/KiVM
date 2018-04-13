@@ -164,7 +164,7 @@ namespace kivm {
                 // static final fields should be initialized with constant values in constant pool.
                 // static non-final fields should be initialized with specified values.
                 if (!field->isFinal()) {
-                    helperInitField(_static_field_values, field);
+                    helperInitField(_static_field_values, static_field_index, field);
 
                 } else if (!helperInitConstantField(_static_field_values, pool, field)) {
                     // TODO: throw VerifyError: static final fields must be initialized.
