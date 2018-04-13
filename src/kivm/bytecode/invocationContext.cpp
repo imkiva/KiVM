@@ -34,8 +34,8 @@ namespace kivm {
           descriptorMap.size());
 
         std::list<oop> callingArgs;
-        for (int i = static_cast<int>(descriptorMap.size() - 1); i >= 0; ++i) {
-            ValueType valueType = descriptorMap[i];
+        for (auto it = descriptorMap.rbegin(); it != descriptorMap.rend(); ++it) {
+            ValueType valueType = *it;
             switch (valueType) {
                 case ValueType::INT:
                     callingArgs.push_front(new intOopDesc(_stack.popInt()));
@@ -53,7 +53,7 @@ namespace kivm {
                     callingArgs.push_front(Resolver::resolveJObject(_stack.popReference()));
                     break;
                 default:
-                    PANIC("Unknown value type");
+                    PANIC("Unknown value type: %d", valueType);
             }
         }
 
