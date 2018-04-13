@@ -22,7 +22,7 @@ namespace kivm {
     oop arrayOopDesc::getElementAt(int position) const {
         if (position < 0 || position >= getLength()) {
             // TODO: throw ArrayIndexOutOfBoundsException
-            return nullptr;
+            PANIC("java.lang.ArrayIndexOutOfBoundsException");
         }
         return _elements[position];
     }
@@ -30,7 +30,7 @@ namespace kivm {
     void arrayOopDesc::setElementAt(int position, oop element) {
         if (position < 0 || position >= getLength()) {
             // TODO: throw ArrayIndexOutOfBoundsException
-            return;
+            PANIC("java.lang.ArrayIndexOutOfBoundsException");
         }
         _elements[position] = element;
     }

@@ -25,8 +25,7 @@ namespace kivm {
                               : classLoader->loadClass(className);
         if (loaded_class == nullptr) {
             // TODO: throw LinkageError
-            assert(false);
-            return nullptr;
+            PANIC("LinkageError");
         }
         return loaded_class;
     }

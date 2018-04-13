@@ -65,4 +65,8 @@ namespace kivm {
                            down_type->getComponentType()) {
         this->_down_dimension_type = down_type;
     }
+
+    objectArrayOop ObjectArrayKlass::newInstance(int length) {
+        return new objectArrayOopDesc(this, length);
+    }
 }

@@ -1398,14 +1398,18 @@ namespace kivm {
                 }
                 OPCODE(NEWARRAY)
                 {
-                    pc++;
-                    PANIC("NEWARRAY");
+                    int arrayType = code_blob[pc++];
+                    int length = stack.popInt();
+                    Execution::newPrimitiveArray(thread, stack, arrayType, length, 1);
                     NEXT();
                 }
                 OPCODE(ANEWARRAY)
                 {
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
-                    PANIC("ANEWARRAY");
+                    int length = stack.popInt();
+                    Execution::newObjectArray(thread, currentClass->getRuntimeConstantPool(),
+                                              stack, constantIndex, length, 1);
                     NEXT();
                 }
                 OPCODE(ARRAYLENGTH)

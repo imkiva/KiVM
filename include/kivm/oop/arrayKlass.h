@@ -79,5 +79,7 @@ namespace kivm {
         bool isObjectArray() override {
             return true;
         }
+
+        objectArrayOop newInstance(int length);
     };
 }

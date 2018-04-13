@@ -417,4 +417,117 @@ namespace kivm {
         Execution::initializeClass(thread, instanceKlass);
         stack.pushReference(instanceKlass->newInstance());
     }
+
+    void Execution::newPrimitiveArray(JavaThread *thread, Stack &stack, int arrayType, int length, int dimension) {
+        if (dimension < 1) {
+            PANIC("array dimension cannot be less than 1");
+        }
+
+        if (length < 0) {
+            // TODO: NegativeArraySizeException
+            PANIC("java.lang.NegativeArraySizeException");
+        }
+
+        Klass *arrayClass = nullptr;
+
+        switch (arrayType) {
+            case T_BOOLEAN:
+                arrayClass = SystemDictionary::get()->find(L"[Z");
+                break;
+            case T_BYTE:
+                arrayClass = SystemDictionary::get()->find(L"[B");
+                break;
+            case T_CHAR:
+                arrayClass = SystemDictionary::get()->find(L"[C");
+                break;
+            case T_DOUBLE:
+                arrayClass = SystemDictionary::get()->find(L"[D");
+                break;
+            case T_FLOAT:
+                arrayClass = SystemDictionary::get()->find(L"[F");
+                break;
+            case T_INT:
+                arrayClass = SystemDictionary::get()->find(L"[I");
+                break;
+            case T_SHORT:
+                arrayClass = SystemDictionary::get()->find(L"[S");
+                break;
+            case T_LONG:
+                arrayClass = SystemDictionary::get()->find(L"[J");
+                break;
+            default:
+                arrayClass = nullptr;
+                break;
+        }
+
+        if (arrayClass == nullptr || arrayClass->getClassType() != ClassType::TYPE_ARRAY_CLASS) {
+            PANIC("Unrecognized array type: %d, array class: %p", arrayType, arrayClass);
+        }
+
+        auto typeArrayClass = (TypeArrayKlass *) arrayClass;
+        stack.pushReference(typeArrayClass->newInstance(length));
+    }
+
+    void Execution::newObjectArray(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
+                                   int constantIndex, int length, int dimension) {
+        if (dimension < 1) {
+            PANIC("array dimension cannot be less than 1");
+        }
+
+        if (length < 0) {
+            // TODO: NegativeArraySizeException
+            PANIC("java.lang.NegativeArraySizeException");
+        }
+
+        Klass *arrayClass = rt->getClass(constantIndex);
+        if (arrayClass == nullptr) {
+            PANIC("Unrecognized array type(in constant pool): %d, array class: %p", constantIndex, arrayClass);
+        }
+
+        ClassType classType = arrayClass->getClassType();
+        ObjectArrayKlass *objectArrayKlass = nullptr;
+
+        if (classType == ClassType::INSTANCE_CLASS) {
+            // ClassType::INSTANCE_CLASS
+            auto instanceKlass = (InstanceKlass *) arrayClass;
+            Execution::initializeClass(thread, instanceKlass);
+
+            ClassLoader *classLoader = instanceKlass->getClassLoader();
+            if (classLoader == nullptr) {
+                objectArrayKlass = (ObjectArrayKlass *) BootstrapClassLoader::get()
+                    ->loadClass(L"[L" + instanceKlass->getName() + L";");
+            } else {
+                objectArrayKlass = (ObjectArrayKlass *) classLoader
+                    ->loadClass(L"[L" + instanceKlass->getName() + L";");
+            }
+
+        } else if (classType == ClassType::OBJECT_ARRAY_CLASS) {
+            // ClassType::OBJECT_ARRAY_CLASS
+            auto wrapperClass = (ObjectArrayKlass *) arrayClass;
+            ClassLoader *classLoader = wrapperClass->getComponentType()->getClassLoader();
+
+            if (classLoader == nullptr) {
+                objectArrayKlass = (ObjectArrayKlass *) BootstrapClassLoader::get()
+                    ->loadClass(L"[" + wrapperClass->getName() + L";");
+            } else {
+                objectArrayKlass = (ObjectArrayKlass *) classLoader
+                    ->loadClass(L"[" + wrapperClass->getName() + L";");
+            }
+
+        } else if (classType == ClassType::TYPE_ARRAY_CLASS) {
+            // ClassType::TYPE_ARRAY_CLASS
+            auto typeArrayKlass = (TypeArrayKlass *) arrayClass;
+
+            objectArrayKlass = (ObjectArrayKlass *) BootstrapClassLoader::get()
+                ->loadClass(L"[" + typeArrayKlass->getName());
+
+        } else {
+            PANIC("Unrecognized class type");
+        }
+
+        if (objectArrayKlass == nullptr) {
+            PANIC("Cannot get component type of an object array");
+        }
+        stack.pushReference(objectArrayKlass->newInstance(length));
+    }
 }
