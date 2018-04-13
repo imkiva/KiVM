@@ -93,7 +93,7 @@ namespace kivm {
 
         using ClassPool = Pool<ClassPoolEntey, ClassCreator, CONSTANT_Class>;
         using StringPool = Pool<StringPoolEntry, StringCreator, CONSTANT_String>;
-        using MethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_Methodref | CONSTANT_InterfaceMethodref>;
+        using MethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_Methodref>;
         using InterfaceMethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_InterfaceMethodref>;
         using FieldPool = Pool<FieldPoolEntry, FieldCreator, CONSTANT_Fieldref>;
     }

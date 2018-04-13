@@ -25,14 +25,27 @@ namespace kivm {
     }
 
     pools::MethodPoolEntry pools::MethodCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-        auto methodRef = (CONSTANT_Methodref_info *) pool[index];
-        Klass *klass = rt->getClass(methodRef->class_index);
+        int tag = rt->getConstantTag(index);
+        u2 classIndex;
+        u2 nameAndTypeIndex;
+        if (tag == CONSTANT_Methodref) {
+            auto methodRef = (CONSTANT_Methodref_info *) pool[index];
+            classIndex = methodRef->class_index;
+            nameAndTypeIndex = methodRef->name_and_type_index;
+        } else if (tag == CONSTANT_InterfaceMethodref) {
+            auto interfaceMethodRef = (CONSTANT_InterfaceMethodref_info *) pool[index];
+            classIndex = interfaceMethodRef->class_index;
+            nameAndTypeIndex = interfaceMethodRef->name_and_type_index;
+        } else {
+            PANIC("Unsupported method & class type.");
+        }
+
+        Klass *klass = rt->getClass(classIndex);
         if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
             auto instanceKlass = (InstanceKlass *) klass;
-            const auto &nameAndType = rt->getNameAndType(methodRef->name_and_type_index);
+            const auto &nameAndType = rt->getNameAndType(nameAndTypeIndex);
             return instanceKlass->getThisClassMethod(nameAndType.first, nameAndType.second);
         }
-        PANIC("Unsupported method & class type.");
         return nullptr;
     }
 
