@@ -164,6 +164,8 @@ namespace kivm {
         _argument_value_types_resolved = true;
 
         const String &desc = getDescriptor();
+        D("Parsing descriptor: %s", strings::toStdString(desc).c_str());
+
         for (int i = 0; i < desc.size(); ++i) {
             wchar_t ch = desc[i];
             switch (ch) {

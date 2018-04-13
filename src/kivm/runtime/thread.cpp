@@ -129,6 +129,7 @@ namespace kivm {
         frame.setNativeFrame(method->isNative());
 
         this->_frames.push(&frame);
+        this->_pc = 0;
         oop result = ByteCodeInterpreter::interp(this);
         this->_frames.pop();
 
