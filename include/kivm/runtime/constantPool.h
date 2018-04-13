@@ -93,7 +93,8 @@ namespace kivm {
 
         using ClassPool = Pool<ClassPoolEntey, ClassCreator, CONSTANT_Class>;
         using StringPool = Pool<StringPoolEntry, StringCreator, CONSTANT_String>;
-        using MethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_Methodref>;
+        using MethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_Methodref | CONSTANT_InterfaceMethodref>;
+        using InterfaceMethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_InterfaceMethodref>;
         using FieldPool = Pool<FieldPoolEntry, FieldCreator, CONSTANT_Fieldref>;
     }
 
@@ -105,6 +106,7 @@ namespace kivm {
         pools::StringPool _string_pool;
         pools::MethodPool _method_pool;
         pools::FieldPool _field_pool;
+        pools::InterfaceMethodPool _interface_method_pool;
         pools::NameAndTypePool _name_and_type_pool;
         pools::Utf8Pool _utf8_pool;
         pools::IntegerPool _int_pool;
@@ -121,6 +123,7 @@ namespace kivm {
             _string_pool.setRawPool(pool);
             _method_pool.setRawPool(pool);
             _field_pool.setRawPool(pool);
+            _interface_method_pool.setRawPool(pool);
             _int_pool.setRawPool(pool);
             _float_pool.setRawPool(pool);
             _long_pool.setRawPool(pool);
@@ -146,6 +149,11 @@ namespace kivm {
         inline pools::MethodPoolEntry getMethod(int index) {
             assert(this->_raw_pool != nullptr);
             return _method_pool.findOrNew(this, index);
+        }
+
+        inline pools::MethodPoolEntry getInterfaceMethod(int index) {
+            assert(this->_raw_pool != nullptr);
+            return _interface_method_pool.findOrNew(this, index);
         }
 
         inline pools::FieldPoolEntry getField(int index) {
