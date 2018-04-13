@@ -1390,8 +1390,10 @@ namespace kivm {
                 }
                 OPCODE(NEW)
                 {
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
-                    PANIC("NEW");
+                    Execution::newInstance(thread, currentClass->getRuntimeConstantPool(),
+                                           stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(NEWARRAY)

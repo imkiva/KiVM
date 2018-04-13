@@ -402,4 +402,19 @@ namespace kivm {
                 break;
         }
     }
+
+    void Execution::newInstance(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+        auto klass = rt->getClass(constantIndex);
+        if (klass == nullptr) {
+            PANIC("Cannot get class info from constant pool");
+        }
+
+        if (klass->getClassType() != ClassType::INSTANCE_CLASS) {
+            PANIC("Not an instance class");
+        }
+
+        auto instanceKlass = (InstanceKlass *) klass;
+        Execution::initializeClass(thread, instanceKlass);
+        stack.pushReference(instanceKlass->newInstance());
+    }
 }

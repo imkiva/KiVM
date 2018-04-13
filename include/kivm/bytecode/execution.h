@@ -54,6 +54,8 @@ namespace kivm {
 
         static void loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex);
 
+        static void newInstance(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
+
         static void initializeClass(JavaThread *javaThread, InstanceKlass *klass);
 
         static void callDefaultConstructor(JavaThread *javaThread, instanceOop oop);
