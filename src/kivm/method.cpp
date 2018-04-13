@@ -46,6 +46,8 @@ namespace kivm {
         this->_method_info = method_info;
         this->_code_attr = nullptr;
         this->_exception_attr = nullptr;
+        this->_argument_value_types_resolved = false;
+        this->_return_type_resolved = false;
     }
 
     bool Method::isPcCorrect(u4 pc) {
@@ -155,9 +157,13 @@ namespace kivm {
         _code_blob.init(_code_attr->code, _code_attr->code_length);
     }
 
-    int Method::getArgumentCount() const {
+    const std::list<ValueType> &Method::getArgumentValueTypes() {
+        if (_argument_value_types_resolved) {
+            return _argument_value_types;
+        }
+        _argument_value_types_resolved = true;
+
         const String &desc = getDescriptor();
-        int count = 0;
         for (int i = 0; i < desc.size(); ++i) {
             wchar_t ch = desc[i];
             switch (ch) {
@@ -169,27 +175,61 @@ namespace kivm {
                 case L'J':    // long
                 case L'F':    // float
                 case L'D':    // double
-                    ++count;
+                    _argument_value_types.push_back(primitiveTypeToValueType(ch));
                     break;
 
                 case L'L':
                     while (desc[i] != ';') {
                         ++i;
                     }
-                    ++count;
+                    _argument_value_types.push_back(ValueType::OBJECT);
                     break;
 
                 case L'(':
-                    count = 0;
                     break;
 
                 case L')':
-                    return count;
+                    return _argument_value_types;
 
                 default:
                     PANIC("Unrecognized char %c in descriptor", ch);
             }
         }
-        return count;
+        return _argument_value_types;
+    }
+
+    ValueType Method::getReturnType() {
+        if (_return_type_resolved) {
+            return _return_type;
+        }
+        _return_type_resolved = true;
+
+        const String &returnTypeDesc = getDescriptor().substr(getDescriptor().find_first_of(L')') + 1);
+        int i = 0;
+        wchar_t ch = returnTypeDesc[i];
+        switch (ch) {
+            case L'B':    // byte
+            case L'Z':    // boolean
+            case L'S':    // short
+            case L'C':    // char
+            case L'I':    // int
+            case L'J':    // long
+            case L'F':    // float
+            case L'D':    // double
+            case L'V':    // void
+                _return_type = primitiveTypeToValueType(ch);
+                break;
+
+            case L'L':
+                while (returnTypeDesc[i] != ';') {
+                    ++i;
+                }
+                _return_type = ValueType::OBJECT;
+                break;
+
+            default:
+                PANIC("Unrecognized char %c in descriptor", ch);
+        }
+        return _return_type;
     }
 }

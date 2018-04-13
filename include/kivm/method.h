@@ -4,6 +4,7 @@
 #pragma once
 
 #include <kivm/kivm.h>
+#include <kivm/oop/oopfwd.h>
 #include <kivm/bytecode/codeBlob.h>
 #include <kivm/classfile/attributeInfo.h>
 #include <list>
@@ -39,13 +40,21 @@ namespace kivm {
         Exceptions_attribute *_exception_attr;
         Code_attribute *_code_attr;
 
+        bool _linked;
+
         /** this method is likely to throw these exceptions **/
         std::list<InstanceKlass *> _throws;
 
         /** map<start-pc, line-number> **/
         std::unordered_map<u2, u2> _line_number_table;
 
-        bool _linked;
+        std::list<ValueType> _argument_value_types;
+
+        bool _argument_value_types_resolved;
+
+        ValueType _return_type;
+
+        bool _return_type_resolved;
 
         void linkAttributes(cp_info **pool);
 
@@ -60,7 +69,9 @@ namespace kivm {
 
         void linkMethod(cp_info **pool);
 
-        int getArgumentCount() const;
+        const std::list<ValueType> &getArgumentValueTypes();
+
+        ValueType getReturnType();
 
         InstanceKlass *getClass() const {
             return _klass;

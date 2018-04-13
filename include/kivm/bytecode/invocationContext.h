@@ -4,6 +4,7 @@
 #pragma once
 
 #include <kivm/runtime/thread.h>
+#include <list>
 
 namespace kivm {
     class InvocationContext {
@@ -13,10 +14,13 @@ namespace kivm {
         Stack &_stack;
 
         InstanceKlass *_instanceKlass;
-        int _nargs;
 
     private:
-        void prepareInvocation();
+        void prepareEnvironment();
+
+        void prepareSynchronized(oop thisObject);
+
+        void finishSynchronized(oop thisObject);
 
     public:
         InvocationContext(JavaThread *thread, Method *method, Stack &stack);

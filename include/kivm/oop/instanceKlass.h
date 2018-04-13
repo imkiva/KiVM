@@ -39,8 +39,6 @@ namespace kivm {
 
         RuntimeConstantPool _runtime_pool;
 
-        Monitor _monitor;
-
         int _n_static_fields;
 
         int _n_instance_fields;
@@ -128,10 +126,6 @@ namespace kivm {
         }
 
         void linkAndInit() override;
-
-        void enterMonitor() { _monitor.enter(); }
-
-        void leaveMonitor() { _monitor.leave(); }
 
         const std::unordered_map<String, Method *> &getVtable() const {
             return _vtable;

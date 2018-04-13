@@ -72,10 +72,10 @@ namespace kivm {
     public:
         JavaThread(Method *method, const std::list<oop> &args);
 
+        oop runMethod(Method *method, const std::list<oop> &args);
+
     protected:
         void start() override;
-
-        oop runMethod(Method *method, const std::list<oop> &args);
     };
 
     // The Java main thread

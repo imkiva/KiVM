@@ -22,7 +22,33 @@ namespace kivm {
             case L'C':    // char
             case L'I':    // int
                 return ValueType::INT;
-            case L'J':
+            case L'J':    // long
+                return ValueType::LONG;
+            case L'F':    // float
+                return ValueType::FLOAT;
+            case L'D':    // double
+                return ValueType::DOUBLE;
+            case L'V':    // void
+                return ValueType::VOID;
+            default:
+                PANIC("primitive type required");
+                break;
+        }
+    }
+
+    inline ValueType primitiveTypeToValueTypeNoWrap(wchar_t c) {
+        switch (c) {
+            case L'B':    // byte
+                return ValueType::BYTE;
+            case L'Z':    // boolean
+                return ValueType::BOOLEAN;
+            case L'S':    // short
+                return ValueType::SHORT;
+            case L'C':    // char
+                return ValueType::CHAR;
+            case L'I':    // int
+                return ValueType::INT;
+            case L'J':    // long
                 return ValueType::LONG;
             case L'F':    // float
                 return ValueType::FLOAT;

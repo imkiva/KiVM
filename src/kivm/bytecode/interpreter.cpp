@@ -70,11 +70,10 @@ namespace kivm {
         const CodeBlob &code_blob = currentMethod->getCodeBlob();
         u4 &pc = thread->_pc;
 
-        D("currentMethod: %s.%s:%s, nargs: %d",
+        D("currentMethod: %s.%s:%s",
           strings::toStdString(currentClass->getName()).c_str(),
           strings::toStdString(currentMethod->getName()).c_str(),
-          strings::toStdString(currentMethod->getDescriptor()).c_str(),
-          currentMethod->getArgumentCount());
+          strings::toStdString(currentMethod->getDescriptor()).c_str());
 
         Stack &stack = currentFrame->getStack();
         Locals &locals = currentFrame->getLocals();
@@ -1454,7 +1453,7 @@ namespace kivm {
                     if (object == nullptr) {
                         PANIC("not an object");
                     }
-                    object->getMarkOop()->enterMonitor();
+                    object->getMarkOop()->monitorEnter();
                     NEXT();
                 }
                 OPCODE(MONITOREXIT)
@@ -1468,7 +1467,7 @@ namespace kivm {
                     if (object == nullptr) {
                         PANIC("not an object");
                     }
-                    object->getMarkOop()->leaveMonitor();
+                    object->getMarkOop()->monitorExit();
                     NEXT();
                 }
                 OPCODE(WIDE)
