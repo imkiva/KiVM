@@ -7,6 +7,7 @@
 #include <kivm/oop/oopfwd.h>
 #include <kivm/oop/reflectionSupport.h>
 #include <kivm/runtime/constantPool.h>
+#include <shared/monitor.h>
 #include <unordered_map>
 #include <vector>
 
@@ -37,6 +38,12 @@ namespace kivm {
         BootstrapMethods_attribute *_bm_attr;
 
         RuntimeConstantPool _runtime_pool;
+
+        Monitor _monitor;
+
+        int _n_static_fields;
+
+        int _n_instance_fields;
 
         /**
          * all methods in this class.
@@ -73,10 +80,6 @@ namespace kivm {
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
         std::unordered_map<String, FieldID *> _instance_fields;
-
-        int _n_static_fields;
-
-        int _n_instance_fields;
 
         /**
          * static fields' values.
@@ -125,6 +128,10 @@ namespace kivm {
         }
 
         void linkAndInit() override;
+
+        void enterMonitor() { _monitor.enter(); }
+
+        void leaveMonitor() { _monitor.leave(); }
 
         const std::unordered_map<String, Method *> &getVtable() const {
             return _vtable;
