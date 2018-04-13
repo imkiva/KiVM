@@ -154,4 +154,42 @@ namespace kivm {
 
         _code_blob.init(_code_attr->code, _code_attr->code_length);
     }
+
+    int Method::getArgumentCount() const {
+        const String &desc = getDescriptor();
+        int count = 0;
+        for (int i = 0; i < desc.size(); ++i) {
+            wchar_t ch = desc[i];
+            switch (ch) {
+                case L'B':    // byte
+                case L'Z':    // boolean
+                case L'S':    // short
+                case L'C':    // char
+                case L'I':    // int
+                case L'J':    // long
+                case L'F':    // float
+                case L'D':    // double
+                    ++count;
+                    break;
+
+                case L'L':
+                    while (desc[i] != ';') {
+                        ++i;
+                    }
+                    ++count;
+                    break;
+
+                case L'(':
+                    count = 0;
+                    break;
+
+                case L')':
+                    return count;
+
+                default:
+                    PANIC("Unrecognized char %c in descriptor", ch);
+            }
+        }
+        return count;
+    }
 }

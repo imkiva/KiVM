@@ -79,7 +79,7 @@ set(SOURCE_FILES
         src/kivm/runtime/init.cpp
         src/kivm/system.cpp
         src/kivm/native/java_lang_String.cpp
-        src/kivm/runtime/constantPool.cpp src/kivm/bytecode/resolver.cpp)
+        src/kivm/runtime/constantPool.cpp src/kivm/bytecode/resolver.cpp include/kivm/bytecode/invocationContext.h src/kivm/bytecode/invocationContext.cpp)
 
 add_library(kivm STATIC ${SOURCE_FILES})
 IF (UNIX)

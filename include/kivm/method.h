@@ -60,6 +60,8 @@ namespace kivm {
 
         void linkMethod(cp_info **pool);
 
+        int getArgumentCount() const;
+
         InstanceKlass *getClass() const {
             return _klass;
         }

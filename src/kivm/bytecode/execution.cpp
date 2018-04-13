@@ -2,6 +2,7 @@
 // Created by kiva on 2018/3/27.
 //
 #include <kivm/bytecode/execution.h>
+#include <kivm/bytecode/invocationContext.h>
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/arrayOop.h>
@@ -9,11 +10,25 @@
 
 namespace kivm {
     void Execution::invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
-        PANIC("Execution::invokeSpecial() not implemented");
+        Method *method = rt->getMethod(constantIndex);
+        if (method == nullptr) {
+            PANIC("NoSuchMethodError");
+        }
+
+        InvocationContext(thread, method, stack).invoke(true);
     }
 
     void Execution::invokeStatic(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
-        PANIC("Execution::invokeStatic() not implemented");
+        Method *method = rt->getMethod(constantIndex);
+        if (method == nullptr) {
+            PANIC("NoSuchMethodError");
+        }
+
+        if (!method->isStatic() || method->isAbstract()) {
+            PANIC("invalid invokeStatic");
+        }
+
+        InvocationContext(thread, method, stack).invoke(false);
     }
 
     void Execution::initializeClass(JavaThread *javaThread, InstanceKlass *klass) {
