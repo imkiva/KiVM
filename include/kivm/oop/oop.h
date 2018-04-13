@@ -62,13 +62,13 @@ namespace kivm {
         oopType getOopType() const { return _type; }
 
         void monitorEnter() {
-            D("MonitorEnter");
             _monitor.enter();
+            D("MonitorEntered");
         }
 
         void monitorExit() {
-            D("MonitorExit");
             _monitor.leave();
+            D("MonitorExited");
         }
 
         void wait() { _monitor.wait(); }

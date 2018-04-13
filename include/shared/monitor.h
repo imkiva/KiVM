@@ -18,7 +18,8 @@ namespace kivm {
         std::unique_lock<std::mutex> _lock;
 
     public:
-        Monitor() : _lock(_mutex) {}
+        Monitor() : _lock(_mutex, std::defer_lock) {
+        }
 
         Monitor(const Monitor &) = delete;
 
@@ -27,7 +28,7 @@ namespace kivm {
         ~Monitor() = default;
 
         void enter() {
-            _mutex.lock();
+            _lock.lock();
         }
 
         void wait() {
@@ -47,12 +48,12 @@ namespace kivm {
         }
 
         void leave() {
-            _mutex.unlock();
+            _lock.unlock();
         }
 
         void force_unlock_when_athrow() {
-            _mutex.try_lock();
-            _mutex.unlock();
+            _lock.try_lock();
+            _lock.unlock();
         }
     };
 }
