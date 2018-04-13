@@ -19,11 +19,6 @@ namespace kivm {
     void InvocationContext::invoke(bool hasThis) {
         prepareEnvironment();
 
-        // TODO: implement native method invocation
-        if (_method->isNative()) {
-            PANIC("Cannot invoke native method currently");
-        }
-
         std::vector<ValueType> descriptorMap = _method->getArgumentValueTypes();
 
         D("invokeTarget: %s.%s:%s, hasThis: %s, nargs: %zd",
@@ -67,29 +62,38 @@ namespace kivm {
         }
 
         prepareSynchronized(thisObj);
-        oop result = _thread->runMethod(_method, callingArgs);
-        switch (_method->getReturnType()) {
-            case ValueType::INT:
-                _stack.pushInt(((intOop) result)->getValue());
-                break;
-            case ValueType::LONG:
-                _stack.pushLong(((longOop) result)->getValue());
-                break;
-            case ValueType::FLOAT:
-                _stack.pushFloat(((floatOop) result)->getValue());
-                break;
-            case ValueType::DOUBLE:
-                _stack.pushDouble(((doubleOop) result)->getValue());
-                break;
-            case ValueType::OBJECT:
-                _stack.pushReference(result);
-                break;
-            case ValueType::VOID:
-                break;
 
-            default:
-                PANIC("Unknown value type");
+        // TODO: implement native method invocation
+        if (_method->isNative()) {
+            PANIC("Cannot invoke native method currently");
+
+        } else {
+            // Non-native methods
+            oop result = _thread->runMethod(_method, callingArgs);
+            switch (_method->getReturnType()) {
+                case ValueType::INT:
+                    _stack.pushInt(((intOop) result)->getValue());
+                    break;
+                case ValueType::LONG:
+                    _stack.pushLong(((longOop) result)->getValue());
+                    break;
+                case ValueType::FLOAT:
+                    _stack.pushFloat(((floatOop) result)->getValue());
+                    break;
+                case ValueType::DOUBLE:
+                    _stack.pushDouble(((doubleOop) result)->getValue());
+                    break;
+                case ValueType::OBJECT:
+                    _stack.pushReference(result);
+                    break;
+                case ValueType::VOID:
+                    break;
+
+                default:
+                    PANIC("Unknown value type");
+            }
         }
+
         finishSynchronized(thisObj);
     }
 
