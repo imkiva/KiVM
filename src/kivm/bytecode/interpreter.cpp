@@ -1446,7 +1446,10 @@ namespace kivm {
                 }
                 OPCODE(MONITORENTER)
                 {
-                    PANIC("MONITORENTER");
+                    jobject ref = stack.popReference();
+                    if (ref == nullptr) {
+
+                    }
                     NEXT();
                 }
                 OPCODE(MONITOREXIT)

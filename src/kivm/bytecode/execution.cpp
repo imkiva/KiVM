@@ -102,8 +102,7 @@ namespace kivm {
         }
         auto array = Resolver::tryResolveTypeArray(ref);
         if (array == nullptr) {
-            // TODO: throw ClassCastException
-            PANIC("java.lang.ClassCastException");
+            PANIC("not a type array");
         }
 
         auto element = (intOop) array->getElementAt(index);
@@ -119,8 +118,7 @@ namespace kivm {
         }
         auto array = Resolver::tryResolveTypeArray(ref);
         if (array == nullptr) {
-            // TODO: throw ClassCastException
-            PANIC("java.lang.ClassCastException");
+            PANIC("not a type array");
         }
 
         auto element = (floatOop) array->getElementAt(index);
@@ -136,8 +134,7 @@ namespace kivm {
         }
         auto array = Resolver::tryResolveTypeArray(ref);
         if (array == nullptr) {
-            // TODO: throw ClassCastException
-            PANIC("java.lang.ClassCastException");
+            PANIC("not a type array");
         }
 
         auto element = (doubleOop) array->getElementAt(index);
@@ -153,8 +150,7 @@ namespace kivm {
         }
         auto array = Resolver::tryResolveTypeArray(ref);
         if (array == nullptr) {
-            // TODO: throw ClassCastException
-            PANIC("java.lang.ClassCastException");
+            PANIC("not a type array");
         }
 
         auto element = (longOop) array->getElementAt(index);
@@ -171,8 +167,7 @@ namespace kivm {
 
         auto array = Resolver::tryResolveObjectArray(ref);
         if (array == nullptr) {
-            // TODO: throw ClassCastException
-            PANIC("java.lang.ClassCastException");
+            PANIC("not an object array");
         }
 
         stack.pushReference(array->getElementAt(index));
@@ -188,8 +183,7 @@ namespace kivm {
         }
         auto array = Resolver::tryResolveTypeArray(ref);
         if (array == nullptr) {
-            // TODO: throw ClassCastException
-            PANIC("java.lang.ClassCastException");
+            PANIC("not a type array");
         }
 
         array->setElementAt(index, new intOopDesc(value));
@@ -205,8 +199,7 @@ namespace kivm {
         }
         auto array = Resolver::tryResolveTypeArray(ref);
         if (array == nullptr) {
-            // TODO: throw ClassCastException
-            PANIC("java.lang.ClassCastException");
+            PANIC("not a type array");
         }
 
         array->setElementAt(index, new floatOopDesc(value));
@@ -222,8 +215,7 @@ namespace kivm {
         }
         auto array = Resolver::tryResolveTypeArray(ref);
         if (array == nullptr) {
-            // TODO: throw ClassCastException
-            PANIC("java.lang.ClassCastException");
+            PANIC("not a type array");
         }
 
         array->setElementAt(index, new doubleOopDesc(value));
@@ -239,8 +231,7 @@ namespace kivm {
         }
         auto array = Resolver::tryResolveTypeArray(ref);
         if (array == nullptr) {
-            // TODO: throw ClassCastException
-            PANIC("java.lang.ClassCastException");
+            PANIC("not a type array");
         }
 
         array->setElementAt(index, new longOopDesc(value));
@@ -254,10 +245,9 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::tryResolveTypeArray(ref);
+        auto array = Resolver::tryResolveObjectArray(ref);
         if (array == nullptr) {
-            // TODO: throw ClassCastException
-            PANIC("java.lang.ClassCastException");
+            PANIC("not an object array");
         }
 
         array->setElementAt(index, Resolver::resolveJObject(value));
