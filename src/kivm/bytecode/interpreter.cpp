@@ -1456,7 +1456,7 @@ namespace kivm {
                 }
                 OPCODE(WIDE)
                 {
-                    PANIC("WIDE");
+                    PANIC("wide should not appear in instructions!");
                     NEXT();
                 }
                 OPCODE(MULTIANEWARRAY)
