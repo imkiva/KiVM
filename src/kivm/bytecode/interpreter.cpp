@@ -1448,13 +1448,28 @@ namespace kivm {
                 {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-
+                        // TODO: throw NullPointerException
+                        PANIC("java.lang.NullPointerException");
                     }
+                    auto object = Resolver::resolveJObject(ref);
+                    if (object == nullptr) {
+                        PANIC("not an object");
+                    }
+                    object->getMarkOop()->enterMonitor();
                     NEXT();
                 }
                 OPCODE(MONITOREXIT)
                 {
-                    PANIC("MONITOREXIT");
+                    jobject ref = stack.popReference();
+                    if (ref == nullptr) {
+                        // TODO: throw NullPointerException
+                        PANIC("java.lang.NullPointerException");
+                    }
+                    auto object = Resolver::resolveJObject(ref);
+                    if (object == nullptr) {
+                        PANIC("not an object");
+                    }
+                    object->getMarkOop()->leaveMonitor();
                     NEXT();
                 }
                 OPCODE(WIDE)
