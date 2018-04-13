@@ -27,7 +27,7 @@
 #ifdef OPCODE_DEBUG
 #define OPCODE(opcode) \
     case OPC_##opcode: \
-        D("pc: %d, opcode: %d, name: %s", pc, code_blob[pc - 1], #opcode);
+        D("pc: %d, opcode: %d, name: %s", pc - 1, code_blob[pc - 1], #opcode);
 #else
 #define OPCODE(opcode) \
     case OPC_##opcode:
@@ -36,13 +36,14 @@
 #define GOTO_PC(branch) \
                     pc += branch
 
-#define GOTO_UNCONDITIONALLY() \
+#define GOTO_UNCONDITIONALLY(occupied) \
                     short branch = code_blob[pc] << 8 | code_blob[pc + 1]; \
-                    GOTO_PC(branch)
+                    GOTO_PC(branch); \
+                    GOTO_PC(-((occupied) - 1))
 
 #define __IF_GOTO_FACTORY(func, target, occupied, op) \
                     if (stack.func() op target) { \
-                        GOTO_UNCONDITIONALLY(); \
+                        GOTO_UNCONDITIONALLY(occupied); \
                     } else { \
                         pc += (occupied); \
                     }
@@ -51,7 +52,7 @@
                     auto v2 = stack.func(); \
                     auto v1 = stack.func(); \
                     if (v1 op v2) { \
-                        GOTO_UNCONDITIONALLY(); \
+                        GOTO_UNCONDITIONALLY(occupied); \
                     } else { \
                         pc += (occupied); \
                     }
@@ -1170,7 +1171,7 @@ namespace kivm {
                 }
                 OPCODE(GOTO)
                 {
-                    GOTO_UNCONDITIONALLY();
+                    GOTO_UNCONDITIONALLY(2);
                     NEXT();
                 }
                 OPCODE(JSR)
