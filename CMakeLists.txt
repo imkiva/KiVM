@@ -1,18 +1,14 @@
 cmake_minimum_required(VERSION 3.8)
 project(KivaVM)
 
+set(CMAKE_MODULE_PATH "${CMCMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake")
+
 set(CMAKE_CXX_STANDARD 11)
 if (DEFINED ENV{CS_SRC})
     set(CMAKE_CXX_FLAGS -DKIVM_DEBUG)
 endif ()
 
-include("${CMAKE_SOURCE_DIR}/third-party/CMakeLists.txt")
-
 include_directories(include)
-include_directories(${PROJECT_BINARY_DIR}
-        third-party/libffi/include
-        third-party/libffi/src
-        third-party/libffi/src/x86)
 
 set(SOURCE_FILES
         include/kivm/classfile/classFile.h
@@ -96,7 +92,7 @@ set(SOURCE_FILES
 
 #### libkivm
 add_library(kivm STATIC ${SOURCE_FILES})
-target_link_libraries(kivm kivm_ffi)
+target_link_libraries(kivm ffi)
 IF (UNIX)
     target_link_libraries(kivm pthread)
 ENDIF ()
@@ -104,7 +100,9 @@ ENDIF ()
 #### Executables
 add_executable(java src/bin/java.cpp)
 add_executable(javap src/bin/javap.cpp)
-
+find_package(FFI REQUIRED)
+include_directories(${FFI_INCLUDE_DIRS})
+link_directories(${FFI_LIBRARIES})
 target_link_libraries(java kivm)
 target_link_libraries(javap kivm)
 
