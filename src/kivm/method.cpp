@@ -157,13 +157,13 @@ namespace kivm {
         _code_blob.init(_code_attr->code, _code_attr->code_length);
     }
 
-    const std::vector<ValueType> &Method::getArgumentValueTypes() {
-        if (_argument_value_types_resolved) {
-            return _argument_value_types;
+    static void getArgumentValueTypesHelper(std::vector<ValueType> *valueTypes, bool *flag,
+                                            const String &desc, bool wrap) {
+        if (*flag) {
+            return;
         }
-        _argument_value_types_resolved = true;
+        *flag = true;
 
-        const String &desc = getDescriptor();
         D("Parsing descriptor: %s", strings::toStdString(desc).c_str());
 
         for (int i = 0; i < desc.size(); ++i) {
@@ -177,36 +177,38 @@ namespace kivm {
                 case L'J':    // long
                 case L'F':    // float
                 case L'D':    // double
-                    _argument_value_types.push_back(primitiveTypeToValueType(ch));
+                    valueTypes->push_back(wrap
+                                          ? primitiveTypeToValueType(ch)
+                                          : primitiveTypeToValueTypeNoWrap(ch));
                     break;
 
                 case L'L':
                     while (desc[i] != ';') {
                         ++i;
                     }
-                    _argument_value_types.push_back(ValueType::OBJECT);
+                    valueTypes->push_back(ValueType::OBJECT);
                     break;
 
                 case L'(':
                     break;
 
                 case L')':
-                    return _argument_value_types;
+                    return;
 
                 default:
                     PANIC("Unrecognized char %c in descriptor", ch);
             }
         }
-        return _argument_value_types;
     }
 
-    ValueType Method::getReturnType() {
-        if (_return_type_resolved) {
-            return _return_type;
+    static void getReturnTypeHelper(ValueType *returnType, bool *flag,
+                                    const String &desc, bool wrap) {
+        if (*flag) {
+            return;
         }
-        _return_type_resolved = true;
+        *flag = true;
 
-        const String &returnTypeDesc = getDescriptor().substr(getDescriptor().find_first_of(L')') + 1);
+        const String &returnTypeDesc = desc.substr(desc.find_first_of(L')') + 1);
         int i = 0;
         wchar_t ch = returnTypeDesc[i];
         switch (ch) {
@@ -219,19 +221,50 @@ namespace kivm {
             case L'F':    // float
             case L'D':    // double
             case L'V':    // void
-                _return_type = primitiveTypeToValueType(ch);
+                *returnType = wrap
+                              ? primitiveTypeToValueType(ch)
+                              : primitiveTypeToValueTypeNoWrap(ch);
                 break;
 
             case L'L':
                 while (returnTypeDesc[i] != ';') {
                     ++i;
                 }
-                _return_type = ValueType::OBJECT;
+                *returnType = ValueType::OBJECT;
                 break;
 
             default:
                 PANIC("Unrecognized char %c in descriptor", ch);
         }
+    }
+
+    const std::vector<ValueType> &Method::getArgumentValueTypes() {
+        getArgumentValueTypesHelper(&_argument_value_types,
+                                    &_argument_value_types_resolved,
+                                    getDescriptor(), true);
+        return _argument_value_types;
+    }
+
+    ValueType Method::getReturnType() {
+        getReturnTypeHelper(&_return_type,
+                            &_return_type_resolved,
+                            getDescriptor(),
+                            true);
         return _return_type;
+    }
+
+    const std::vector<ValueType> &Method::getArgumentValueTypesNoWrap() {
+        getArgumentValueTypesHelper(&_argument_value_types_no_wrap,
+                                    &_argument_value_types_no_wrap_resolved,
+                                    getDescriptor(),
+                                    false);
+        return _argument_value_types_no_wrap;
+    }
+
+    ValueType Method::getReturnTypeNoWrap() {
+        getReturnTypeHelper(&_return_type_no_wrap,
+                            &_return_type_no_wrap_resolved,
+                            getDescriptor(), false);
+        return _return_type_no_wrap;
     }
 }

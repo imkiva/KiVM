@@ -41,6 +41,22 @@ namespace kivm {
         Exceptions_attribute *_exception_attr;
         Code_attribute *_code_attr;
 
+        ValueType _return_type;
+
+        ValueType _return_type_no_wrap;
+
+        std::vector<ValueType> _argument_value_types;
+
+        std::vector<ValueType> _argument_value_types_no_wrap;
+
+        bool _argument_value_types_resolved;
+
+        bool _argument_value_types_no_wrap_resolved;
+
+        bool _return_type_no_wrap_resolved;
+
+        bool _return_type_resolved;
+
         bool _linked;
 
         /** this method is likely to throw these exceptions **/
@@ -49,14 +65,7 @@ namespace kivm {
         /** map<start-pc, line-number> **/
         std::unordered_map<u2, u2> _line_number_table;
 
-        std::vector<ValueType> _argument_value_types;
-
-        bool _argument_value_types_resolved;
-
-        ValueType _return_type;
-
-        bool _return_type_resolved;
-
+    private:
         void linkAttributes(cp_info **pool);
 
         void linkExceptionAttribute(cp_info **pool, Exceptions_attribute *attr);
@@ -70,9 +79,19 @@ namespace kivm {
 
         void linkMethod(cp_info **pool);
 
+        /**
+         * Used for Java calls
+         */
         const std::vector<ValueType> &getArgumentValueTypes();
 
         ValueType getReturnType();
+
+        /**
+         * Used for JNI calls
+         */
+        const std::vector<ValueType> &getArgumentValueTypesNoWrap();
+
+        ValueType getReturnTypeNoWrap();
 
         InstanceKlass *getClass() const {
             return _klass;
