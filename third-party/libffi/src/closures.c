@@ -29,7 +29,7 @@
 #define _GNU_SOURCE 1
 #endif
 
-#include <ffi.h>
+#include <kivm_ffi.h>
 #include <ffi_common.h>
 
 #ifndef FFI_MMAP_EXEC_WRIT
@@ -45,7 +45,7 @@
 #  define HAVE_MNTENT 1
 # endif
 # if defined(X86_WIN32) || defined(X86_WIN64)
-/* Windows systems may have Data Execution Protection (DEP) enabled, 
+/* Windows systems may have Data Execution Protection (DEP) enabled,
    which requires the use of VirtualMalloc/VirtualFree to alloc/free
    executable memory. */
 #  define FFI_MMAP_EXEC_WRIT 1
@@ -159,7 +159,7 @@ selinux_enabled_check (void)
 }
 
 #define is_selinux_enabled() (selinux_enabled >= 0 ? selinux_enabled \
-			      : (selinux_enabled = selinux_enabled_check ()))
+                  : (selinux_enabled = selinux_enabled_check ()))
 
 #else
 
@@ -277,14 +277,14 @@ open_temp_exec_file_mnt (const char *mounts)
   if (mounts != last_mounts)
     {
       if (last_mntent)
-	endmntent (last_mntent);
+    endmntent (last_mntent);
 
       last_mounts = mounts;
 
       if (mounts)
-	last_mntent = setmntent (mounts, "r");
+    last_mntent = setmntent (mounts, "r");
       else
-	last_mntent = NULL;
+    last_mntent = NULL;
     }
 
   if (!last_mntent)
@@ -297,17 +297,17 @@ open_temp_exec_file_mnt (const char *mounts)
       char buf[MAXPATHLEN * 3];
 
       if (getmntent_r (last_mntent, &mnt, buf, sizeof (buf)))
-	return -1;
+    return -1;
 
       if (hasmntopt (&mnt, "ro")
-	  || hasmntopt (&mnt, "noexec")
-	  || access (mnt.mnt_dir, W_OK))
-	continue;
+      || hasmntopt (&mnt, "noexec")
+      || access (mnt.mnt_dir, W_OK))
+    continue;
 
       fd = open_temp_exec_file_dir (mnt.mnt_dir);
 
       if (fd != -1)
-	return fd;
+    return fd;
     }
 }
 #endif /* HAVE_MNTENT */
@@ -346,7 +346,7 @@ open_temp_exec_file_opts_next (void)
   open_temp_exec_file_opts_idx++;
   if (open_temp_exec_file_opts_idx
       == (sizeof (open_temp_exec_file_opts)
-	  / sizeof (*open_temp_exec_file_opts)))
+      / sizeof (*open_temp_exec_file_opts)))
     {
       open_temp_exec_file_opts_idx = 0;
       return 1;
@@ -365,14 +365,14 @@ open_temp_exec_file (void)
   do
     {
       fd = open_temp_exec_file_opts[open_temp_exec_file_opts_idx].func
-	(open_temp_exec_file_opts[open_temp_exec_file_opts_idx].arg);
+    (open_temp_exec_file_opts[open_temp_exec_file_opts_idx].arg);
 
       if (!open_temp_exec_file_opts[open_temp_exec_file_opts_idx].repeat
-	  || fd == -1)
-	{
-	  if (open_temp_exec_file_opts_next ())
-	    break;
-	}
+      || fd == -1)
+    {
+      if (open_temp_exec_file_opts_next ())
+        break;
+    }
     }
   while (fd == -1);
 
@@ -395,7 +395,7 @@ dlmmap_locked (void *start, size_t length, int prot, int flags, off_t offset)
     retry_open:
       execfd = open_temp_exec_file ();
       if (execfd == -1)
-	return MFAIL;
+    return MFAIL;
     }
 
   offset = execsize;
@@ -407,19 +407,19 @@ dlmmap_locked (void *start, size_t length, int prot, int flags, off_t offset)
   flags |= MAP_SHARED;
 
   ptr = mmap (NULL, length, (prot & ~PROT_WRITE) | PROT_EXEC,
-	      flags, execfd, offset);
+          flags, execfd, offset);
   if (ptr == MFAIL)
     {
       if (!offset)
-	{
-	  close (execfd);
-	  goto retry_open;
-	}
+    {
+      close (execfd);
+      goto retry_open;
+    }
       ftruncate (execfd, offset);
       return MFAIL;
     }
   else if (!offset
-	   && open_temp_exec_file_opts[open_temp_exec_file_opts_idx].repeat)
+       && open_temp_exec_file_opts[open_temp_exec_file_opts_idx].repeat)
     open_temp_exec_file_opts_next ();
 
   start = mmap (start, length, prot, flags, execfd, offset);
@@ -442,14 +442,14 @@ dlmmap_locked (void *start, size_t length, int prot, int flags, off_t offset)
    Failing that, fall back to dlmmap_locked.  */
 static void *
 dlmmap (void *start, size_t length, int prot,
-	int flags, int fd, off_t offset)
+    int flags, int fd, off_t offset)
 {
   void *ptr;
 
   assert (start == NULL && length % malloc_getpagesize == 0
-	  && prot == (PROT_READ | PROT_WRITE)
-	  && flags == (MAP_PRIVATE | MAP_ANONYMOUS)
-	  && fd == -1 && offset == 0);
+      && prot == (PROT_READ | PROT_WRITE)
+      && flags == (MAP_PRIVATE | MAP_ANONYMOUS)
+      && fd == -1 && offset == 0);
 
 #if FFI_CLOSURE_TEST
   printf ("mapping in %zi\n", length);
@@ -460,12 +460,12 @@ dlmmap (void *start, size_t length, int prot,
       ptr = mmap (start, length, prot | PROT_EXEC, flags, fd, offset);
 
       if (ptr != MFAIL || (errno != EPERM && errno != EACCES))
-	/* Cool, no need to mess with separate segments.  */
-	return ptr;
+    /* Cool, no need to mess with separate segments.  */
+    return ptr;
 
       /* If MREMAP_DUP is ever introduced and implemented, try mmap
-	 with ((prot & ~PROT_WRITE) | PROT_EXEC) and mremap with
-	 MREMAP_DUP and prot at this point.  */
+     with ((prot & ~PROT_WRITE) | PROT_EXEC) and mremap with
+     MREMAP_DUP and prot at this point.  */
     }
 
   if (execsize == 0 || execfd == -1)
@@ -484,18 +484,18 @@ dlmmap (void *start, size_t length, int prot,
 
 static void *
 dlmmap (void *start, size_t length, int prot,
-	int flags, int fd, off_t offset)
+    int flags, int fd, off_t offset)
 {
-  
+
   assert (start == NULL && length % malloc_getpagesize == 0
-	  && prot == (PROT_READ | PROT_WRITE)
-	  && flags == (MAP_PRIVATE | MAP_ANONYMOUS)
-	  && fd == -1 && offset == 0);
-  
+      && prot == (PROT_READ | PROT_WRITE)
+      && flags == (MAP_PRIVATE | MAP_ANONYMOUS)
+      && fd == -1 && offset == 0);
+
 #if FFI_CLOSURE_TEST
   printf ("mapping in %zi\n", length);
 #endif
-  
+
   return mmap (start, length, prot | PROT_EXEC, flags, fd, offset);
 }
 
@@ -523,7 +523,7 @@ dlmunmap (void *start, size_t length)
     {
       int ret = munmap (code, length);
       if (ret)
-	return ret;
+    return ret;
     }
 
   return munmap (start, length);
@@ -537,7 +537,7 @@ segment_holding_code (mstate m, char* addr)
   msegmentptr sp = &m->seg;
   for (;;) {
     if (addr >= add_segment_exec_offset (sp->base, sp)
-	&& addr < add_segment_exec_offset (sp->base, sp) + sp->size)
+    && addr < add_segment_exec_offset (sp->base, sp) + sp->size)
       return sp;
     if ((sp = sp->next) == 0)
       return 0;
@@ -615,18 +615,16 @@ int main ()
 #include <stdlib.h>
 
 void *
-ffi_closure_alloc (size_t size, void **code)
-{
-  if (!code)
-    return NULL;
+ffi_closure_alloc(size_t size, void **code) {
+    if (!code)
+        return NULL;
 
-  return *code = malloc (size);
+    return *code = malloc(size);
 }
 
 void
-ffi_closure_free (void *ptr)
-{
-  free (ptr);
+ffi_closure_free(void *ptr) {
+    free(ptr);
 }
 
 # endif /* ! FFI_MMAP_EXEC_WRIT */

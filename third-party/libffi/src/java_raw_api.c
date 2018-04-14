@@ -35,7 +35,7 @@
 /* stack slots (longs, doubles) occupy 128 bits, but only the first	*/
 /* 64 bits are actually used.						*/
 
-#include <ffi.h>
+#include <kivm_ffi.h>
 #include <ffi_common.h>
 #include <stdlib.h>
 

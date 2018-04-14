@@ -22,7 +22,7 @@
    DEALINGS IN THE SOFTWARE.
    ----------------------------------------------------------------------- */
 
-#include <ffi.h>
+#include <kivm_ffi.h>
 #include <ffi_common.h>
 #include <stdlib.h>
 #include <stdio.h>

@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-#include <fficonfig.h>
+#include <kivm_fficonfig.h>
 
 /* Do not move this. Some versions of AIX are very picky about where
    this is positioned. */

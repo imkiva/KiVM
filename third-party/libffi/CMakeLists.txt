@@ -117,8 +117,8 @@ else ()
     endif ()
 endif ()
 # Generate headers
-configure_file("${PROJECT_SOURCE_DIR}/third-party/libffi/include/ffi.h.in" "${PROJECT_BINARY_DIR}/ffi.h")
-configure_file("${PROJECT_SOURCE_DIR}/third-party/libffi/fficonfig.cmake.in" "${PROJECT_BINARY_DIR}/fficonfig.h")
+configure_file("${PROJECT_SOURCE_DIR}/third-party/libffi/include/ffi.h.in" "${PROJECT_BINARY_DIR}/kivm_ffi.h")
+configure_file("${PROJECT_SOURCE_DIR}/third-party/libffi/fficonfig.cmake.in" "${PROJECT_BINARY_DIR}/kivm_fficonfig.h")
 # Use C to compile the assembly (this way preprocessor is used)
 set_source_files_properties(${SRC_ASM} PROPERTIES LANGUAGE C)
 # Compile libffi

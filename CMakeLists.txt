@@ -9,6 +9,10 @@ endif ()
 include("${CMAKE_SOURCE_DIR}/third-party/CMakeLists.txt")
 
 include_directories(include)
+include_directories(${PROJECT_BINARY_DIR}
+        third-party/libffi/include
+        third-party/libffi/src
+        third-party/libffi/src/x86)
 
 set(SOURCE_FILES
         include/kivm/classfile/classFile.h
