@@ -29,6 +29,9 @@ namespace kivm {
                 return &ffi_type_double;
             case ValueType::VOID:
                 return &ffi_type_void;
+            case ValueType::OBJECT:
+            case ValueType::ARRAY:
+                return &ffi_type_pointer;
 
             default:
                 PANIC("Unknown value type: %d", valueType);
