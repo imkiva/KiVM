@@ -6,6 +6,8 @@ if (DEFINED ENV{CS_SRC})
     set(CMAKE_CXX_FLAGS -DKIVM_DEBUG)
 endif ()
 
+include("${CMAKE_SOURCE_DIR}/third-party/CMakeLists.txt")
+
 include_directories(include)
 
 set(SOURCE_FILES
@@ -49,6 +51,8 @@ set(SOURCE_FILES
         include/kivm/system.h
         include/kivm/bytecode/codeBlob.h
         include/kivm/runtime/constantPool.h
+        include/kivm/bytecode/invocationContext.h
+        include/kivm/runtime/nativeMethodPool.h
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp
@@ -79,20 +83,32 @@ set(SOURCE_FILES
         src/kivm/runtime/init.cpp
         src/kivm/system.cpp
         src/kivm/native/java_lang_String.cpp
-        src/kivm/runtime/constantPool.cpp src/kivm/bytecode/resolver.cpp include/kivm/bytecode/invocationContext.h src/kivm/bytecode/invocationContext.cpp src/kivm/bytecode/nativeInvocationContext.cpp include/kivm/runtime/nativeMethodPool.h src/kivm/runtime/nativeMethodPool.cpp)
+        src/kivm/runtime/constantPool.cpp
+        src/kivm/bytecode/resolver.cpp
+        src/kivm/bytecode/invocationContext.cpp
+        src/kivm/bytecode/nativeInvocationContext.cpp
+        src/kivm/runtime/nativeMethodPool.cpp)
 
+
+#### libkivm
 add_library(kivm STATIC ${SOURCE_FILES})
-target_link_libraries(kivm ffi)
+target_link_libraries(kivm kivm_ffi)
 IF (UNIX)
     target_link_libraries(kivm pthread)
 ENDIF ()
 
-add_executable(java src/bin/main.cpp)
+#### Executables
+add_executable(java src/bin/java.cpp)
 add_executable(javap src/bin/javap.cpp)
 
 target_link_libraries(java kivm)
 target_link_libraries(javap kivm)
 
+#### Tests
+add_executable(test_stack-and-frame tests/stack-and-locals.cpp)
+target_link_libraries(test_stack-and-frame kivm)
+
+#### CovScript extension
 if (DEFINED ENV{CS_SRC})
     set(CS_SRC $ENV{CS_SRC})
     include_directories(${CS_SRC}/include)
@@ -104,6 +120,3 @@ if (DEFINED ENV{CS_SRC})
     set_target_properties(covscript-kivm PROPERTIES PREFIX "")
     set_target_properties(covscript-kivm PROPERTIES SUFFIX ".cse")
 endif ()
-
-add_executable(test_stack-and-frame tests/stack-and-locals.cpp)
-target_link_libraries(test_stack-and-frame kivm)

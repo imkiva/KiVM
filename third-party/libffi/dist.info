@@ -1,0 +1,10 @@
+--- This file is part of LuaDist project
+
+name = "libffi"
+version = "3.0.9"
+
+desc = "FFI stands for Foreign Function Interface. A foreign function interface is the popular name for the interface that allows code written in one language to call code written in another language."
+author = "Anthony Green"
+license = "MIT"
+url = "http://sourceware.org/libffi/"
+maintainer = "Peter Drahos"
