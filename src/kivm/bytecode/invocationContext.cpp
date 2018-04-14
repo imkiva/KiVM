@@ -6,6 +6,7 @@
 #include <kivm/runtime/thread.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
+#include <ffi/ffi.h>
 
 namespace kivm {
     InvocationContext::InvocationContext(JavaThread *thread, Method *method, Stack &stack)

@@ -82,14 +82,15 @@ set(SOURCE_FILES
         src/kivm/runtime/constantPool.cpp src/kivm/bytecode/resolver.cpp include/kivm/bytecode/invocationContext.h src/kivm/bytecode/invocationContext.cpp)
 
 add_library(kivm STATIC ${SOURCE_FILES})
+target_link_libraries(kivm ffi)
 IF (UNIX)
     target_link_libraries(kivm pthread)
 ENDIF ()
 
-add_executable(KivaVM src/bin/main.cpp)
+add_executable(java src/bin/main.cpp)
 add_executable(javap src/bin/javap.cpp)
 
-target_link_libraries(KivaVM kivm)
+target_link_libraries(java kivm)
 target_link_libraries(javap kivm)
 
 if (DEFINED ENV{CS_SRC})
