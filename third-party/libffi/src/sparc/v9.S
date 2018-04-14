@@ -25,8 +25,8 @@
    ----------------------------------------------------------------------- */
 
 #define LIBFFI_ASM	
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 
 #ifdef SPARC64
 /* Only compile this in for 64bit builds, because otherwise the object file

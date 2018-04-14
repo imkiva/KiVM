@@ -30,8 +30,8 @@
    ----------------------------------------------------------------------- */
 
 #define LIBFFI_ASM	
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 #include "ia64_flags.h"
 
 	.pred.safe_across_calls p1-p5,p16-p63

@@ -29,8 +29,8 @@
    */
  
 #define LIBFFI_ASM
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
  
 	.text
  

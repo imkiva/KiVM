@@ -25,8 +25,8 @@
    ----------------------------------------------------------------------- */
 
 #define LIBFFI_ASM	
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 
 /* Only build this code if we are compiling for o32 */	
 

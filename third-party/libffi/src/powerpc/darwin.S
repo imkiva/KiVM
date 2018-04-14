@@ -35,8 +35,8 @@
 #define LOG2_GPR_BYTES  MODE_CHOICE(2,3)        /* log2(GPR_BYTES) */
 
 #define LIBFFI_ASM
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 #define JUMPTARGET(name) name
 #define L(x) x
 .text

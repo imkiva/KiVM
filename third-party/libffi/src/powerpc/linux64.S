@@ -26,8 +26,8 @@
    ----------------------------------------------------------------------- */
 
 #define LIBFFI_ASM
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 
 #ifdef __powerpc64__
 	.hidden	ffi_call_LINUX64, .ffi_call_LINUX64

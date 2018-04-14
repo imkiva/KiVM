@@ -26,8 +26,8 @@
    ----------------------------------------------------------------------- */
 
 #define LIBFFI_ASM	
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 
 #ifdef HAVE_AS_CFI_PSEUDO_OP
 #define CFI_STARTPROC()		.cfi_startproc

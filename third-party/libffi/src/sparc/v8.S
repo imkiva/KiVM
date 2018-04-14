@@ -25,8 +25,8 @@
    ----------------------------------------------------------------------- */
 
 #define LIBFFI_ASM	
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 
 #define STACKFRAME 96		/* Minimum stack framesize for SPARC */
 #define ARGS (64+4)		/* Offset of register area in frame */

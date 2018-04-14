@@ -25,8 +25,8 @@
    DEALINGS IN THE SOFTWARE.
    ----------------------------------------------------------------------- */
 #define LIBFFI_ASM
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 #include <powerpc/asm.h>
 
 	.file   "ppc_closure.S"

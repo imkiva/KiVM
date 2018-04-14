@@ -24,8 +24,8 @@
    ----------------------------------------------------------------------- */
 
 #define LIBFFI_ASM
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 #ifdef HAVE_MACHINE_ASM_H
 #include <machine/asm.h>
 #else

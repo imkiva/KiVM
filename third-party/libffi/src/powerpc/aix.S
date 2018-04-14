@@ -80,8 +80,8 @@
 	.set f21,21
 
 #define LIBFFI_ASM
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 #define JUMPTARGET(name) name
 #define L(x) x
 	.file "aix.S"

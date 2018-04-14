@@ -1,6 +1,6 @@
 #define LIBFFI_ASM
-#include <fficonfig.h>
-#include <ffi.h>
+#include <kivm_fficonfig.h>
+#include <kivm_ffi.h>
 	
 /* Constants for ffi_call_win64 */	
 #define STACK 0

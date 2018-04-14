@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <ffi.h>
-#include "fficonfig.h"
+#include "kivm_fficonfig.h"
 
 #define MAX_ARGS 256
 

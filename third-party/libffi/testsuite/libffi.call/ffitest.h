@@ -3,7 +3,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <ffi.h>
-#include "fficonfig.h"
+#include "kivm_fficonfig.h"
 
 #if defined HAVE_STDINT_H
 #include <stdint.h>
