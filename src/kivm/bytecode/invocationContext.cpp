@@ -9,39 +9,6 @@
 #include <ffi/ffi.h>
 
 namespace kivm {
-    static ffi_type *valueTypeToFFIType(ValueType valueType) {
-        switch (valueType) {
-            case ValueType::BOOLEAN:
-                return &ffi_type_uint8;
-            case ValueType::BYTE:
-                return &ffi_type_sint8;
-            case ValueType::CHAR:
-                return &ffi_type_uint16;
-            case ValueType::SHORT:
-                return &ffi_type_sint16;
-            case ValueType::INT:
-                return &ffi_type_uint32;
-            case ValueType::FLOAT:
-                return &ffi_type_float;
-            case ValueType::LONG:
-                return &ffi_type_sint64;
-            case ValueType::DOUBLE:
-                return &ffi_type_double;
-            case ValueType::VOID:
-                return &ffi_type_void;
-            case ValueType::OBJECT:
-            case ValueType::ARRAY:
-                return &ffi_type_pointer;
-
-            default:
-                PANIC("Unknown value type: %d", valueType);
-        }
-    }
-
-    static ffi_type *getFFIReturnType(Method *_method) {
-        return valueTypeToFFIType(_method->getReturnTypeNoWrap());
-    }
-
     InvocationContext::InvocationContext(JavaThread *thread, Method *method, Stack &stack)
         : _thread(thread), _method(method), _stack(stack), _instanceKlass(_method->getClass()) {
     }
@@ -53,24 +20,23 @@ namespace kivm {
     void InvocationContext::invoke(bool hasThis) {
         prepareEnvironment();
 
-        std::vector<ValueType> descriptorMap = _method->getArgumentValueTypes();
-
-        D("invokeTarget: %s.%s:%s, hasThis: %s, nargs: %zd",
-          strings::toStdString(_instanceKlass->getName()).c_str(),
-          strings::toStdString(_method->getName()).c_str(),
-          strings::toStdString(_method->getDescriptor()).c_str(),
-          hasThis ? "true" : "false",
-          descriptorMap.size());
-
         if (_method->isNative()) {
-            // native methods
-            ffi_cif cif{};
-            ffi_type *rtype = getFFIReturnType(_method);
-
-            PANIC("Cannot invoke native method currently");
+            // we don't handle native invocation here
+            this->invokeNative(hasThis);
+            return;
 
         } else {
             // Non-native methods
+            std::vector<ValueType> descriptorMap = _method->getArgumentValueTypes();
+
+            D("invokeTarget: %s.%s:%s, hasThis: %s, native: %s, nargs: %zd",
+              strings::toStdString(_instanceKlass->getName()).c_str(),
+              strings::toStdString(_method->getName()).c_str(),
+              strings::toStdString(_method->getDescriptor()).c_str(),
+              hasThis ? "true" : "false",
+              _method->isNative() ? "true" : "false",
+              descriptorMap.size());
+
             std::list<oop> callingArgs;
             for (auto it = descriptorMap.rbegin(); it != descriptorMap.rend(); ++it) {
                 ValueType valueType = *it;
@@ -88,6 +54,7 @@ namespace kivm {
                         callingArgs.push_front(new doubleOopDesc(_stack.popDouble()));
                         break;
                     case ValueType::OBJECT:
+                    case ValueType::ARRAY:
                         callingArgs.push_front(Resolver::resolveJObject(_stack.popReference()));
                         break;
                     default:
@@ -120,6 +87,7 @@ namespace kivm {
                     _stack.pushDouble(((doubleOop) result)->getValue());
                     break;
                 case ValueType::OBJECT:
+                case ValueType::ARRAY:
                     _stack.pushReference(result);
                     break;
                 case ValueType::VOID:

@@ -35,29 +35,35 @@ namespace kivm {
         String _signature;
         u2 _access_flag;
 
+        /**
+         * basic information about a method
+         */
         CodeBlob _code_blob;
-
         method_info *_method_info;
         Exceptions_attribute *_exception_attr;
         Code_attribute *_code_attr;
 
-        ValueType _return_type;
+        /**
+         * only available when this method is a native method
+         */
+        void *_native_pointer;
 
-        ValueType _return_type_no_wrap;
-
-        std::vector<ValueType> _argument_value_types;
-
-        std::vector<ValueType> _argument_value_types_no_wrap;
-
+        /**
+         * flags related to descriptor parsing
+         */
         bool _argument_value_types_resolved;
-
         bool _argument_value_types_no_wrap_resolved;
-
         bool _return_type_no_wrap_resolved;
-
         bool _return_type_resolved;
-
         bool _linked;
+
+        /**
+         * result of descriptor parsing
+         */
+        ValueType _return_type;
+        ValueType _return_type_no_wrap;
+        std::vector<ValueType> _argument_value_types;
+        std::vector<ValueType> _argument_value_types_no_wrap;
 
         /** this method is likely to throw these exceptions **/
         std::list<InstanceKlass *> _throws;
@@ -80,18 +86,45 @@ namespace kivm {
         void linkMethod(cp_info **pool);
 
         /**
-         * Used for Java calls
+         * Used for Java calls.
+         * Parse descriptor and map arguments to value types
+         * short, boolean, bool and char will be wrapped to int
+         * @return argument value type mapping parsed from descriptor
          */
         const std::vector<ValueType> &getArgumentValueTypes();
 
+        /**
+         * Parse descriptor and map result type to value types
+         * short, boolean, bool and char will be wrapped to int
+         * @return result value type parsed from descriptor
+         */
         ValueType getReturnType();
 
         /**
-         * Used for JNI calls
+         * Used for JNI calls.
+         * Parse descriptor and map arguments to value types
+         * short, boolean, bool and char will remains its original value type
+         * @return argument value type mapping parsed from descriptor
          */
         const std::vector<ValueType> &getArgumentValueTypesNoWrap();
 
+        /**
+         * Parse descriptor and map result type to value types
+         * short, boolean, bool and char will remains its original value type
+         * @return result value type parsed from descriptor
+         */
         ValueType getReturnTypeNoWrap();
+
+        /**
+         * Locate native method address
+         * @return address of the native method
+         */
+        void* getNativePointer();
+
+    public:
+        /*
+         * Public getters and setters
+         */
 
         InstanceKlass *getClass() const {
             return _klass;

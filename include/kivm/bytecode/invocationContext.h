@@ -26,5 +26,7 @@ namespace kivm {
         InvocationContext(JavaThread *thread, Method *method, Stack &stack);
 
         void invoke(bool hasThis);
+
+        void invokeNative(bool hasThis);
     };
 }

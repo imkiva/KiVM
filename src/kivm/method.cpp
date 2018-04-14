@@ -267,4 +267,14 @@ namespace kivm {
                             getDescriptor(), false);
         return _return_type_no_wrap;
     }
+
+    void *Method::getNativePointer() {
+        if (this->isNative()) {
+            if (this->_native_pointer == nullptr) {
+                // TODO: locate native symbol
+            }
+            return this->_native_pointer;
+        }
+        return nullptr;
+    }
 }
