@@ -6,7 +6,7 @@
 #include <kivm/runtime/thread.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
-#include <ffi/ffi.h>
+#include <ffi.h>
 
 #define FILL_ARG(popFunc, field) \
         argsHolder[fillIndex].field = _stack.popFunc(); \
