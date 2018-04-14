@@ -25,6 +25,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
+            - libffi-dev
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
