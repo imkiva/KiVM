@@ -27,7 +27,7 @@ namespace kivm {
 
         } else {
             // Non-native methods
-            std::vector<ValueType> descriptorMap = _method->getArgumentValueTypes();
+            const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypes();
 
             D("invokeTarget: %s.%s:%s, hasThis: %s, native: %s, nargs: %zd",
               strings::toStdString(_instanceKlass->getName()).c_str(),

@@ -48,7 +48,7 @@ namespace kivm {
     }
 
     void InvocationContext::invokeNative(bool hasThis) {
-        std::vector<ValueType> descriptorMap = _method->getArgumentValueTypesNoWrap();
+        const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypesNoWrap();
 
         D("invokeTarget: %s.%s:%s, hasThis: %s, native: %s, nargs: %zd",
           strings::toStdString(_instanceKlass->getName()).c_str(),
