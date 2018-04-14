@@ -61,7 +61,10 @@ namespace kivm {
         // native methods
         void *nativeMethod = _method->getNativePointer();
         if (nativeMethod == nullptr) {
-            PANIC("UnsatisfiedLinkError");
+            PANIC("UnsatisfiedLinkError: %s.%s:%s",
+                  strings::toStdString(_instanceKlass->getName()).c_str(),
+                  strings::toStdString(_method->getName()).c_str(),
+                  strings::toStdString(_method->getDescriptor()).c_str());
         }
 
         ValueType returnValueType = _method->getReturnTypeNoWrap();
