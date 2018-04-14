@@ -8,7 +8,7 @@
 
 namespace kivm {
     RuntimeConstantPool::RuntimeConstantPool(InstanceKlass *instanceKlass)
-        : _class_loader(instanceKlass->getClassLoader()) {
+        : _classLoader(instanceKlass->getClassLoader()) {
     }
 
     /********************** pools ***********************/

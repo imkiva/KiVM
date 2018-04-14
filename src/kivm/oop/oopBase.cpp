@@ -7,7 +7,7 @@
 #include <cstdlib>
 
 namespace kivm {
-    void *oopBase::allocate(size_t size, bool add_to_pool) {
+    void *oopBase::allocate(size_t size, bool addToPool) {
         if (size == 0) {
             return nullptr;
         }
@@ -16,7 +16,7 @@ namespace kivm {
         memset(ptr, '\0', size);
 
         // add it to the oopPoll
-        if (add_to_pool) {
+        if (addToPool) {
             LockGuard lg(getOopMemoryLock());
             oopPool::getOopHandlerPool().push_back((oop) ptr);
         }

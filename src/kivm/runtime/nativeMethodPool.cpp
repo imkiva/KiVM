@@ -7,4 +7,9 @@ namespace kivm {
     void *NativeMethodPool::resolve(Method *method) {
         return nullptr;
     }
+
+    NativeMethodPool *NativeMethodPool::get() {
+        static NativeMethodPool pool;
+        return &pool;
+    }
 }

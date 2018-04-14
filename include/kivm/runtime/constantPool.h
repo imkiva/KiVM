@@ -100,95 +100,95 @@ namespace kivm {
 
     class RuntimeConstantPool {
     private:
-        ClassLoader *_class_loader;
-        cp_info **_raw_pool;
-        pools::ClassPool _class_pool;
-        pools::StringPool _string_pool;
-        pools::MethodPool _method_pool;
-        pools::FieldPool _field_pool;
-        pools::InterfaceMethodPool _interface_method_pool;
-        pools::NameAndTypePool _name_and_type_pool;
-        pools::Utf8Pool _utf8_pool;
-        pools::IntegerPool _int_pool;
-        pools::FloatPool _float_pool;
-        pools::LongPool _long_pool;
-        pools::DoublePool _double_pool;
+        ClassLoader *_classLoader;
+        cp_info **_rawPool;
+        pools::ClassPool _classPool;
+        pools::StringPool _stringPool;
+        pools::MethodPool _methodPool;
+        pools::FieldPool _fieldPool;
+        pools::InterfaceMethodPool _interfaceMethodPool;
+        pools::NameAndTypePool _nameAndTypePool;
+        pools::Utf8Pool _utf8Pool;
+        pools::IntegerPool _intPool;
+        pools::FloatPool _floatPool;
+        pools::LongPool _longPool;
+        pools::DoublePool _doublePool;
 
     public:
         explicit RuntimeConstantPool(InstanceKlass *instanceKlass);
 
         inline void attachConstantPool(cp_info **pool) {
-            this->_raw_pool = pool;
-            _class_pool.setRawPool(pool);
-            _string_pool.setRawPool(pool);
-            _method_pool.setRawPool(pool);
-            _field_pool.setRawPool(pool);
-            _interface_method_pool.setRawPool(pool);
-            _int_pool.setRawPool(pool);
-            _float_pool.setRawPool(pool);
-            _long_pool.setRawPool(pool);
-            _double_pool.setRawPool(pool);
-            _utf8_pool.setRawPool(pool);
-            _name_and_type_pool.setRawPool(pool);
+            this->_rawPool = pool;
+            _classPool.setRawPool(pool);
+            _stringPool.setRawPool(pool);
+            _methodPool.setRawPool(pool);
+            _fieldPool.setRawPool(pool);
+            _interfaceMethodPool.setRawPool(pool);
+            _intPool.setRawPool(pool);
+            _floatPool.setRawPool(pool);
+            _longPool.setRawPool(pool);
+            _doublePool.setRawPool(pool);
+            _utf8Pool.setRawPool(pool);
+            _nameAndTypePool.setRawPool(pool);
         }
 
         inline int getConstantTag(int index) {
-            return _raw_pool[index]->tag;
+            return _rawPool[index]->tag;
         }
 
         inline pools::ClassPoolEntey getClass(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _class_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _classPool.findOrNew(this, index);
         }
 
         inline pools::StringPoolEntry getString(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _string_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _stringPool.findOrNew(this, index);
         }
 
         inline pools::MethodPoolEntry getMethod(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _method_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _methodPool.findOrNew(this, index);
         }
 
         inline pools::MethodPoolEntry getInterfaceMethod(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _interface_method_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _interfaceMethodPool.findOrNew(this, index);
         }
 
         inline pools::FieldPoolEntry getField(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _field_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _fieldPool.findOrNew(this, index);
         }
 
         inline pools::Utf8PoolEntry getUtf8(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _utf8_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _utf8Pool.findOrNew(this, index);
         }
 
         inline pools::NameAndTypePoolEntry getNameAndType(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _name_and_type_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _nameAndTypePool.findOrNew(this, index);
         }
 
         inline jint getInt(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _int_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _intPool.findOrNew(this, index);
         }
 
         inline jlong getLong(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _long_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _longPool.findOrNew(this, index);
         }
 
         inline jfloat getFloat(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _float_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _floatPool.findOrNew(this, index);
         }
 
         inline jdouble getDouble(int index) {
-            assert(this->_raw_pool != nullptr);
-            return _double_pool.findOrNew(this, index);
+            assert(this->_rawPool != nullptr);
+            return _doublePool.findOrNew(this, index);
         }
     };
 }

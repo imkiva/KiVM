@@ -25,8 +25,8 @@ namespace kivm {
     class oopBase {
     private:
         static Lock &getOopMemoryLock() {
-            static Lock mem_lock;
-            return mem_lock;
+            static Lock memLock;
+            return memLock;
         }
 
     public:
@@ -34,7 +34,7 @@ namespace kivm {
 
         virtual ~oopBase() = default;
 
-        static void *allocate(size_t size, bool add_to_pool);
+        static void *allocate(size_t size, bool addToPool);
 
         static void deallocate(void *ptr);
 

@@ -28,62 +28,62 @@ namespace kivm {
     class Klass {
     private:
         ClassState _state;
-        u2 _access_flag;
+        u2 _accessFlag;
 
     protected:
         String _name;
         ClassType _type;
 
-        mirrorOop _java_mirror;
-        Klass *_super_class;
+        mirrorOop _javaMirror;
+        Klass *_superClass;
 
     public:
         mirrorOop getJavaMirror() {
-            return _java_mirror;
+            return _javaMirror;
         }
 
-        void setJavaMirror(mirrorOop java_mirror) {
-            this->_java_mirror = java_mirror;
+        void setJavaMirror(mirrorOop javaMirror) {
+            this->_javaMirror = javaMirror;
         }
 
         ClassState getClassState() const {
             return _state;
         }
 
-        void setClassState(ClassState _state) {
-            this->_state = _state;
+        void setClassState(ClassState classState) {
+            this->_state = classState;
         }
 
         u2 getAccessFlag() const {
-            return _access_flag;
+            return _accessFlag;
         }
 
-        void setAccessFlag(u2 _access_flag) {
-            Klass::_access_flag = _access_flag;
+        void setAccessFlag(u2 accessFlag) {
+            Klass::_accessFlag = accessFlag;
         }
 
         const String &getName() const {
             return _name;
         }
 
-        void setName(const String &_name) {
-            this->_name = _name;
+        void setName(const String &name) {
+            this->_name = name;
         }
 
         ClassType getClassType() const {
             return _type;
         }
 
-        void setClassType(ClassType _type) {
-            this->_type = _type;
+        void setClassType(ClassType classType) {
+            this->_type = classType;
         }
 
         Klass *getSuperClass() const {
-            return _super_class;
+            return _superClass;
         }
 
-        void setSuperClass(Klass *_super_class) {
-            this->_super_class = _super_class;
+        void setSuperClass(Klass *superClass) {
+            this->_superClass = superClass;
         }
 
         bool isPublic() const {

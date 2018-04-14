@@ -69,6 +69,6 @@ namespace kivm {
     }
 
     void *Resolver::resolveNativePointer(Method *method) {
-        return NativeMethodPool::resolve(method);
+        return NativeMethodPool::get()->resolve(method);
     }
 }

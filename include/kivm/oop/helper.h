@@ -11,7 +11,7 @@
 namespace kivm {
     inline void helperInitField(std::vector<oop> &values, int offset, Field *field) {
         if (values.size() <= offset) {
-            values.resize(offset + 1);
+            values.resize((unsigned long) offset + 1);
         }
         switch (field->getValueType()) {
             case ValueType::INT:

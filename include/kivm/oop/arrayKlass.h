@@ -9,17 +9,17 @@
 namespace kivm {
     class ArrayKlass : public Klass {
     private:
-        ClassLoader *_class_loader;
-        mirrorOop _java_loader;
+        ClassLoader *_classLoader;
+        mirrorOop _javaLoader;
 
         int _dimension;
 
     public:
-        ArrayKlass(ClassLoader *class_loader, mirrorOop java_loader,
-                   int dimension, ClassType class_type);
+        ArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
+                   int dimension, ClassType classType);
 
         ClassLoader *getClassLoader() const {
-            return _class_loader;
+            return _classLoader;
         }
 
         int getDimension() const {
@@ -27,7 +27,7 @@ namespace kivm {
         }
 
         mirrorOop getJavaLoader() {
-            return _java_loader;
+            return _javaLoader;
         }
 
         void linkAndInit() override;
@@ -37,19 +37,19 @@ namespace kivm {
 
     class TypeArrayKlass : public ArrayKlass {
     private:
-        ValueType _component_type;
+        ValueType _componentType;
 
         // Only available when dimension > 1
-        TypeArrayKlass *_down_dimension_type;
+        TypeArrayKlass *_downDimensionType;
 
     public:
-        TypeArrayKlass(ClassLoader *class_loader, mirrorOop java_loader,
-                       int dimension, ValueType component_type);
+        TypeArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
+                       int dimension, ValueType componentType);
 
-        TypeArrayKlass(ClassLoader *class_loader, TypeArrayKlass *down_type);
+        TypeArrayKlass(ClassLoader *classLoader, TypeArrayKlass *downType);
 
         ValueType getComponentType() const {
-            return _component_type;
+            return _componentType;
         }
 
         bool isObjectArray() override {
@@ -57,7 +57,7 @@ namespace kivm {
         }
 
         TypeArrayKlass *getDownDimensionType() const {
-            return _down_dimension_type;
+            return _downDimensionType;
         }
 
         typeArrayOop newInstance(int length);
@@ -65,19 +65,19 @@ namespace kivm {
 
     class ObjectArrayKlass : public ArrayKlass {
     private:
-        InstanceKlass *_component_type;
+        InstanceKlass *_componentType;
 
         // Only available when dimension > 1
-        ObjectArrayKlass *_down_dimension_type;
+        ObjectArrayKlass *_downDimensionType;
 
     public:
-        ObjectArrayKlass(ClassLoader *class_loader, mirrorOop java_loader,
-                         int dimension, InstanceKlass *component_type);
+        ObjectArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
+                         int dimension, InstanceKlass *componentType);
 
-        ObjectArrayKlass(ClassLoader *class_loader, ObjectArrayKlass *down_type);
+        ObjectArrayKlass(ClassLoader *classLoader, ObjectArrayKlass *downType);
 
         InstanceKlass *getComponentType() const {
-            return _component_type;
+            return _componentType;
         }
 
         bool isObjectArray() override {
@@ -85,7 +85,7 @@ namespace kivm {
         }
 
         ObjectArrayKlass *getDownDimensionType() const {
-            return _down_dimension_type;
+            return _downDimensionType;
         }
 
         objectArrayOop newInstance(int length);

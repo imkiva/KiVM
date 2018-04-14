@@ -11,7 +11,7 @@ namespace kivm {
     class instanceOopDesc : public oopDesc {
         friend class InstanceKlass;
 
-        std::vector<oop> _instance_field_values;
+        std::vector<oop> _instanceFieldValues;
 
     public:
         explicit instanceOopDesc(InstanceKlass *klass);

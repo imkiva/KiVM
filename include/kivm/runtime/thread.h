@@ -19,8 +19,8 @@ namespace kivm {
         friend class ByteCodeInterpreter;
 
     protected:
-        instanceOop _java_thread_object;
-        std::thread *_native_thread;
+        instanceOop _javaThreadObject;
+        std::thread *_nativeThread;
 
         ThreadState _state;
         Method *_method;
@@ -37,8 +37,8 @@ namespace kivm {
             return _frames.getCurrentFrame();
         }
 
-        void setJavaThreadObject(instanceOop java_thread) {
-            this->_java_thread_object = java_thread;
+        void setJavaThreadObject(instanceOop javaThread) {
+            this->_javaThreadObject = javaThread;
         }
 
     public:
@@ -46,22 +46,22 @@ namespace kivm {
 
         virtual ~Thread();
 
-        void create(instanceOop java_thread);
+        void create(instanceOop javaThread);
 
         long getEetop() const;
 
         virtual void onThreadLaunched();
 
         inline instanceOop getJavaThreadObject() const {
-            return _java_thread_object;
+            return _javaThreadObject;
         }
 
         ThreadState getThreadState() const {
             return _state;
         }
 
-        void setThreadState(ThreadState _state) {
-            Thread::_state = _state;
+        void setThreadState(ThreadState threadState) {
+            Thread::_state = threadState;
         }
     };
 
@@ -95,13 +95,13 @@ namespace kivm {
     class Threads {
     private:
         static int &getAppThreadCount() {
-            static int app_thread_count;
-            return app_thread_count;
+            static int appThreadCount;
+            return appThreadCount;
         }
 
         static std::list<Thread *> getAppThreadList() {
-            static std::list<Thread *> app_threads;
-            return app_threads;
+            static std::list<Thread *> appThreads;
+            return appThreads;
         }
 
     public:
@@ -117,9 +117,9 @@ namespace kivm {
             return lock;
         }
 
-        static void add(Thread *java_thread) {
+        static void add(Thread *javaThread) {
             appThreadLock().lock();
-            getAppThreadList().push_back(java_thread);
+            getAppThreadList().push_back(javaThread);
             ++getAppThreadCount();
             appThreadLock().unlock();
         }

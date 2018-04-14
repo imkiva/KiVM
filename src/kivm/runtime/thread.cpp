@@ -13,13 +13,13 @@ namespace kivm {
     Thread::Thread(Method *method, const std::list<oop> &args)
         : _frames(RuntimeConfig::get().threadMaxStackSize),
           _method(method), _args(args),
-          _java_thread_object(nullptr), _native_thread(nullptr),
+          _javaThreadObject(nullptr), _nativeThread(nullptr),
           _pc(0), _state(ThreadState::RUNNING) {
     }
 
-    void Thread::create(instanceOop java_thread) {
-        this->_java_thread_object = java_thread;
-        this->_native_thread = new std::thread([this] {
+    void Thread::create(instanceOop javaThread) {
+        this->_javaThreadObject = javaThread;
+        this->_nativeThread = new std::thread([this] {
             if (this->shouldRecordInThreadTable()) {
                 D("should_record_in_thread_table == true, recording.");
                 Threads::add(this);
@@ -38,7 +38,7 @@ namespace kivm {
     }
 
     long Thread::getEetop() const {
-        return (long) this->_native_thread->native_handle();
+        return (long) this->_nativeThread->native_handle();
     }
 
     Thread::~Thread() = default;
@@ -50,7 +50,7 @@ namespace kivm {
     void JavaThread::start() {
         // No other threads will join this thread.
         // So it is OK to detach()
-        this->_native_thread->detach();
+        this->_nativeThread->detach();
 
         // A thread must start with an empty frame
         assert(_frames.getSize() == 0);

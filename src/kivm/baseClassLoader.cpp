@@ -11,24 +11,24 @@
 #include <sstream>
 
 namespace kivm {
-    Klass *BaseClassLoader::loadClass(const String &class_name) {
+    Klass *BaseClassLoader::loadClass(const String &className) {
         static const char *KLASSPATH_ENV = getenv("KLASSPATH");
         static String RT_DIR = KLASSPATH_ENV == nullptr
                                ? L""
                                : strings::fromStdString(KLASSPATH_ENV);
 
         // Load array class
-        if (class_name[0] == L'[') {
+        if (className[0] == L'[') {
             // [I
             int dimension = 0;
-            while (class_name[++dimension] == L'[') continue;
+            while (className[++dimension] == L'[') continue;
 
             // Load 1-dimension array directly
             if (dimension == 1) {
                 // for example: [Ljava/lang/Object;
-                if (class_name[1] == L'L') {
+                if (className[1] == L'L') {
                     // java/lang/Object
-                    const String &component = class_name.substr(2, class_name.size() - 3);
+                    const String &component = className.substr(2, className.size() - 3);
                     auto *component_class = (InstanceKlass *) loadClass(component);
                     return component_class != nullptr
                            ? new ObjectArrayKlass(this, nullptr, dimension, component_class)
@@ -36,13 +36,13 @@ namespace kivm {
                 }
 
                 // for example: LI -> I
-                ValueType component_type = primitiveTypeToValueType(class_name[1]);
+                ValueType component_type = primitiveTypeToValueType(className[1]);
                 return new TypeArrayKlass(this, nullptr, dimension, component_type);
             }
 
             // Load multi-dimension array recursively
             // remove the first '['
-            const String &down_type_name = class_name.substr(1);
+            const String &down_type_name = className.substr(1);
             auto *down_type = (ArrayKlass *) loadClass(down_type_name);
             if (down_type == nullptr) {
                 return nullptr;
@@ -57,7 +57,7 @@ namespace kivm {
 
         // Load instance class
         std::wstringstream path_builder;
-        path_builder << RT_DIR << L'/' << class_name << L".class";
+        path_builder << RT_DIR << L'/' << className << L".class";
         const String &class_file_path = path_builder.str();
         ClassFileParser classFileParser(strings::toStdString(class_file_path).c_str());
         ClassFile *classFile = classFileParser.getParsedClassFile();

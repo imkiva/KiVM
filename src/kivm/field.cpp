@@ -40,21 +40,21 @@ namespace kivm {
         return ss.str();
     }
 
-    Field::Field(InstanceKlass *clazz, field_info *field_info) {
+    Field::Field(InstanceKlass *clazz, field_info *fieldInfo) {
         this->_linked = false;
         this->_klass = clazz;
-        this->_field_info = field_info;
-        this->_constant_attribute = nullptr;
-        this->_value_class_type = nullptr;
+        this->_fieldInfo = fieldInfo;
+        this->_constantAttr = nullptr;
+        this->_valueClassType = nullptr;
     }
 
     void Field::linkField(cp_info **pool) {
         if (_linked) {
             return;
         }
-        this->_access_flag = _field_info->access_flags;
-        auto *name_info = requireConstant<CONSTANT_Utf8_info>(pool, _field_info->name_index);
-        auto *desc_info = requireConstant<CONSTANT_Utf8_info>(pool, _field_info->descriptor_index);
+        this->_accessFlag = _fieldInfo->access_flags;
+        auto *name_info = requireConstant<CONSTANT_Utf8_info>(pool, _fieldInfo->name_index);
+        auto *desc_info = requireConstant<CONSTANT_Utf8_info>(pool, _fieldInfo->descriptor_index);
         this->_name = name_info->get_constant();
         this->_descriptor = desc_info->get_constant();
         linkAttributes(pool);
@@ -63,12 +63,12 @@ namespace kivm {
     }
 
     void Field::linkAttributes(cp_info **pool) {
-        for (int i = 0; i < _field_info->attributes_count; ++i) {
-            attribute_info *attr = _field_info->attributes[i];
+        for (int i = 0; i < _fieldInfo->attributes_count; ++i) {
+            attribute_info *attr = _fieldInfo->attributes[i];
 
             switch (AttributeParser::toAttributeTag(attr->attribute_name_index, pool)) {
                 case ATTRIBUTE_ConstantValue: {
-                    _constant_attribute = (ConstantValue_attribute *) (attr);
+                    _constantAttr = (ConstantValue_attribute *) (attr);
                     break;
                 }
                 case ATTRIBUTE_Signature: {
@@ -90,39 +90,39 @@ namespace kivm {
     void Field::linkValueType() {
         switch (_descriptor[0]) {
             case L'Z':
-                _value_type = ValueType::BOOLEAN;
+                _valueType = ValueType::BOOLEAN;
                 break;
             case L'B':
-                _value_type = ValueType::BYTE;
+                _valueType = ValueType::BYTE;
                 break;
             case L'C':
-                _value_type = ValueType::CHAR;
+                _valueType = ValueType::CHAR;
                 break;
             case L'S':
-                _value_type = ValueType::SHORT;
+                _valueType = ValueType::SHORT;
                 break;
             case L'I':
-                _value_type = ValueType::INT;
+                _valueType = ValueType::INT;
                 break;
             case L'F':
-                _value_type = ValueType::FLOAT;
+                _valueType = ValueType::FLOAT;
                 break;
             case L'J':
-                _value_type = ValueType::LONG;
+                _valueType = ValueType::LONG;
                 break;
             case L'D':
-                _value_type = ValueType::DOUBLE;
+                _valueType = ValueType::DOUBLE;
                 break;
             case L'L': {
-                _value_type = ValueType::OBJECT;
+                _valueType = ValueType::OBJECT;
                 const String &class_name = _descriptor.substr(1, _descriptor.size() - 2);
-                _value_class_type = ClassLoader::requireClass(getClass()->getClassLoader(),
+                _valueClassType = ClassLoader::requireClass(getClass()->getClassLoader(),
                                                               class_name);
                 break;
             }
             case L'[': {
-                _value_type = ValueType::ARRAY;
-                _value_class_type = ClassLoader::requireClass(getClass()->getClassLoader(),
+                _valueType = ValueType::ARRAY;
+                _valueClassType = ClassLoader::requireClass(getClass()->getClassLoader(),
                                                               _descriptor);
                 break;
             }

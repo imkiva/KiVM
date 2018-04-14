@@ -20,14 +20,14 @@ namespace kivm {
             classLoader = BootstrapClassLoader::get();
         }
 
-        Klass *loaded_class = classLoader == nullptr
+        Klass *loadedClass = classLoader == nullptr
                               ? nullptr
                               : classLoader->loadClass(className);
-        if (loaded_class == nullptr) {
+        if (loadedClass == nullptr) {
             // TODO: throw LinkageError
             PANIC("LinkageError");
         }
-        return loaded_class;
+        return loadedClass;
     }
 
     BootstrapClassLoader *BootstrapClassLoader::get() {
@@ -35,19 +35,19 @@ namespace kivm {
         return &classLoader;
     }
 
-    Klass *BootstrapClassLoader::loadClass(const String &class_name) {
+    Klass *BootstrapClassLoader::loadClass(const String &className) {
         RecursiveLockGuard guard(get_bootstrap_lock());
 
         // check whether class is already loaded
-        auto iter = SystemDictionary::get()->find(class_name);
+        auto iter = SystemDictionary::get()->find(className);
         if (iter != nullptr) {
             return iter;
         }
 
         // OK, let's find it!
-        auto *klass = BaseClassLoader::loadClass(class_name);
+        auto *klass = BaseClassLoader::loadClass(className);
         if (klass != nullptr) {
-            SystemDictionary::get()->put(class_name, klass);
+            SystemDictionary::get()->put(className, klass);
             klass->setClassState(ClassState::LOADED);
             klass->linkAndInit();
         }

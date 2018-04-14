@@ -10,9 +10,9 @@ namespace kivm {
 
     instanceOopDesc::instanceOopDesc(InstanceKlass *klass)
         : oopDesc(klass, oopType::INSTANCE_OOP) {
-        this->_instance_field_values.resize(klass->_instance_fields.size());
-        for (auto &e : klass->_instance_fields) {
-            helperInitField(this->_instance_field_values, e.second->_offset, e.second->_field);
+        this->_instanceFieldValues.resize(klass->_instanceFields.size());
+        for (auto &e : klass->_instanceFields) {
+            helperInitField(this->_instanceFieldValues, e.second->_offset, e.second->_field);
         }
     }
 }

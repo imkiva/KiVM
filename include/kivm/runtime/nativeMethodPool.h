@@ -4,10 +4,15 @@
 #pragma once
 
 #include <kivm/method.h>
+#include <unordered_map>
 
 namespace kivm {
     class NativeMethodPool {
+    private:
+        std::unordered_map<Method *, void *> _nativeMethods;
     public:
-        static void *resolve(Method *method);
+        static NativeMethodPool *get();
+
+        void *resolve(Method *method);
     };
 }

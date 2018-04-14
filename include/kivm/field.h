@@ -31,17 +31,17 @@ namespace kivm {
         String _name;
         String _descriptor;
         String _signature;
-        u2 _access_flag;
+        u2 _accessFlag;
 
-        ValueType _value_type;
+        ValueType _valueType;
 
         /**
          * Only available when _value_type is OBJECT or ARRAY
          */
-        Klass *_value_class_type;
+        Klass *_valueClassType;
 
-        field_info *_field_info;
-        ConstantValue_attribute *_constant_attribute;
+        field_info *_fieldInfo;
+        ConstantValue_attribute *_constantAttr;
 
         bool _linked;
 
@@ -50,7 +50,7 @@ namespace kivm {
         void linkValueType();
 
     public:
-        Field(InstanceKlass *clazz, field_info *field_info);
+        Field(InstanceKlass *clazz, field_info *fieldInfo);
 
         void linkField(cp_info **pool);
 
@@ -71,15 +71,15 @@ namespace kivm {
         }
 
         ConstantValue_attribute *getConstantAttribute() const {
-            return _constant_attribute;
+            return _constantAttr;
         }
 
         u2 getAccessFlag() const {
-            return _access_flag;
+            return _accessFlag;
         }
 
         ValueType getValueType() const {
-            return _value_type;
+            return _valueType;
         }
 
         bool isLinked() const {

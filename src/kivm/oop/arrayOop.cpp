@@ -5,8 +5,8 @@
 #include <kivm/oop/arrayOop.h>
 
 namespace kivm {
-    arrayOopDesc::arrayOopDesc(ArrayKlass *array_klass, oopType type, int length)
-        : oopDesc(array_klass, type) {
+    arrayOopDesc::arrayOopDesc(ArrayKlass *arrayClass, oopType type, int length)
+        : oopDesc(arrayClass, type) {
         _elements.resize(static_cast<unsigned>(length));
         _elements.shrink_to_fit();
     }
@@ -35,11 +35,11 @@ namespace kivm {
         _elements[position] = element;
     }
 
-    typeArrayOopDesc::typeArrayOopDesc(TypeArrayKlass *array_klass, int length)
-        : arrayOopDesc(array_klass, oopType::TYPE_ARRAY_OOP, length) {
+    typeArrayOopDesc::typeArrayOopDesc(TypeArrayKlass *arrayClass, int length)
+        : arrayOopDesc(arrayClass, oopType::TYPE_ARRAY_OOP, length) {
     }
 
-    objectArrayOopDesc::objectArrayOopDesc(ObjectArrayKlass *array_klass, int length)
-        : arrayOopDesc(array_klass, oopType::OBJECT_ARRAY_OOP, length) {
+    objectArrayOopDesc::objectArrayOopDesc(ObjectArrayKlass *arrayClass, int length)
+        : arrayOopDesc(arrayClass, oopType::OBJECT_ARRAY_OOP, length) {
     }
 }

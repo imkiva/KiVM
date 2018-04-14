@@ -39,7 +39,7 @@ namespace kivm {
 
     void JavaMainThread::onThreadLaunched() {
         // Start the first app thread to run main(String[])
-        this->_native_thread->join();
+        this->_nativeThread->join();
 
         // Then, let's wait for all app threads to finish
         for (;;) {

@@ -8,62 +8,62 @@
 
 namespace kivm {
 
-    ArrayKlass::ArrayKlass(ClassLoader *class_loader, mirrorOop java_loader,
-                           int dimension, ClassType class_type)
-        : _class_loader(class_loader),
-          _java_loader(java_loader),
+    ArrayKlass::ArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
+                           int dimension, ClassType classType)
+        : _classLoader(classLoader),
+          _javaLoader(javaLoader),
           _dimension(dimension) {
-        this->setClassType(class_type);
+        this->setClassType(classType);
     }
 
     void ArrayKlass::linkAndInit() {
         this->setClassState(ClassState::LINKED);
     }
 
-    TypeArrayKlass::TypeArrayKlass(ClassLoader *class_loader, mirrorOop java_loader,
-                                   int dimension, ValueType component_type)
-        : ArrayKlass(class_loader, java_loader, dimension, ClassType::TYPE_ARRAY_CLASS),
-          _component_type(component_type),
-          _down_dimension_type(nullptr) {
+    TypeArrayKlass::TypeArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
+                                   int dimension, ValueType componentType)
+        : ArrayKlass(classLoader, javaLoader, dimension, ClassType::TYPE_ARRAY_CLASS),
+          _componentType(componentType),
+          _downDimensionType(nullptr) {
         std::wstringstream ss;
         for (int i = 0; i < dimension; ++i) {
             ss << L"[";
         }
-        ss << valueTypeToPrimitiveType(component_type);
+        ss << valueTypeToPrimitiveType(componentType);
         this->setName(ss.str());
     }
 
-    TypeArrayKlass::TypeArrayKlass(ClassLoader *class_loader, TypeArrayKlass *down_type)
-        : TypeArrayKlass(class_loader,
-                         down_type->getJavaMirror(),
-                         down_type->getDimension() + 1,
-                         down_type->getComponentType()) {
-        this->_down_dimension_type = down_type;
+    TypeArrayKlass::TypeArrayKlass(ClassLoader *classLoader, TypeArrayKlass *downType)
+        : TypeArrayKlass(classLoader,
+                         downType->getJavaMirror(),
+                         downType->getDimension() + 1,
+                         downType->getComponentType()) {
+        this->_downDimensionType = downType;
     }
 
     typeArrayOop TypeArrayKlass::newInstance(int length) {
         return new typeArrayOopDesc(this, length);
     }
 
-    ObjectArrayKlass::ObjectArrayKlass(ClassLoader *class_loader, mirrorOop java_loader,
-                                       int dimension, InstanceKlass *component_type)
-        : ArrayKlass(class_loader, java_loader, dimension, ClassType::OBJECT_ARRAY_CLASS),
-          _component_type(component_type),
-          _down_dimension_type(nullptr) {
+    ObjectArrayKlass::ObjectArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
+                                       int dimension, InstanceKlass *componentType)
+        : ArrayKlass(classLoader, javaLoader, dimension, ClassType::OBJECT_ARRAY_CLASS),
+          _componentType(componentType),
+          _downDimensionType(nullptr) {
         std::wstringstream ss;
         for (int i = 0; i < dimension; ++i) {
             ss << L"[";
         }
-        ss << L"L" << component_type->getName() << L";";
+        ss << L"L" << componentType->getName() << L";";
         this->setName(ss.str());
     }
 
-    ObjectArrayKlass::ObjectArrayKlass(ClassLoader *class_loader, ObjectArrayKlass *down_type)
-        : ObjectArrayKlass(class_loader,
-                           down_type->getJavaMirror(),
-                           down_type->getDimension() + 1,
-                           down_type->getComponentType()) {
-        this->_down_dimension_type = down_type;
+    ObjectArrayKlass::ObjectArrayKlass(ClassLoader *classLoader, ObjectArrayKlass *downType)
+        : ObjectArrayKlass(classLoader,
+                           downType->getJavaMirror(),
+                           downType->getDimension() + 1,
+                           downType->getComponentType()) {
+        this->_downDimensionType = downType;
     }
 
     objectArrayOop ObjectArrayKlass::newInstance(int length) {

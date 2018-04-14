@@ -16,9 +16,9 @@ namespace kivm {
         Frame *_previous;
         Method *_method;
 
-        bool _native_frame;
-        bool _exception_occurred;
-        u4 _return_pc;
+        bool _nativeFrame;
+        bool _exceptionOccurred;
+        u4 _returnPc;
 
         Locals _locals;
         Stack _stack;
@@ -31,11 +31,11 @@ namespace kivm {
         }
 
         bool isNativeFrame() const {
-            return _native_frame;
+            return _nativeFrame;
         }
 
         bool isExceptionOccurred() const {
-            return _exception_occurred;
+            return _exceptionOccurred;
         }
 
         Locals &getLocals() {
@@ -47,7 +47,7 @@ namespace kivm {
         }
 
         u4 getReturnPc() const {
-            return this->_return_pc;
+            return this->_returnPc;
         }
 
         void setMethod(Method *_method) {
@@ -55,15 +55,15 @@ namespace kivm {
         }
 
         void setNativeFrame(bool _native_frame) {
-            this->_native_frame = _native_frame;
+            this->_nativeFrame = _native_frame;
         }
 
         void setExceptionOccurred(bool _exception_occurred) {
-            this->_exception_occurred = _exception_occurred;
+            this->_exceptionOccurred = _exception_occurred;
         }
 
         void setReturnPc(u4 _return_pc) {
-            this->_return_pc = _return_pc;
+            this->_returnPc = _return_pc;
         }
     };
 

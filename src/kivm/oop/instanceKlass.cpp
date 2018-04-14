@@ -11,24 +11,24 @@
 #include <sstream>
 
 namespace kivm {
-    InstanceKlass::InstanceKlass(ClassFile *class_file, ClassLoader *class_loader,
-                                 mirrorOop java_loader, ClassType class_type)
-        : _runtime_pool(this),
-          _java_loader(java_loader),
-          _class_file(class_file),
-          _class_loader(class_loader),
-          _n_instance_fields(0),
-          _n_static_fields(0),
-          _em_attr(nullptr),
-          _bm_attr(nullptr),
-          _ic_attr(nullptr) {
-        this->setClassType(class_type);
+    InstanceKlass::InstanceKlass(ClassFile *classFile, ClassLoader *classLoader,
+                                 mirrorOop javaLoader, ClassType classType)
+        : _runtimePool(this),
+          _javaLoader(javaLoader),
+          _classFile(classFile),
+          _classLoader(classLoader),
+          _nInstanceFields(0),
+          _nStaticFields(0),
+          _enclosingMethodAttr(nullptr),
+          _bootstrapMethodAttr(nullptr),
+          _innerClassAttr(nullptr) {
+        this->setClassType(classType);
     }
 
-    InstanceKlass *InstanceKlass::requireInstanceClass(u2 class_info_index) {
-        auto *class_info = requireConstant<CONSTANT_Class_info>(_class_file->constant_pool,
-                                                                class_info_index);
-        auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(_class_file->constant_pool,
+    InstanceKlass *InstanceKlass::requireInstanceClass(u2 classInfoIndex) {
+        auto *class_info = requireConstant<CONSTANT_Class_info>(_classFile->constant_pool,
+                                                                classInfoIndex);
+        auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(_classFile->constant_pool,
                                                               class_info->name_index);
 
         Klass *loaded = ClassLoader::requireClass(getClassLoader(), utf8_info->get_constant());
@@ -42,10 +42,10 @@ namespace kivm {
     }
 
     void InstanceKlass::linkAndInit() {
-        cp_info **pool = _class_file->constant_pool;
-        this->setAccessFlag(_class_file->access_flags);
+        cp_info **pool = _classFile->constant_pool;
+        this->setAccessFlag(_classFile->access_flags);
 
-        auto *class_info = requireConstant<CONSTANT_Class_info>(pool, _class_file->this_class);
+        auto *class_info = requireConstant<CONSTANT_Class_info>(pool, _classFile->this_class);
         auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(pool, class_info->name_index);
         this->setName(utf8_info->get_constant());
 
@@ -59,7 +59,7 @@ namespace kivm {
     }
 
     void InstanceKlass::linkSuperClass(cp_info **pool) {
-        if (_class_file->super_class == 0) {
+        if (_classFile->super_class == 0) {
             // java.lang.Object
             if (getName() != L"java/lang/Object") {
                 // TODO: throw VerifyError
@@ -71,7 +71,7 @@ namespace kivm {
             return;
         }
 
-        auto *super_class = requireInstanceClass(_class_file->super_class);
+        auto *super_class = requireInstanceClass(_classFile->super_class);
         if (super_class->isFinal()) {
             // TODO: throw VerifyError
             this->setClassState(ClassState::INITIALIZATION_ERROR);
@@ -81,8 +81,8 @@ namespace kivm {
     }
 
     void InstanceKlass::linkInterfaces(cp_info **pool) {
-        for (int i = 0; i < _class_file->interfaces_count; ++i) {
-            InstanceKlass *interface_class = requireInstanceClass(_class_file->interfaces[i]);
+        for (int i = 0; i < _classFile->interfaces_count; ++i) {
+            InstanceKlass *interface_class = requireInstanceClass(_classFile->interfaces[i]);
             _interfaces.insert(std::make_pair(interface_class->getName(), interface_class));
         }
     }
@@ -96,14 +96,14 @@ namespace kivm {
             this->_vtable = sc->_vtable;
         }
 
-        for (int i = 0; i < _class_file->methods_count; ++i) {
-            auto *method = new Method(this, _class_file->methods + i);
+        for (int i = 0; i < _classFile->methods_count; ++i) {
+            auto *method = new Method(this, _classFile->methods + i);
             method->linkMethod(pool);
             MethodPool::add(method);
 
             const auto &id = Method::makeIdentity(method);
             const auto &pair = make_pair(id, method);
-            _all_methods.insert(pair);
+            _allMethods.insert(pair);
 
             if (method->isStatic()) {
                 _stable.insert(pair);
@@ -126,14 +126,14 @@ namespace kivm {
         int instance_field_index = 0;
 
         // instance fields in superclass
-        if (this->_super_class != nullptr) {
-            auto *super = (InstanceKlass *) this->_super_class;
-            for (auto e : super->_instance_fields) {
+        if (this->_superClass != nullptr) {
+            auto *super = (InstanceKlass *) this->_superClass;
+            for (auto e : super->_instanceFields) {
                 D("%s: Extended instance field: #%-d %s",
                   strings::toStdString(getName()).c_str(),
                   instance_field_index,
                   strings::toStdString(e.first).c_str());
-                this->_instance_fields.insert(
+                this->_instanceFields.insert(
                     make_pair(e.first,
                               new FieldID(instance_field_index++, e.second->_field)));
             }
@@ -141,13 +141,13 @@ namespace kivm {
 
         // instance fields in interfaces
         for (auto interface : this->_interfaces) {
-            for (auto field : interface.second->_instance_fields) {
+            for (auto field : interface.second->_instanceFields) {
                 D("%s: Extended interface instance field: #%-d %s",
                   strings::toStdString(getName()).c_str(),
                   instance_field_index,
                   strings::toStdString(field.first).c_str());
 
-                this->_instance_fields.insert(
+                this->_instanceFields.insert(
                     make_pair(field.first,
                               new FieldID(instance_field_index++, field.second->_field)));
             }
@@ -155,8 +155,8 @@ namespace kivm {
 
         // link our fields
         int static_field_index = 0;
-        for (int i = 0; i < _class_file->fields_count; ++i) {
-            auto *field = new Field(this, _class_file->fields + i);
+        for (int i = 0; i < _classFile->fields_count; ++i) {
+            auto *field = new Field(this, _classFile->fields + i);
             field->linkField(pool);
             FieldPool::add(field);
 
@@ -164,9 +164,9 @@ namespace kivm {
                 // static final fields should be initialized with constant values in constant pool.
                 // static non-final fields should be initialized with specified values.
                 if (!field->isFinal()) {
-                    helperInitField(_static_field_values, static_field_index, field);
+                    helperInitField(_staticFieldValues, static_field_index, field);
 
-                } else if (!helperInitConstantField(_static_field_values, pool, field)) {
+                } else if (!helperInitConstantField(_staticFieldValues, pool, field)) {
                     // TODO: throw VerifyError: static final fields must be initialized.
                     assert(false);
                 }
@@ -176,7 +176,7 @@ namespace kivm {
                   static_field_index,
                   strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
-                _static_fields.insert(make_pair(Field::makeIdentity(this, field),
+                _staticFields.insert(make_pair(Field::makeIdentity(this, field),
                                                 new FieldID(static_field_index++, field)));
             } else {
                 D("%s: New instance field: #%-d %s",
@@ -184,29 +184,29 @@ namespace kivm {
                   instance_field_index,
                   strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
-                _instance_fields.insert(make_pair(Field::makeIdentity(this, field),
+                _instanceFields.insert(make_pair(Field::makeIdentity(this, field),
                                                   new FieldID(instance_field_index++, field)));
             }
         }
-        this->_static_field_values.shrink_to_fit();
-        this->_n_static_fields = static_field_index;
-        this->_n_instance_fields = instance_field_index;
+        this->_staticFieldValues.shrink_to_fit();
+        this->_nStaticFields = static_field_index;
+        this->_nInstanceFields = instance_field_index;
     }
 
-    void InstanceKlass::linkConstantPool(cp_info **constant_pool) {
-        getRuntimeConstantPool()->attachConstantPool(constant_pool);
+    void InstanceKlass::linkConstantPool(cp_info **pool) {
+        getRuntimeConstantPool()->attachConstantPool(pool);
     }
 
     void InstanceKlass::linkAttributes(cp_info **pool) {
-        for (int i = 0; i < _class_file->attributes_count; ++i) {
-            attribute_info *attr = _class_file->attributes[i];
+        for (int i = 0; i < _classFile->attributes_count; ++i) {
+            attribute_info *attr = _classFile->attributes[i];
 
             switch (AttributeParser::toAttributeTag(attr->attribute_name_index, pool)) {
                 case ATTRIBUTE_InnerClasses:
-                    _ic_attr = (InnerClasses_attribute *) attr;
+                    _innerClassAttr = (InnerClasses_attribute *) attr;
                     break;
                 case ATTRIBUTE_EnclosingMethod:
-                    _em_attr = (EnclosingMethod_attribute *) attr;
+                    _enclosingMethodAttr = (EnclosingMethod_attribute *) attr;
                     break;
                 case ATTRIBUTE_Signature: {
                     auto *sig_attr = (Signature_attribute *) attr;
@@ -217,11 +217,11 @@ namespace kivm {
                 case ATTRIBUTE_SourceFile: {
                     auto *s = (SourceFile_attribute *) attr;
                     auto *utf8 = requireConstant<CONSTANT_Utf8_info>(pool, s->sourcefile_index);
-                    _source_file = utf8->get_constant();
+                    _sourceFile = utf8->get_constant();
                     break;
                 }
                 case ATTRIBUTE_BootstrapMethods:
-                    _bm_attr = (BootstrapMethods_attribute *) attr;
+                    _bootstrapMethodAttr = (BootstrapMethods_attribute *) attr;
                     break;
                 case ATTRIBUTE_RuntimeVisibleAnnotations:
                 case ATTRIBUTE_RuntimeVisibleTypeAnnotations:
@@ -265,7 +265,7 @@ namespace kivm {
     FieldID* InstanceKlass::getStaticFieldInfo(const String &className,
                                               const String &name,
                                               const String &descriptor) const {
-        RETURN_IF(iter, this->_static_fields,
+        RETURN_IF(iter, this->_staticFields,
                   KEY_MAKER(className, name, descriptor),
                   iter->second,
                   nullptr);
@@ -274,14 +274,14 @@ namespace kivm {
     FieldID* InstanceKlass::getInstanceFieldInfo(const String &className,
                                                 const String &name,
                                                 const String &descriptor) const {
-        RETURN_IF(iter, this->_instance_fields,
+        RETURN_IF(iter, this->_instanceFields,
                   KEY_MAKER(className, name, descriptor),
                   iter->second,
                   nullptr);
     }
 
     Method *InstanceKlass::getThisClassMethod(const String &name, const String &descriptor) const {
-        RETURN_IF(iter, this->_all_methods,
+        RETURN_IF(iter, this->_allMethods,
                   ND_KEY_MAKER(name, descriptor),
                   iter->second, nullptr);
     }
@@ -329,7 +329,7 @@ namespace kivm {
           strings::toStdString(fieldID->_field->getName()).c_str(),
           strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
           value);
-        this->_static_field_values[fieldID->_offset] = value;
+        this->_staticFieldValues[fieldID->_offset] = value;
     }
 
     bool InstanceKlass::getStaticFieldValue(const String &className,
@@ -345,7 +345,7 @@ namespace kivm {
             return false;
         }
 
-        *result = this->_static_field_values[fieldID->_offset];
+        *result = this->_staticFieldValues[fieldID->_offset];
         return true;
     }
 
@@ -369,7 +369,7 @@ namespace kivm {
           strings::toStdString(fieldID->_field->getName()).c_str(),
           strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
           value);
-        receiver->_instance_field_values[fieldID->_offset] = value;
+        receiver->_instanceFieldValues[fieldID->_offset] = value;
     }
 
     bool InstanceKlass::getInstanceFieldValue(instanceOop receiver, const String &className,
@@ -386,7 +386,7 @@ namespace kivm {
             return false;
         }
 
-        *result = receiver->_instance_field_values[fieldID->_offset];
+        *result = receiver->_instanceFieldValues[fieldID->_offset];
         return true;
     }
 

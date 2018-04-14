@@ -26,28 +26,28 @@ namespace kivm {
         friend class instanceOopDesc;
 
     private:
-        ClassLoader *_class_loader;
-        mirrorOop _java_loader;
+        ClassLoader *_classLoader;
+        mirrorOop _javaLoader;
 
-        ClassFile *_class_file;
-        String _source_file;
+        ClassFile *_classFile;
+        String _sourceFile;
         String _signature;
 
-        InnerClasses_attribute *_ic_attr;
-        EnclosingMethod_attribute *_em_attr;
-        BootstrapMethods_attribute *_bm_attr;
+        InnerClasses_attribute *_innerClassAttr;
+        EnclosingMethod_attribute *_enclosingMethodAttr;
+        BootstrapMethods_attribute *_bootstrapMethodAttr;
 
-        RuntimeConstantPool _runtime_pool;
+        RuntimeConstantPool _runtimePool;
 
-        int _n_static_fields;
+        int _nStaticFields;
 
-        int _n_instance_fields;
+        int _nInstanceFields;
 
         /**
          * all methods in this class.
          * map<name + " " + descriptor, method>
          */
-        std::unordered_map<String, Method *> _all_methods;
+        std::unordered_map<String, Method *> _allMethods;
 
         /**
          * virtual methods (public or protected methods).
@@ -71,18 +71,18 @@ namespace kivm {
          * static fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        std::unordered_map<String, FieldID *> _static_fields;
+        std::unordered_map<String, FieldID *> _staticFields;
 
         /**
          * instance fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        std::unordered_map<String, FieldID *> _instance_fields;
+        std::unordered_map<String, FieldID *> _instanceFields;
 
         /**
          * static fields' values.
          */
-        std::vector<oop> _static_field_values;
+        std::vector<oop> _staticFieldValues;
 
         /**
          * interfaces
@@ -91,9 +91,9 @@ namespace kivm {
         std::unordered_map<String, InstanceKlass *> _interfaces;
 
     private:
-        InstanceKlass *requireInstanceClass(u2 class_info_index);
+        InstanceKlass *requireInstanceClass(u2 classInfoIndex);
 
-        void linkConstantPool(cp_info **constant_pool);
+        void linkConstantPool(cp_info **pool);
 
         void linkSuperClass(cp_info **pool);
 
@@ -106,15 +106,15 @@ namespace kivm {
         void linkAttributes(cp_info **pool);
 
     public:
-        InstanceKlass(ClassFile *class_file, ClassLoader *class_loader,
-                      mirrorOop java_loader, ClassType class_type);
+        InstanceKlass(ClassFile *classFile, ClassLoader *classLoader,
+                      mirrorOop javaLoader, ClassType classType);
 
         ClassLoader *getClassLoader() const {
-            return _class_loader;
+            return _classLoader;
         }
 
         const String &getSourceFile() const {
-            return _source_file;
+            return _sourceFile;
         }
 
         const String &getSignature() const {
@@ -122,7 +122,7 @@ namespace kivm {
         }
 
         RuntimeConstantPool *getRuntimeConstantPool() {
-            return &this->_runtime_pool;
+            return &this->_runtimePool;
         }
 
         void linkAndInit() override;

@@ -14,7 +14,7 @@ namespace kivm {
         std::vector<oop> _elements;
 
     public:
-        explicit arrayOopDesc(ArrayKlass *array_klass, oopType type, int length);
+        explicit arrayOopDesc(ArrayKlass *arrayClass, oopType type, int length);
 
         int getDimension() const;
 
@@ -27,11 +27,11 @@ namespace kivm {
 
     class typeArrayOopDesc : public arrayOopDesc {
     public:
-        typeArrayOopDesc(TypeArrayKlass *array_klass, int length);
+        typeArrayOopDesc(TypeArrayKlass *arrayClass, int length);
     };
 
     class objectArrayOopDesc : public arrayOopDesc {
     public:
-        objectArrayOopDesc(ObjectArrayKlass *array_klass, int length);
+        objectArrayOopDesc(ObjectArrayKlass *arrayClass, int length);
     };
 }

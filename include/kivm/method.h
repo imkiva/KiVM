@@ -33,43 +33,43 @@ namespace kivm {
         String _name;
         String _descriptor;
         String _signature;
-        u2 _access_flag;
+        u2 _accessFlag;
 
         /**
          * basic information about a method
          */
-        CodeBlob _code_blob;
-        method_info *_method_info;
-        Exceptions_attribute *_exception_attr;
-        Code_attribute *_code_attr;
+        CodeBlob _codeBlob;
+        method_info *_methodInfo;
+        Exceptions_attribute *_exceptionAttr;
+        Code_attribute *_codeAttr;
 
         /**
          * only available when this method is a native method
          */
-        void *_native_pointer;
+        void *_nativePointer;
 
         /**
          * flags related to descriptor parsing
          */
-        bool _argument_value_types_resolved;
-        bool _argument_value_types_no_wrap_resolved;
-        bool _return_type_no_wrap_resolved;
-        bool _return_type_resolved;
+        bool _argumentValueTypesResolved;
+        bool _argumentValueTypesNoWrapResolved;
+        bool _returnTypeNoWrapResolved;
+        bool _returnTypeResolved;
         bool _linked;
 
         /**
          * result of descriptor parsing
          */
-        ValueType _return_type;
-        ValueType _return_type_no_wrap;
-        std::vector<ValueType> _argument_value_types;
-        std::vector<ValueType> _argument_value_types_no_wrap;
+        ValueType _returnType;
+        ValueType _returnTypeNoWrap;
+        std::vector<ValueType> _argumentValueTypes;
+        std::vector<ValueType> _argumentValueTypesNoWrap;
 
         /** this method is likely to throw these exceptions **/
         std::list<InstanceKlass *> _throws;
 
         /** map<start-pc, line-number> **/
-        std::unordered_map<u2, u2> _line_number_table;
+        std::unordered_map<u2, u2> _lineNumberTable;
 
     private:
         void linkAttributes(cp_info **pool);
@@ -81,7 +81,7 @@ namespace kivm {
         bool isPcCorrect(u4 pc);
 
     public:
-        Method(InstanceKlass *clazz, method_info *method_info);
+        Method(InstanceKlass *clazz, method_info *methodInfo);
 
         void linkMethod(cp_info **pool);
 
@@ -143,11 +143,11 @@ namespace kivm {
         }
 
         u2 getAccessFlag() const {
-            return _access_flag;
+            return _accessFlag;
         }
 
         const CodeBlob &getCodeBlob() const {
-            return _code_blob;
+            return _codeBlob;
         }
 
         bool isLinked() const {
@@ -187,11 +187,11 @@ namespace kivm {
         }
 
         int getMaxLocals() const {
-            return _code_attr != nullptr ? _code_attr->max_locals : 0;
+            return _codeAttr != nullptr ? _codeAttr->max_locals : 0;
         }
 
         int getMaxStack() const {
-            return _code_attr != nullptr ? _code_attr->max_stack : 0;
+            return _codeAttr != nullptr ? _codeAttr->max_stack : 0;
         }
     };
 

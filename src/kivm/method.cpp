@@ -40,20 +40,20 @@ namespace kivm {
         return ss.str();
     }
 
-    Method::Method(InstanceKlass *clazz, method_info *method_info) {
+    Method::Method(InstanceKlass *clazz, method_info *methodInfo) {
         this->_linked = false;
         this->_klass = clazz;
-        this->_method_info = method_info;
-        this->_code_attr = nullptr;
-        this->_exception_attr = nullptr;
-        this->_argument_value_types_resolved = false;
-        this->_return_type_resolved = false;
+        this->_methodInfo = methodInfo;
+        this->_codeAttr = nullptr;
+        this->_exceptionAttr = nullptr;
+        this->_argumentValueTypesResolved = false;
+        this->_returnTypeResolved = false;
     }
 
     bool Method::isPcCorrect(u4 pc) {
-        return _code_attr != nullptr
-               && _code_attr->code_length > 0
-               && pc < _code_attr->code_length;
+        return _codeAttr != nullptr
+               && _codeAttr->code_length > 0
+               && pc < _codeAttr->code_length;
     }
 
     void Method::linkMethod(cp_info **pool) {
@@ -61,9 +61,9 @@ namespace kivm {
             return;
         }
 
-        this->_access_flag = _method_info->access_flags;
-        auto *name_info = requireConstant<CONSTANT_Utf8_info>(pool, _method_info->name_index);
-        auto *desc_info = requireConstant<CONSTANT_Utf8_info>(pool, _method_info->descriptor_index);
+        this->_accessFlag = _methodInfo->access_flags;
+        auto *name_info = requireConstant<CONSTANT_Utf8_info>(pool, _methodInfo->name_index);
+        auto *desc_info = requireConstant<CONSTANT_Utf8_info>(pool, _methodInfo->descriptor_index);
         this->_name = name_info->get_constant();
         this->_descriptor = desc_info->get_constant();
         linkAttributes(pool);
@@ -71,8 +71,8 @@ namespace kivm {
     }
 
     void Method::linkAttributes(cp_info **pool) {
-        for (int i = 0; i < _method_info->attributes_count; ++i) {
-            attribute_info *attr = _method_info->attributes[i];
+        for (int i = 0; i < _methodInfo->attributes_count; ++i) {
+            attribute_info *attr = _methodInfo->attributes[i];
 
             switch (AttributeParser::toAttributeTag(attr->attribute_name_index, pool)) {
                 case ATTRIBUTE_Code: {
@@ -119,7 +119,7 @@ namespace kivm {
     }
 
     void Method::linkCodeAttribute(cp_info **pool, Code_attribute *attr) {
-        _code_attr = attr;
+        _codeAttr = attr;
         // check exception handlers
         for (int i = 0; i < attr->exception_table_length; ++i) {
             if (isPcCorrect(attr->exception_table[i].start_pc)
@@ -138,7 +138,7 @@ namespace kivm {
                 case ATTRIBUTE_LineNumberTable: {
                     auto *line_attr = (LineNumberTable_attribute *) sub_attr;
                     for (int j = 0; j < line_attr->line_number_table_length; ++j) {
-                        _line_number_table[line_attr->line_number_table[j].start_pc]
+                        _lineNumberTable[line_attr->line_number_table[j].start_pc]
                             = line_attr->line_number_table[j].line_number;
                     }
                     break;
@@ -154,7 +154,7 @@ namespace kivm {
             }
         }
 
-        _code_blob.init(_code_attr->code, _code_attr->code_length);
+        _codeBlob.init(_codeAttr->code, _codeAttr->code_length);
     }
 
     static void getArgumentValueTypesHelper(std::vector<ValueType> *valueTypes, bool *flag,
@@ -239,41 +239,41 @@ namespace kivm {
     }
 
     const std::vector<ValueType> &Method::getArgumentValueTypes() {
-        getArgumentValueTypesHelper(&_argument_value_types,
-                                    &_argument_value_types_resolved,
+        getArgumentValueTypesHelper(&_argumentValueTypes,
+                                    &_argumentValueTypesResolved,
                                     getDescriptor(), true);
-        return _argument_value_types;
+        return _argumentValueTypes;
     }
 
     ValueType Method::getReturnType() {
-        getReturnTypeHelper(&_return_type,
-                            &_return_type_resolved,
+        getReturnTypeHelper(&_returnType,
+                            &_returnTypeResolved,
                             getDescriptor(),
                             true);
-        return _return_type;
+        return _returnType;
     }
 
     const std::vector<ValueType> &Method::getArgumentValueTypesNoWrap() {
-        getArgumentValueTypesHelper(&_argument_value_types_no_wrap,
-                                    &_argument_value_types_no_wrap_resolved,
+        getArgumentValueTypesHelper(&_argumentValueTypesNoWrap,
+                                    &_argumentValueTypesNoWrapResolved,
                                     getDescriptor(),
                                     false);
-        return _argument_value_types_no_wrap;
+        return _argumentValueTypesNoWrap;
     }
 
     ValueType Method::getReturnTypeNoWrap() {
-        getReturnTypeHelper(&_return_type_no_wrap,
-                            &_return_type_no_wrap_resolved,
+        getReturnTypeHelper(&_returnTypeNoWrap,
+                            &_returnTypeNoWrapResolved,
                             getDescriptor(), false);
-        return _return_type_no_wrap;
+        return _returnTypeNoWrap;
     }
 
     void *Method::getNativePointer() {
         if (this->isNative()) {
-            if (this->_native_pointer == nullptr) {
-                this->_native_pointer = Resolver::resolveNativePointer(this);
+            if (this->_nativePointer == nullptr) {
+                this->_nativePointer = Resolver::resolveNativePointer(this);
             }
-            return this->_native_pointer;
+            return this->_nativePointer;
         }
         PANIC("non-native methods have no native pointer");
     }
