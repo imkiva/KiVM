@@ -8,6 +8,11 @@ if (DEFINED ENV{CS_SRC})
     set(CMAKE_CXX_FLAGS -DKIVM_DEBUG)
 endif ()
 
+#### libffi
+find_package(FFI REQUIRED)
+include_directories(${FFI_INCLUDE_DIRS})
+link_directories(${FFI_LIBRARIES})
+
 include_directories(include)
 
 set(SOURCE_FILES
@@ -100,9 +105,6 @@ ENDIF ()
 #### Executables
 add_executable(java src/bin/java.cpp)
 add_executable(javap src/bin/javap.cpp)
-find_package(FFI REQUIRED)
-include_directories(${FFI_INCLUDE_DIRS})
-link_directories(${FFI_LIBRARIES})
 target_link_libraries(java kivm)
 target_link_libraries(javap kivm)
 
