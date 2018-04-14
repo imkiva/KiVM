@@ -4,8 +4,8 @@
 
 #include <kivm/method.h>
 #include <kivm/oop/instanceKlass.h>
+#include <kivm/bytecode/execution.h>
 #include <shared/lock.h>
-
 #include <sstream>
 
 namespace kivm {
@@ -271,10 +271,10 @@ namespace kivm {
     void *Method::getNativePointer() {
         if (this->isNative()) {
             if (this->_native_pointer == nullptr) {
-                // TODO: locate native symbol
+                this->_native_pointer = Resolver::resolveNativePointer(this);
             }
             return this->_native_pointer;
         }
-        return nullptr;
+        PANIC("non-native methods have no native pointer");
     }
 }

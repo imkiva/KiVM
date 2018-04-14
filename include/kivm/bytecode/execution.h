@@ -31,6 +31,8 @@ namespace kivm {
         static typeArrayOop tryResolveTypeArray(jobject obj);
 
         static objectArrayOop tryResolveObjectArray(jobject object);
+
+        static void *resolveNativePointer(Method *method);
     };
 
     /**
