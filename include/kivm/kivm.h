@@ -122,3 +122,10 @@
 
 #define JVM_ENTRY_NAME(nameAndSignature) jvm##jvm_##nameAndSignature
 #define JVM_ENTRY(returnType, nameAndSignature) returnType JVM_ENTRY_NAME(nameAndSignature)
+
+namespace kivm {
+    class KiVM {
+    public:
+        static int createVirtualMachine(JavaVM **pJavaVM);
+    };
+}
