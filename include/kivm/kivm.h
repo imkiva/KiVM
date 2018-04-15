@@ -120,3 +120,5 @@
     } while (false)
 
 
+#define JVM_ENTRY_NAME(nameAndSignature) jvm##jvm_##nameAndSignature
+#define JVM_ENTRY(returnType, nameAndSignature) returnType JVM_ENTRY_NAME(nameAndSignature)

@@ -3,6 +3,8 @@
 //
 #pragma once
 
+#define _JNI_IMPLEMENTATION_
+
 #include <kivm/jni/jni.h>
 
 typedef unsigned char u1;

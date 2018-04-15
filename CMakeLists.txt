@@ -127,7 +127,7 @@ set(SOURCE_FILES
         src/kivm/bytecode/resolver.cpp
         src/kivm/bytecode/invocationContext.cpp
         src/kivm/bytecode/nativeInvocationContext.cpp
-        src/kivm/runtime/nativeMethodPool.cpp src/kivm/native/java_lang_Thread.cpp include/kivm/jni/jni_md.h include/kivm/jni/jni.h)
+        src/kivm/runtime/nativeMethodPool.cpp src/kivm/native/java_lang_Thread.cpp include/kivm/jni/jni_md.h include/kivm/jni/jni.h src/kivm/jni/jniGlobal.cpp src/kivm/jni/jniJavaVM.cpp include/kivm/jni/jniJavaVM.h)
 
 
 #### libkivm
