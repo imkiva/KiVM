@@ -99,5 +99,18 @@ namespace kivm {
             std::wstring_convert<std::codecvt_utf8<wchar_t>> convert;
             return convert.to_bytes(str);
         }
+
+        String replaceAll(const String &string, const String &oldValue, const String &newValue) {
+            auto oldSize = oldValue.size();
+            auto newSize = newValue.size();
+
+            String newString = string;
+            auto pos = newString.find(oldValue);
+            while (pos != std::string::npos) {
+                newString.replace(pos, oldSize, newValue);
+                pos = string.find(oldValue, pos + newSize);
+            }
+            return newString;
+        }
     }
 }

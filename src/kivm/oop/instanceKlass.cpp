@@ -324,7 +324,7 @@ namespace kivm {
             assert(!"java.lang.NoSuchFieldError");
         }
 
-        D("Set field %s::%s(%s) to %p\n",
+        D("Set field %s::%s(%s) to %p",
           strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
           strings::toStdString(fieldID->_field->getName()).c_str(),
           strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
@@ -364,7 +364,7 @@ namespace kivm {
             PANIC("java.lang.NoSuchFieldError");
         }
 
-        D("Set field %s::%s(%s) to %p\n",
+        D("Set field %s::%s(%s) to %p",
           strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
           strings::toStdString(fieldID->_field->getName()).c_str(),
           strings::toStdString(fieldID->_field->getDescriptor()).c_str(),

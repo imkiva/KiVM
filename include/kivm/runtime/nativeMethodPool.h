@@ -10,6 +10,7 @@ namespace kivm {
     class NativeMethodPool {
     private:
         std::unordered_map<Method *, void *> _nativeMethods;
+
     public:
         static NativeMethodPool *get();
 
