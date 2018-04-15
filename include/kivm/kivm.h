@@ -119,5 +119,4 @@
        exit(1); \
     } while (false)
 
-namespace kivm {
-}
+
