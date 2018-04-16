@@ -120,8 +120,8 @@
     } while (false)
 
 
-#define JVM_ENTRY_NAME(nameAndSignature) jvm##jvm_##nameAndSignature
-#define JVM_ENTRY(returnType, nameAndSignature) returnType JVM_ENTRY_NAME(nameAndSignature)
+#define JNI_ENTRY_NAME(nameAndSignature) jni_##nameAndSignature
+#define JNI_ENTRY(returnType, nameAndSignature) returnType JNI_ENTRY_NAME(nameAndSignature)
 
 namespace kivm {
     class KiVM {
