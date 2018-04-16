@@ -18,9 +18,8 @@ namespace kivm {
         invokeInterface->DetachCurrentThread = JNI_ENTRY_NAME(DetachCurrentThread);
         invokeInterface->GetEnv = JNI_ENTRY_NAME(GetEnv);
 
-        auto javaVM = new JavaVM;
+        auto javaVM = *pJavaVM;
         javaVM->functions = invokeInterface;
-        *pJavaVM = javaVM;
         return JNI_OK;
     }
 
