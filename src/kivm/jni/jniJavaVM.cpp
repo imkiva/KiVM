@@ -1,7 +1,6 @@
 //
 // Created by kiva on 2018/4/16.
 //
-#define _JNI_IMPLEMENTATION_
 
 #include <kivm/kivm.h>
 
