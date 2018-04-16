@@ -5,6 +5,8 @@
 
 #include <kivm/kivm.h>
 
+JNI_ENTRY(void, FillInterface());
+
 JNI_ENTRY(jint, GetVersion(JNIEnv *env));
 
 JNI_ENTRY(jclass, DefineClass(JNIEnv *env, const char *name, jobject loader, const jbyte *buf, jsize len));

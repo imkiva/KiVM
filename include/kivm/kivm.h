@@ -127,5 +127,6 @@ namespace kivm {
     class KiVM {
     public:
         static int createVirtualMachine(JavaVM **pJavaVM);
+        static void fillInterfaceFunctions(JNINativeInterface_ *nativeInterface);
     };
 }
