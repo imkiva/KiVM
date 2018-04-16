@@ -50,6 +50,8 @@ namespace kivm {
     void InvocationContext::invokeNative(bool hasThis) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypesNoWrap();
 
+        // TODO: pass JNIEnv* to native methods
+
         D("invokeTarget: %s.%s:%s, hasThis: %s, native: %s, nargs: %zd",
           strings::toStdString(_instanceKlass->getName()).c_str(),
           strings::toStdString(_method->getName()).c_str(),
