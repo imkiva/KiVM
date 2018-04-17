@@ -33,10 +33,27 @@ namespace kivm {
         return JNI_OK;
     }
 
-    int KiVM::getEnv(JavaVM *vm, JNIEnv **pEnv, int version) {
-        if (vm == nullptr || pEnv == nullptr) {
+    int KiVM::destroyJavaVM(JavaVM *vm) {
+        if (vm == nullptr || vm != sJavaVMInstance) {
             return JNI_ERR;
         }
+
+        delete sJNIEnvInstance->functions;
+        delete sJNIEnvInstance;
+        delete sJavaVMInstance->functions;
+        delete sJavaVMInstance;
+        sJavaVMInstance = nullptr;
+        sJNIEnvInstance = nullptr;
+
+        // TODO: notify JavaVM destroyed
+        return JNI_OK;
+    }
+
+    int KiVM::getEnv(JavaVM *vm, JNIEnv **pEnv, int version) {
+        if (vm == nullptr || vm != sJavaVMInstance || pEnv == nullptr) {
+            return JNI_ERR;
+        }
+
         switch (version) {
             case JNI_VERSION_1_1:
             case JNI_VERSION_1_2:

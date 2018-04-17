@@ -129,11 +129,14 @@ namespace kivm {
         static JavaVM *sJavaVMInstance;
         static JNIEnv *sJNIEnvInstance;
 
+    private:
+        static void fillInterfaceFunctions(JNINativeInterface_ *nativeInterface);
+
     public:
         static int getEnv(JavaVM *vm, JNIEnv **pEnv, int version);
 
         static int createVirtualMachine(JavaVM **pJavaVM, JNIEnv **pEnv, JavaVMInitArgs *initArgs);
 
-        static void fillInterfaceFunctions(JNINativeInterface_ *nativeInterface);
+        static int destroyJavaVM(JavaVM *vm);
     };
 }
