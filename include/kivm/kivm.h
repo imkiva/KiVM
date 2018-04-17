@@ -133,6 +133,11 @@ namespace kivm {
         static void fillInterfaceFunctions(JNINativeInterface_ *nativeInterface);
 
     public:
+        static inline JavaVM *getJavaVMQuick() {
+            return sJavaVMInstance;
+        }
+
+    public:
         static int getJavaVM(JavaVM **pJavaVM);
 
         static int getEnv(JavaVM *vm, JNIEnv **pEnv, int version);

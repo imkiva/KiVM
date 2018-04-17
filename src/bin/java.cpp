@@ -4,7 +4,16 @@
 
 int main() {
     using namespace kivm;
+
+    JavaVM *javaVM;
+    JNIEnv *env;
+    if (JNI_CreateJavaVM(&javaVM, (void **) &env, nullptr) != JNI_OK) {
+        PANIC("JNI_CreateJavaVM() failed");
+    }
+
     JavaMainThread javaMainThread;
     javaMainThread.create(nullptr);
+
+    javaVM->DestroyJavaVM();
     return 0;
 }
