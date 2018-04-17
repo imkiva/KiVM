@@ -5,7 +5,7 @@
 #include <kivm/kivm.h>
 
 JNI_ENTRY(jint, DestroyJavaVM(JavaVM * vm)) {
-    PANIC("jvm_DestroyJavaVM()");
+    return kivm::KiVM::destroyJavaVM(vm);
 }
 
 JNI_ENTRY(jint, AttachCurrentThread(JavaVM * vm, void * *penv, void * args)) {
