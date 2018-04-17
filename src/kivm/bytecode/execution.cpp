@@ -123,7 +123,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::tryResolveTypeArray(ref);
+        auto array = Resolver::resolveTypeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -139,7 +139,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::tryResolveTypeArray(ref);
+        auto array = Resolver::resolveTypeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -155,7 +155,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::tryResolveTypeArray(ref);
+        auto array = Resolver::resolveTypeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -171,7 +171,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::tryResolveTypeArray(ref);
+        auto array = Resolver::resolveTypeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -188,7 +188,7 @@ namespace kivm {
             PANIC("java.lang.NullPointerException");
         }
 
-        auto array = Resolver::tryResolveObjectArray(ref);
+        auto array = Resolver::resolveObjectArray(ref);
         if (array == nullptr) {
             PANIC("not an object array");
         }
@@ -204,7 +204,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::tryResolveTypeArray(ref);
+        auto array = Resolver::resolveTypeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -220,7 +220,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::tryResolveTypeArray(ref);
+        auto array = Resolver::resolveTypeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -236,7 +236,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::tryResolveTypeArray(ref);
+        auto array = Resolver::resolveTypeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -252,7 +252,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::tryResolveTypeArray(ref);
+        auto array = Resolver::resolveTypeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -268,7 +268,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::tryResolveObjectArray(ref);
+        auto array = Resolver::resolveObjectArray(ref);
         if (array == nullptr) {
             PANIC("not an object array");
         }

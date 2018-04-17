@@ -1338,7 +1338,7 @@ namespace kivm {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
                     }
-                    instanceOop receiver = Resolver::tryResolveInstance(ref);
+                    instanceOop receiver = Resolver::resolveInstance(ref);
                     if (receiver == nullptr) {
                         PANIC("Not an instance oop");
                     }
@@ -1419,7 +1419,7 @@ namespace kivm {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
                     }
-                    arrayOop array = Resolver::tryResolveArray(ref);
+                    arrayOop array = Resolver::resolveArray(ref);
                     if (array == nullptr) {
                         PANIC("Attempt to use arraylength on non-array objects");
                     }

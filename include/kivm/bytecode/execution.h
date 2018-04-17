@@ -24,13 +24,17 @@ namespace kivm {
     public:
         static oop resolveJObject(jobject obj);
 
-        static instanceOop tryResolveInstance(jobject obj);
+        static instanceOop resolveInstance(jobject obj);
 
-        static arrayOop tryResolveArray(jobject obj);
+        static arrayOop resolveArray(jobject obj);
 
-        static typeArrayOop tryResolveTypeArray(jobject obj);
+        static typeArrayOop resolveTypeArray(jobject obj);
 
-        static objectArrayOop tryResolveObjectArray(jobject object);
+        static objectArrayOop resolveObjectArray(jobject object);
+
+        static Klass* resolveJClass(jclass clazz);
+
+        static InstanceKlass *resolveInstanceClass(jclass *clazz);
 
         static void *resolveNativePointer(Method *method);
     };

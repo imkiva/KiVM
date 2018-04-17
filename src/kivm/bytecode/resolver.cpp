@@ -19,7 +19,7 @@ namespace kivm {
         return (oop) obj;
     }
 
-    instanceOop Resolver::tryResolveInstance(jobject obj) {
+    instanceOop Resolver::resolveInstance(jobject obj) {
         auto n = resolveJObject(obj);
         if (n == nullptr) {
             return nullptr;
@@ -31,7 +31,7 @@ namespace kivm {
         return nullptr;
     }
 
-    arrayOop Resolver::tryResolveArray(jobject obj) {
+    arrayOop Resolver::resolveArray(jobject obj) {
         auto n = resolveJObject(obj);
         if (n == nullptr) {
             return nullptr;
@@ -44,7 +44,7 @@ namespace kivm {
         return nullptr;
     }
 
-    typeArrayOop Resolver::tryResolveTypeArray(jobject obj) {
+    typeArrayOop Resolver::resolveTypeArray(jobject obj) {
         auto n = resolveJObject(obj);
         if (n == nullptr) {
             return nullptr;
@@ -56,7 +56,7 @@ namespace kivm {
         return nullptr;
     }
 
-    objectArrayOop Resolver::tryResolveObjectArray(jobject obj) {
+    objectArrayOop Resolver::resolveObjectArray(jobject obj) {
         auto n = resolveJObject(obj);
         if (n == nullptr) {
             return nullptr;
@@ -70,5 +70,24 @@ namespace kivm {
 
     void *Resolver::resolveNativePointer(Method *method) {
         return NativeMethodPool::get()->resolve(method);
+    }
+
+    Klass *Resolver::resolveJClass(jclass clazz) {
+        if (clazz != nullptr) {
+            return (Klass *) clazz;
+        }
+        return nullptr;
+    }
+
+    InstanceKlass *Resolver::resolveInstanceClass(jclass *clazz) {
+        auto klass = Resolver::resolveJClass(clazz);
+        if (klass == nullptr) {
+            return nullptr;
+        }
+
+        if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
+            return (InstanceKlass *) klass;
+        }
+        return nullptr;
     }
 }
