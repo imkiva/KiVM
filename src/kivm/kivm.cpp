@@ -4,10 +4,14 @@
 #include <kivm/kivm.h>
 #include <kivm/jni/jniJavaVM.h>
 #include <kivm/jni/jniEnv.h>
+#include <unordered_map>
 
 namespace kivm {
-    int KiVM::createVirtualMachine(JavaVM **pJavaVM) {
-        if (pJavaVM == nullptr) {
+    JavaVM *KiVM::sJavaVMInstance = nullptr;
+    JNIEnv *KiVM::sJNIEnvInstance = nullptr;
+
+    int KiVM::createVirtualMachine(JavaVM **pJavaVM, JNIEnv **pEnv, JavaVMInitArgs *initArgs) {
+        if (KiVM::sJavaVMInstance != nullptr || pJavaVM == nullptr) {
             return JNI_ERR;
         }
 
@@ -18,8 +22,32 @@ namespace kivm {
         invokeInterface->DetachCurrentThread = JNI_ENTRY_NAME(DetachCurrentThread);
         invokeInterface->GetEnv = JNI_ENTRY_NAME(GetEnv);
 
-        auto javaVM = *pJavaVM;
-        javaVM->functions = invokeInterface;
+        sJavaVMInstance = new JavaVM;
+        sJavaVMInstance->functions = invokeInterface;
+        *pJavaVM = sJavaVMInstance;
+
+        sJNIEnvInstance = new JNIEnv;
+        auto nativeInterface = new JNINativeInterface_;
+        kivm::KiVM::fillInterfaceFunctions(nativeInterface);
+        sJNIEnvInstance->functions = nativeInterface;
+        return JNI_OK;
+    }
+
+    int KiVM::getEnv(JavaVM *vm, JNIEnv **pEnv, int version) {
+        if (vm == nullptr || pEnv == nullptr) {
+            return JNI_ERR;
+        }
+        switch (version) {
+            case JNI_VERSION_1_1:
+            case JNI_VERSION_1_2:
+            case JNI_VERSION_1_4:
+            case JNI_VERSION_1_6:
+                break;
+            default:
+                return JNI_ERR;
+        }
+
+        *pEnv = sJNIEnvInstance;
         return JNI_OK;
     }
 
@@ -27,6 +55,7 @@ namespace kivm {
         if (nativeInterface == nullptr) {
             return;
         }
+
         nativeInterface->GetVersion = JNI_ENTRY_NAME(GetVersion);
         nativeInterface->DefineClass = JNI_ENTRY_NAME(DefineClass);
         nativeInterface->FindClass = JNI_ENTRY_NAME(FindClass);

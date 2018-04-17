@@ -5,12 +5,13 @@
 
 _JNI_IMPORT_OR_EXPORT_
 jint JNICALL JNI_GetDefaultJavaVMInitArgs(void *args) {
-    PANIC("JNI_GetDefaultJavaVMInitArgs()");
+    return JNI_ERR;
 }
 
 _JNI_IMPORT_OR_EXPORT_
 jint JNICALL JNI_CreateJavaVM(JavaVM **pvm, void **penv, void *args) {
-    return kivm::KiVM::createVirtualMachine(pvm);
+    auto initArgs = (JavaVMInitArgs *) args;
+    return kivm::KiVM::createVirtualMachine(pvm, (JNIEnv **) penv, initArgs);
 }
 
 _JNI_IMPORT_OR_EXPORT_

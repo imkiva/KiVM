@@ -2244,7 +2244,7 @@ jint JNICALL JNI_GetDefaultJavaVMInitArgs(void *args);
 _JNI_IMPORT_OR_EXPORT_
 jint JNICALL JNI_CreateJavaVM(JavaVM **pvm, void **penv, void *args);
 
-_JNI_IMPORT_OR_EXPORT_
+_JNI_IMPORT_OR_EXPORT_ __attribute__((deprecated))
 jint JNICALL JNI_GetCreatedJavaVMs(JavaVM **, jsize, jsize *);
 
 /* Defined by native libraries. */

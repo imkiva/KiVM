@@ -125,8 +125,15 @@
 
 namespace kivm {
     class KiVM {
+    private:
+        static JavaVM *sJavaVMInstance;
+        static JNIEnv *sJNIEnvInstance;
+
     public:
-        static int createVirtualMachine(JavaVM **pJavaVM);
+        static int getEnv(JavaVM *vm, JNIEnv **pEnv, int version);
+
+        static int createVirtualMachine(JavaVM **pJavaVM, JNIEnv **pEnv, JavaVMInitArgs *initArgs);
+
         static void fillInterfaceFunctions(JNINativeInterface_ *nativeInterface);
     };
 }

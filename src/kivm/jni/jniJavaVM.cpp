@@ -17,23 +17,7 @@ JNI_ENTRY(jint, DetachCurrentThread(JavaVM * vm)) {
 }
 
 JNI_ENTRY(jint, GetEnv(JavaVM * vm, void * *penv, jint version)) {
-    if (vm == nullptr) {
-        return JNI_ERR;
-    }
-    switch (version) {
-        case JNI_VERSION_1_1:
-        case JNI_VERSION_1_2:
-        case JNI_VERSION_1_4:
-        case JNI_VERSION_1_6:
-            break;
-        default:
-            return JNI_ERR;
-    }
-
-    auto *env = (JNIEnv *) penv;
-    auto nativeInterface = (JNINativeInterface_ *) env->functions;
-    kivm::KiVM::fillInterfaceFunctions(nativeInterface);
-    return JNI_OK;
+    return kivm::KiVM::getEnv(vm, (JNIEnv **) penv, version);
 }
 
 JNI_ENTRY(jint, AttachCurrentThreadAsDaemon(JavaVM * vm, void * *penv, void * args)) {
