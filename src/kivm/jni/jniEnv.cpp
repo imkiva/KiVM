@@ -865,7 +865,7 @@ JNI_ENTRY(jint, MonitorExit(JNIEnv *env, jobject obj)) {
 }
 
 JNI_ENTRY(jint, GetJavaVM(JNIEnv *env, JavaVM **vm)) {
-    PANIC("not implemented");
+    return kivm::KiVM::getJavaVM(vm);
 }
 
 JNI_ENTRY(void, GetStringRegion(JNIEnv *env, jstring str, jsize start, jsize len, jchar *buf)) {

@@ -49,6 +49,15 @@ namespace kivm {
         return JNI_OK;
     }
 
+    int KiVM::getJavaVM(JavaVM **pJavaVM) {
+        if (pJavaVM == nullptr) {
+            return JNI_ERR;
+        }
+
+        *pJavaVM = sJavaVMInstance;
+        return JNI_OK;
+    }
+
     int KiVM::getEnv(JavaVM *vm, JNIEnv **pEnv, int version) {
         if (vm == nullptr || vm != sJavaVMInstance || pEnv == nullptr) {
             return JNI_ERR;
