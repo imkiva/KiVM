@@ -363,7 +363,7 @@ namespace kivm {
             if (receiverRef == nullptr) { \
                 PANIC("java.lang.NullPointerException"); \
             } \
-            instanceOop receiver = Resolver::tryResolveInstance(receiverRef); \
+            instanceOop receiver = Resolver::resolveInstance(receiverRef); \
             if (receiver == nullptr) { \
                 PANIC("Not an instance oop"); \
             } \
