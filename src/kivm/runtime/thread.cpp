@@ -81,7 +81,6 @@ namespace kivm {
         bool isStatic = method->isStatic();
         const std::vector<ValueType> descriptorMap = method->getArgumentValueTypes();
 
-        D("Copying arguments to local variable table");
         std::for_each(args.begin(), args.end(), [&](oop arg) {
             if (arg == nullptr) {
                 D("Copying reference: #%d - null", localVariableIndex);

@@ -257,9 +257,11 @@ namespace kivm {
 
     FieldID* InstanceKlass::getThisClassField(const String &name, const String &descriptor) const {
         auto id = getInstanceFieldInfo(getName(), name, descriptor);
-        return id->_field != nullptr
-               ? id
-               : getStaticFieldInfo(getName(), name, descriptor);
+        if (id != nullptr && id->_field != nullptr) {
+            return id;
+        }
+
+        return getStaticFieldInfo(getName(), name, descriptor);
     }
 
     FieldID* InstanceKlass::getStaticFieldInfo(const String &className,
