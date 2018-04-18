@@ -78,7 +78,7 @@ namespace kivm {
         init_thread->setFieldValue(J_THREAD, L"priority", L"I",
                                    new intOopDesc(java::lang::ThreadPriority::NORMAL_PRIORITY));
 
-        // JavaMainThread is created with java_thread_object == nullptr
+        // JavaMainThread is created with javaThreadObject == nullptr
         // Now we have created a thread for it.
         thread->setJavaThreadObject(init_thread);
         Threads::add(thread);
@@ -132,21 +132,5 @@ namespace kivm {
 
         // re-enable sun.security.util.Debug
         sunDebug_class->setClassState(ClassState::FULLY_INITIALIZED);
-    }
-
-    Thread *Threads::currentThread() {
-        Thread *found = nullptr;
-        auto currentThreadID = std::this_thread::get_id();
-
-        Threads::forEachAppThread([&](Thread *thread) {
-            if (thread->getThreadState() != ThreadState::DIED) {
-                if (thread->_nativeThread->get_id() == currentThreadID) {
-                    found = thread;
-                    return true;
-                }
-            }
-            return false;
-        });
-        return found;
     }
 }

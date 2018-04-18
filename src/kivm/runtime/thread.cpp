@@ -19,11 +19,12 @@ namespace kivm {
 
     void Thread::create(instanceOop javaThread) {
         this->_javaThreadObject = javaThread;
+        if (this->shouldRecordInThreadTable()) {
+            D("shouldRecordInThreadTable == true, recording.");
+            Threads::add(this);
+        }
+
         this->_nativeThread = new std::thread([this] {
-            if (this->shouldRecordInThreadTable()) {
-                D("should_record_in_thread_table == true, recording.");
-                Threads::add(this);
-            }
             this->start();
         });
         this->onThreadLaunched();
@@ -148,5 +149,25 @@ namespace kivm {
 
         this->_pc = frame.getReturnPc();
         return result;
+    }
+
+    Thread *Threads::currentThread() {
+        Thread *found = nullptr;
+        auto currentThreadID = std::this_thread::get_id();
+
+        Threads::forEachAppThread([&](Thread *thread) {
+            D("Threads::currentThread: Got thread: %p", thread);
+            if (thread->getThreadState() != ThreadState::DIED) {
+                auto checkThreadID = thread->_nativeThread->get_id();
+                D("thread->_nativeThread->get_id(): %p", checkThreadID);
+                D("currentThreadID                : %p", currentThreadID);
+                if (checkThreadID == currentThreadID) {
+                    found = thread;
+                    return true;
+                }
+            }
+            return false;
+        });
+        return found;
     }
 }

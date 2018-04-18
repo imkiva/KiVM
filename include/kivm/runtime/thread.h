@@ -101,8 +101,8 @@ namespace kivm {
             return appThreadCount;
         }
 
-        static std::list<Thread *> getAppThreadList() {
-            static std::list<Thread *> appThreads;
+        static std::vector<Thread *> &getAppThreadList() {
+            static std::vector<Thread *> appThreads;
             return appThreads;
         }
 
@@ -131,29 +131,26 @@ namespace kivm {
         }
 
         static inline void add(Thread *javaThread) {
-            appThreadLock().lock();
+            D("Adding thread: %p", javaThread);
+            LockGuard lockGuard(appThreadLock());
             getAppThreadList().push_back(javaThread);
-            ++getAppThreadCount();
-            appThreadLock().unlock();
+            ++Threads::getAppThreadCount();
         }
 
         static inline int getAppThreadCountLocked() {
-            Threads::appThreadLock().lock();
+            LockGuard lockGuard(appThreadLock());
             int threads = Threads::getAppThreadCount();
-            Threads::appThreadLock().unlock();
             return threads;
         }
 
         static inline void incAppThreadCountLocked() {
-            Threads::appThreadLock().lock();
+            LockGuard lockGuard(appThreadLock());
             ++Threads::getAppThreadCount();
-            Threads::appThreadLock().unlock();
         }
 
         static inline void decAppThreadCountLocked() {
-            Threads::appThreadLock().lock();
+            LockGuard lockGuard(appThreadLock());
             ++Threads::getAppThreadCount();
-            Threads::appThreadLock().unlock();
         }
     };
 }
