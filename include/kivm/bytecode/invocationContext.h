@@ -24,6 +24,8 @@ namespace kivm {
 
         void invokeNative(bool hasThis);
 
+        void invokeJava(bool hasThis);
+
     public:
         InvocationContext(JavaThread *thread, Method *method, Stack &stack);
 
