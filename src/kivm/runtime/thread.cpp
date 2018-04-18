@@ -71,10 +71,11 @@ namespace kivm {
     }
 
     oop JavaThread::runMethod(Method *method, const std::list<oop> &args) {
-        D("### JavaThread::runMethod(), maxLocals: %d, maxStack: %d", method->getMaxLocals(), method->getMaxStack());
+        D("### JavaThread::runMethod(), maxLocals: %d, maxStack: %d",
+          method->getMaxLocals(), method->getMaxStack());
+
         Frame frame(method->getMaxLocals(), method->getMaxStack());
         Locals &locals = frame.getLocals();
-        D("### Stack is at %p, locals is at %p", &frame.getStack(), &locals);
 
         // copy args to local variable table
         int localVariableIndex = 0;
@@ -147,6 +148,12 @@ namespace kivm {
         this->_frames.pop();
 
         this->_pc = frame.getReturnPc();
+
+        D("returnedFrom: %s.%s:%s",
+          strings::toStdString(method->getClass()->getName()).c_str(),
+          strings::toStdString(method->getName()).c_str(),
+          strings::toStdString(method->getDescriptor()).c_str());
+
         return result;
     }
 
@@ -155,7 +162,6 @@ namespace kivm {
         auto currentThreadID = std::this_thread::get_id();
 
         Threads::forEachAppThread([&](Thread *thread) {
-            D("Threads::currentThread: Got thread: %p", thread);
             if (thread->getThreadState() != ThreadState::DIED) {
                 auto checkThreadID = thread->_nativeThread->get_id();
                 if (checkThreadID == currentThreadID) {
