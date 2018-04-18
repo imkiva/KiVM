@@ -8,6 +8,7 @@
 #include <kivm/runtime/frame.h>
 #include <list>
 #include <thread>
+#include <functional>
 
 namespace kivm {
     enum ThreadState {
@@ -16,6 +17,7 @@ namespace kivm {
 
     class Thread {
         friend class Threads;
+
         friend class ByteCodeInterpreter;
 
     protected:
@@ -33,7 +35,7 @@ namespace kivm {
         virtual bool shouldRecordInThreadTable();
 
     protected:
-        Frame * getCurrentFrame() {
+        Frame *getCurrentFrame() {
             return _frames.getCurrentFrame();
         }
 
@@ -107,6 +109,17 @@ namespace kivm {
     public:
         static void initializeJVM(JavaMainThread *thread);
 
+        static Thread *currentThread();
+
+        static void forEachAppThread(const std::function<bool(Thread *)> &callback) {
+            const auto &list = getAppThreadList();
+            for (auto it : list) {
+                if (callback(it)) {
+                    break;
+                }
+            }
+        }
+
         static Lock &appThreadLock() {
             static Lock lock;
             return lock;
@@ -117,7 +130,7 @@ namespace kivm {
             return lock;
         }
 
-        static void add(Thread *javaThread) {
+        static inline void add(Thread *javaThread) {
             appThreadLock().lock();
             getAppThreadList().push_back(javaThread);
             ++getAppThreadCount();

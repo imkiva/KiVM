@@ -6,12 +6,18 @@
 #include <kivm/kivm.h>
 #include <kivm/bytecode/execution.h>
 
+using namespace kivm;
+
 extern "C" jobject Java_java_lang_Thread_currentThread(JNIEnv *env, jclass java_lang_Thread) {
     auto instanceKlass = kivm::Resolver::resolveJClass(java_lang_Thread);
     D("JNIEnv: %p, I am %s",
       env,
-      kivm::strings::toStdString(instanceKlass->getName()).c_str());
+      strings::toStdString(instanceKlass->getName()).c_str());
 
-    PANIC("Native method: java/lang/Thread.currentThread() not implemented");
+    auto currentThread = Threads::currentThread();
+    if (currentThread == nullptr) {
+        PANIC("currentThread cannot be null");
+    }
+
+    return currentThread->getJavaThreadObject();
 }
-

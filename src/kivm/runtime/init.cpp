@@ -133,4 +133,20 @@ namespace kivm {
         // re-enable sun.security.util.Debug
         sunDebug_class->setClassState(ClassState::FULLY_INITIALIZED);
     }
+
+    Thread *Threads::currentThread() {
+        Thread *found = nullptr;
+        auto currentThreadID = std::this_thread::get_id();
+
+        Threads::forEachAppThread([&](Thread *thread) {
+            if (thread->getThreadState() != ThreadState::DIED) {
+                if (thread->_nativeThread->get_id() == currentThreadID) {
+                    found = thread;
+                    return true;
+                }
+            }
+            return false;
+        });
+        return found;
+    }
 }
