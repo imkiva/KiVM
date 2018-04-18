@@ -159,8 +159,6 @@ namespace kivm {
             D("Threads::currentThread: Got thread: %p", thread);
             if (thread->getThreadState() != ThreadState::DIED) {
                 auto checkThreadID = thread->_nativeThread->get_id();
-                D("thread->_nativeThread->get_id(): %p", checkThreadID);
-                D("currentThreadID                : %p", currentThreadID);
                 if (checkThreadID == currentThreadID) {
                     found = thread;
                     return true;

@@ -112,8 +112,8 @@ namespace kivm {
         static Thread *currentThread();
 
         static void forEachAppThread(const std::function<bool(Thread *)> &callback) {
-            const auto &list = getAppThreadList();
-            for (auto it : list) {
+            LockGuard lockGuard(appThreadLock());
+            for (auto it : getAppThreadList()) {
                 if (callback(it)) {
                     break;
                 }
