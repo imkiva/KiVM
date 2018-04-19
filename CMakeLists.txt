@@ -127,7 +127,7 @@ set(SOURCE_FILES
         src/kivm/bytecode/resolver.cpp
         src/kivm/bytecode/invocationContext.cpp
         src/kivm/bytecode/nativeInvocationContext.cpp
-        src/kivm/runtime/nativeMethodPool.cpp src/kivm/native/java_lang_Thread.cpp include/kivm/jni/jni_md.h include/kivm/jni/jni.h src/kivm/jni/jniGlobal.cpp src/kivm/jni/jniJavaVM.cpp include/kivm/jni/jniJavaVM.h src/kivm/kivm.cpp include/kivm/jni/jniEnv.h src/kivm/jni/jniEnv.cpp src/kivm/bytecode/executionInvoke.cpp src/kivm/bytecode/javaInvocationContext.cpp)
+        src/kivm/runtime/nativeMethodPool.cpp src/kivm/native/java_lang_Thread.cpp include/kivm/jni/jni_md.h include/kivm/jni/jni.h src/kivm/jni/jniGlobal.cpp src/kivm/jni/jniJavaVM.cpp include/kivm/jni/jniJavaVM.h src/kivm/kivm.cpp include/kivm/jni/jniEnv.h src/kivm/jni/jniEnv.cpp src/kivm/bytecode/executionInvoke.cpp src/kivm/bytecode/javaInvocationContext.cpp include/kivm/memory/collectedHeap.h include/kivm/memory/markSweep.h)
 
 
 #### libkivm
