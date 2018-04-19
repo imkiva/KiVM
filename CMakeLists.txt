@@ -93,6 +93,12 @@ set(SOURCE_FILES
         include/kivm/runtime/constantPool.h
         include/kivm/bytecode/invocationContext.h
         include/kivm/runtime/nativeMethodPool.h
+        include/kivm/jni/jni_md.h
+        include/kivm/jni/jni.h
+        include/kivm/jni/jniJavaVM.h
+        include/kivm/jni/jniEnv.h
+        include/kivm/memory/collectedHeap.h
+        include/kivm/memory/markSweep.h
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp
@@ -127,7 +133,14 @@ set(SOURCE_FILES
         src/kivm/bytecode/resolver.cpp
         src/kivm/bytecode/invocationContext.cpp
         src/kivm/bytecode/nativeInvocationContext.cpp
-        src/kivm/runtime/nativeMethodPool.cpp src/kivm/native/java_lang_Thread.cpp include/kivm/jni/jni_md.h include/kivm/jni/jni.h src/kivm/jni/jniGlobal.cpp src/kivm/jni/jniJavaVM.cpp include/kivm/jni/jniJavaVM.h src/kivm/kivm.cpp include/kivm/jni/jniEnv.h src/kivm/jni/jniEnv.cpp src/kivm/bytecode/executionInvoke.cpp src/kivm/bytecode/javaInvocationContext.cpp include/kivm/memory/collectedHeap.h include/kivm/memory/markSweep.h)
+        src/kivm/runtime/nativeMethodPool.cpp
+        src/kivm/native/java_lang_Thread.cpp
+        src/kivm/jni/jniGlobal.cpp
+        src/kivm/jni/jniJavaVM.cpp
+        src/kivm/kivm.cpp
+        src/kivm/jni/jniEnv.cpp
+        src/kivm/bytecode/executionInvoke.cpp
+        src/kivm/bytecode/javaInvocationContext.cpp)
 
 
 #### libkivm
