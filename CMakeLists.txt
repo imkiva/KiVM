@@ -99,6 +99,7 @@ set(SOURCE_FILES
         include/kivm/jni/jniEnv.h
         include/kivm/memory/collectedHeap.h
         include/kivm/memory/markSweep.h
+        include/kivm/memory/universe.h
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp
@@ -140,7 +141,9 @@ set(SOURCE_FILES
         src/kivm/kivm.cpp
         src/kivm/jni/jniEnv.cpp
         src/kivm/bytecode/executionInvoke.cpp
-        src/kivm/bytecode/javaInvocationContext.cpp src/kivm/memory/markSweep.cpp include/kivm/memory/universe.h src/kivm/memory/universe.cpp)
+        src/kivm/bytecode/javaInvocationContext.cpp
+        src/kivm/memory/markSweep.cpp
+        src/kivm/memory/universe.cpp)
 
 
 #### libkivm
@@ -160,6 +163,9 @@ target_link_libraries(javap kivm)
 #### Tests
 add_executable(test_stack-and-frame tests/stack-and-locals.cpp)
 target_link_libraries(test_stack-and-frame kivm)
+
+add_executable(bench-allocation tests/bench-allocation.cpp)
+target_link_libraries(bench-allocation kivm)
 
 #### CovScript extension
 if (DEFINED ENV{CS_SRC})

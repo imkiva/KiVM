@@ -21,6 +21,7 @@ namespace kivm {
     }
 
     void *Universe::allocVirtual(size_t size) {
+        D("allocVirtual: %zd", size);
         auto m = (jbyte *) mmap(nullptr, size + sizeof(VirtualMemoryInfo),
                                   PROT_READ | PROT_WRITE,
                                   MAP_ANONYMOUS | MAP_SHARED, -1, 0);

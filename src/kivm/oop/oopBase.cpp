@@ -5,6 +5,7 @@
 #include <kivm/oop/oop.h>
 #include <cstring>
 #include <cstdlib>
+#include <kivm/memory/universe.h>
 
 namespace kivm {
     void *oopBase::allocate(size_t size, bool addToPool) {
@@ -12,22 +13,21 @@ namespace kivm {
             return nullptr;
         }
 
+#ifdef KIVM_DEBUG_MALLOC_ONLY
         void *ptr = malloc(size);
+#else
+        void *ptr = Universe::allocHeap(size);
+#endif
         memset(ptr, '\0', size);
-
-        // add it to the oopPoll
-        if (addToPool) {
-            LockGuard lg(getOopMemoryLock());
-            oopPool::getOopHandlerPool().push_back((oop) ptr);
-        }
-
         return ptr;
     }
 
     void oopBase::deallocate(void *ptr) {
-        if (ptr != nullptr) {
-            free(ptr);
-        }
+#ifdef KIVM_DEBUG_MALLOC_ONLY
+        free(ptr);
+#else
+        // TODO: garbage collector
+#endif
     }
 
     void *oopBase::operator new(size_t size, bool addToPool) throw() {
@@ -44,12 +44,5 @@ namespace kivm {
 
     void oopBase::operator delete[](void *ptr) {
         return deallocate(ptr);
-    }
-
-    void oopBase::cleanup() {
-        LockGuard lg(getOopMemoryLock());
-        for (auto iter : oopPool::getOopHandlerPool()) {
-            delete iter;
-        }
     }
 }

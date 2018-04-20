@@ -11,24 +11,9 @@
 #include <shared/monitor.h>
 #include <list>
 
-// Forward declaration
-
 namespace kivm {
-    class oopPool {
-    public:
-        static std::list<oop> &getOopHandlerPool() {
-            static std::list<oop> handlerPool;
-            return handlerPool;
-        }
-    };
 
     class oopBase {
-    private:
-        static Lock &getOopMemoryLock() {
-            static Lock memLock;
-            return memLock;
-        }
-
     public:
         oopBase() = default;
 
@@ -47,8 +32,6 @@ namespace kivm {
         static void operator delete(void *ptr);
 
         static void operator delete[](void *ptr);
-
-        static void cleanup();
     };
 
     class markOopDesc {
