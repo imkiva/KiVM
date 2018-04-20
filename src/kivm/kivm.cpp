@@ -4,6 +4,7 @@
 #include <kivm/kivm.h>
 #include <kivm/jni/jniJavaVM.h>
 #include <kivm/jni/jniEnv.h>
+#include <kivm/memory/universe.h>
 #include <unordered_map>
 
 namespace kivm {
@@ -14,6 +15,9 @@ namespace kivm {
         if (KiVM::sJavaVMInstance != nullptr || pJavaVM == nullptr) {
             return JNI_ERR;
         }
+
+        // initialize memory
+        Universe::initialize();
 
         auto invokeInterface = new JNIInvokeInterface_;
         invokeInterface->AttachCurrentThread = JNI_ENTRY_NAME(AttachCurrentThread);

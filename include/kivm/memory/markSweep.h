@@ -8,14 +8,14 @@
 namespace kivm {
     class MarkSweepHeap : public CollectedHeap {
     private:
-        void *_memoryStart;
-        void *_current;
+        jbyte *_memoryStart;
+        jbyte *_current;
         size_t _size;
 
     public:
         MarkSweepHeap();
 
-        ~MarkSweepHeap() override = default;
+        ~MarkSweepHeap() override;
 
         void *allocate(size_t size) override;
 
