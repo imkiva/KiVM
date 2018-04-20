@@ -34,10 +34,9 @@ namespace kivm {
     }
 
     bool MarkSweepHeap::initializeAll() {
-        _memoryStart = (jbyte *) Universe::allocVirtual(_size);
+        _memoryStart = (jbyte *) Universe::allocVirtual(0);
         if (_memoryStart != nullptr) {
             D("MarkSweepHeap: virtual memory allocated: %p", _memoryStart);
-            Universe::memoryZero(_memoryStart, _size);
             _current = _memoryStart;
             return true;
         }

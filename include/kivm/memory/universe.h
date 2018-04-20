@@ -6,19 +6,15 @@
 namespace kivm {
     class Universe {
     private:
-        static CollectedHeap* sCollectedHeapInstance;
+        static CollectedHeap *sCollectedHeapInstance;
 
     public:
         static void initialize();
 
         static void *allocVirtual(size_t size);
 
-        static void *deallocVirtual(void *memory, size_t size);
+        static void deallocVirtual(void *memory);
 
-        static inline void memoryZero(void *memory, size_t size) {
-            if (memory != nullptr) {
-                memset(memory, '\0', size);
-            }
-        }
+        static void *allocHeap(size_t size);
     };
 }
