@@ -3,12 +3,15 @@
 //
 #pragma once
 
+#include <shared/types.h>
+
 namespace kivm {
     struct RuntimeConfig {
-        int threadInitialStackSize;
-        int threadMaxStackSize;
+        int threadMaxStackFrames;
+        size_t initialHeapSizeInBytes;
+        size_t maxHeapSizeInBytes;
 
-        static RuntimeConfig& get();
+        static RuntimeConfig &get();
 
         RuntimeConfig();
     };

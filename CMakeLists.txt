@@ -140,7 +140,7 @@ set(SOURCE_FILES
         src/kivm/kivm.cpp
         src/kivm/jni/jniEnv.cpp
         src/kivm/bytecode/executionInvoke.cpp
-        src/kivm/bytecode/javaInvocationContext.cpp)
+        src/kivm/bytecode/javaInvocationContext.cpp src/kivm/memory/markSweep.cpp include/kivm/memory/universe.h src/kivm/memory/universe.cpp)
 
 
 #### libkivm

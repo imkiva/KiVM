@@ -11,5 +11,13 @@ namespace kivm {
         virtual ~CollectedHeap() = default;
 
         virtual void *allocate(size_t size) = 0;
+
+        virtual bool initializeAll() = 0;
+
+        virtual void* getHeapStart() = 0;
+
+        virtual void *getHeapEnd() = 0;
+
+        virtual size_t getHeapSize() = 0;
     };
 }

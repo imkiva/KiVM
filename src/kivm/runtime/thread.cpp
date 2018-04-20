@@ -11,7 +11,7 @@
 
 namespace kivm {
     Thread::Thread(Method *method, const std::list<oop> &args)
-        : _frames(RuntimeConfig::get().threadMaxStackSize),
+        : _frames(RuntimeConfig::get().threadMaxStackFrames),
           _method(method), _args(args),
           _javaThreadObject(nullptr), _nativeThread(nullptr),
           _pc(0), _state(ThreadState::RUNNING) {
