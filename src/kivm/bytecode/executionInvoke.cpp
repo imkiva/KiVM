@@ -26,4 +26,17 @@ namespace kivm {
 
         InvocationContext(thread, method, stack).invoke(false);
     }
+
+    void Execution::invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+        Method *method = rt->getMethod(constantIndex);
+        if (method == nullptr) {
+            PANIC("NoSuchMethodError");
+        }
+
+        if (method->isStatic()) {
+            PANIC("invalid invokeVirtual");
+        }
+
+        InvocationContext(thread, method, stack).invoke(true);
+    }
 }

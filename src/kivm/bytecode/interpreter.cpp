@@ -367,31 +367,31 @@ namespace kivm {
                 }
                 OPCODE(ISTORE)
                 {
-                    int localIndex = pc++;
+                    int localIndex = code_blob[pc++];
                     locals.setInt(localIndex, stack.popInt());
                     NEXT();
                 }
                 OPCODE(LSTORE)
                 {
-                    int localIndex = pc++;
+                    int localIndex = code_blob[pc++];
                     locals.setLong(localIndex, stack.popLong());
                     NEXT();
                 }
                 OPCODE(FSTORE)
                 {
-                    int localIndex = pc++;
+                    int localIndex = code_blob[pc++];
                     locals.setFloat(localIndex, stack.popFloat());
                     NEXT();
                 }
                 OPCODE(DSTORE)
                 {
-                    int localIndex = pc++;
+                    int localIndex = code_blob[pc++];
                     locals.setDouble(localIndex, stack.popDouble());
                     NEXT();
                 }
                 OPCODE(ASTORE)
                 {
-                    int localIndex = pc++;
+                    int localIndex = code_blob[pc++];
                     locals.setReference(localIndex, stack.popReference());
                     NEXT();
                 }
@@ -1356,8 +1356,10 @@ namespace kivm {
                 }
                 OPCODE(INVOKEVIRTUAL)
                 {
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
-                    PANIC("INVOKEVIRTUAL");
+                    Execution::invokeVirtual(thread, currentClass->getRuntimeConstantPool(),
+                                             stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(INVOKESPECIAL)
