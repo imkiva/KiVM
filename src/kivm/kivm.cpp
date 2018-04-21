@@ -34,6 +34,8 @@ namespace kivm {
         auto nativeInterface = new JNINativeInterface_;
         kivm::KiVM::fillInterfaceFunctions(nativeInterface);
         sJNIEnvInstance->functions = nativeInterface;
+        *pEnv = sJNIEnvInstance;
+
         return JNI_OK;
     }
 
