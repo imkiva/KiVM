@@ -19,4 +19,5 @@ Kiva's Java Virtual Machine.
     4. Enjoy it!
     
 ### Credit
-Inspired by [wind_jvm](https://github.com/wind2412/wind_jvm)
+* Inspired by [wind_jvm](https://github.com/wind2412/wind_jvm)
+* Modified version of [libzippp](https://github.com/ctabin/libzippp)

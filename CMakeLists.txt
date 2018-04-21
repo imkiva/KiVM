@@ -101,6 +101,7 @@ set(SOURCE_FILES
         include/kivm/memory/markSweep.h
         include/kivm/memory/universe.h
         include/kivm/memory/heapRegion.h
+        include/shared/zip/libzippp.h
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp
@@ -144,7 +145,9 @@ set(SOURCE_FILES
         src/kivm/bytecode/executionInvoke.cpp
         src/kivm/bytecode/javaInvocationContext.cpp
         src/kivm/memory/markSweep.cpp
-        src/kivm/memory/universe.cpp src/kivm/native/java_lang_System.cpp)
+        src/kivm/memory/universe.cpp
+        src/kivm/native/java_lang_System.cpp
+        src/shared/zip/libzippp.cpp)
 
 
 #### libkivm
@@ -153,6 +156,8 @@ target_link_libraries(kivm ffi)
 IF (UNIX)
     target_link_libraries(kivm pthread)
     target_link_libraries(kivm dl)
+    target_link_libraries(kivm z)
+    target_link_libraries(kivm zip)
 ENDIF ()
 
 #### Executables
