@@ -100,6 +100,7 @@ set(SOURCE_FILES
         include/kivm/memory/collectedHeap.h
         include/kivm/memory/markSweep.h
         include/kivm/memory/universe.h
+        include/kivm/memory/heapRegion.h
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp

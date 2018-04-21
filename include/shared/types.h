@@ -12,6 +12,10 @@ typedef unsigned short u2;
 typedef unsigned int u4;
 typedef unsigned long long u8;
 
+#define BYTES_UNIT 1024
+#define SIZE_KB(X) ((X) * BYTES_UNIT)
+#define SIZE_MB(X) ((X) * SIZE_KB(BYTES_UNIT))
+
 /**
  * Declared public; may be accessed from outside its package.
  */

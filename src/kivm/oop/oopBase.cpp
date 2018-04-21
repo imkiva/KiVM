@@ -8,7 +8,7 @@
 #include <kivm/memory/universe.h>
 
 namespace kivm {
-    void *oopBase::allocate(size_t size, bool addToPool) {
+    void *GCJavaObject::allocate(size_t size) {
         if (size == 0) {
             return nullptr;
         }
@@ -22,7 +22,7 @@ namespace kivm {
         return ptr;
     }
 
-    void oopBase::deallocate(void *ptr) {
+    void GCJavaObject::deallocate(void *ptr) {
 #ifdef KIVM_DEBUG_MALLOC_ONLY
         free(ptr);
 #else
@@ -30,19 +30,19 @@ namespace kivm {
 #endif
     }
 
-    void *oopBase::operator new(size_t size, bool addToPool) throw() {
-        return allocate(size, addToPool);
+    void *GCJavaObject::operator new(size_t size, bool addToPool) throw() {
+        return allocate(size);
     }
 
-    void *oopBase::operator new[](size_t size, bool addToPool) throw() {
-        return allocate(size, addToPool);
+    void *GCJavaObject::operator new[](size_t size, bool addToPool) throw() {
+        return allocate(size);
     }
 
-    void oopBase::operator delete(void *ptr) {
+    void GCJavaObject::operator delete(void *ptr) {
         return deallocate(ptr);
     }
 
-    void oopBase::operator delete[](void *ptr) {
+    void GCJavaObject::operator delete[](void *ptr) {
         return deallocate(ptr);
     }
 }

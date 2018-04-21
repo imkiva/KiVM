@@ -4,13 +4,18 @@
 #pragma once
 
 #include <kivm/memory/collectedHeap.h>
+#include <kivm/memory/heapRegion.h>
 
 namespace kivm {
     class MarkSweepHeap : public CollectedHeap {
     private:
         jbyte *_memoryStart;
-        jbyte *_current;
-        size_t _size;
+        size_t _totalSize;
+        HeapRegion *_firstRegion;
+        int _currentRegion;
+
+    private:
+        void initializeRegions();
 
     public:
         MarkSweepHeap();
@@ -19,7 +24,7 @@ namespace kivm {
 
         void *allocate(size_t size) override;
 
-        bool initializeAll() override;
+        void initializeAll() override;
 
         void *getHeapStart() override {
             return _memoryStart;
@@ -30,7 +35,7 @@ namespace kivm {
         }
 
         size_t getHeapSize() override {
-            return _size;
+            return _totalSize;
         }
     };
 }

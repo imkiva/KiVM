@@ -12,7 +12,7 @@ namespace kivm {
 
         virtual void *allocate(size_t size) = 0;
 
-        virtual bool initializeAll() = 0;
+        virtual void initializeAll() = 0;
 
         virtual void* getHeapStart() = 0;
 

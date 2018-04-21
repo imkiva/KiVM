@@ -11,10 +11,16 @@ namespace kivm {
     public:
         static void initialize();
 
+        static void destroy();
+
         static void *allocVirtual(size_t size);
 
         static void deallocVirtual(void *memory);
 
         static void *allocHeap(size_t size);
+
+        static void *allocCObject(size_t size);
+
+        static void deallocCObject(void *memory);
     };
 }

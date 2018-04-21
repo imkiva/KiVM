@@ -5,13 +5,13 @@
 #include <kivm/oop/oop.h>
 
 namespace kivm {
-    markOopDesc::markOopDesc(oopType type) {
-        this->_type = type;
+    markOopDesc::markOopDesc(oopType type, oop _oop)
+        : _type(type) {
     }
 
     oopDesc::oopDesc(Klass *klass, oopType type) {
         this->_klass = klass;
-        this->_mark = new markOopDesc(type);
+        this->_mark = new markOopDesc(type, this);
     }
 
     oopDesc::~oopDesc() {

@@ -13,22 +13,22 @@
 
 namespace kivm {
 
-    class oopBase {
+    class GCJavaObject {
     public:
-        oopBase() = default;
+        GCJavaObject() = default;
 
-        virtual ~oopBase() = default;
+        virtual ~GCJavaObject() = default;
 
-        static void *allocate(size_t size, bool addToPool);
+        static void *allocate(size_t size);
 
         static void deallocate(void *ptr);
 
         static void *operator new(size_t size, bool = true) noexcept;
 
-        static void *operator new(size_t size, const std::nothrow_t &) noexcept { exit(-2); }        // do not use it.
+        static void *operator new(size_t size, const std::nothrow_t &) noexcept = delete;
         static void *operator new[](size_t size, bool = true) throw();
 
-        static void *operator new[](size_t size, const std::nothrow_t &) noexcept { exit(-2); }        // do not use it.
+        static void *operator new[](size_t size, const std::nothrow_t &) noexcept = delete;
         static void operator delete(void *ptr);
 
         static void operator delete[](void *ptr);
@@ -40,7 +40,7 @@ namespace kivm {
         Monitor _monitor;
 
     public:
-        markOopDesc(oopType type);
+        markOopDesc(oopType type, oop _oop);
 
         oopType getOopType() const { return _type; }
 
@@ -54,20 +54,20 @@ namespace kivm {
             D("MonitorExited");
         }
 
-        void wait() { _monitor.wait(); }
+        inline void wait() { _monitor.wait(); }
 
-        void wait(long macro_sec) { _monitor.wait(macro_sec); }
+        inline void wait(long macro_sec) { _monitor.wait(macro_sec); }
 
-        void notify() { _monitor.notify(); }
+        inline void notify() { _monitor.notify(); }
 
-        void notifyAll() { _monitor.notify_all(); }
+        inline void notifyAll() { _monitor.notify_all(); }
 
-        void forceUnlockWhenExceptionOccurred() { _monitor.force_unlock_when_athrow(); }
+        inline void forceUnlockWhenExceptionOccurred() { _monitor.force_unlock_when_athrow(); }
     };
 
     typedef markOopDesc *markOop;
 
-    class oopDesc : public oopBase {
+    class oopDesc : public GCJavaObject {
     private:
         markOop _mark;
         Klass *_klass;

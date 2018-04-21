@@ -3,10 +3,6 @@
 //
 #include <kivm/runtime/runtimeConfig.h>
 
-#define BYTES_UNIT 1024
-#define SIZE_KB(X) ((X) * BYTES_UNIT)
-#define SIZE_MB(X) ((X) * SIZE_KB(BYTES_UNIT))
-
 namespace kivm {
     RuntimeConfig &RuntimeConfig::get() {
         static RuntimeConfig RUNTIME_CONFIG;

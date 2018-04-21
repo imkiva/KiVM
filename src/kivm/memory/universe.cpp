@@ -15,16 +15,21 @@ namespace kivm {
 
     void Universe::initialize() {
         Universe::sCollectedHeapInstance = new MarkSweepHeap;
-        if (!Universe::sCollectedHeapInstance->initializeAll()) {
-            PANIC("CollectedHeap initialization failed");
+        Universe::sCollectedHeapInstance->initializeAll();
+    }
+
+    void Universe::destroy() {
+        if (Universe::sCollectedHeapInstance != nullptr) {
+            delete Universe::sCollectedHeapInstance;
+            Universe::sCollectedHeapInstance = nullptr;
         }
     }
 
     void *Universe::allocVirtual(size_t size) {
         D("allocVirtual: %zd", size);
         auto m = (jbyte *) mmap(nullptr, size + sizeof(VirtualMemoryInfo),
-                                  PROT_READ | PROT_WRITE,
-                                  MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+                                PROT_READ | PROT_WRITE,
+                                MAP_ANONYMOUS | MAP_SHARED, -1, 0);
         if (m == MAP_FAILED) {
             PANIC("mmap() failed: %s", strerror(errno));
             return nullptr;
@@ -46,5 +51,19 @@ namespace kivm {
             PANIC("heap not initialized");
         }
         return sCollectedHeapInstance->allocate(size);
+    }
+
+    void *Universe::allocCObject(size_t size) {
+        void *m = malloc(size);
+        if (m == nullptr) {
+            PANIC("OutOfMemory: system heap");
+        }
+        return m;
+    }
+
+    void Universe::deallocCObject(void *memory) {
+        if (memory != nullptr) {
+            free(memory);
+        }
     }
 }
