@@ -11,7 +11,7 @@ namespace kivm {
     void InvocationContext::invokeJava(bool hasThis) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypes();
 
-        D("invokeTarget: %s.%s:%s, hasThis: %s, native: %s, nargs: %zd",
+        D("javaInvocationContext: invokeTarget: %s.%s:%s, hasThis: %s, native: %s, nargs: %zd",
           strings::toStdString(_instanceKlass->getName()).c_str(),
           strings::toStdString(_method->getName()).c_str(),
           strings::toStdString(_method->getDescriptor()).c_str(),
@@ -22,6 +22,8 @@ namespace kivm {
         std::list<oop> callingArgs;
         for (auto it = descriptorMap.rbegin(); it != descriptorMap.rend(); ++it) {
             ValueType valueType = *it;
+            D("javaInvocationContext: Passing stack argument whose value type is %d", valueType);
+
             switch (valueType) {
                 case ValueType::INT:
                     callingArgs.push_front(new intOopDesc(_stack.popInt()));
@@ -53,6 +55,7 @@ namespace kivm {
             callingArgs.push_front(thisObj);
         }
 
+        D("javaInvocationContext: invoke and push result onto the stack (if has)");
         prepareSynchronized(thisObj);
         oop result = _thread->runMethod(_method, callingArgs);
         switch (_method->getReturnType()) {

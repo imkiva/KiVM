@@ -53,29 +53,29 @@ namespace kivm {
             switch (constant_info->tag) {
                 case CONSTANT_Long: {
                     auto *info = (CONSTANT_Long_info *) constant_info;
-                    values.push_back(new longOopDesc(info->get_constant()));
+                    values.push_back(new longOopDesc(info->getConstant()));
                     break;
                 }
                 case CONSTANT_Float: {
                     auto *info = (CONSTANT_Float_info *) constant_info;
-                    values.push_back(new floatOopDesc(info->get_constant()));
+                    values.push_back(new floatOopDesc(info->getConstant()));
                     break;
                 }
                 case CONSTANT_Double: {
                     auto *info = (CONSTANT_Double_info *) constant_info;
-                    values.push_back(new doubleOopDesc(info->get_constant()));
+                    values.push_back(new doubleOopDesc(info->getConstant()));
                     break;
                 }
                 case CONSTANT_Integer: {
                     auto *info = (CONSTANT_Integer_info *) constant_info;
-                    values.push_back(new intOopDesc(info->get_constant()));
+                    values.push_back(new intOopDesc(info->getConstant()));
                     break;
                 }
                 case CONSTANT_String: {
                     // TODO: use runtime constant pool
                     auto *info = (CONSTANT_String_info *) constant_info;
                     auto *utf8 = (CONSTANT_Utf8_info *) pool[info->string_index];
-                    values.push_back(java::lang::String::intern(utf8->get_constant()));
+                    values.push_back(java::lang::String::intern(utf8->getConstant()));
                     break;
                 }
                 default: {

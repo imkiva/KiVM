@@ -9,6 +9,7 @@
 #include <kivm/method.h>
 #include <kivm/field.h>
 #include <sstream>
+#include <kivm/native/java_lang_Class.h>
 
 namespace kivm {
     InstanceKlass::InstanceKlass(ClassFile *classFile, ClassLoader *classLoader,
@@ -23,6 +24,7 @@ namespace kivm {
           _bootstrapMethodAttr(nullptr),
           _innerClassAttr(nullptr) {
         this->setClassType(classType);
+        this->setJavaMirror(nullptr);
     }
 
     InstanceKlass *InstanceKlass::requireInstanceClass(u2 classInfoIndex) {
@@ -31,7 +33,7 @@ namespace kivm {
         auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(_classFile->constant_pool,
                                                               class_info->name_index);
 
-        Klass *loaded = ClassLoader::requireClass(getClassLoader(), utf8_info->get_constant());
+        Klass *loaded = ClassLoader::requireClass(getClassLoader(), utf8_info->getConstant());
         if (loaded->getClassType() != ClassType::INSTANCE_CLASS) {
             // TODO: throw VerifyError
             this->setClassState(ClassState::INITIALIZATION_ERROR);
@@ -47,7 +49,10 @@ namespace kivm {
 
         auto *class_info = requireConstant<CONSTANT_Class_info>(pool, _classFile->this_class);
         auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(pool, class_info->name_index);
-        this->setName(utf8_info->get_constant());
+        this->setName(utf8_info->getConstant());
+
+        // Must call this once class name is linked
+        java::lang::Class::createMirror(this, _javaLoader);
 
         linkSuperClass(pool);
         linkInterfaces(pool);
@@ -177,7 +182,7 @@ namespace kivm {
                   strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
                 _staticFields.insert(make_pair(Field::makeIdentity(this, field),
-                                                new FieldID(static_field_index++, field)));
+                                               new FieldID(static_field_index++, field)));
             } else {
                 D("%s: New instance field: #%-d %s",
                   strings::toStdString(getName()).c_str(),
@@ -185,7 +190,7 @@ namespace kivm {
                   strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
                 _instanceFields.insert(make_pair(Field::makeIdentity(this, field),
-                                                  new FieldID(instance_field_index++, field)));
+                                                 new FieldID(instance_field_index++, field)));
             }
         }
         this->_staticFieldValues.shrink_to_fit();
@@ -211,13 +216,13 @@ namespace kivm {
                 case ATTRIBUTE_Signature: {
                     auto *sig_attr = (Signature_attribute *) attr;
                     auto *utf8 = requireConstant<CONSTANT_Utf8_info>(pool, sig_attr->signature_index);
-                    _signature = utf8->get_constant();
+                    _signature = utf8->getConstant();
                     break;
                 }
                 case ATTRIBUTE_SourceFile: {
                     auto *s = (SourceFile_attribute *) attr;
                     auto *utf8 = requireConstant<CONSTANT_Utf8_info>(pool, s->sourcefile_index);
-                    _sourceFile = utf8->get_constant();
+                    _sourceFile = utf8->getConstant();
                     break;
                 }
                 case ATTRIBUTE_BootstrapMethods:
@@ -255,7 +260,7 @@ namespace kivm {
         return this->getInstanceFieldInfo(className, name, descriptor)->_offset;
     }
 
-    FieldID* InstanceKlass::getThisClassField(const String &name, const String &descriptor) const {
+    FieldID *InstanceKlass::getThisClassField(const String &name, const String &descriptor) const {
         auto id = getInstanceFieldInfo(getName(), name, descriptor);
         if (id != nullptr && id->_field != nullptr) {
             return id;
@@ -264,18 +269,18 @@ namespace kivm {
         return getStaticFieldInfo(getName(), name, descriptor);
     }
 
-    FieldID* InstanceKlass::getStaticFieldInfo(const String &className,
-                                              const String &name,
-                                              const String &descriptor) const {
+    FieldID *InstanceKlass::getStaticFieldInfo(const String &className,
+                                               const String &name,
+                                               const String &descriptor) const {
         RETURN_IF(iter, this->_staticFields,
                   KEY_MAKER(className, name, descriptor),
                   iter->second,
                   nullptr);
     }
 
-    FieldID* InstanceKlass::getInstanceFieldInfo(const String &className,
-                                                const String &name,
-                                                const String &descriptor) const {
+    FieldID *InstanceKlass::getInstanceFieldInfo(const String &className,
+                                                 const String &name,
+                                                 const String &descriptor) const {
         RETURN_IF(iter, this->_instanceFields,
                   KEY_MAKER(className, name, descriptor),
                   iter->second,

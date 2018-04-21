@@ -69,6 +69,8 @@ namespace kivm {
                   strings::toStdString(_method->getDescriptor()).c_str());
         }
 
+        D("nativeInvocationContext: native method found at: %p", nativeMethod);
+
         ValueType returnValueType = _method->getReturnTypeNoWrap();
         ffi_type *rtype = valueTypeToFFIType(returnValueType);
 
@@ -187,7 +189,7 @@ namespace kivm {
             PANIC("invokeNative: ffi_prep_cif() failed: %d", result);
         }
 
-        D("nativeInvocationContext: ");
+        D("nativeInvocationContext: invoke and push result onto the stack (if has)");
         // invoke and push the result onto the stack(if has)
         switch (returnValueType) {
             case ValueType::VOID: {

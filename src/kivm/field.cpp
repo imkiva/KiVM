@@ -55,8 +55,8 @@ namespace kivm {
         this->_accessFlag = _fieldInfo->access_flags;
         auto *name_info = requireConstant<CONSTANT_Utf8_info>(pool, _fieldInfo->name_index);
         auto *desc_info = requireConstant<CONSTANT_Utf8_info>(pool, _fieldInfo->descriptor_index);
-        this->_name = name_info->get_constant();
-        this->_descriptor = desc_info->get_constant();
+        this->_name = name_info->getConstant();
+        this->_descriptor = desc_info->getConstant();
         linkAttributes(pool);
         linkValueType();
         this->_linked = true;
@@ -74,7 +74,7 @@ namespace kivm {
                 case ATTRIBUTE_Signature: {
                     auto *sig_attr = (Signature_attribute *) attr;
                     auto *utf8 = requireConstant<CONSTANT_Utf8_info>(pool, sig_attr->signature_index);
-                    _signature = utf8->get_constant();
+                    _signature = utf8->getConstant();
                     break;
                 }
 

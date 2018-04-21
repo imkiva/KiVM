@@ -954,7 +954,7 @@ namespace kivm {
         cp_info *cp = constant_pool[attribute_name_index];
         if (cp->tag == CONSTANT_Utf8) {
             auto *utf8_info = (CONSTANT_Utf8_info *) cp;
-            const String &name = utf8_info->get_constant();
+            const String &name = utf8_info->getConstant();
             auto iter = ATTRIBUTE_MAPPING.find(name);
             if (iter != ATTRIBUTE_MAPPING.end()) {
                 u2 tag = iter->second;

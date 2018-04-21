@@ -42,12 +42,12 @@ void print_constant_pool(ClassFile *classFile) {
             }
             case CONSTANT_Integer: {
                 auto *target = (CONSTANT_Integer_info *) pool[i];
-                printf("    #%4d = Integer %13s %di\n", i, "", target->get_constant());
+                printf("    #%4d = Integer %13s %di\n", i, "", target->getConstant());
                 break;
             }
             case CONSTANT_Float: {
                 auto *target = (CONSTANT_Float_info *) pool[i];
-                float result = target->get_constant();
+                float result = target->getConstant();
                 if (FLOAT_IS_POSITIVE_INFINITY(result)) {
                     printf("    #%4d = Float %15s Inf\n", i, "");
 
@@ -64,13 +64,13 @@ void print_constant_pool(ClassFile *classFile) {
             }
             case CONSTANT_Long: {
                 auto *target = (CONSTANT_Long_info *) pool[i];
-                printf("    #%4d = Long %16s %ldl\n", i, "", target->get_constant());
+                printf("    #%4d = Long %16s %ldl\n", i, "", target->getConstant());
                 ++i;
                 break;
             }
             case CONSTANT_Double: {
                 auto *target = (CONSTANT_Double_info *) pool[i];
-                double result = target->get_constant();
+                double result = target->getConstant();
                 if (DOUBLE_IS_POSITIVE_INFINITY(result))
                     printf("    #%4d = Double %14s Inf\n", i, "");
                 else if (DOUBLE_IS_NEGATIVE_INFINITY(result))
@@ -92,7 +92,7 @@ void print_constant_pool(ClassFile *classFile) {
             case CONSTANT_Utf8: {
                 auto *target = (CONSTANT_Utf8_info *) pool[i];
                 printf("    #%4d = Utf8 %16s ", i, "");
-                printf("%s\n", strings::toStdString(target->get_constant()).c_str());
+                printf("%s\n", strings::toStdString(target->getConstant()).c_str());
                 break;
             }
             case CONSTANT_MethodHandle: {

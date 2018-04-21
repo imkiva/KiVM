@@ -4,7 +4,7 @@
 #include <kivm/runtime/thread.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/oop/primitiveOop.h>
-#include <kivm/native/class_names.h>
+#include <kivm/native/classNames.h>
 #include <kivm/native/java_lang_Class.h>
 #include <kivm/native/java_lang_Thread.h>
 #include <kivm/native/java_lang_String.h>
@@ -64,7 +64,7 @@ namespace kivm {
 
         java::lang::Class::initialize();
         auto class_class = use(cl, thread, J_CLASS);
-        java::lang::Class::mirrorCoreClasses();
+        java::lang::Class::mirrorCoreAndDelayedClasses();
 
         use(cl, thread, J_STRING);
         auto thread_class = use(cl, thread, J_THREAD);

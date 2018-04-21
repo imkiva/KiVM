@@ -7,6 +7,7 @@
 #include <kivm/oop/oopfwd.h>
 #include <queue>
 #include <unordered_map>
+#include <kivm/oop/klass.h>
 
 namespace kivm {
     namespace java {
@@ -17,16 +18,20 @@ namespace kivm {
                     FIXED, NOT_FIXED
                 };
 
-                static std::unordered_map<kivm::String, mirrorOop>& getPrimitiveTypeMirrors();
+                static std::unordered_map<kivm::String, mirrorOop> &getPrimitiveTypeMirrors();
 
                 static std::queue<kivm::String> &getDelayedMirrors();
 
                 static ClassMirrorState &getMirrorState();
 
+                static mirrorOop findPrimitiveTypeMirror(const kivm::String &signature);
+
             public:
                 static void initialize();
 
-                static void mirrorCoreClasses();
+                static void mirrorCoreAndDelayedClasses();
+
+                static void createMirror(Klass *klass, mirrorOop javaLoader);
             };
         }
     }

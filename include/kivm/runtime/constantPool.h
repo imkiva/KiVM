@@ -60,7 +60,7 @@ namespace kivm {
         struct PrimitiveConstantCreator {
             inline PrimitiveType operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
                 auto primitiveInfo = (EntryType *) pool[index];
-                return (PrimitiveType) primitiveInfo->get_constant();
+                return (PrimitiveType) primitiveInfo->getConstant();
             }
         };
 
@@ -130,6 +130,10 @@ namespace kivm {
             _doublePool.setRawPool(pool);
             _utf8Pool.setRawPool(pool);
             _nameAndTypePool.setRawPool(pool);
+        }
+
+        inline cp_info **getRawPool() {
+            return _rawPool;
         }
 
         inline int getConstantTag(int index) {

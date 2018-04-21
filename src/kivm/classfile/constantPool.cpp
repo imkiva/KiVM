@@ -6,11 +6,11 @@
 #include <cmath>
 
 namespace kivm {
-    jint CONSTANT_Integer_info::get_constant() const {
+    jint CONSTANT_Integer_info::getConstant() const {
         return static_cast<jint>(bytes);
     }
 
-    jfloat CONSTANT_Float_info::get_constant() const {
+    jfloat CONSTANT_Float_info::getConstant() const {
         if (FLOAT_IS_POSITIVE_INFINITY(bytes)) {
             return _FLOAT_POSITIVE_INFINITY;
 
@@ -30,11 +30,11 @@ namespace kivm {
         }
     }
 
-    jlong CONSTANT_Long_info::get_constant() const {
+    jlong CONSTANT_Long_info::getConstant() const {
         return ((jlong) high_bytes << 32) + low_bytes;
     }
 
-    jdouble CONSTANT_Double_info::get_constant() const {
+    jdouble CONSTANT_Double_info::getConstant() const {
         jlong bits = ((jlong) high_bytes << 32) + low_bytes;
 
         if (DOUBLE_IS_POSITIVE_INFINITY(bits)) {
@@ -56,7 +56,7 @@ namespace kivm {
         }
     }
 
-    String CONSTANT_Utf8_info::get_constant() {
+    String CONSTANT_Utf8_info::getConstant() {
         // UTF-8 Strings in Java needs to be Unicode in C++
         if (!_cached) {
             _cached_string = kivm::strings::fromBytes(bytes, length);

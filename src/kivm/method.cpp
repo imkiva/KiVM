@@ -65,8 +65,8 @@ namespace kivm {
         this->_accessFlag = _methodInfo->access_flags;
         auto *name_info = requireConstant<CONSTANT_Utf8_info>(pool, _methodInfo->name_index);
         auto *desc_info = requireConstant<CONSTANT_Utf8_info>(pool, _methodInfo->descriptor_index);
-        this->_name = name_info->get_constant();
-        this->_descriptor = desc_info->get_constant();
+        this->_name = name_info->getConstant();
+        this->_descriptor = desc_info->getConstant();
         linkAttributes(pool);
         _linked = true;
     }
@@ -87,7 +87,7 @@ namespace kivm {
                 case ATTRIBUTE_Signature: {
                     auto *sig_attr = (Signature_attribute *) attr;
                     auto *utf8 = requireConstant<CONSTANT_Utf8_info>(pool, sig_attr->signature_index);
-                    _signature = utf8->get_constant();
+                    _signature = utf8->getConstant();
                     break;
                 }
                 case ATTRIBUTE_RuntimeVisibleAnnotations:
@@ -107,7 +107,7 @@ namespace kivm {
             auto *class_info = requireConstant<CONSTANT_Class_info>(pool, exception_index);
             auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(pool, class_info->name_index);
             Klass *loaded = ClassLoader::requireClass(getClass()->getClassLoader(),
-                                                      utf8_info->get_constant());
+                                                      utf8_info->getConstant());
             if (loaded->getClassType() != ClassType::INSTANCE_CLASS) {
                 // TODO: throw VerifyError
                 assert(false);

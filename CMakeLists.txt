@@ -85,7 +85,7 @@ set(SOURCE_FILES
         include/kivm/bytecode/bytecodes.h
         include/kivm/bytecode/execution.h
         include/kivm/native/java_lang_Class.h
-        include/kivm/native/class_names.h
+        include/kivm/native/classNames.h
         include/kivm/native/java_lang_Thread.h
         include/kivm/native/java_lang_String.h
         include/kivm/system.h
@@ -125,7 +125,7 @@ set(SOURCE_FILES
         src/kivm/runtime/stack.cpp
         src/kivm/runtime/frame.cpp
         src/kivm/runtime/thread.cpp
-        src/kivm/runtimeConfig.cpp
+        src/kivm/runtime/runtimeConfig.cpp
         src/kivm/bytecode/execution.cpp
         src/kivm/native/java_lang_Class.cpp
         src/kivm/runtime/init.cpp
@@ -144,7 +144,7 @@ set(SOURCE_FILES
         src/kivm/bytecode/executionInvoke.cpp
         src/kivm/bytecode/javaInvocationContext.cpp
         src/kivm/memory/markSweep.cpp
-        src/kivm/memory/universe.cpp)
+        src/kivm/memory/universe.cpp src/kivm/native/java_lang_System.cpp)
 
 
 #### libkivm

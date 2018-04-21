@@ -2,7 +2,7 @@
 // Created by kiva on 2018/3/29.
 //
 
-#include <kivm/native/class_names.h>
+#include <kivm/native/classNames.h>
 #include <kivm/native/java_lang_String.h>
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/primitiveOop.h>
