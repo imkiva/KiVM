@@ -6,17 +6,11 @@
 #include <kivm/oop/klass.h>
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/oop/arrayKlass.h>
-#include <kivm/oop/reflectionSupport.h>
 #include <kivm/classfile/classFileParser.h>
-#include <sstream>
+#include <kivm/classpath/classPathManager.h>
 
 namespace kivm {
     Klass *BaseClassLoader::loadClass(const String &className) {
-        static const char *KLASSPATH_ENV = getenv("KLASSPATH");
-        static String RT_DIR = KLASSPATH_ENV == nullptr
-                               ? L""
-                               : strings::fromStdString(KLASSPATH_ENV);
-
         // Load array class
         if (className[0] == L'[') {
             // [I
@@ -55,14 +49,20 @@ namespace kivm {
             }
         }
 
+
         // Load instance class
-        std::wstringstream path_builder;
-        path_builder << RT_DIR << L'/' << className << L".class";
-        const String &class_file_path = path_builder.str();
-        ClassFileParser classFileParser(strings::toStdString(class_file_path).c_str());
-        ClassFile *classFile = classFileParser.getParsedClassFile();
-        return classFile != nullptr
-               ? new InstanceKlass(classFile, this, nullptr, ClassType::INSTANCE_CLASS)
-               : nullptr;
+        ClassPathManager *cpm = ClassPathManager::get();
+        const auto &result = cpm->searchClass(className);
+        if (result._source == ClassSource::NOT_FOUND) {
+            return nullptr;
+        }
+
+        ClassFileParser fileParser(result._file, result._buffer, result._bufferSize);
+        ClassFile *classFile = fileParser.getParsedClassFile();
+        Klass *klass = classFile != nullptr
+                       ? new InstanceKlass(classFile, this, nullptr, ClassType::INSTANCE_CLASS)
+                       : nullptr;
+        result.closeResource();
+        return klass;
     }
 }

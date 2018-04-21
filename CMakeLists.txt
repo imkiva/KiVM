@@ -26,9 +26,7 @@ else ()
 endif ()
 set(CMAKE_C_STANDARD 11)
 
-
-#### Check CovScript extension
-if (DEFINED ENV{CS_SRC})
+if (DEFINED ENV{KIVM_DEBUG})
     add_definitions(-DKIVM_DEBUG)
 endif ()
 
@@ -147,7 +145,7 @@ set(SOURCE_FILES
         src/kivm/memory/markSweep.cpp
         src/kivm/memory/universe.cpp
         src/kivm/native/java_lang_System.cpp
-        src/shared/zip/libzippp.cpp include/kivm/classpath/classPath.h src/kivm/classpath/classPath.cpp include/shared/filesystem.h src/shared/filesystem.cpp include/shared/zip.h)
+        src/shared/zip/libzippp.cpp include/kivm/classpath/classPathManager.h src/kivm/classpath/classPathManager.cpp include/shared/filesystem.h src/shared/filesystem.cpp include/shared/zip.h)
 
 
 #### libkivm

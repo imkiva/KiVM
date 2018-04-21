@@ -5,21 +5,23 @@
 #include <kivm/jni/jniJavaVM.h>
 #include <kivm/jni/jniEnv.h>
 #include <kivm/memory/universe.h>
-#include <unordered_map>
+#include <kivm/classpath/classPathManager.h>
 
 #if defined(KIVM_PLATFORM_UNIX)
-#define PATH_SEPARATOR_CHAR L"/"
+#   define PATH_SEPARATOR_CHAR L"/"
+#   define PATH_DELIMITER_CHAR L":"
 #elif defined(KIVM_PLATFORM_WINDOWS)
-#define PATH_SEPARATOR_CHAR L"\\"
-#else
-#define PATH_SEPARATOR_CHAR L"/"
+#   define PATH_SEPARATOR_CHAR L"\\"
+#   define PATH_DELIMITER_CHAR L";"
 #endif
 
 namespace kivm {
-    String Global::SLASH(L"/");
-    String Global::DOT(L".");
-    String Global::UNDERLINE(L"_");
-    String Global::PATH_SEPARATOR(PATH_SEPARATOR_CHAR);
+    String Global::SLASH(L"/"); // NOLINT
+    String Global::DOT(L"."); // NOLINT
+    String Global::UNDERLINE(L"_"); // NOLINT
+    String Global::PATH_SEPARATOR(PATH_SEPARATOR_CHAR); // NOLINT
+    String Global::PATH_DELIMITER(PATH_DELIMITER_CHAR); // NOLINT
+    String Global::CLASS_EXTENSION(L"class"); // NOLINT
 
     JavaVM *KiVM::sJavaVMInstance = nullptr;
     JNIEnv *KiVM::sJNIEnvInstance = nullptr;
@@ -31,6 +33,9 @@ namespace kivm {
 
         // initialize memory
         Universe::initialize();
+
+        // initialize classpath
+        ClassPathManager::initialize();
 
         auto invokeInterface = new JNIInvokeInterface_;
         invokeInterface->AttachCurrentThread = JNI_ENTRY_NAME(AttachCurrentThread);

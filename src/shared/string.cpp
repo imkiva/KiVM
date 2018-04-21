@@ -112,5 +112,45 @@ namespace kivm {
             }
             return newString;
         }
+
+        std::vector<String> split(const String &string, const String &delimiter) {
+            std::vector<String> result;
+            String::size_type i = 0;
+
+            while (i != string.size()) {
+                // find the first char that is not a part of delimiter
+                int flag = 0;
+                while (i != string.size() && flag == 0) {
+                    flag = 1;
+                    for (wchar_t x : delimiter) {
+                        if (string[i] == x) {
+                            ++i;
+                            flag = 0;
+                            break;
+                        }
+                    }
+                }
+
+                // find another delimiter char
+                flag = 0;
+                String::size_type j = i;
+                while (j != string.size() && flag == 0) {
+                    for (wchar_t x : delimiter) {
+                        if (string[j] == x) {
+                            flag = 1;
+                            break;
+                        }
+                    }
+                    if (flag == 0) {
+                        ++j;
+                    }
+                }
+                if (i != j) {
+                    result.push_back(string.substr(i, j - i));
+                    i = j;
+                }
+            }
+            return result;
+        }
     }
 }

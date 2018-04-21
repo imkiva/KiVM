@@ -13,7 +13,6 @@ namespace kivm {
         this->_current = nullptr;
         this->_bufferStart = nullptr;
         this->_bufferEnd = nullptr;
-        this->_source = nullptr;
     }
 
     void ClassFileStream::init(u1 *buffer, size_t length) {

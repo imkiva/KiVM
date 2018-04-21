@@ -41,6 +41,8 @@ namespace kivm {
         static String DOT;
         static String UNDERLINE;
         static String PATH_SEPARATOR;
+        static String PATH_DELIMITER;
+        static String CLASS_EXTENSION;
     };
 
     class KiVM {

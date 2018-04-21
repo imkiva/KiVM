@@ -190,10 +190,10 @@ ZipEntry ZipArchive::getEntry(const string &name, bool excludeDirectories, bool 
         libzippp_int64 index = zip_name_locate(zipHandle, name.c_str(), flags);
         if (index >= 0) {
             return getEntry(index);
-        } else {
-            //name not found
         }
     }
+
+    // name not found
     return ZipEntry();
 }
 
@@ -208,7 +208,7 @@ ZipEntry ZipArchive::getEntry(libzippp_int64 index, State state) const {
         }
     }
 
-    //index not found / invalid index
+    // index not found / invalid index
     return ZipEntry();
 }
 

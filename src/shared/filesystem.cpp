@@ -5,6 +5,10 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
+#include <cstring>
+#include <cerrno>
+#include <fcntl.h>
 
 namespace kivm {
     bool FileSystem::isDirectory(const String &path) {
@@ -17,5 +21,37 @@ namespace kivm {
 
     bool FileSystem::canRead(const String &path) {
         return access(strings::toStdString(path).c_str(), R_OK) == 0;
+    }
+
+    void *FileSystem::createFileMapping(const String &path, int *pFd, size_t *pSize) {
+        int fd = open(strings::toStdString(path).c_str(), O_RDONLY);
+        if (fd < 0) {
+            return nullptr;
+        }
+        size_t size = FileSystem::getFileSize(path);
+        auto m = (jbyte *) mmap(nullptr, size,
+                                PROT_READ,
+                                MAP_SHARED, fd, 0);
+        if (m == MAP_FAILED) {
+            return nullptr;
+        }
+        *pFd = fd;
+        *pSize = size;
+        return m;
+    }
+
+    void FileSystem::destroyFileMapping(void *memory, int fd, size_t size) {
+        if (memory != nullptr) {
+            munmap(memory, size);
+            close(fd);
+        }
+    }
+
+    size_t FileSystem::getFileSize(const String &path) {
+        struct stat s{};
+        if (stat(strings::toStdString(path).c_str(), &s) == 0) {
+            return (size_t) s.st_size;
+        }
+        return 0;
     }
 }

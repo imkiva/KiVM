@@ -17,9 +17,8 @@ namespace kivm {
     private:
         ClassFile *_classFile;
         ClassFileStream _classFileStream;
-        FILE *_file;
-
         u1 *_content;
+        size_t _size;
 
         ClassFile *parse();
 
@@ -34,7 +33,7 @@ namespace kivm {
         void parseAttributes(ClassFile *classFile);
 
     public:
-        explicit ClassFileParser(const char *filePath);
+        ClassFileParser(const String &filePath, u1 *buffer, size_t size);
 
         ~ClassFileParser();
 

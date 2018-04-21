@@ -7,16 +7,6 @@
 #include <cassert>
 
 namespace kivm {
-    static u1 *read_all_rewind(FILE *file, size_t *psize) {
-        fseek(file, 0L, SEEK_END);
-        long size = ftell(file);
-        auto *content = new u1[size + 1];
-        fseek(file, 0L, SEEK_SET);
-        fread(content, static_cast<size_t>(size), 1, file);
-        *psize = static_cast<size_t>(size);
-        return content;
-    }
-
     ClassFile *ClassFileParser::alloc() {
         auto *classFile = new ClassFile();
         classFile->constant_pool = nullptr;
@@ -44,33 +34,24 @@ namespace kivm {
         delete class_file;
     }
 
-    ClassFileParser::ClassFileParser(const char *filePath) {
+    ClassFileParser::ClassFileParser(const String &filePath, u1 *buffer, size_t size) {
         _classFile = nullptr;
-        _content = nullptr;
-        _file = fopen(filePath, "rb");
+        _content = buffer;
+        _size = size;
         _classFileStream.setSource(filePath);
     }
 
-    ClassFileParser::~ClassFileParser() {
-        if (_file != nullptr) {
-            fclose(_file);
-        }
-        delete[] _content;
-    }
+    ClassFileParser::~ClassFileParser() = default;
 
     ClassFile *ClassFileParser::getParsedClassFile() {
         if (_classFile == nullptr) {
-            if (_file != nullptr) {
-                _classFile = parse();
-            }
+            _classFile = parse();
         }
 
         return _classFile;
     }
 
     ClassFile *ClassFileParser::parse() {
-        size_t size = 0;
-        _content = read_all_rewind(_file, &size);
         if (_content == nullptr) {
             return nullptr;
         }
@@ -80,7 +61,7 @@ namespace kivm {
             return nullptr;
         }
 
-        _classFileStream.init(_content, size);
+        _classFileStream.init(_content, _size);
 
         classFile->magic = _classFileStream.get4();
         if (classFile->magic != 0xCAFEBABE) {

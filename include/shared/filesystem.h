@@ -9,5 +9,11 @@ namespace kivm {
         static bool isDirectory(const String &path);
 
         static bool canRead(const String &path);
+
+        static size_t getFileSize(const String &path);
+
+        static void *createFileMapping(const String &path, int *pFd, size_t *pSize);
+
+        static void destroyFileMapping(void *memory, int fd, size_t size);
     };
 }

@@ -5,6 +5,7 @@
 
 #include <shared/types.h>
 #include <string>
+#include <vector>
 
 namespace kivm {
 
@@ -18,6 +19,8 @@ namespace kivm {
         String replaceAll(const String &string, const String &oldValue, const String &newValue);
 
         std::string toStdString(const String &str);
+
+        std::vector<String> split(const String &string, const String &delimiter);
     }
 
     using String = strings::String;

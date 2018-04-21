@@ -14,13 +14,15 @@ namespace kivm {
     };
 
     struct ClassSearchResult {
+        String _file;
+        int _fd;
         ClassSource _source;
         u1 *_buffer;
         size_t _bufferSize;
 
-        ClassSearchResult(ClassSource _source, u1 *_buffer, size_t _bufferSize)
-            : _source(_source), _buffer(_buffer), _bufferSize(_bufferSize) {
-        }
+        ClassSearchResult(const String &file, int fd, ClassSource source, u1 *buffer, size_t bufferSize);
+
+        void closeResource() const;
     };
 
     struct ClassPathEntry {
@@ -34,6 +36,8 @@ namespace kivm {
         std::list<ClassPathEntry> _runtimeClassPath;
 
     public:
+        static void initialize();
+
         static ClassPathManager *get();
 
         void addClassPath(const String &path);

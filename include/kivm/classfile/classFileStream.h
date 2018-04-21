@@ -28,7 +28,7 @@ namespace kivm {
         u1 *_bufferStart; // Buffer bottom
         u1 *_bufferEnd;   // Buffer top (one past last element)
         u1 *_current;      // Current buffer position
-        const char *_source;       // Source of stream (directory name, ZIP/JAR archive name)
+        String _source;    // Source of stream (directory name, ZIP/JAR archive name)
         bool _needVerify;  // True if verification is on for the class file
 
         void guaranteeMore(int size) {
@@ -53,11 +53,11 @@ namespace kivm {
 
         void setCurrent(u1 *pos) { _current = pos; }
 
-        const char *getSource() const { return _source; }
+        const String &getSource() const { return _source; }
 
         void setNeedVerify(bool flag) { _needVerify = flag; }
 
-        void setSource(const char *source) { _source = source; }
+        void setSource(const String &source) { _source = source; }
 
         // Peek u1
         u1 peek1() const {
