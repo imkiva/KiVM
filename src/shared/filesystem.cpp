@@ -20,7 +20,8 @@ namespace kivm {
     }
 
     bool FileSystem::canRead(const String &path) {
-        return access(strings::toStdString(path).c_str(), R_OK) == 0;
+        int r = access(strings::toStdString(path).c_str(), R_OK);
+        return r == 0;
     }
 
     void *FileSystem::createFileMapping(const String &path, int *pFd, size_t *pSize) {

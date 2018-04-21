@@ -180,10 +180,10 @@ bool ZipArchive::hasEntry(const string &name, bool excludeDirectories, bool case
     return index >= 0;
 }
 
-ZipEntry ZipArchive::getEntry(const string &name, bool excludeDirectories, bool caseSensitive, State state) const {
+ZipEntry ZipArchive::getEntry(const string &name, bool excludeDirectoryPart, bool caseSensitive, State state) const {
     if (isOpen()) {
         zip_flags_t flags = ZIP_FL_ENC_GUESS;
-        if (excludeDirectories) { flags = flags | ZIP_FL_NODIR; }
+        if (excludeDirectoryPart) { flags = flags | ZIP_FL_NODIR; }
         if (!caseSensitive) { flags = flags | ZIP_FL_NOCASE; }
         if (state == ORIGINAL) { flags = flags | ZIP_FL_UNCHANGED; }
 

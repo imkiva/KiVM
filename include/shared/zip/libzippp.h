@@ -219,7 +219,7 @@ namespace libzippp {
          * must end with a '/' !
          * The zip file must be open otherwise a null-ZipEntry will be returned.
          */
-        ZipEntry getEntry(const std::string &name, bool excludeDirectories = false, bool caseSensitive = true,
+        ZipEntry getEntry(const std::string &name, bool excludeDirectoryPart = false, bool caseSensitive = true,
                           State state = CURRENT) const;
 
         /**

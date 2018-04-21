@@ -62,6 +62,9 @@ namespace kivm {
             return JNI_ERR;
         }
 
+        ClassPathManager::get()->destroy();
+        Universe::destroy();
+
         delete sJNIEnvInstance->functions;
         delete sJNIEnvInstance;
         delete sJavaVMInstance->functions;

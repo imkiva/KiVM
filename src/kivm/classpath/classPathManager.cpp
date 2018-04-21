@@ -21,6 +21,17 @@ namespace kivm {
         }
     }
 
+    void ClassPathManager::destroy() {
+        auto it = _runtimeClassPath.begin();
+        while (it != _runtimeClassPath.end()) {
+            const ClassPathEntry &entry = *it++;
+            if (entry._source == ClassSource::JAR) {
+                auto zip = (ZipArchive *) entry._cookie;
+                delete zip;
+            }
+        }
+    }
+
     ClassPathManager *ClassPathManager::get() {
         static ClassPathManager classPathManager;
         return &classPathManager;
@@ -38,6 +49,7 @@ namespace kivm {
         size_t bufferSize = 0;
         int fd = -1;
         ClassSource classSource = ClassSource::NOT_FOUND;
+        String classFile;
 
         while (it != _runtimeClassPath.end()) {
             const ClassPathEntry &entry = *it++;
@@ -62,28 +74,31 @@ namespace kivm {
                 if (FileSystem::canRead(tempPath)) {
                     buffer = (u1 *) FileSystem::createFileMapping(tempPath, &fd, &bufferSize);
                     classSource = buffer != nullptr ? ClassSource::DIR : ClassSource::NOT_FOUND;
+                    classFile = std::move(tempPath);
                     break;
                 }
 
             } else if (entry._source == ClassSource::JAR) {
                 auto zip = (ZipArchive *) entry._cookie;
-                const auto &zipEntry = zip->getEntry(strings::toStdString(tempPath), true);
+                const auto &zipEntry = zip->getEntry(strings::toStdString(tempPath), false);
 
                 if (!zipEntry.isNull() && zipEntry.isFile()) {
                     buffer = (u1 *) zipEntry.readAsBinary();
                     bufferSize = zipEntry.getSize();
                     classSource = buffer != nullptr ? ClassSource::JAR : ClassSource::NOT_FOUND;
+                    classFile = entry._path;
                     break;
                 }
             }
         }
 
         if (classSource != ClassSource::NOT_FOUND) {
-            D("ClassPathManager: found class in file: %s",
-              strings::toStdString(tempPath).c_str());
+            D("ClassPathManager: found class %s in file: %s",
+              strings::toStdString(className).c_str(),
+              strings::toStdString(classFile).c_str());
         }
 
-        return ClassSearchResult(tempPath, fd, classSource, buffer, bufferSize);
+        return ClassSearchResult(classFile, fd, classSource, buffer, bufferSize);
     }
 
     void ClassPathManager::addClassPath(const String &path) {
@@ -95,7 +110,10 @@ namespace kivm {
         if (FileSystem::canRead(path)) {
             auto zip = new ZipArchive(path);
             zip->open(ZipArchive::OpenMode::READ_ONLY);
-            _runtimeClassPath.push_back({ClassSource::JAR, path, zip});
+            if (zip->isOpen()) {
+                _runtimeClassPath.push_back({ClassSource::JAR, path, zip});
+                return;
+            }
         }
 
         D("ClassPathManager: ignoring unrecognized classpath: %s",
