@@ -4,6 +4,7 @@
 #include <kivm/memory/universe.h>
 #include <kivm/memory/markSweep.h>
 #include <sys/mman.h>
+#include <cstring>
 #include <cerrno>
 
 namespace kivm {
