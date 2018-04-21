@@ -45,7 +45,6 @@ namespace kivm {
     }
 
     void Execution::invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
-        // TODO: lookup in parent methods
         Method *method = rt->getMethod(constantIndex);
         if (method == nullptr) {
             panicNoSuchMethod(rt, constantIndex);
