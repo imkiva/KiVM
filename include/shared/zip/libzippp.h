@@ -38,6 +38,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <kivm/kivm.h>
 
 //defined in libzip
 struct zip;
@@ -128,9 +129,13 @@ namespace libzippp {
          *
          * http://nih.at/listarchive/libzip-discuss/msg00219.html
          */
-        explicit ZipArchive(const std::string &zipPath, const std::string &password = "");
+        explicit ZipArchive(const kivm::String &zipPath);
 
         ~ZipArchive(); //commit all the changes if open
+
+        ZipArchive(const ZipArchive &zf) = delete;
+
+        ZipArchive &operator=(const ZipArchive &) = delete;
 
         /**
          * Return the path of the ZipArchive.
@@ -176,12 +181,6 @@ namespace libzippp {
          * Returns true if the ZipArchive is open and mutable.
          */
         inline bool isMutable() const { return isOpen() && mode != NOT_OPEN && mode != READ_ONLY; }
-
-        /**
-         * Returns true if the ZipArchive is encrypted. This method returns true only if
-         * a password has been set in the constructor.
-         */
-        inline bool isEncrypted() const { return !password.empty(); }
 
         /**
          * Returns the number of entries in this zip file (folders are included).
@@ -280,15 +279,9 @@ namespace libzippp {
         std::string path;
         zip *zipHandle;
         OpenMode mode;
-        std::string password;
 
         //generic method to create ZipEntry
         ZipEntry createEntry(struct zip_stat *stat) const;
-
-        //prevent copy across functions
-        ZipArchive(const ZipArchive &zf);
-
-        ZipArchive &operator=(const ZipArchive &);
     };
 
     /**

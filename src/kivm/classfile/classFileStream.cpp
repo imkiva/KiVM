@@ -11,70 +11,70 @@ namespace kivm {
 
     ClassFileStream::ClassFileStream() {
         this->_current = nullptr;
-        this->_buffer_start = nullptr;
-        this->_buffer_end = nullptr;
+        this->_bufferStart = nullptr;
+        this->_bufferEnd = nullptr;
         this->_source = nullptr;
     }
 
     void ClassFileStream::init(u1 *buffer, size_t length) {
-        this->_buffer_start = buffer;
-        this->_buffer_end = buffer + length;
+        this->_bufferStart = buffer;
+        this->_bufferEnd = buffer + length;
         setNeedVerify(false);
         setCurrent(buffer);
     }
 
     u1 ClassFileStream::get1() {
-        if (_need_verify) {
+        if (_needVerify) {
             guaranteeMore(1);
         } else {
-            assert(1 <= _buffer_end - _current);
+            assert(1 <= _bufferEnd - _current);
         }
         return get1Fast();
     }
 
     u2 ClassFileStream::get2() {
-        if (_need_verify) {
+        if (_needVerify) {
             guaranteeMore(2);
         } else {
-            assert(2 <= _buffer_end - _current);
+            assert(2 <= _bufferEnd - _current);
         }
         return get2Fast();
     }
 
     u4 ClassFileStream::get4() {
-        if (_need_verify) {
+        if (_needVerify) {
             guaranteeMore(4);
         } else {
-            assert(4 <= _buffer_end - _current);
+            assert(4 <= _bufferEnd - _current);
         }
         return get4Fast();
     }
 
     u8 ClassFileStream::get8() {
-        if (_need_verify) {
+        if (_needVerify) {
             guaranteeMore(8);
         } else {
-            assert(8 <= _buffer_end - _current);
+            assert(8 <= _bufferEnd - _current);
         }
         return get8Fast();
     }
 
     void ClassFileStream::skip1(int length) {
-        if (_need_verify) {
+        if (_needVerify) {
             guaranteeMore(length);
         }
         _current += length;
     }
 
     void ClassFileStream::skip2(int length) {
-        if (_need_verify) {
+        if (_needVerify) {
             guaranteeMore(length * 2);
         }
         _current += length * 2;
     }
 
     void ClassFileStream::skip4(int length) {
-        if (_need_verify) {
+        if (_needVerify) {
             guaranteeMore(length * 4);
         }
         _current += length * 4;

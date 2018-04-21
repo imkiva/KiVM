@@ -25,14 +25,14 @@ namespace kivm {
      */
     class ClassFileStream {
     private:
-        u1 *_buffer_start; // Buffer bottom
-        u1 *_buffer_end;   // Buffer top (one past last element)
+        u1 *_bufferStart; // Buffer bottom
+        u1 *_bufferEnd;   // Buffer top (one past last element)
         u1 *_current;      // Current buffer position
         const char *_source;       // Source of stream (directory name, ZIP/JAR archive name)
-        bool _need_verify;  // True if verification is on for the class file
+        bool _needVerify;  // True if verification is on for the class file
 
         void guaranteeMore(int size) {
-            auto remaining = (size_t) (_buffer_end - _current);
+            auto remaining = (size_t) (_bufferEnd - _current);
             auto usize = (unsigned int) size;
             if (usize > remaining) {
                 PANIC("Unexpected EOF");
@@ -45,9 +45,9 @@ namespace kivm {
         void init(u1 *buffer, size_t length);
 
         // Buffer access
-        u1 *getBufferStart() const { return _buffer_start; }
+        u1 *getBufferStart() const { return _bufferStart; }
 
-        size_t getLength() const { return static_cast<size_t>(_buffer_end - _buffer_start); }
+        size_t getLength() const { return static_cast<size_t>(_bufferEnd - _bufferStart); }
 
         u1 *getCurrent() const { return _current; }
 
@@ -55,7 +55,7 @@ namespace kivm {
 
         const char *getSource() const { return _source; }
 
-        void setNeedVerify(bool flag) { _need_verify = flag; }
+        void setNeedVerify(bool flag) { _needVerify = flag; }
 
         void setSource(const char *source) { _source = source; }
 
@@ -141,7 +141,7 @@ namespace kivm {
         }
 
         // Tells whether eos is reached
-        bool isEnded() const { return _current == _buffer_end; }
+        bool isEnded() const { return _current == _bufferEnd; }
 
         // Yeah...
         ClassFileStream &operator>>(CONSTANT_Utf8_info &info);

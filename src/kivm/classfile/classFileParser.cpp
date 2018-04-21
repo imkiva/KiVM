@@ -11,11 +11,9 @@ namespace kivm {
         fseek(file, 0L, SEEK_END);
         long size = ftell(file);
         auto *content = new u1[size + 1];
-        if (content != nullptr) {
-            fseek(file, 0L, SEEK_SET);
-            fread(content, static_cast<size_t>(size), 1, file);
-            *psize = static_cast<size_t>(size);
-        }
+        fseek(file, 0L, SEEK_SET);
+        fread(content, static_cast<size_t>(size), 1, file);
+        *psize = static_cast<size_t>(size);
         return content;
     }
 
@@ -106,7 +104,7 @@ namespace kivm {
     }
 
     template<typename T>
-    static void read_pool_entry(cp_info **pool, int index, ClassFileStream &stream) {
+    static void readPoolEntry(cp_info **pool, int index, ClassFileStream &stream) {
         pool[index] = new T;
         stream >> *(T *) pool[index];
     }
@@ -123,48 +121,48 @@ namespace kivm {
             u1 tag = _classFileStream.peek1();
             switch (tag) {
                 case CONSTANT_Utf8:
-                    read_pool_entry<CONSTANT_Utf8_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_Utf8_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_Integer:
-                    read_pool_entry<CONSTANT_Integer_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_Integer_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_Float:
-                    read_pool_entry<CONSTANT_Float_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_Float_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_Long:
-                    read_pool_entry<CONSTANT_Long_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_Long_info>(pool, i, _classFileStream);
                     ++i;
                     break;
                 case CONSTANT_Double:
-                    read_pool_entry<CONSTANT_Double_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_Double_info>(pool, i, _classFileStream);
                     ++i;
                     break;
                 case CONSTANT_Class:
-                    read_pool_entry<CONSTANT_Class_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_Class_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_String:
-                    read_pool_entry<CONSTANT_String_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_String_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_Fieldref:
-                    read_pool_entry<CONSTANT_Fieldref_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_Fieldref_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_Methodref:
-                    read_pool_entry<CONSTANT_Methodref_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_Methodref_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_InterfaceMethodref:
-                    read_pool_entry<CONSTANT_InterfaceMethodref_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_InterfaceMethodref_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_NameAndType:
-                    read_pool_entry<CONSTANT_NameAndType_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_NameAndType_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_MethodHandle:
-                    read_pool_entry<CONSTANT_MethodHandle_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_MethodHandle_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_MethodType:
-                    read_pool_entry<CONSTANT_MethodType_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_MethodType_info>(pool, i, _classFileStream);
                     break;
                 case CONSTANT_InvokeDynamic:
-                    read_pool_entry<CONSTANT_InvokeDynamic_info>(pool, i, _classFileStream);
+                    readPoolEntry<CONSTANT_InvokeDynamic_info>(pool, i, _classFileStream);
                     break;
                 default:
                     assert(false);

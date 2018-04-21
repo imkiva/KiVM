@@ -15,9 +15,6 @@ namespace kivm {
     }
 
     void *NativeMethodPool::resolve(Method *method) {
-        static String SLASH = L"/";
-        static String UNDERLINE = L"_";
-
         LockGuard lg(nativeMethodPoolLock());
         auto it = _nativeMethods.find(method);
         if (it != _nativeMethods.end()) {
@@ -30,9 +27,9 @@ namespace kivm {
 
         nativeSymbolBuilder
             << L"Java_"
-            << strings::replaceAll(method->getClass()->getName(), SLASH, UNDERLINE)
-            << UNDERLINE
-            << strings::replaceAll(method->getName(), SLASH, UNDERLINE);
+            << strings::replaceAll(method->getClass()->getName(), Global::SLASH, Global::UNDERLINE)
+            << Global::UNDERLINE
+            << strings::replaceAll(method->getName(), Global::SLASH, Global::UNDERLINE);
 
         const String &nativeSymbolName = nativeSymbolBuilder.str();
         D("Looking up symbol: %s", strings::toStdString(nativeSymbolName).c_str());

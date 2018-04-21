@@ -38,6 +38,7 @@
 #include <memory>
 
 #include <shared/zip/libzippp.h>
+#include <shared/string.h>
 
 using namespace libzippp;
 using namespace std;
@@ -60,9 +61,10 @@ int ZipEntry::readContent(std::ofstream &ofOutput, ZipArchive::State state, libz
     return zipFile->readEntry(*this, ofOutput, state, chunksize);
 }
 
-ZipArchive::ZipArchive(const string &zipPath, const string &password)
-    : path(zipPath), zipHandle(nullptr),
-      mode(NOT_OPEN), password(password) {
+ZipArchive::ZipArchive(const kivm::String &zipPath)
+    : path(kivm::strings::toStdString(zipPath)),
+      zipHandle(nullptr),
+      mode(NOT_OPEN) {
 }
 
 ZipArchive::~ZipArchive() {
@@ -92,14 +94,6 @@ bool ZipArchive::open(OpenMode om, bool checkConsistency) {
     }
 
     if (zipHandle != nullptr) {
-        if (isEncrypted()) {
-            int result = zip_set_default_password(zipHandle, password.c_str());
-            if (result != 0) {
-                close();
-                return false;
-            }
-        }
-
         mode = om;
         return true;
     }

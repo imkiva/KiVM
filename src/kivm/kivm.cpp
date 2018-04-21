@@ -7,7 +7,20 @@
 #include <kivm/memory/universe.h>
 #include <unordered_map>
 
+#if defined(KIVM_PLATFORM_UNIX)
+#define PATH_SEPARATOR_CHAR L"/"
+#elif defined(KIVM_PLATFORM_WINDOWS)
+#define PATH_SEPARATOR_CHAR L"\\"
+#else
+#define PATH_SEPARATOR_CHAR L"/"
+#endif
+
 namespace kivm {
+    String Global::SLASH(L"/");
+    String Global::DOT(L".");
+    String Global::UNDERLINE(L"_");
+    String Global::PATH_SEPARATOR(PATH_SEPARATOR_CHAR);
+
     JavaVM *KiVM::sJavaVMInstance = nullptr;
     JNIEnv *KiVM::sJNIEnvInstance = nullptr;
 

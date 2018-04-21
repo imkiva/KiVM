@@ -36,6 +36,13 @@
 #define JNI_ENTRY(returnType, nameAndSignature) returnType JNI_ENTRY_NAME(nameAndSignature)
 
 namespace kivm {
+    struct Global {
+        static String SLASH;
+        static String DOT;
+        static String UNDERLINE;
+        static String PATH_SEPARATOR;
+    };
+
     class KiVM {
     private:
         static JavaVM *sJavaVMInstance;
