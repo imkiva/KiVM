@@ -52,7 +52,7 @@ namespace kivm {
     }
 
     void MarkSweepHeap::initializeRegions() {
-        size_t regionSize = std::__1::max((size_t) MIN_REGION_SIZE,
+        size_t regionSize = std::max((size_t) MIN_REGION_SIZE,
                                           _totalSize / TARGET_REGION_COUNT);
         auto sizeLog = (int) log2(regionSize);
         regionSize = ((size_t) 1) << sizeLog;
