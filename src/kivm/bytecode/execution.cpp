@@ -6,7 +6,7 @@
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/arrayOop.h>
-#include <kivm/method.h>
+#include <kivm/oop/method.h>
 
 namespace kivm {
     void Execution::initializeClass(JavaThread *javaThread, InstanceKlass *klass) {

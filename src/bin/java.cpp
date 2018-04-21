@@ -1,4 +1,4 @@
-#include <kivm/classLoader.h>
+#include <kivm/classpath/classLoader.h>
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/runtime/thread.h>
 

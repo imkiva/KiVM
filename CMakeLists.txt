@@ -65,9 +65,9 @@ set(SOURCE_FILES
         include/kivm/classfile/classFileStream.h
         include/kivm/classfile/classFileParser.h
         include/kivm/classfile/attributeInfo.h
-        include/kivm/classLoader.h
-        include/kivm/method.h
-        include/kivm/field.h
+        include/kivm/classpath/classLoader.h
+        include/kivm/oop/method.h
+        include/kivm/oop/field.h
         include/kivm/oop/mirrorKlass.h
         include/kivm/oop/oopfwd.h
         include/kivm/oop/instanceOop.h
@@ -88,7 +88,7 @@ set(SOURCE_FILES
         include/kivm/native/classNames.h
         include/kivm/native/java_lang_Thread.h
         include/kivm/native/java_lang_String.h
-        include/kivm/system.h
+        include/kivm/classpath/system.h
         include/kivm/bytecode/codeBlob.h
         include/kivm/runtime/constantPool.h
         include/kivm/bytecode/invocationContext.h
@@ -111,12 +111,12 @@ set(SOURCE_FILES
         src/kivm/classfile/classFile.cpp
         src/kivm/classfile/attributeInfo.cpp
         src/kivm/oop/klass.cpp
-        src/kivm/classLoader.cpp
+        src/kivm/classpath/classLoader.cpp
         src/kivm/oop/instanceKlass.cpp
-        src/kivm/method.cpp
+        src/kivm/oop/method.cpp
         src/kivm/bytecode/interpreter.cpp
-        src/kivm/field.cpp
-        src/kivm/baseClassLoader.cpp
+        src/kivm/oop/field.cpp
+        src/kivm/classpath/baseClassLoader.cpp
         src/kivm/oop/mirrorKlass.cpp
         src/kivm/oop/instanceOop.cpp
         src/kivm/oop/primitiveOop.cpp
@@ -130,7 +130,7 @@ set(SOURCE_FILES
         src/kivm/bytecode/execution.cpp
         src/kivm/native/java_lang_Class.cpp
         src/kivm/runtime/init.cpp
-        src/kivm/system.cpp
+        src/kivm/classpath/system.cpp
         src/kivm/native/java_lang_String.cpp
         src/kivm/runtime/constantPool.cpp
         src/kivm/bytecode/resolver.cpp

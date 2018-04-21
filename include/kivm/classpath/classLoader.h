@@ -5,7 +5,7 @@
 #pragma once
 
 #include <kivm/kivm.h>
-#include <kivm/system.h>
+#include <kivm/classpath/system.h>
 
 namespace kivm {
     class Klass;

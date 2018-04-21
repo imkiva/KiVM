@@ -1,7 +1,7 @@
 //
 // Created by kiva on 2018/3/28.
 //
-#include <kivm/system.h>
+#include <kivm/classpath/system.h>
 
 namespace kivm {
     SystemDictionary *SystemDictionary::get() {

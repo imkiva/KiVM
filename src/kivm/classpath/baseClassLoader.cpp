@@ -2,7 +2,7 @@
 // Created by kiva on 2018/3/1.
 //
 
-#include <kivm/classLoader.h>
+#include <kivm/classpath/classLoader.h>
 #include <kivm/oop/klass.h>
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/oop/arrayKlass.h>

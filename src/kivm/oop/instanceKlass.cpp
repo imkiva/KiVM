@@ -6,8 +6,8 @@
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/helper.h>
-#include <kivm/method.h>
-#include <kivm/field.h>
+#include <kivm/oop/method.h>
+#include <kivm/oop/field.h>
 #include <sstream>
 #include <kivm/native/java_lang_Class.h>
 

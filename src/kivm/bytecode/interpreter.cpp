@@ -9,7 +9,7 @@
 #include <kivm/oop/arrayOop.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
-#include <kivm/method.h>
+#include <kivm/oop/method.h>
 #include <climits>
 #include <unordered_map>
 #include <deque>

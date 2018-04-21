@@ -64,7 +64,7 @@ void print_constant_pool(ClassFile *classFile) {
             }
             case CONSTANT_Long: {
                 auto *target = (CONSTANT_Long_info *) pool[i];
-                printf("    #%4d = Long %16s %ldl\n", i, "", target->getConstant());
+                printf("    #%4d = Long %16s %lldl\n", i, "", target->getConstant());
                 ++i;
                 break;
             }

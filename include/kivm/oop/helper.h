@@ -5,7 +5,7 @@
 
 #include <vector>
 #include <kivm/oop/primitiveOop.h>
-#include <kivm/field.h>
+#include <kivm/oop/field.h>
 #include <kivm/native/java_lang_String.h>
 
 namespace kivm {

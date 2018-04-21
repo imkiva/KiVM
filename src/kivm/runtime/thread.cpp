@@ -2,7 +2,7 @@
 // Created by kiva on 2018/3/25.
 //
 
-#include <kivm/method.h>
+#include <kivm/oop/method.h>
 #include <kivm/runtime/thread.h>
 #include <kivm/runtime/runtimeConfig.h>
 #include <kivm/bytecode/interpreter.h>

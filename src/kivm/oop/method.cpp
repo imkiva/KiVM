@@ -2,7 +2,7 @@
 // Created by kiva on 2018/2/27.
 //
 
-#include <kivm/method.h>
+#include <kivm/oop/method.h>
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/bytecode/execution.h>
 #include <shared/lock.h>

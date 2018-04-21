@@ -7,9 +7,9 @@
 #include <kivm/oop/reflectionSupport.h>
 #include <kivm/classfile/constantPool.h>
 #include <kivm/native/java_lang_String.h>
-#include <kivm/classLoader.h>
-#include <kivm/method.h>
-#include <kivm/field.h>
+#include <kivm/classpath/classLoader.h>
+#include <kivm/oop/method.h>
+#include <kivm/oop/field.h>
 #include <unordered_map>
 
 namespace kivm {

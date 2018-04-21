@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <kivm/method.h>
+#include <kivm/oop/method.h>
 #include <unordered_map>
 
 namespace kivm {

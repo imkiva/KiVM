@@ -3,8 +3,8 @@
 //
 
 #include <unordered_map>
-#include <kivm/classLoader.h>
-#include <kivm/system.h>
+#include <kivm/classpath/classLoader.h>
+#include <kivm/classpath/system.h>
 #include <kivm/oop/klass.h>
 #include <shared/lock.h>
 

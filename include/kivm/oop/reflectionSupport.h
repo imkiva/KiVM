@@ -4,7 +4,7 @@
 #pragma once
 
 #include <kivm/oop/oopfwd.h>
-#include <kivm/field.h>
+#include <kivm/oop/field.h>
 
 namespace kivm {
     struct FieldID {

@@ -2,7 +2,7 @@
 // Created by kiva on 2018/3/28.
 //
 #include <kivm/native/java_lang_Class.h>
-#include <kivm/classLoader.h>
+#include <kivm/classpath/classLoader.h>
 #include <kivm/oop/klass.h>
 #include <kivm/oop/mirrorKlass.h>
 #include <kivm/oop/mirrorOop.h>
