@@ -27,7 +27,7 @@
 #ifdef OPCODE_DEBUG
 #define OPCODE(opcode) \
     case OPC_##opcode: \
-        D("pc: %d, opcode: %d, name: %s", pc - 1, code_blob[pc - 1], #opcode);
+        D("interpreter: pc: %d, opcode: %d, name: %s", pc - 1, code_blob[pc - 1], #opcode);
 #else
 #define OPCODE(opcode) \
     case OPC_##opcode:

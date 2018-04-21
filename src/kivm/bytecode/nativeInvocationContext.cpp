@@ -52,7 +52,7 @@ namespace kivm {
     void InvocationContext::invokeNative(bool hasThis) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypesNoWrap();
 
-        D("invokeTarget: %s.%s:%s, hasThis: %s, native: %s, nargs: %zd",
+        D("nativeInvocationContext: %s.%s:%s, hasThis: %s, native: %s, nargs: %zd",
           strings::toStdString(_instanceKlass->getName()).c_str(),
           strings::toStdString(_method->getName()).c_str(),
           strings::toStdString(_method->getDescriptor()).c_str(),
@@ -76,7 +76,7 @@ namespace kivm {
         // 1. JNIEnv *
         // 2. jobject or jclass
         auto argumentCount = ((int) descriptorMap.size()) + 2;
-        D("Calculated exact argument count: %d", argumentCount);
+        D("nativeInvocationContext: Calculated exact argument count: %d", argumentCount);
 
         // arguments to pass to ffi_call()
         void *argsPointer[argumentCount];
@@ -91,7 +91,7 @@ namespace kivm {
         int fillIndex = argumentCount - 1;
         for (auto it = descriptorMap.rbegin(); it != descriptorMap.rend(); ++it, --fillIndex) {
             ValueType valueType = *it;
-            D("Passing stack argument whose value type is %d", valueType);
+            D("nativeInvocationContext: Passing stack argument whose value type is %d", valueType);
 
             // fill types
             argsType[fillIndex] = valueTypeToFFIType(valueType);
@@ -133,12 +133,6 @@ namespace kivm {
                 case ValueType::OBJECT:
                 case ValueType::ARRAY: {
                     FILL_ARG(popReference, l);
-                    if (fillIndex == 0 && hasThis) {
-                        thisObject = Resolver::resolveJObject(argsHolder[fillIndex].l);
-                        if (thisObject == nullptr) {
-                            PANIC("NullPointerException");
-                        }
-                    }
                     break;
                 }
                 default:
@@ -146,16 +140,27 @@ namespace kivm {
             }
         }
 
-        D("Start to fill JNI interfaces, fillIndex: %d", fillIndex);
-        // this is a static method, we should pass jclass to it
-        if (!hasThis) {
-            D("Pass jclass to static methods");
-            FILL_ARG_VALUE((void *) _method->getClass(), l);
-            argsType[fillIndex] = &ffi_type_pointer;
-            --fillIndex;
+        if (fillIndex != 1) {
+            PANIC("fillIndex should be 1");
         }
 
-        if (fillIndex != 0) {
+        if (!hasThis) {
+            D("nativeInvocationContext: Pass jclass to static methods");
+            FILL_ARG_VALUE((void *) _method->getClass(), l);
+            argsType[fillIndex] = &ffi_type_pointer;
+
+        } else {
+            D("nativeInvocationContext: Pass jobject to member methods");
+            FILL_ARG(popReference, l);
+            argsType[fillIndex] = &ffi_type_pointer;
+
+            thisObject = Resolver::resolveJObject(argsHolder[fillIndex].l);
+            if (thisObject == nullptr) {
+                PANIC("NullPointerException");
+            }
+        }
+
+        if (--fillIndex != 0) {
             PANIC("fillIndex should be 0");
         }
 
@@ -165,7 +170,7 @@ namespace kivm {
             PANIC("Failed to obtain JNIEnv");
         }
 
-        D("Pass JNIEnv to native methods");
+        D("nativeInvocationContext: Pass JNIEnv to native methods");
         FILL_ARG_VALUE((void *) env, l);
         argsType[fillIndex] = &ffi_type_pointer;
 
@@ -182,6 +187,7 @@ namespace kivm {
             PANIC("invokeNative: ffi_prep_cif() failed: %d", result);
         }
 
+        D("nativeInvocationContext: ");
         // invoke and push the result onto the stack(if has)
         switch (returnValueType) {
             case ValueType::VOID: {

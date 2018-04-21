@@ -48,6 +48,7 @@ namespace kivm {
         this->_exceptionAttr = nullptr;
         this->_argumentValueTypesResolved = false;
         this->_returnTypeResolved = false;
+        this->_nativePointer = nullptr;
     }
 
     bool Method::isPcCorrect(u4 pc) {
@@ -273,6 +274,6 @@ namespace kivm {
             }
             return this->_nativePointer;
         }
-        PANIC("non-native methods have no native pointer");
+        PANIC("non-native methods have no native pointers");
     }
 }
