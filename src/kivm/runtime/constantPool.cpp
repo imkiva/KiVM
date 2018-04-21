@@ -26,16 +26,18 @@ namespace kivm {
 
     pools::MethodPoolEntry pools::MethodCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
         int tag = rt->getConstantTag(index);
-        u2 classIndex;
-        u2 nameAndTypeIndex;
+        u2 classIndex = 0;
+        u2 nameAndTypeIndex = 0;
         if (tag == CONSTANT_Methodref) {
             auto methodRef = (CONSTANT_Methodref_info *) pool[index];
             classIndex = methodRef->class_index;
             nameAndTypeIndex = methodRef->name_and_type_index;
+
         } else if (tag == CONSTANT_InterfaceMethodref) {
             auto interfaceMethodRef = (CONSTANT_InterfaceMethodref_info *) pool[index];
             classIndex = interfaceMethodRef->class_index;
             nameAndTypeIndex = interfaceMethodRef->name_and_type_index;
+
         } else {
             PANIC("Unsupported method & class type.");
         }
@@ -44,7 +46,19 @@ namespace kivm {
         if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
             auto instanceKlass = (InstanceKlass *) klass;
             const auto &nameAndType = rt->getNameAndType(nameAndTypeIndex);
-            return instanceKlass->getThisClassMethod(nameAndType.first, nameAndType.second);
+
+            if (tag == CONSTANT_Methodref) {
+                // invokespecial and invokestatic
+                auto found = instanceKlass->getThisClassMethod(nameAndType.first, nameAndType.second);
+                if (found == nullptr) {
+                    // invokevirtual
+                    found = instanceKlass->getVirtualMethod(nameAndType.first, nameAndType.second);
+                }
+                return found;
+            } else {
+                // invokeinterface
+                // TODO: find interface method
+            }
         }
         return nullptr;
     }
