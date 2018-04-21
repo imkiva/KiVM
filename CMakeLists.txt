@@ -145,7 +145,7 @@ set(SOURCE_FILES
         src/kivm/memory/markSweep.cpp
         src/kivm/memory/universe.cpp
         src/kivm/native/java_lang_System.cpp
-        src/shared/zip/libzippp.cpp include/kivm/classpath/classPathManager.h src/kivm/classpath/classPathManager.cpp include/shared/filesystem.h src/shared/filesystem.cpp include/shared/zip.h)
+        src/shared/zip/libzippp.cpp include/kivm/classpath/classPathManager.h src/kivm/classpath/classPathManager.cpp include/shared/filesystem.h src/shared/filesystem.cpp include/shared/zip.h src/kivm/native/java_lang_Object.cpp)
 
 
 #### libkivm

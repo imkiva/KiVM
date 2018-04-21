@@ -154,3 +154,7 @@ namespace kivm {
         }
     }
 }
+
+extern "C" void Java_java_lang_Class_registerNatives(JNIEnv *env, jclass java_lang_Class) {
+    D("java/lang/Class.registerNatives()V");
+}

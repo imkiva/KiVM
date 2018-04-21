@@ -9,6 +9,10 @@
 
 using namespace kivm;
 
+extern "C" void Java_java_lang_Thread_registerNatives(JNIEnv *env, jclass java_lang_Thread) {
+    D("java/lang/Thread.registerNatives()V");
+}
+
 extern "C" jobject Java_java_lang_Thread_currentThread(JNIEnv *env, jclass java_lang_Thread) {
     auto currentThread = Threads::currentThread();
     if (currentThread == nullptr) {
