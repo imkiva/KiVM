@@ -26,9 +26,6 @@ namespace kivm {
                 D("<clinit> found in %s, invoking.",
                   strings::toStdString(klass->getName()).c_str());
                 javaThread->runMethod(clinit, {});
-            } else {
-                D("<clinit> not found in %s, skipping.",
-                  strings::toStdString(klass->getName()).c_str());
             }
             klass->setClassState(ClassState::FULLY_INITIALIZED);
         }
