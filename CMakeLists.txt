@@ -195,9 +195,7 @@ ENDIF ()
 
 #### Executables
 add_executable(java src/bin/java.cpp)
-add_executable(javap src/bin/javap.cpp)
 target_link_libraries(java kivm)
-target_link_libraries(javap kivm)
 
 #### Tests
 add_executable(test_stack-and-frame tests/stack-and-locals.cpp)
