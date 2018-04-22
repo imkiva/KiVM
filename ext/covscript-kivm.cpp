@@ -2,7 +2,7 @@
 // Created by kiva on 2018/3/1.
 //
 
-#include "extension_helper.h"
+#include "extension-helper.h"
 
 CS_EXTENSION(kivm) // NOLINT
     CS_OBJECT(kivm, kivm_holder) {
