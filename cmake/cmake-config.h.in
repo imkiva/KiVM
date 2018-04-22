@@ -1,0 +1,9 @@
+#pragma once
+
+#ifdef HAVE_CONFIG_H
+
+#cmakedefine HAVE_ZIP_H
+#cmakedefine HAVE_ZIP_FLAGS_T
+#cmakedefine HAVE_ZIP_FL_ENC_GUESS
+
+#endif

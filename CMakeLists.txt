@@ -3,8 +3,12 @@ project(KivaVM)
 
 set(CMAKE_MODULE_PATH "${CMCMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake")
 
-#### Check c++11
+include(CheckIncludeFiles)
 include(CheckCXXCompilerFlag)
+include(CheckCCompilerFlag)
+include(CheckCSourceCompiles)
+
+#### Check c++11
 check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
 check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 if (COMPILER_SUPPORTS_CXX11)
@@ -17,7 +21,6 @@ endif ()
 set(CMAKE_CXX_STANDARD 11)
 
 #### Check c11
-include(CheckCCompilerFlag)
 check_c_compiler_flag("-std=c11" COMPILER_SUPPORTS_C11)
 if (COMPILER_SUPPORTS_CXX11)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
@@ -46,6 +49,32 @@ find_package(FFI REQUIRED)
 include_directories(${FFI_INCLUDE_DIRS})
 link_directories(${FFI_LIBRARIES})
 
+#### zlib
+find_package(ZLIB REQUIRED)
+include_directories(${ZLIB_INCLUDE_DIR})
+set(CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIR})
+if (ZLIB_VERSION_STRING VERSION_LESS "1.1.2")
+    message(FATAL_ERROR "-- zlib version too old, please install at least v1.1.2")
+endif (ZLIB_VERSION_STRING VERSION_LESS "1.1.2")
+
+#### libzip
+check_include_files(zip.h HAVE_ZIP_H)
+check_c_source_compiles("#include <zip.h>
+int main(int argc, char *argv[]) { zip_flags_t flag = 0; }" HAVE_ZIP_FLAGS_T)
+check_c_source_compiles("#include <zip.h>
+int main(int argc, char *argv[]) { unsigned int flag = ZIP_FL_ENC_GUESS; }" HAVE_ZIP_FL_ENC_GUESS)
+
+if (NOT HAVE_ZIP_H)
+    message(FATAL_ERROR "-- libzip not found")
+endif ()
+
+
+#### post configuration
+ADD_DEFINITIONS("-DHAVE_CONFIG_H")
+configure_file(${CMAKE_SOURCE_DIR}/cmake/cmake-config.h.in ${CMAKE_BINARY_DIR}/compileTimeConfig.h)
+
+#### kivm
+include_directories(${CMAKE_BINARY_DIR})
 include_directories(include)
 
 set(SOURCE_FILES
@@ -100,6 +129,9 @@ set(SOURCE_FILES
         include/kivm/memory/universe.h
         include/kivm/memory/heapRegion.h
         include/shared/zip/libzippp.h
+        include/kivm/classpath/classPathManager.h
+        include/shared/filesystem.h
+        include/shared/zip.h
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp
@@ -145,7 +177,10 @@ set(SOURCE_FILES
         src/kivm/memory/markSweep.cpp
         src/kivm/memory/universe.cpp
         src/kivm/native/java_lang_System.cpp
-        src/shared/zip/libzippp.cpp include/kivm/classpath/classPathManager.h src/kivm/classpath/classPathManager.cpp include/shared/filesystem.h src/shared/filesystem.cpp include/shared/zip.h src/kivm/native/java_lang_Object.cpp)
+        src/shared/zip/libzippp.cpp
+        src/kivm/classpath/classPathManager.cpp
+        src/shared/filesystem.cpp
+        src/kivm/native/java_lang_Object.cpp)
 
 
 #### libkivm
