@@ -77,7 +77,6 @@ bool ZipArchive::open(OpenMode om, bool checkConsistency) {
     int zipFlag = 0;
     if (om == READ_ONLY) { zipFlag = 0; }
     else if (om == WRITE) { zipFlag = ZIP_CREATE; }
-    else if (om == NEW) { zipFlag = ZIP_CREATE | ZIP_TRUNCATE; }
     else { return false; }
 
     if (checkConsistency) {
@@ -113,24 +112,10 @@ int ZipArchive::close() {
     return LIBZIPPP_OK;
 }
 
-void ZipArchive::discard() {
-    if (isOpen()) {
-        zip_discard(zipHandle);
-        zipHandle = nullptr;
-        mode = NOT_OPEN;
-    }
-}
-
-bool ZipArchive::unlink() {
-    if (isOpen()) { discard(); }
-    int result = remove(path.c_str());
-    return result == 0;
-}
-
 libzippp_int64 ZipArchive::getNbEntries(State state) const {
     if (!isOpen()) { return LIBZIPPP_ERROR_NOT_OPEN; }
 
-    zip_flags_t flag = state == ORIGINAL ? ZIP_FL_UNCHANGED : 0;
+    unsigned int flag = state == ORIGINAL ? ZIP_FL_UNCHANGED : 0;
     return zip_get_num_entries(zipHandle, flag);
 }
 
@@ -154,7 +139,7 @@ vector<ZipEntry> ZipArchive::getEntries(State state) const {
     zip_stat_init(&stat);
 
     vector<ZipEntry> entries;
-    zip_flags_t flag = state == ORIGINAL ? ZIP_FL_UNCHANGED : 0;
+    unsigned int flag = state == ORIGINAL ? ZIP_FL_UNCHANGED : 0;
     libzippp_int64 nbEntries = getNbEntries(state);
     for (libzippp_int64 i = 0; i < nbEntries; ++i) {
         int result = zip_stat_index(zipHandle, (zip_uint64_t) i, flag, &stat);
@@ -171,7 +156,7 @@ vector<ZipEntry> ZipArchive::getEntries(State state) const {
 bool ZipArchive::hasEntry(const string &name, bool excludeDirectories, bool caseSensitive, State state) const {
     if (!isOpen()) { return false; }
 
-    zip_flags_t flags = ZIP_FL_ENC_GUESS;
+    unsigned int flags = ZIP_FL_ENC_GUESS;
     if (excludeDirectories) { flags = flags | ZIP_FL_NODIR; }
     if (!caseSensitive) { flags = flags | ZIP_FL_NOCASE; }
     if (state == ORIGINAL) { flags = flags | ZIP_FL_UNCHANGED; }
@@ -182,7 +167,7 @@ bool ZipArchive::hasEntry(const string &name, bool excludeDirectories, bool case
 
 ZipEntry ZipArchive::getEntry(const string &name, bool excludeDirectoryPart, bool caseSensitive, State state) const {
     if (isOpen()) {
-        zip_flags_t flags = ZIP_FL_ENC_GUESS;
+        unsigned int flags = ZIP_FL_ENC_GUESS;
         if (excludeDirectoryPart) { flags = flags | ZIP_FL_NODIR; }
         if (!caseSensitive) { flags = flags | ZIP_FL_NOCASE; }
         if (state == ORIGINAL) { flags = flags | ZIP_FL_UNCHANGED; }
@@ -201,7 +186,7 @@ ZipEntry ZipArchive::getEntry(libzippp_int64 index, State state) const {
     if (isOpen()) {
         struct zip_stat stat{};
         zip_stat_init(&stat);
-        zip_flags_t flag = state == ORIGINAL ? ZIP_FL_UNCHANGED : 0;
+        unsigned int flag = state == ORIGINAL ? ZIP_FL_UNCHANGED : 0;
         int result = zip_stat_index(zipHandle, (zip_uint64_t) index, flag, &stat);
         if (result == 0) {
             return createEntry(&stat);
@@ -216,7 +201,7 @@ void *ZipArchive::readEntry(const ZipEntry &zipEntry, bool asText, State state, 
     if (!isOpen()) { return nullptr; }
     if (zipEntry.zipFile != this) { return nullptr; }
 
-    zip_flags_t flag = state == ORIGINAL ? ZIP_FL_UNCHANGED : 0;
+    unsigned int flag = state == ORIGINAL ? ZIP_FL_UNCHANGED : 0;
     struct zip_file *zipFile = zip_fopen_index(zipHandle, zipEntry.getIndex(), flag);
     if (zipFile) {
         libzippp_uint64 maxSize = zipEntry.getSize();
@@ -256,7 +241,7 @@ ZipArchive::readEntry(const ZipEntry &zipEntry, std::ofstream &ofOutput, State s
     if (zipEntry.zipFile != this) { return LIBZIPPP_ERROR_INVALID_ENTRY; }
 
     int iRes = LIBZIPPP_OK;
-    zip_flags_t flag = state == ORIGINAL ? ZIP_FL_UNCHANGED : 0;
+    unsigned int flag = state == ORIGINAL ? ZIP_FL_UNCHANGED : 0;
     struct zip_file *zipFile = zip_fopen_index(zipHandle, zipEntry.getIndex(), flag);
     if (zipFile) {
         libzippp_uint64 maxSize = zipEntry.getSize();

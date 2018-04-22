@@ -109,7 +109,6 @@ namespace libzippp {
             NOT_OPEN,
             READ_ONLY,
             WRITE,
-            NEW
         };
 
         /**
@@ -158,19 +157,6 @@ namespace libzippp {
          * returns the value returned by the zip_close() function.
          */
         int close();
-
-        /**
-         * Closes the ZipArchive and releases all the resources held by it. If the ZipArchive was
-         * not open previously, this method does nothing. If the archive was open in modification
-         * and some were done, they will be rollbacked.
-         */
-        void discard();
-
-        /**
-         * Deletes the file denoted by the path. If the ZipArchive is open, all the changes will
-         * be discarded and the file removed.
-         */
-        bool unlink();
 
         /**
          * Returns true if the ZipArchive is currently open.
