@@ -400,4 +400,13 @@ namespace kivm {
     instanceOop InstanceKlass::newInstance() {
         return new instanceOopDesc(this);
     }
+
+    bool InstanceKlass::checkInterface(InstanceKlass *interfaceClass) {
+        for (const auto &e : this->_interfaces) {
+            if (e.second == interfaceClass) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -1435,14 +1435,18 @@ namespace kivm {
                 }
                 OPCODE(CHECKCAST)
                 {
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
-                    PANIC("CHECKCAST");
+                    Execution::instanceOf(currentClass->getRuntimeConstantPool(),
+                                          stack, constantIndex, true);
                     NEXT();
                 }
                 OPCODE(INSTANCEOF)
                 {
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
                     pc += 2;
-                    PANIC("INSTANCEOF");
+                    Execution::instanceOf(currentClass->getRuntimeConstantPool(),
+                                          stack, constantIndex, false);
                     NEXT();
                 }
                 OPCODE(MONITORENTER)

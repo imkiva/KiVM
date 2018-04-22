@@ -85,7 +85,9 @@ namespace kivm {
 
         static void callVoidMethod(JavaThread *javaThread, Method *method, const std::list<oop> &args);
 
-        static bool instanceOf(Klass *ref, Klass *klass);
+        static bool instanceOf(Klass *S, Klass *T);
+
+        static void instanceOf(RuntimeConstantPool *rt, Stack &stack, int constantIndex, bool checkCast);
 
         static instanceOop newInstance(JavaThread *thread, RuntimeConstantPool *rt, int constantIndex);
 

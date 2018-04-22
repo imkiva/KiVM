@@ -110,6 +110,10 @@ namespace kivm {
             return (getAccessFlag() & ACC_ABSTRACT) == ACC_ABSTRACT;
         }
 
+        bool isInterface() {
+            return (getAccessFlag() & ACC_INTERFACE) == ACC_INTERFACE;
+        }
+
     public:
         Klass();
 

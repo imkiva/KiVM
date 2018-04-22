@@ -9,6 +9,16 @@
 #include <kivm/oop/method.h>
 
 namespace kivm {
+    static bool checkInherit(Klass *S, Klass *T) {
+        auto super = S;
+        do {
+            if (super == T) {
+                return true;
+            }
+        } while ((super = super->getSuperClass()) != nullptr);
+        return false;
+    }
+
     void Execution::initializeClass(JavaThread *javaThread, InstanceKlass *klass) {
         if (klass->getClassState() == ClassState::LINKED) {
             klass->setClassState(ClassState::BEING_INITIALIZED);
@@ -46,32 +56,26 @@ namespace kivm {
         D("constant index: %d, tag: %d", constantIndex, rt->getConstantTag(constantIndex));
         switch (rt->getConstantTag(constantIndex)) {
             case CONSTANT_Integer: {
-                D("load: CONSTANT_Integer");
                 stack.pushInt(rt->getInt(constantIndex));
                 break;
             }
             case CONSTANT_Float: {
-                D("load: CONSTANT_Float");
                 stack.pushFloat(rt->getFloat(constantIndex));
                 break;
             }
             case CONSTANT_Long: {
-                D("load: CONSTANT_Long");
                 stack.pushLong(rt->getLong(constantIndex));
                 break;
             }
             case CONSTANT_Double: {
-                D("load: CONSTANT_Double");
                 stack.pushDouble(rt->getDouble(constantIndex));
                 break;
             }
             case CONSTANT_String: {
-                D("load: CONSTANT_String");
                 stack.pushReference(rt->getString(constantIndex));
                 break;
             }
             case CONSTANT_Class: {
-                D("load: CONSTANT_Class");
                 Klass *klass = rt->getClass(constantIndex);
                 auto mirror = klass->getJavaMirror();
                 if (mirror == nullptr) {
@@ -87,7 +91,130 @@ namespace kivm {
         }
     }
 
-    bool Execution::instanceOf(Klass *ref, Klass *klass) {
+    void Execution::instanceOf(RuntimeConstantPool *rt, Stack &stack, int constantIndex, bool checkCast) {
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            if (checkCast) {
+                stack.pushReference(ref);
+                return;
+            }
+            stack.pushInt(0);
+            D("null instanceof <>: always false");
+            return;
+        }
+
+        oop obj = Resolver::resolveJObject(ref);
+        Klass *objClass = obj->getClass();
+        Klass *targetClass = rt->getClass(constantIndex);
+        if (Execution::instanceOf(objClass, targetClass)) {
+            if (checkCast) {
+                stack.pushReference(ref);
+                D("%s checkcast %s: true",
+                  strings::toStdString(objClass->getName()).c_str(),
+                  strings::toStdString(targetClass->getName()).c_str());
+            } else {
+                stack.pushInt(1);
+                D("%s instanceof %s: true",
+                  strings::toStdString(objClass->getName()).c_str(),
+                  strings::toStdString(targetClass->getName()).c_str());
+            }
+        } else {
+            if (checkCast) {
+                // TODO: throw java.lang.ClassCastException
+                PANIC("java.lang.ClassCastException");
+            } else {
+                stack.pushInt(0);
+                D("%s instanceof %s: false",
+                  strings::toStdString(objClass->getName()).c_str(),
+                  strings::toStdString(targetClass->getName()).c_str());
+            }
+        }
+    }
+
+    bool Execution::instanceOf(Klass *S, Klass *T) {
+        // Return if S and T are the same class
+        if (S == T) {
+            return true;
+        }
+
+        // If S is an ordinary (non-array) class
+        if (S->getClassType() == ClassType::INSTANCE_CLASS
+            && !S->isInterface()) {
+
+            // If T is an interface type, then S must implement interface T.
+            if (T->isInterface()) {
+                auto instanceKlassS = (InstanceKlass *) S;
+                return instanceKlassS->checkInterface((InstanceKlass *) T);
+            }
+
+            // If T is a class type, then S must be the same class as T,
+            // or S must be a subclass of T;
+            if (T->getClassType() == ClassType::INSTANCE_CLASS) {
+                return checkInherit(S, T);
+            }
+
+            return false;
+        }
+
+        // If S is an interface type
+        if (S->isInterface()) {
+            // If T is an interface type, then T must be the same interface as S
+            // or a superinterface of S.
+            if (T->isInterface()) {
+                return checkInherit(S, T);
+            }
+
+            // If T is a class type, then T must be Object
+            if (T->getClassType() == ClassType::INSTANCE_CLASS) {
+                return T == Global::java_lang_Object;
+            }
+            return false;
+        }
+
+        // If S is a class representing the array type SC[],
+        // that is, an array of components of type SC
+        if (S->getClassType() == ClassType::TYPE_ARRAY_CLASS
+            || S->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
+
+            // If T is an interface type, then T must be one of the interfaces
+            // implemented by arrays (JLS §4.10.3).
+            // https://docs.oracle.com/javase/specs/jls/se7/html/jls-4.html#jls-4.10.3
+            // array implements:
+            // 1. java/lang/Cloneable
+            // 2. java/io/Serializable
+            if (T->isInterface()) {
+                return T == Global::java_lang_Serializable
+                       || T == Global::java_lang_Cloneable;
+            }
+
+            // If T is a class type, then T must be Object
+            if (T->getClassType() == ClassType::INSTANCE_CLASS) {
+                return T == Global::java_lang_Object;
+            }
+
+            // If T is an array type TC[], that is, an array of components of type TC
+            // then one of the following must be true
+
+            // If TC and SC are the same primitive type
+            if (T->getClassType() == ClassType::TYPE_ARRAY_CLASS
+                && S->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
+                auto typeArrayKlassS = (TypeArrayKlass *) S;
+                auto typeArrayKlassT = (TypeArrayKlass *) T;
+                return typeArrayKlassS->getDimension() == typeArrayKlassT->getDimension()
+                       && typeArrayKlassS->getComponentType() == typeArrayKlassT->getComponentType();
+            }
+
+            // TC and SC are reference types, and type SC can be cast to TC by these run-time rules.
+            if (T->getClassType() == ClassType::OBJECT_ARRAY_CLASS
+                && S->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
+                auto objectArrayKlassS = (ObjectArrayKlass *) S;
+                auto objectArrayKlassT = (ObjectArrayKlass *) T;
+                return objectArrayKlassS->getDimension() == objectArrayKlassT->getDimension()
+                       && checkInherit(objectArrayKlassS->getComponentType(),
+                                       objectArrayKlassT->getComponentType());
+            }
+            return false;
+        }
         return false;
     }
 

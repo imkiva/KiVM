@@ -3,6 +3,9 @@
 //
 #pragma once
 
+#define J_OBJECT L"java/lang/Object"
+#define J_CLONEABLE L"java/lang/Cloneable"
+#define J_SERIALIZABLE L"java/io/Serializable"
 #define J_CLASS L"java/lang/Class"
 #define J_STRING L"java/lang/String"
 #define J_THREAD L"java/lang/Thread"

@@ -36,6 +36,8 @@
 #define JNI_ENTRY(returnType, nameAndSignature) returnType JNI_ENTRY_NAME(nameAndSignature)
 
 namespace kivm {
+    class InstanceKlass;
+
     struct Global {
         static String SLASH;
         static String DOT;
@@ -43,6 +45,10 @@ namespace kivm {
         static String PATH_SEPARATOR;
         static String PATH_DELIMITER;
         static String CLASS_EXTENSION;
+
+        static InstanceKlass *java_lang_Object;
+        static InstanceKlass *java_lang_Cloneable;
+        static InstanceKlass *java_lang_Serializable;
     };
 
     class KiVM {

@@ -22,6 +22,9 @@ namespace kivm {
     String Global::PATH_SEPARATOR(PATH_SEPARATOR_CHAR); // NOLINT
     String Global::PATH_DELIMITER(PATH_DELIMITER_CHAR); // NOLINT
     String Global::CLASS_EXTENSION(L"class"); // NOLINT
+    InstanceKlass *Global::java_lang_Object = nullptr;
+    InstanceKlass *Global::java_lang_Cloneable = nullptr;
+    InstanceKlass *Global::java_lang_Serializable = nullptr;
 
     JavaVM *KiVM::sJavaVMInstance = nullptr;
     JNIEnv *KiVM::sJNIEnvInstance = nullptr;

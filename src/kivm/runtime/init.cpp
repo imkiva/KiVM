@@ -66,6 +66,10 @@ namespace kivm {
         auto class_class = use(cl, thread, J_CLASS);
         java::lang::Class::mirrorCoreAndDelayedClasses();
 
+        Global::java_lang_Object = use(cl, thread, J_OBJECT);
+        Global::java_lang_Cloneable = use(cl, thread, J_CLONEABLE);
+        Global::java_lang_Serializable = use(cl, thread, J_SERIALIZABLE);
+
         use(cl, thread, J_STRING);
         auto thread_class = use(cl, thread, J_THREAD);
         auto tg_class = use(cl, thread, J_THREAD_GROUP);

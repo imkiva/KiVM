@@ -310,5 +310,7 @@ namespace kivm {
         bool getInstanceFieldValue(instanceOop receiver, FieldID *fieldID, oop *result);
 
         instanceOop newInstance();
+
+        bool checkInterface(InstanceKlass *interfaceClass);
     };
 }
