@@ -156,7 +156,8 @@ vector<ZipEntry> ZipArchive::getEntries(State state) const {
 bool ZipArchive::hasEntry(const string &name, bool excludeDirectories, bool caseSensitive, State state) const {
     if (!isOpen()) { return false; }
 
-    unsigned int flags = ZIP_FL_ENC_GUESS;
+//    unsigned int flags = ZIP_FL_ENC_GUESS;
+    unsigned int flags = 0;
     if (excludeDirectories) { flags = flags | ZIP_FL_NODIR; }
     if (!caseSensitive) { flags = flags | ZIP_FL_NOCASE; }
     if (state == ORIGINAL) { flags = flags | ZIP_FL_UNCHANGED; }
@@ -167,7 +168,8 @@ bool ZipArchive::hasEntry(const string &name, bool excludeDirectories, bool case
 
 ZipEntry ZipArchive::getEntry(const string &name, bool excludeDirectoryPart, bool caseSensitive, State state) const {
     if (isOpen()) {
-        unsigned int flags = ZIP_FL_ENC_GUESS;
+//        unsigned int flags = ZIP_FL_ENC_GUESS;
+        unsigned int flags = 0;
         if (excludeDirectoryPart) { flags = flags | ZIP_FL_NODIR; }
         if (!caseSensitive) { flags = flags | ZIP_FL_NOCASE; }
         if (state == ORIGINAL) { flags = flags | ZIP_FL_UNCHANGED; }
