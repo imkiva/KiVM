@@ -24,14 +24,14 @@ namespace kivm {
 
                 static ClassMirrorState &getMirrorState();
 
-                static mirrorOop findPrimitiveTypeMirror(const kivm::String &signature);
-
             public:
                 static void initialize();
 
                 static void mirrorCoreAndDelayedClasses();
 
                 static void createMirror(Klass *klass, mirrorOop javaLoader);
+
+                static mirrorOop findPrimitiveTypeMirror(const kivm::String &signature);
             };
         }
     }

@@ -114,6 +114,10 @@ namespace kivm {
                 java_string->setFieldValue(J_STRING, L"value", L"[C", chars);
                 return java_string;
             }
+
+            kivm::String String::toNativeString(instanceOop stringOop) {
+                return kivm::String();
+            }
         }
     }
 }

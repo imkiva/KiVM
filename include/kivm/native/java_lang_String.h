@@ -36,6 +36,8 @@ namespace kivm {
             public:
                 static instanceOop from(const kivm::String &string);
 
+                static kivm::String toNativeString(instanceOop stringOop);
+
                 static inline instanceOop intern(const kivm::String &string) {
                     return InternStringPool::getGlobal()->findOrNew(string);
                 }

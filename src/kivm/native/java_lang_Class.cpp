@@ -2,10 +2,12 @@
 // Created by kiva on 2018/3/28.
 //
 #include <kivm/native/java_lang_Class.h>
+#include <kivm/native/java_lang_String.h>
 #include <kivm/classpath/classLoader.h>
 #include <kivm/oop/klass.h>
 #include <kivm/oop/mirrorKlass.h>
 #include <kivm/oop/mirrorOop.h>
+#include <kivm/bytecode/execution.h>
 
 namespace kivm {
     namespace java {
@@ -126,8 +128,8 @@ namespace kivm {
                         PANIC("Class::createMirror(): use of deprecated mirroring policy");
                     } else {
                         PANIC("Class::createMirror(): use of illegal mirroring policy: "
-                                  "only instance classes are acceptable "
-                                  "before mirrorCoreAndDelayedClasses()");
+                              "only instance classes are acceptable "
+                              "before mirrorCoreAndDelayedClasses()");
                     }
                     return;
                 }
@@ -148,13 +150,56 @@ namespace kivm {
 
                 } else {
                     PANIC("Class::createMirror(): use of illegal mirroring policy: "
-                              "unknown class type");
+                          "unknown class type");
                 }
             }
         }
     }
 }
 
+using namespace kivm;
+
 extern "C" void Java_java_lang_Class_registerNatives(JNIEnv *env, jclass java_lang_Class) {
     D("java/lang/Class.registerNatives()V");
+}
+
+extern "C" jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass java_lang_Class,
+                                                          jstring className) {
+    auto stringInstance = Resolver::resolveInstance(className);
+    if (stringInstance == nullptr) {
+        // TODO: throw java.lang.NullPointerException
+        PANIC("java.lang.NullPointerException");
+    }
+
+    const String &signature = java::lang::String::toNativeString(stringInstance);
+    if (signature == L"byte") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"B");
+
+    } else if (signature == L"boolean") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"Z");
+
+    } else if (signature == L"char") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"C");
+
+    } else if (signature == L"short") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"S");
+
+    } else if (signature == L"int") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"I");
+
+    } else if (signature == L"float") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"F");
+
+    } else if (signature == L"long") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"J");
+
+    } else if (signature == L"double") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"D");
+
+    } else if (signature == L"void") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"V");
+    }
+
+    PANIC("Class.getPrimitiveClass(String): unknwon primitive type: %s",
+          strings::toStdString(signature).c_str());
 }
