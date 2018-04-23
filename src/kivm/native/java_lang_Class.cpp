@@ -37,6 +37,7 @@ namespace kivm {
             }
 
             void Class::initialize() {
+                D("native: Class::initialize()");
                 BootstrapClassLoader::get()->loadClass(L"java/lang/Class");
                 auto &m = getDelayedMirrors();
                 m.push(L"I");
@@ -60,17 +61,19 @@ namespace kivm {
             }
 
             void Class::mirrorCoreAndDelayedClasses() {
+                D("native: Class::mirrorCoreAndDelayedClasses()");
                 assert(getMirrorState() != ClassMirrorState::FIXED);
                 assert(SystemDictionary::get()->find(L"java/lang/Class") != nullptr);
 
                 auto &M = getDelayedMirrors();
-                for (int i = 0; i < M.size(); ++i) {
+                long size = M.size();
+                for (int i = 0; i < size; ++i) {
                     const auto &name = M.front();
                     M.pop();
 
                     bool isPrimitiveArray = false;
                     wchar_t primitiveType = name[0];
-                    if (name.size() == 2 && name[0] == 'L') {
+                    if (name.size() == 2 && name[0] == L'[') {
                         isPrimitiveArray = true;
                         primitiveType = name[1];
                     }
@@ -82,6 +85,8 @@ namespace kivm {
 
                         mirrorOop mirror = mirrorKlass::newMirror(klass, nullptr);
                         klass->setJavaMirror(mirror);
+                        D("native: Class::mirrorCoreAndDelayedClasses: mirroring %s",
+                          strings::toStdString(klass->getName()).c_str());
 
                     } else {
                         if (primitiveType == L'V' && isPrimitiveArray) {
@@ -100,6 +105,8 @@ namespace kivm {
                             case L'V': {
                                 mirrorOop mirror = mirrorKlass::newMirror(nullptr, nullptr);
                                 getPrimitiveTypeMirrors().insert(std::make_pair(name, mirror));
+                                D("native: Class::mirrorCoreAndDelayedClasses: mirroring primitive type %s",
+                                  strings::toStdString(name).c_str());
 
                                 if (isPrimitiveArray) {
                                     // Only arrays need them.
@@ -113,7 +120,8 @@ namespace kivm {
                                 break;
                             }
                             default:
-                                PANIC("Cannot make mirror for primitive type %d.", primitiveType);
+                                PANIC("Cannot make mirror for primitive type %c",
+                                      primitiveType);
                         }
                     }
                 }
@@ -200,6 +208,6 @@ extern "C" jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass ja
         return java::lang::Class::findPrimitiveTypeMirror(L"V");
     }
 
-    PANIC("Class.getPrimitiveClass(String): unknwon primitive type: %s",
+    PANIC("Class.getPrimitiveClass(String): unknown primitive type: %s",
           strings::toStdString(signature).c_str());
 }

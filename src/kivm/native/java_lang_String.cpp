@@ -8,6 +8,7 @@
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/arrayOop.h>
 #include <unordered_map>
+#include <sstream>
 
 namespace kivm {
     namespace java {
@@ -26,34 +27,34 @@ namespace kivm {
                 }
 
                 // No cache, create new.
-                instanceOop java_string = String::from(string);
-                _pool.insert(std::make_pair(hash, java_string));
-                return java_string;
+                instanceOop javaString = String::from(string);
+                _pool.insert(std::make_pair(hash, javaString));
+                return javaString;
             }
 
             int String::Hash::operator()(instanceOop string) const noexcept {
                 // if has a hash_val cache, need no calculate.
-                oop int_oop_hash = nullptr;
+                oop hashOop = nullptr;
 
                 auto klass = (InstanceKlass *) string->getClass();
-                FieldID *hash_field = klass->getInstanceFieldInfo(J_STRING, L"hash", L"I");
-                if (string->getFieldValue(hash_field, &int_oop_hash)) {
-                    int cached_hash = ((intOop) int_oop_hash)->getValue();
-                    if (cached_hash != 0) {
-                        return cached_hash;
+                FieldID *hashFieldId = klass->getInstanceFieldInfo(J_STRING, L"hash", L"I");
+                if (string->getFieldValue(hashFieldId, &hashOop)) {
+                    int cachedHash = ((intOop) hashOop)->getValue();
+                    if (cachedHash != 0) {
+                        return cachedHash;
                     }
                 }
 
                 // get string's content which is typed `TypeArrayOop` and calculate hash value.
-                typeArrayOop value_field = nullptr;
-                if (string->getFieldValue(J_STRING, L"value", L"[C", (oop *) &value_field)) {
-                    int length = value_field->getLength();
+                typeArrayOop valueOop = nullptr;
+                if (string->getFieldValue(J_STRING, L"value", L"[C", (oop *) &valueOop)) {
+                    int length = valueOop->getLength();
                     int hash = 0;
                     for (int i = 0; i < length; i++) {
-                        auto single_char = (intOop) value_field->getElementAt(i);
-                        hash = 31 * hash + single_char->getValue();
+                        auto charElement = (intOop) valueOop->getElementAt(i);
+                        hash = 31 * hash + charElement->getValue();
                     }
-                    string->setFieldValue(hash_field, new intOopDesc(hash));
+                    string->setFieldValue(hashFieldId, new intOopDesc(hash));
                     return hash;
                 }
 
@@ -77,24 +78,24 @@ namespace kivm {
                 }
 
                 auto klass = (InstanceKlass *) lhs->getClass();
-                FieldID *value_field = klass->getInstanceFieldInfo(J_STRING, L"value", L"[C");
-                typeArrayOop lhs_value = nullptr;
-                typeArrayOop rhs_value = nullptr;
-                if (!lhs->getFieldValue(value_field, (oop *) &lhs_value)
-                    || !rhs->getFieldValue(value_field, (oop *) &rhs_value)) {
+                FieldID *valueFieldId = klass->getInstanceFieldInfo(J_STRING, L"value", L"[C");
+                typeArrayOop lhsValue = nullptr;
+                typeArrayOop rhsValue = nullptr;
+                if (!lhs->getFieldValue(valueFieldId, (oop *) &lhsValue)
+                    || !rhs->getFieldValue(valueFieldId, (oop *) &rhsValue)) {
                     return false;
                 }
 
-                int lhs_length = lhs_value->getLength();
-                int rhs_length = rhs_value->getLength();
-                if (lhs_length != rhs_length) {
+                int lhsLength = lhsValue->getLength();
+                int rhsLength = rhsValue->getLength();
+                if (lhsLength != rhsLength) {
                     return false;
                 }
 
-                for (int i = 0; i < lhs_length; ++i) {
-                    auto lhs_char = (intOop) lhs_value->getElementAt(i);
-                    auto rhs_char = (intOop) rhs_value->getElementAt(i);
-                    if (lhs_char->getValue() != rhs_char->getValue()) {
+                for (int i = 0; i < lhsLength; ++i) {
+                    auto lhsChar = (intOop) lhsValue->getElementAt(i);
+                    auto rhsChar = (intOop) rhsValue->getElementAt(i);
+                    if (lhsChar->getValue() != rhsChar->getValue()) {
                         return false;
                     }
                 }
@@ -102,21 +103,30 @@ namespace kivm {
             }
 
             instanceOop String::from(const kivm::String &string) {
-                auto *char_array_klass = (TypeArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[C");
-                auto *string_klass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(J_STRING);
+                auto *charArrayKlass = (TypeArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[C");
+                auto *stringKlass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(J_STRING);
 
-                typeArrayOop chars = char_array_klass->newInstance((int) string.size());
+                typeArrayOop chars = charArrayKlass->newInstance((int) string.size());
                 for (int i = 0; i < string.size(); ++i) {
                     chars->setElementAt(i, new intOopDesc((unsigned short) string[i]));
                 }
 
-                instanceOop java_string = string_klass->newInstance();
-                java_string->setFieldValue(J_STRING, L"value", L"[C", chars);
-                return java_string;
+                instanceOop javaString = stringKlass->newInstance();
+                javaString->setFieldValue(J_STRING, L"value", L"[C", chars);
+                return javaString;
             }
 
             kivm::String String::toNativeString(instanceOop stringOop) {
-                return kivm::String();
+                typeArrayOop valueOop = nullptr;
+                std::wstringstream builder;
+                if (stringOop->getFieldValue(J_STRING, L"value", L"[C", (oop *) &valueOop)) {
+                    int length = valueOop->getLength();
+                    for (int i = 0; i < length; i++) {
+                        auto charElement = (intOop) valueOop->getElementAt(i);
+                        builder << (wchar_t) charElement->getValue();
+                    }
+                }
+                return builder.str();
             }
         }
     }
