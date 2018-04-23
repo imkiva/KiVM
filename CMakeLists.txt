@@ -216,3 +216,4 @@ if (DEFINED ENV{CS_SRC})
     set_target_properties(covscript-kivm PROPERTIES PREFIX "")
     set_target_properties(covscript-kivm PROPERTIES SUFFIX ".cse")
 endif ()
+
