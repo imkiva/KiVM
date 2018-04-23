@@ -6,9 +6,15 @@ KiVM
 
 Kiva's Java Virtual Machine.
 
+### Features
+- JNI Support
+- JAR Class Loading Support
+- Full OracleJDK/OpenJDK compatibility
+- Garbage Collector [WIP]
+
 ### Build
 1. Requirements
-    * Linux or macOS. **Windows is not supported.**
+    * Linux or macOS. **Windows is not supported yet.**
     * Java Development Kit >= 8
     * CMake >= 3.8
     
