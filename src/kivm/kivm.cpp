@@ -100,7 +100,7 @@ namespace kivm {
             case JNI_VERSION_1_6:
                 break;
             default:
-                return JNI_ERR;
+                return JNI_EVERSION;
         }
 
         *pEnv = sJNIEnvInstance;
