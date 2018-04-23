@@ -20,7 +20,7 @@ namespace kivm {
 
             instanceOop InternStringPool::findOrNew(const kivm::String &string) {
                 // Find cached string oop
-                int hash = java::lang::String::Hash()(string);
+                int hash = java::lang::StringHash()(string);
                 const auto &iter = _pool.find(hash);
                 if (iter != _pool.end()) {
                     return iter->second;
@@ -32,7 +32,7 @@ namespace kivm {
                 return javaString;
             }
 
-            int String::Hash::operator()(instanceOop string) const noexcept {
+            int StringHash::operator()(instanceOop string) const noexcept {
                 // if has a hash_val cache, need no calculate.
                 oop hashOop = nullptr;
 
@@ -61,7 +61,7 @@ namespace kivm {
                 return 0;
             }
 
-            int String::Hash::operator()(const kivm::String &string) const noexcept {
+            int StringHash::operator()(const kivm::String &string) const noexcept {
                 int hash = 0;
                 for (wchar_t ch : string) {
                     hash = 31 * hash + (unsigned short) ch;
@@ -69,7 +69,7 @@ namespace kivm {
                 return hash;
             }
 
-            bool String::EqualTo::operator()(instanceOop lhs, instanceOop rhs) const {
+            bool StringEqualTo::operator()(instanceOop lhs, instanceOop rhs) const {
                 if (lhs == rhs) {
                     return true;
                 }

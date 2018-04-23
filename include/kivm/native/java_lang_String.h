@@ -21,18 +21,17 @@ namespace kivm {
                 instanceOop findOrNew(const kivm::String &string);
             };
 
+            struct StringHash {
+                int operator()(instanceOop ptr) const noexcept;
+
+                int operator()(const kivm::String &string) const noexcept;
+            };
+
+            struct StringEqualTo {
+                bool operator()(instanceOop lhs, instanceOop rhs) const;
+            };
+
             class String {
-            public:
-                struct Hash {
-                    int operator()(instanceOop ptr) const noexcept;
-
-                    int operator()(const kivm::String &string) const noexcept;
-                };
-
-                struct EqualTo {
-                    bool operator()(instanceOop lhs, instanceOop rhs) const;
-                };
-
             public:
                 static instanceOop from(const kivm::String &string);
 
