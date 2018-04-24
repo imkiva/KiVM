@@ -58,7 +58,8 @@ namespace kivm {
         InvocationContext(thread, method, stack).invoke(true);
     }
 
-    void Execution::invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+    void Execution::invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
+                                    int constantIndex, int count) {
         Execution::invokeVirtual(thread, rt, stack, constantIndex);
     }
 }

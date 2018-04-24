@@ -1380,8 +1380,17 @@ namespace kivm {
                 }
                 OPCODE(INVOKEINTERFACE)
                 {
+                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int count = code_blob[pc + 2];
+                    int zero = code_blob[pc + 3];
                     pc += 4;
-                    PANIC("INVOKEINTERFACE");
+
+                    if (zero != 0) {
+                        PANIC("interpreter: invalid invokeinterface: "
+                              "the value of the fourth operand byte must always be zero.");
+                    }
+                    Execution::invokeInterface(thread, currentClass->getRuntimeConstantPool(),
+                                               stack, constantIndex, count);
                     NEXT();
                 }
                 OPCODE(INVOKEDYNAMIC)

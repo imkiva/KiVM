@@ -45,19 +45,24 @@ namespace kivm {
      */
     class Execution {
     public:
-        static void invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
+        static void invokeInterface(JavaThread *thread, RuntimeConstantPool *rt,
+                                    Stack &stack, int constantIndex, int count);
 
-        static void invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
+        static void invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt,
+                                  Stack &stack, int constantIndex);
 
-        static void invokeStatic(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
+        static void invokeStatic(JavaThread *thread, RuntimeConstantPool *rt,
+                                 Stack &stack, int constantIndex);
 
-        static void invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
+        static void invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt,
+                                  Stack &stack, int constantIndex);
 
         static void putField(JavaThread *thread, RuntimeConstantPool *rt,
                              Stack &stack, int constantIndex);
 
         static void getField(JavaThread *thread, RuntimeConstantPool *rt,
-                             instanceOop receiver, Stack &stack, int constantIndex);
+                             instanceOop receiver, Stack &stack,
+                             int constantIndex);
 
         static void loadIntArrayElement(Stack &stack);
 
@@ -79,19 +84,23 @@ namespace kivm {
 
         static void storeObjectArrayElement(Stack &stack);
 
-        static void loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex);
+        static void loadConstant(RuntimeConstantPool *rt, Stack &stack,
+                                 int constantIndex);
 
         static void initializeClass(JavaThread *javaThread, InstanceKlass *klass);
 
         static void callDefaultConstructor(JavaThread *javaThread, instanceOop oop);
 
-        static void callVoidMethod(JavaThread *javaThread, Method *method, const std::list<oop> &args);
+        static void callVoidMethod(JavaThread *javaThread, Method *method,
+                                   const std::list<oop> &args);
 
         static bool instanceOf(Klass *S, Klass *T);
 
-        static void instanceOf(RuntimeConstantPool *rt, Stack &stack, int constantIndex, bool checkCast);
+        static void instanceOf(RuntimeConstantPool *rt, Stack &stack, int constantIndex,
+                               bool checkCast);
 
-        static instanceOop newInstance(JavaThread *thread, RuntimeConstantPool *rt, int constantIndex);
+        static instanceOop newInstance(JavaThread *thread, RuntimeConstantPool *rt,
+                                       int constantIndex);
 
         static typeArrayOop newPrimitiveArray(JavaThread *thread,
                                               int arrayType, int length);
@@ -100,6 +109,7 @@ namespace kivm {
                                              int constantIndex, int length);
 
         static arrayOop newMultiObjectArray(JavaThread *thread, RuntimeConstantPool *rt,
-                                            int constantIndex, int dimension, const std::deque<int> &length);
+                                            int constantIndex, int dimension,
+                                            const std::deque<int> &length);
     };
 }
