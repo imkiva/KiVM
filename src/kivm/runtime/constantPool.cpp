@@ -58,6 +58,8 @@ namespace kivm {
             } else {
                 // invokeinterface
                 // TODO: find interface method
+                // TODO: find interface method
+                // TODO: find interface method
             }
         }
         return nullptr;

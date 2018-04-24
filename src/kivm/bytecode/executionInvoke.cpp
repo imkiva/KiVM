@@ -60,6 +60,8 @@ namespace kivm {
 
     void Execution::invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
                                     int constantIndex, int count) {
+        // the count argument is deprecated
+        // we can absolutely use invokeVirtual
         Execution::invokeVirtual(thread, rt, stack, constantIndex);
     }
 }
