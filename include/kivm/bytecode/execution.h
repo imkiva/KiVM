@@ -45,6 +45,8 @@ namespace kivm {
      */
     class Execution {
     public:
+        static void invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
+
         static void invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
 
         static void invokeStatic(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex);
