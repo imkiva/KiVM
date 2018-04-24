@@ -16,6 +16,8 @@ typedef unsigned long long u8;
 #define SIZE_KB(X) ((X) * BYTES_UNIT)
 #define SIZE_MB(X) ((X) * SIZE_KB(BYTES_UNIT))
 
+#define JAVA_NATIVE extern "C"
+
 /**
  * Declared public; may be accessed from outside its package.
  */

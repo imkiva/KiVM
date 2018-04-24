@@ -2,6 +2,7 @@
 // Created by kiva on 2018/4/20.
 //
 #include <kivm/kivm.h>
+#include <kivm/memory/collectedHeap.h>
 
 namespace kivm {
     class Universe {

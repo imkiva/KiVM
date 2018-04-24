@@ -7,7 +7,7 @@
 
 using namespace kivm;
 
-extern "C" jint Java_java_lang_Float_floatToRawIntBits(JNIEnv *env, jclass java_lang_Float, jfloat f) {
+JAVA_NATIVE jint Java_java_lang_Float_floatToRawIntBits(JNIEnv *env, jclass java_lang_Float, jfloat f) {
     union {
         jint i;
         jfloat f;

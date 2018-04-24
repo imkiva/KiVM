@@ -7,7 +7,7 @@
 
 using namespace kivm;
 
-extern "C" jobject Java_java_lang_System_initProperties(JNIEnv *env, jobject propertiesObject) {
+JAVA_NATIVE jobject Java_java_lang_System_initProperties(JNIEnv *env, jobject propertiesObject) {
     return propertiesObject;
 }
 

@@ -9,11 +9,11 @@
 
 using namespace kivm;
 
-extern "C" void Java_java_lang_Thread_registerNatives(JNIEnv *env, jclass java_lang_Thread) {
+JAVA_NATIVE void Java_java_lang_Thread_registerNatives(JNIEnv *env, jclass java_lang_Thread) {
     D("java/lang/Thread.registerNatives()V");
 }
 
-extern "C" jobject Java_java_lang_Thread_currentThread(JNIEnv *env, jclass java_lang_Thread) {
+JAVA_NATIVE jobject Java_java_lang_Thread_currentThread(JNIEnv *env, jclass java_lang_Thread) {
     auto currentThread = Threads::currentThread();
     if (currentThread == nullptr) {
         PANIC("currentThread cannot be null");
@@ -22,7 +22,7 @@ extern "C" jobject Java_java_lang_Thread_currentThread(JNIEnv *env, jclass java_
     return currentThread->getJavaThreadObject();
 }
 
-extern "C" void Java_java_lang_Thread_setPriority0(JNIEnv *env, jobject threadObject, jint priority) {
+JAVA_NATIVE void Java_java_lang_Thread_setPriority0(JNIEnv *env, jobject threadObject, jint priority) {
     auto instanceOop = Resolver::resolveInstance(threadObject);
     // TODO: set native thread's priority
 }

@@ -167,11 +167,11 @@ namespace kivm {
 
 using namespace kivm;
 
-extern "C" void Java_java_lang_Class_registerNatives(JNIEnv *env, jclass java_lang_Class) {
+JAVA_NATIVE void Java_java_lang_Class_registerNatives(JNIEnv *env, jclass java_lang_Class) {
     D("java/lang/Class.registerNatives()V");
 }
 
-extern "C" jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass java_lang_Class,
+JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass java_lang_Class,
                                                           jstring className) {
     auto stringInstance = Resolver::resolveInstance(className);
     if (stringInstance == nullptr) {
@@ -212,6 +212,6 @@ extern "C" jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass ja
           strings::toStdString(signature).c_str());
 }
 
-extern "C" jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, jclass java_lang_Class) {
+JAVA_NATIVE jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, jclass java_lang_Class) {
     return JNI_FALSE;
 }

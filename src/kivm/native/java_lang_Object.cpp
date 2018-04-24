@@ -7,6 +7,6 @@
 
 using namespace kivm;
 
-extern "C" void Java_java_lang_Object_registerNatives(JNIEnv *env, jclass java_lang_Object) {
+JAVA_NATIVE void Java_java_lang_Object_registerNatives(JNIEnv *env, jclass java_lang_Object) {
     D("java/lang/Object.registerNatives()V");
 }

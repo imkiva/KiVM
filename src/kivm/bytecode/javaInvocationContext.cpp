@@ -11,11 +11,11 @@ namespace kivm {
     void InvocationContext::invokeJava(bool hasThis) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypes();
 
-        D("javaInvocationContext: invokeTarget: %s.%s:%s, hasThis: %s, native: %s, nargs: %zd",
+        D("javaInvocationContext: invokeTarget: %s.%s:%s, static: %s, native: %s, nargs: %zd",
           strings::toStdString(_instanceKlass->getName()).c_str(),
           strings::toStdString(_method->getName()).c_str(),
           strings::toStdString(_method->getDescriptor()).c_str(),
-          hasThis ? "true" : "false",
+          hasThis ? "false" : "true",
           _method->isNative() ? "true" : "false",
           descriptorMap.size());
 

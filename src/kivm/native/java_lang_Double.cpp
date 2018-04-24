@@ -7,7 +7,7 @@
 
 using namespace kivm;
 
-extern "C" jlong Java_java_lang_Double_doubleToRawLongBits(JNIEnv *env, jclass java_lang_Double, jdouble d) {
+JAVA_NATIVE jlong Java_java_lang_Double_doubleToRawLongBits(JNIEnv *env, jclass java_lang_Double, jdouble d) {
     union {
         jlong j;
         jdouble d;
@@ -16,7 +16,7 @@ extern "C" jlong Java_java_lang_Double_doubleToRawLongBits(JNIEnv *env, jclass j
     return u.j;
 }
 
-extern "C" jdouble Java_java_lang_Double_longBitsToDouble(JNIEnv *env, jclass java_lang_Double, jlong j) {
+JAVA_NATIVE jdouble Java_java_lang_Double_longBitsToDouble(JNIEnv *env, jclass java_lang_Double, jlong j) {
     union {
         jlong j;
         jdouble d;

@@ -10,7 +10,6 @@
 #include <cassert>
 #include <shared/types.h>
 #include <shared/string.h>
-#include <kivm/memory/collectedHeap.h>
 
 #ifdef KIVM_DEBUG
 #define D(fmt, ...) \
