@@ -211,3 +211,7 @@ extern "C" jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass ja
     PANIC("Class.getPrimitiveClass(String): unknown primitive type: %s",
           strings::toStdString(signature).c_str());
 }
+
+extern "C" jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, jclass java_lang_Class) {
+    return JNI_FALSE;
+}
