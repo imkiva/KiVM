@@ -49,7 +49,7 @@ namespace kivm {
         }
     }
 
-    void InvocationContext::invokeNative(bool hasThis) {
+    void InvocationContext::invokeNative(bool hasThis, bool resolveTwice) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypesNoWrap();
 
         D("nativeInvocationContext: %s.%s:%s, static: %s, native: %s, nargs: %zd",
@@ -159,6 +159,10 @@ namespace kivm {
             thisObject = Resolver::resolveJObject(argsHolder[fillIndex].l);
             if (thisObject == nullptr) {
                 PANIC("NullPointerException");
+            }
+
+            if (resolveTwice) {
+                PANIC("resolveTwice required");
             }
         }
 

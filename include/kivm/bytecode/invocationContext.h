@@ -22,13 +22,13 @@ namespace kivm {
 
         void finishSynchronized(oop thisObject);
 
-        void invokeNative(bool hasThis);
+        void invokeNative(bool hasThis, bool resolveTwice);
 
-        void invokeJava(bool hasThis);
+        void invokeJava(bool hasThis, bool resolveTwice);
 
     public:
         InvocationContext(JavaThread *thread, Method *method, Stack &stack);
 
-        void invoke(bool hasThis);
+        void invoke(bool hasThis, bool resolveTwice);
     };
 }

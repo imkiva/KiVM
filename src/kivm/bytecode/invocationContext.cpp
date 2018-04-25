@@ -16,14 +16,14 @@ namespace kivm {
         Execution::initializeClass(_thread, _instanceKlass);
     }
 
-    void InvocationContext::invoke(bool hasThis) {
+    void InvocationContext::invoke(bool hasThis, bool resolveTwice) {
         prepareEnvironment();
 
         if (_method->isNative()) {
-            this->invokeNative(hasThis);
+            this->invokeNative(hasThis, resolveTwice);
 
         } else {
-            this->invokeJava(hasThis);
+            this->invokeJava(hasThis, resolveTwice);
         }
     }
 

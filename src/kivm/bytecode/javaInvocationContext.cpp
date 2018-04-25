@@ -8,7 +8,7 @@
 #include <kivm/oop/mirrorOop.h>
 
 namespace kivm {
-    void InvocationContext::invokeJava(bool hasThis) {
+    void InvocationContext::invokeJava(bool hasThis, bool resolveTwice) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypes();
 
         D("javaInvocationContext: invokeTarget: %s.%s:%s, static: %s, native: %s, nargs: %zd",
@@ -53,6 +53,10 @@ namespace kivm {
                 PANIC("java.lang.NullPointerException");
             }
             callingArgs.push_front(thisObj);
+
+            if (resolveTwice) {
+                PANIC("resolveTwice required");
+            }
         }
 
         D("javaInvocationContext: invoke and push result onto the stack (if has)");
