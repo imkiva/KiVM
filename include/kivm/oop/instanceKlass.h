@@ -109,27 +109,27 @@ namespace kivm {
         InstanceKlass(ClassFile *classFile, ClassLoader *classLoader,
                       mirrorOop javaLoader, ClassType classType);
 
-        ClassLoader *getClassLoader() const {
+        inline ClassLoader *getClassLoader() const {
             return _classLoader;
         }
 
-        const String &getSourceFile() const {
+        inline const String &getSourceFile() const {
             return _sourceFile;
         }
 
-        const String &getSignature() const {
+        inline const String &getSignature() const {
             return _signature;
         }
 
-        RuntimeConstantPool *getRuntimeConstantPool() {
+        inline RuntimeConstantPool *getRuntimeConstantPool() {
             return &this->_runtimePool;
         }
 
-        void linkAndInit() override;
-
-        const std::unordered_map<String, Method *> &getVtable() const {
+        inline const std::unordered_map<String, Method *> &getVtable() const {
             return _vtable;
         }
+
+        void linkAndInit() override;
 
         /**
          * Search field in this class.

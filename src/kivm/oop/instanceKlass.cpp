@@ -106,6 +106,14 @@ namespace kivm {
             method->linkMethod(pool);
             MethodPool::add(method);
 
+            if (this->isInterface()) {
+                if (method->getName() == L"entrySet") {
+                    D("!!!!!!!!!!: %s.entrySet(): locals: %d",
+                      strings::toStdString(getName()).c_str(),
+                      method->getMaxLocals());
+                }
+            }
+
             const auto &id = Method::makeIdentity(method);
             const auto &pair = make_pair(id, method);
             _allMethods.insert(pair);

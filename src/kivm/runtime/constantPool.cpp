@@ -55,11 +55,11 @@ namespace kivm {
                     found = instanceKlass->getVirtualMethod(nameAndType.first, nameAndType.second);
                 }
                 return found;
+
             } else {
                 // invokeinterface
-                // TODO: find interface method
-                // TODO: find interface method
-                // TODO: find interface method
+                // interface methods are virtual methods
+                return instanceKlass->getVirtualMethod(nameAndType.first, nameAndType.second);
             }
         }
         return nullptr;

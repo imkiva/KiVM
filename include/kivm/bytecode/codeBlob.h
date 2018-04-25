@@ -19,6 +19,8 @@ namespace kivm {
         }
 
     public:
+        CodeBlob() : _base(nullptr), _size(0) {}
+
         inline bool validate() {
             return _base != nullptr && _size > 0;
         }
