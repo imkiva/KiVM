@@ -35,7 +35,7 @@ namespace kivm {
         ClassType _type;
 
         mirrorOop _javaMirror;
-        Klass *_superClass;
+        InstanceKlass *_superClass;
 
     public:
         mirrorOop getJavaMirror() {
@@ -78,11 +78,11 @@ namespace kivm {
             this->_type = classType;
         }
 
-        Klass *getSuperClass() const {
+        InstanceKlass *getSuperClass() const {
             return _superClass;
         }
 
-        void setSuperClass(Klass *superClass) {
+        void setSuperClass(InstanceKlass *superClass) {
             this->_superClass = superClass;
         }
 

@@ -406,6 +406,17 @@ namespace kivm {
             if (e.second == interfaceClass) {
                 return true;
             }
+
+            // check interfaces' interfaces
+            if (e.second->checkInterface(interfaceClass)) {
+                return true;
+            }
+        }
+
+        // check parent's interfaces
+        InstanceKlass *superClass = getSuperClass();
+        if (superClass != nullptr) {
+            return superClass->checkInterface(interfaceClass);
         }
         return false;
     }
