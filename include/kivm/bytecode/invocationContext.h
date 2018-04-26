@@ -16,6 +16,9 @@ namespace kivm {
         InstanceKlass *_instanceKlass;
 
     private:
+        static Method* resolveVirtualMethod(oop thisObject, Method *tagMethod);
+
+    private:
         void prepareEnvironment();
 
         void prepareSynchronized(oop thisObject);

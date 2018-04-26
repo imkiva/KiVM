@@ -46,21 +46,25 @@ namespace kivm {
             }
         }
 
-        oop thisObj = nullptr;
+        oop thisObject = nullptr;
         if (hasThis) {
-            thisObj = Resolver::resolveJObject(_stack.popReference());
-            if (thisObj == nullptr) {
+            thisObject = Resolver::resolveJObject(_stack.popReference());
+            if (thisObject == nullptr) {
                 PANIC("java.lang.NullPointerException");
             }
-            callingArgs.push_front(thisObj);
+            callingArgs.push_front(thisObject);
 
             if (resolveTwice) {
-                PANIC("resolveTwice required");
+                auto resolvedVirtualMethod = resolveVirtualMethod(thisObject, _method);
+                if (resolvedVirtualMethod == nullptr) {
+                    PANIC("resolveVirtualMethod: failed");
+                }
+                this->_method = resolvedVirtualMethod;
             }
         }
 
         D("javaInvocationContext: invoke and push result onto the stack (if has)");
-        prepareSynchronized(thisObj);
+        prepareSynchronized(thisObject);
         oop result = _thread->runMethod(_method, callingArgs);
         switch (_method->getReturnType()) {
             case ValueType::INT:
@@ -85,6 +89,6 @@ namespace kivm {
             default:
                 PANIC("Unknown value type");
         }
-        finishSynchronized(thisObj);
+        finishSynchronized(thisObject);
     }
 }

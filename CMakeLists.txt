@@ -180,7 +180,11 @@ set(SOURCE_FILES
         src/shared/zip/libzippp.cpp
         src/kivm/classpath/classPathManager.cpp
         src/shared/filesystem.cpp
-        src/kivm/native/java_lang_Object.cpp src/kivm/native/java_lang_Float.cpp src/kivm/native/java_lang_Double.cpp src/kivm/native/sun_misc_VM.cpp)
+        src/kivm/native/java_lang_Object.cpp
+        src/kivm/native/java_lang_Float.cpp
+        src/kivm/native/java_lang_Double.cpp
+        src/kivm/native/sun_misc_VM.cpp
+        src/kivm/bytecode/virtualMethodResolver.cpp)
 
 
 #### libkivm

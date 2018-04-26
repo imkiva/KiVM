@@ -162,7 +162,11 @@ namespace kivm {
             }
 
             if (resolveTwice) {
-                PANIC("resolveTwice required");
+                auto resolvedVirtualMethod = resolveVirtualMethod(thisObject, _method);
+                if (resolvedVirtualMethod == nullptr) {
+                    PANIC("resolveVirtualMethod: failed");
+                }
+                this->_method = resolvedVirtualMethod;
             }
         }
 
