@@ -99,24 +99,26 @@ namespace kivm {
                 return;
             }
             stack.pushInt(0);
-            D("null instanceof <>: always false");
+            D("null instanceof <ref>: always false");
             return;
         }
 
         oop obj = Resolver::resolveJObject(ref);
         Klass *objClass = obj->getClass();
         Klass *targetClass = rt->getClass(constantIndex);
-        if (Execution::instanceOf(objClass, targetClass)) {
+
+        bool result = Execution::instanceOf(objClass, targetClass);
+        D("Execution::instanceOf: %s %s %s: %s",
+          strings::toStdString(objClass->getName()).c_str(),
+          checkCast ? "checkcast" : "instanceof",
+          strings::toStdString(targetClass->getName()).c_str(),
+          result ? "true" : "false");
+
+        if (result) {
             if (checkCast) {
                 stack.pushReference(ref);
-                D("%s checkcast %s: true",
-                  strings::toStdString(objClass->getName()).c_str(),
-                  strings::toStdString(targetClass->getName()).c_str());
             } else {
                 stack.pushInt(1);
-                D("%s instanceof %s: true",
-                  strings::toStdString(objClass->getName()).c_str(),
-                  strings::toStdString(targetClass->getName()).c_str());
             }
         } else {
             if (checkCast) {
@@ -124,9 +126,6 @@ namespace kivm {
                 PANIC("java.lang.ClassCastException");
             } else {
                 stack.pushInt(0);
-                D("%s instanceof %s: false",
-                  strings::toStdString(objClass->getName()).c_str(),
-                  strings::toStdString(targetClass->getName()).c_str());
             }
         }
     }

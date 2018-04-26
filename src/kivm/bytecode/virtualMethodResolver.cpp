@@ -6,7 +6,18 @@
 
 namespace kivm {
     Method *InvocationContext::resolveVirtualMethod(oop thisObject, Method *tagMethod) {
-        PANIC("resolveVirtualMethod: todo");
-        return nullptr;
+        // if method is not an interface method
+        // there's no need to resolve twice
+        // just return itself
+        if (tagMethod->getMaxLocals() != 0) {
+            return tagMethod;
+        }
+
+        Method *resolved = nullptr;
+        if (thisObject->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
+            auto instanceClass = (InstanceKlass*) thisObject->getClass();
+            resolved = instanceClass->getVirtualMethod(tagMethod->getName(), tagMethod->getDescriptor());
+        }
+        return resolved;
     }
 }
