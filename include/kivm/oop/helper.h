@@ -45,37 +45,42 @@ namespace kivm {
     }
 
     inline bool helperInitConstantField(std::vector<oop> &values,
+                                        int offset,
                                         cp_info **pool,
                                         Field *field) {
+        if (values.size() <= offset) {
+            values.resize((unsigned long) offset + 1);
+        }
+
         ConstantValue_attribute *attr = field->getConstantAttribute();
         if (attr != nullptr) {
             cp_info *constant_info = pool[attr->constant_index];
             switch (constant_info->tag) {
                 case CONSTANT_Long: {
                     auto *info = (CONSTANT_Long_info *) constant_info;
-                    values.push_back(new longOopDesc(info->getConstant()));
+                    values[offset] = new longOopDesc(info->getConstant());
                     break;
                 }
                 case CONSTANT_Float: {
                     auto *info = (CONSTANT_Float_info *) constant_info;
-                    values.push_back(new floatOopDesc(info->getConstant()));
+                    values[offset] = new floatOopDesc(info->getConstant());
                     break;
                 }
                 case CONSTANT_Double: {
                     auto *info = (CONSTANT_Double_info *) constant_info;
-                    values.push_back(new doubleOopDesc(info->getConstant()));
+                    values[offset] = new doubleOopDesc(info->getConstant());
                     break;
                 }
                 case CONSTANT_Integer: {
                     auto *info = (CONSTANT_Integer_info *) constant_info;
-                    values.push_back(new intOopDesc(info->getConstant()));
+                    values[offset] = new intOopDesc(info->getConstant());
                     break;
                 }
                 case CONSTANT_String: {
                     // TODO: use runtime constant pool
                     auto *info = (CONSTANT_String_info *) constant_info;
                     auto *utf8 = (CONSTANT_Utf8_info *) pool[info->string_index];
-                    values.push_back(java::lang::String::intern(utf8->getConstant()));
+                    values[offset] = java::lang::String::intern(utf8->getConstant());
                     break;
                 }
                 default: {

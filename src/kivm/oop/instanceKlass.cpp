@@ -132,7 +132,7 @@ namespace kivm {
 
         // instance fields in superclass
         if (this->_superClass != nullptr) {
-            auto *super = (InstanceKlass *) this->_superClass;
+            auto *super = this->_superClass;
             for (auto e : super->_instanceFields) {
                 D("%s: Extended instance field: #%-d %s",
                   strings::toStdString(getName()).c_str(),
@@ -168,24 +168,27 @@ namespace kivm {
             if (field->isStatic()) {
                 // static final fields should be initialized with constant values in constant pool.
                 // static non-final fields should be initialized with specified values.
-                if (!field->isFinal()) {
+                if (field->isFinal()) {
+                    if (!helperInitConstantField(_staticFieldValues, static_field_index, pool, field)) {
+                        // TODO: throw VerifyError
+                        PANIC("java.lang.VerifyError: static final fields must be initialized");
+                    }
+                } else {
                     helperInitField(_staticFieldValues, static_field_index, field);
-
-                } else if (!helperInitConstantField(_staticFieldValues, pool, field)) {
-                    // TODO: throw VerifyError: static final fields must be initialized.
-                    assert(false);
                 }
 
-                D("%s: New static field: #%-d %s",
+                D("%s: New static field (final: %s): #%-d %s",
                   strings::toStdString(getName()).c_str(),
+                  field->isFinal() ? "true" : "false",
                   static_field_index,
                   strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
                 _staticFields.insert(make_pair(Field::makeIdentity(this, field),
                                                new FieldID(static_field_index++, field)));
             } else {
-                D("%s: New instance field: #%-d %s",
+                D("%s: New instance field (final: %s): #%-d %s",
                   strings::toStdString(getName()).c_str(),
+                  field->isFinal() ? "true" : "false",
                   instance_field_index,
                   strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
@@ -193,7 +196,6 @@ namespace kivm {
                                                  new FieldID(instance_field_index++, field)));
             }
         }
-        this->_staticFieldValues.shrink_to_fit();
         this->_nStaticFields = static_field_index;
         this->_nInstanceFields = instance_field_index;
     }
@@ -327,15 +329,18 @@ namespace kivm {
 
     void InstanceKlass::setStaticFieldValue(FieldID *fieldID, oop value) {
         if (fieldID->_field == nullptr) {
-            // throw java.lang.NoSuchFieldError
-            assert(!"java.lang.NoSuchFieldError");
+            // TODO: throw java.lang.NoSuchFieldError
+            PANIC("java.lang.NoSuchFieldError");
         }
 
-        D("Set field %s::%s(%s) to %p",
+        D("Set field %s::%s(%s) (slot: %d, max: %zd) to %p in %s",
           strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
           strings::toStdString(fieldID->_field->getName()).c_str(),
           strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
-          value);
+          fieldID->_offset,
+          this->_staticFieldValues.size(),
+          value,
+          strings::toStdString(this->getName()).c_str());
         this->_staticFieldValues[fieldID->_offset] = value;
     }
 

@@ -8,7 +8,6 @@ namespace kivm {
     arrayOopDesc::arrayOopDesc(ArrayKlass *arrayClass, oopType type, int length)
         : oopDesc(arrayClass, type) {
         _elements.resize(static_cast<unsigned>(length));
-        _elements.shrink_to_fit();
     }
 
     int arrayOopDesc::getDimension() const {
