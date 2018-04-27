@@ -13,6 +13,8 @@ JAVA_NATIVE void Java_java_lang_Object_registerNatives(JNIEnv *env, jclass java_
 
 JAVA_NATIVE jint Java_java_lang_Object_hashCode(JNIEnv *env, jobject javaObject) {
     D("java/lang/Object.hashCode()I");
-    return 0;
+    intptr_t addrBits = intptr_t(javaObject) >> 3 ;
+    intptr_t value = addrBits ^ (addrBits >> 5) ^ Global::runtimeRandom ;
+    return (jint) value;
 }
 

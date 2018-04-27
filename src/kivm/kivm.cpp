@@ -6,6 +6,7 @@
 #include <kivm/jni/jniEnv.h>
 #include <kivm/memory/universe.h>
 #include <kivm/classpath/classPathManager.h>
+#include <random>
 
 #if defined(KIVM_PLATFORM_UNIX)
 #   define PATH_SEPARATOR_CHAR L"/"
@@ -25,6 +26,7 @@ namespace kivm {
     InstanceKlass *Global::java_lang_Object = nullptr;
     InstanceKlass *Global::java_lang_Cloneable = nullptr;
     InstanceKlass *Global::java_lang_Serializable = nullptr;
+    int Global::runtimeRandom = 0;
 
     JavaVM *KiVM::sJavaVMInstance = nullptr;
     JNIEnv *KiVM::sJNIEnvInstance = nullptr;
@@ -33,6 +35,10 @@ namespace kivm {
         if (KiVM::sJavaVMInstance != nullptr || pJavaVM == nullptr) {
             return JNI_ERR;
         }
+
+        std::default_random_engine dre((unsigned int) time(nullptr));
+        std::uniform_int_distribution<int> distribution(0xABC, INT32_MAX);
+        Global::runtimeRandom = distribution(dre);
 
         // initialize memory
         Universe::initialize();

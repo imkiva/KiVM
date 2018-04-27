@@ -48,6 +48,8 @@ namespace kivm {
         static InstanceKlass *java_lang_Object;
         static InstanceKlass *java_lang_Cloneable;
         static InstanceKlass *java_lang_Serializable;
+
+        static int runtimeRandom;
     };
 
     class KiVM {

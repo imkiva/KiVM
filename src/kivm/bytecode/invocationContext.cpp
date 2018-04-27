@@ -29,6 +29,7 @@ namespace kivm {
 
     void InvocationContext::prepareSynchronized(oop thisObject) {
         if (_method->isSynchronized()) {
+            D("invocationContext: method is synchronized");
             if (_method->isStatic()) {
                 _method->getClass()->getJavaMirror()->getMarkOop()->monitorEnter();
             } else {
