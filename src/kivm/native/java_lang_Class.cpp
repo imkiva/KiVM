@@ -38,7 +38,6 @@ namespace kivm {
 
             void Class::initialize() {
                 D("native: Class::initialize()");
-                BootstrapClassLoader::get()->loadClass(L"java/lang/Class");
                 auto &m = getDelayedMirrors();
                 m.push(L"I");
                 m.push(L"Z");
@@ -132,8 +131,10 @@ namespace kivm {
                 if (getMirrorState() != ClassMirrorState::FIXED) {
                     if (klass->getClassType() == ClassType::INSTANCE_CLASS)
                         getDelayedMirrors().push(klass->getName());
+
                     else if (klass->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
                         PANIC("Class::createMirror(): use of deprecated mirroring policy");
+
                     } else {
                         PANIC("Class::createMirror(): use of illegal mirroring policy: "
                               "only instance classes are acceptable "

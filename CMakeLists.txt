@@ -132,11 +132,12 @@ set(SOURCE_FILES
         include/kivm/classpath/classPathManager.h
         include/shared/filesystem.h
         include/shared/zip.h
+        src/shared/filesystem.cpp
+        src/shared/string.cpp
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
         src/kivm/oop/oop.cpp
         src/kivm/classfile/constantPool.cpp
-        src/shared/string.cpp
         src/kivm/classfile/classFileParser.cpp
         src/kivm/classfile/classFile.cpp
         src/kivm/classfile/attributeInfo.cpp
@@ -179,15 +180,15 @@ set(SOURCE_FILES
         src/kivm/native/java_lang_System.cpp
         src/shared/zip/libzippp.cpp
         src/kivm/classpath/classPathManager.cpp
-        src/shared/filesystem.cpp
+        src/kivm/bytecode/virtualMethodResolver.cpp
         src/kivm/native/java_lang_Object.cpp
         src/kivm/native/java_lang_Float.cpp
         src/kivm/native/java_lang_Double.cpp
         src/kivm/native/sun_misc_VM.cpp
-        src/kivm/bytecode/virtualMethodResolver.cpp
         src/kivm/native/java_io_FileInputStream.cpp
         src/kivm/native/java_io_FileOutputStream.cpp
-        src/kivm/native/java_io_FileDescriptor.cpp src/kivm/native/sun_misc_Unsafe.cpp)
+        src/kivm/native/java_io_FileDescriptor.cpp
+        src/kivm/native/sun_misc_Unsafe.cpp)
 
 
 #### libkivm

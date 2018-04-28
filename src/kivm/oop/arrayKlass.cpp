@@ -5,6 +5,7 @@
 #include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/arrayOop.h>
 #include <sstream>
+#include <kivm/native/java_lang_Class.h>
 
 namespace kivm {
 
@@ -14,6 +15,7 @@ namespace kivm {
           _javaLoader(javaLoader),
           _dimension(dimension) {
         this->setClassType(classType);
+        this->setJavaMirror(nullptr);
     }
 
     void ArrayKlass::linkAndInit() {
@@ -45,6 +47,12 @@ namespace kivm {
         return new typeArrayOopDesc(this, length);
     }
 
+    void TypeArrayKlass::linkAndInit() {
+        // Type array classes are already
+        // mirrored in java::lang::Class::initialize()
+        ArrayKlass::linkAndInit();
+    }
+
     ObjectArrayKlass::ObjectArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
                                        int dimension, InstanceKlass *componentType)
         : ArrayKlass(classLoader, javaLoader, dimension, ClassType::OBJECT_ARRAY_CLASS),
@@ -68,5 +76,10 @@ namespace kivm {
 
     objectArrayOop ObjectArrayKlass::newInstance(int length) {
         return new objectArrayOopDesc(this, length);
+    }
+
+    void ObjectArrayKlass::linkAndInit() {
+        java::lang::Class::createMirror(this, getJavaLoader());
+        ArrayKlass::linkAndInit();
     }
 }

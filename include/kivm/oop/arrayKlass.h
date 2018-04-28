@@ -30,9 +30,11 @@ namespace kivm {
             return _javaLoader;
         }
 
-        void linkAndInit() override;
+        bool isObjectArray() const {
+            return getClassType() == ClassType::OBJECT_ARRAY_CLASS;
+        }
 
-        virtual bool isObjectArray() = 0;
+        void linkAndInit() override;
     };
 
     class TypeArrayKlass : public ArrayKlass {
@@ -52,9 +54,7 @@ namespace kivm {
             return _componentType;
         }
 
-        bool isObjectArray() override {
-            return false;
-        }
+        void linkAndInit() override;
 
         TypeArrayKlass *getDownDimensionType() const {
             return _downDimensionType;
@@ -80,9 +80,7 @@ namespace kivm {
             return _componentType;
         }
 
-        bool isObjectArray() override {
-            return true;
-        }
+        void linkAndInit() override;
 
         ObjectArrayKlass *getDownDimensionType() const {
             return _downDimensionType;
