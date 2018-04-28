@@ -226,10 +226,14 @@ namespace kivm {
                 break;
 
             case L'L':
-                while (returnTypeDesc[i] != ';') {
-                    ++i;
-                }
+//                while (returnTypeDesc[i] != ';') {
+//                    ++i;
+//                }
                 *returnType = ValueType::OBJECT;
+                break;
+
+            case L'[':
+                *returnType = ValueType::ARRAY;
                 break;
 
             default:
