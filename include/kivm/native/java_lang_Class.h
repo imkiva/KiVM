@@ -10,6 +10,8 @@
 #include <kivm/oop/klass.h>
 
 namespace kivm {
+    class ArrayKlass;
+
     namespace java {
         namespace lang {
             class Class {
@@ -22,6 +24,8 @@ namespace kivm {
 
                 static std::queue<kivm::String> &getDelayedMirrors();
 
+                static std::queue<kivm::ArrayKlass*> &getDelayedArrayClassMirrors();
+
                 static ClassMirrorState &getMirrorState();
 
             public:
@@ -29,7 +33,11 @@ namespace kivm {
 
                 static void mirrorCoreAndDelayedClasses();
 
+                static void mirrorDelayedArrayClasses();
+
                 static void createMirror(Klass *klass, mirrorOop javaLoader);
+
+                static void createMirrorForArrayClass(ArrayKlass *klass, mirrorOop javaLoader);
 
                 static mirrorOop findPrimitiveTypeMirror(const kivm::String &signature);
             };

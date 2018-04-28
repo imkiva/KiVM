@@ -5,6 +5,7 @@
 #include <kivm/native/java_lang_String.h>
 #include <kivm/classpath/classLoader.h>
 #include <kivm/oop/klass.h>
+#include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/mirrorKlass.h>
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/bytecode/execution.h>
@@ -14,6 +15,11 @@ namespace kivm {
         namespace lang {
             std::queue<kivm::String> &Class::getDelayedMirrors() {
                 static std::queue<kivm::String> mirrors;
+                return mirrors;
+            }
+
+            std::queue<kivm::ArrayKlass *> &Class::getDelayedArrayClassMirrors() {
+                static std::queue<kivm::ArrayKlass *> mirrors;
                 return mirrors;
             }
 
@@ -125,6 +131,20 @@ namespace kivm {
                     }
                 }
                 getMirrorState() = ClassMirrorState::FIXED;
+                D("native: Class::mirrorCoreAndDelayedClasses(): done");
+            }
+
+            void Class::mirrorDelayedArrayClasses() {
+                D("native: Class::mirrorDelayedArrayClasses()");
+                auto &M = getDelayedArrayClassMirrors();
+                long size = M.size();
+                for (int i = 0; i < size; ++i) {
+                    auto klass = M.front();
+                    M.pop();
+
+                    Class::createMirror(klass, klass->getJavaLoader());
+                }
+                D("native: Class::mirrorDelayedArrayClasses(): done");
             }
 
             void Class::createMirror(Klass *klass, mirrorOop javaLoader) {
@@ -162,6 +182,10 @@ namespace kivm {
                           "unknown class type");
                 }
             }
+
+            void Class::createMirrorForArrayClass(ArrayKlass *klass, mirrorOop javaLoader) {
+                getDelayedArrayClassMirrors().push(klass);
+            }
         }
     }
 }
@@ -173,7 +197,7 @@ JAVA_NATIVE void Java_java_lang_Class_registerNatives(JNIEnv *env, jclass java_l
 }
 
 JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass java_lang_Class,
-                                                          jstring className) {
+                                                           jstring className) {
     auto stringInstance = Resolver::resolveInstance(className);
     if (stringInstance == nullptr) {
         // TODO: throw java.lang.NullPointerException

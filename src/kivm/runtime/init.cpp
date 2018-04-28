@@ -65,6 +65,7 @@ namespace kivm {
         java::lang::Class::initialize();
         auto class_class = use(cl, thread, J_CLASS);
         java::lang::Class::mirrorCoreAndDelayedClasses();
+        java::lang::Class::mirrorDelayedArrayClasses();
 
         Global::java_lang_Object = use(cl, thread, J_OBJECT);
         Global::java_lang_Cloneable = use(cl, thread, J_CLONEABLE);
