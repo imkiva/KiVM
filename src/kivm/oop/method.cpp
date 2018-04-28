@@ -165,9 +165,15 @@ namespace kivm {
         }
         *flag = true;
 
+        bool isArray = false;
+
         for (int i = 0; i < desc.size(); ++i) {
             wchar_t ch = desc[i];
             switch (ch) {
+                case L'[' :
+                    isArray = true;
+                    break;
+
                 case L'B':    // byte
                 case L'Z':    // boolean
                 case L'S':    // short
@@ -176,16 +182,26 @@ namespace kivm {
                 case L'J':    // long
                 case L'F':    // float
                 case L'D':    // double
-                    valueTypes->push_back(wrap
-                                          ? primitiveTypeToValueType(ch)
-                                          : primitiveTypeToValueTypeNoWrap(ch));
+                    if (isArray) {
+                        valueTypes->push_back(ValueType::ARRAY);
+                        isArray = false;
+                    } else {
+                        valueTypes->push_back(wrap
+                                              ? primitiveTypeToValueType(ch)
+                                              : primitiveTypeToValueTypeNoWrap(ch));
+                    }
                     break;
 
                 case L'L':
                     while (desc[i] != ';') {
                         ++i;
                     }
-                    valueTypes->push_back(ValueType::OBJECT);
+                    if (isArray) {
+                        valueTypes->push_back(ValueType::ARRAY);
+                        isArray = false;
+                    } else {
+                        valueTypes->push_back(ValueType::OBJECT);
+                    }
                     break;
 
                 case L'(':
