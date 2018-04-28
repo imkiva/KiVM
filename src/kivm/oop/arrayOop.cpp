@@ -20,18 +20,24 @@ namespace kivm {
 
     oop arrayOopDesc::getElementAt(int position) const {
         if (position < 0 || position >= getLength()) {
-            // TODO: throw ArrayIndexOutOfBoundsException
-            PANIC("java.lang.ArrayIndexOutOfBoundsException");
+            arrayIndexOutOfBounds(position);
+            return nullptr;
         }
         return _elements[position];
     }
 
     void arrayOopDesc::setElementAt(int position, oop element) {
         if (position < 0 || position >= getLength()) {
-            // TODO: throw ArrayIndexOutOfBoundsException
-            PANIC("java.lang.ArrayIndexOutOfBoundsException");
+            arrayIndexOutOfBounds(position);
+            return;
         }
         _elements[position] = element;
+    }
+
+    void arrayOopDesc::arrayIndexOutOfBounds(int position) const {
+        // TODO: throw ArrayIndexOutOfBoundsException
+        PANIC("java.lang.ArrayIndexOutOfBoundsException: length is %d, but index is %d",
+              getLength(), position);
     }
 
     typeArrayOopDesc::typeArrayOopDesc(TypeArrayKlass *arrayClass, int length)

@@ -23,13 +23,11 @@ namespace kivm {
 
     class Monitor final {
     private:
-        RecursiveLock _mutexLock;
-        std::unique_lock<RecursiveLock> _lock;
+        RecursiveLock _lock;
         std::condition_variable_any _cond;
 
     public:
-        Monitor() : _lock(_mutexLock, std::defer_lock) {
-        }
+        Monitor() = default;
 
         Monitor(const Monitor &) = delete;
 

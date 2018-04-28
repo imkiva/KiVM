@@ -13,6 +13,9 @@ namespace kivm {
     private:
         std::vector<oop> _elements;
 
+    private:
+        void arrayIndexOutOfBounds(int position) const;
+
     public:
         explicit arrayOopDesc(ArrayKlass *arrayClass, oopType type, int length);
 

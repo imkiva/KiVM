@@ -27,7 +27,7 @@
 #ifdef OPCODE_DEBUG
 #define OPCODE(opcode) \
     case OPC_##opcode: \
-        D("interpreter: pc: %d, opcode: %d, name: %s", pc - 1, code_blob[pc - 1], #opcode);
+        D("interpreter: pc: %d, opcode: %d, name: %s", pc - 1, codeBlob[pc - 1], #opcode);
 #else
 #define OPCODE(opcode) \
     case OPC_##opcode:
@@ -37,7 +37,7 @@
                     pc += branch
 
 #define GOTO_UNCONDITIONALLY(occupied) \
-                    short branch = code_blob[pc] << 8 | code_blob[pc + 1]; \
+                    short branch = codeBlob[pc] << 8 | codeBlob[pc + 1]; \
                     GOTO_PC(branch); \
                     GOTO_PC(-((occupied) - 1))
 
@@ -68,7 +68,7 @@ namespace kivm {
         Frame *currentFrame = thread->getCurrentFrame();
         auto currentMethod = currentFrame->getMethod();
         auto currentClass = currentMethod->getClass();
-        const CodeBlob &code_blob = currentMethod->getCodeBlob();
+        const CodeBlob &codeBlob = currentMethod->getCodeBlob();
         u4 &pc = thread->_pc;
 
         D("currentMethod: %s.%s:%s",
@@ -79,7 +79,7 @@ namespace kivm {
         Stack &stack = currentFrame->getStack();
         Locals &locals = currentFrame->getLocals();
 
-        BEGIN(code_blob, pc)
+        BEGIN(codeBlob, pc)
 
                 OPCODE(NOP)
                 {
@@ -162,26 +162,26 @@ namespace kivm {
                 }
                 OPCODE(BIPUSH)
                 {
-                    stack.pushInt(code_blob[pc++]);
+                    stack.pushInt(codeBlob[pc++]);
                     NEXT();
                 }
                 OPCODE(SIPUSH)
                 {
-                    short si = code_blob[pc] << 8 | code_blob[pc + 1];
+                    short si = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     stack.pushInt(si);
                     NEXT();
                 }
                 OPCODE(LDC)
                 {
-                    int constantIndex = code_blob[pc++];
+                    int constantIndex = codeBlob[pc++];
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
                                             stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(LDC_W)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
                                             stack, constantIndex);
@@ -189,7 +189,7 @@ namespace kivm {
                 }
                 OPCODE(LDC2_W)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
                                             stack, constantIndex);
@@ -197,31 +197,31 @@ namespace kivm {
                 }
                 OPCODE(ILOAD)
                 {
-                    int index = code_blob[pc++];
+                    int index = codeBlob[pc++];
                     stack.pushInt(locals.getInt(index));
                     NEXT();
                 }
                 OPCODE(LLOAD)
                 {
-                    int index = code_blob[pc++];
+                    int index = codeBlob[pc++];
                     stack.pushLong(locals.getLong(index));
                     NEXT();
                 }
                 OPCODE(FLOAD)
                 {
-                    int index = code_blob[pc++];
+                    int index = codeBlob[pc++];
                     stack.pushFloat(locals.getFloat(index));
                     NEXT();
                 }
                 OPCODE(DLOAD)
                 {
-                    int index = code_blob[pc++];
+                    int index = codeBlob[pc++];
                     stack.pushDouble(locals.getDouble(index));
                     NEXT();
                 }
                 OPCODE(ALOAD)
                 {
-                    int index = code_blob[pc++];
+                    int index = codeBlob[pc++];
                     stack.pushReference(locals.getReference(index));
                     NEXT();
                 }
@@ -367,31 +367,31 @@ namespace kivm {
                 }
                 OPCODE(ISTORE)
                 {
-                    int localIndex = code_blob[pc++];
+                    int localIndex = codeBlob[pc++];
                     locals.setInt(localIndex, stack.popInt());
                     NEXT();
                 }
                 OPCODE(LSTORE)
                 {
-                    int localIndex = code_blob[pc++];
+                    int localIndex = codeBlob[pc++];
                     locals.setLong(localIndex, stack.popLong());
                     NEXT();
                 }
                 OPCODE(FSTORE)
                 {
-                    int localIndex = code_blob[pc++];
+                    int localIndex = codeBlob[pc++];
                     locals.setFloat(localIndex, stack.popFloat());
                     NEXT();
                 }
                 OPCODE(DSTORE)
                 {
-                    int localIndex = code_blob[pc++];
+                    int localIndex = codeBlob[pc++];
                     locals.setDouble(localIndex, stack.popDouble());
                     NEXT();
                 }
                 OPCODE(ASTORE)
                 {
-                    int localIndex = code_blob[pc++];
+                    int localIndex = codeBlob[pc++];
                     locals.setReference(localIndex, stack.popReference());
                     NEXT();
                 }
@@ -897,8 +897,9 @@ namespace kivm {
                 }
                 OPCODE(IINC)
                 {
-                    int index = code_blob[pc];
-                    int factor = code_blob[pc + 1];
+                    int index = codeBlob[pc];
+                    // the codeBlob stores unsigned char
+                    int factor = (signed char) codeBlob[pc + 1];
                     pc += 2;
 
                     locals.setInt(index, locals.getInt(index) + factor);
@@ -1197,28 +1198,28 @@ namespace kivm {
                     }
                     int ptr = bc;
 
-                    int defaultByte = ((code_blob[ptr] << 24)
-                                       | (code_blob[ptr + 1] << 16)
-                                       | (code_blob[ptr + 2] << 8)
-                                       | (code_blob[ptr + 3]));
-                    int lowByte = ((code_blob[ptr + 4] << 24)
-                                   | (code_blob[ptr + 5] << 16)
-                                   | (code_blob[ptr + 6] << 8)
-                                   | (code_blob[ptr + 7]));
-                    int highByte = ((code_blob[ptr + 8] << 24)
-                                    | (code_blob[ptr + 9] << 16)
-                                    | (code_blob[ptr + 10] << 8)
-                                    | (code_blob[ptr + 11]));
+                    int defaultByte = ((codeBlob[ptr] << 24)
+                                       | (codeBlob[ptr + 1] << 16)
+                                       | (codeBlob[ptr + 2] << 8)
+                                       | (codeBlob[ptr + 3]));
+                    int lowByte = ((codeBlob[ptr + 4] << 24)
+                                   | (codeBlob[ptr + 5] << 16)
+                                   | (codeBlob[ptr + 6] << 8)
+                                   | (codeBlob[ptr + 7]));
+                    int highByte = ((codeBlob[ptr + 8] << 24)
+                                    | (codeBlob[ptr + 9] << 16)
+                                    | (codeBlob[ptr + 10] << 8)
+                                    | (codeBlob[ptr + 11]));
                     int num = highByte - lowByte + 1;
                     ptr += 12;
 
                     // switch-case jump table
                     std::vector<int> jumpTable;
                     for (int pos = 0; pos < num; pos++) {
-                        int jump_pos = ((code_blob[ptr] << 24)
-                                        | (code_blob[ptr + 1] << 16)
-                                        | (code_blob[ptr + 2] << 8)
-                                        | (code_blob[ptr + 3]))
+                        int jump_pos = ((codeBlob[ptr] << 24)
+                                        | (codeBlob[ptr + 1] << 16)
+                                        | (codeBlob[ptr + 2] << 8)
+                                        | (codeBlob[ptr + 3]))
                                        + originBc;
                         ptr += 4;
                         jumpTable.push_back(jump_pos);
@@ -1247,27 +1248,27 @@ namespace kivm {
                     }
                     int ptr = bc;
 
-                    int defaultByte = ((code_blob[ptr] << 24)
-                                       | (code_blob[ptr + 1] << 16)
-                                       | (code_blob[ptr + 2] << 8)
-                                       | (code_blob[ptr + 3]));
-                    int count = ((code_blob[ptr + 4] << 24)
-                                 | (code_blob[ptr + 5] << 16)
-                                 | (code_blob[ptr + 6] << 8)
-                                 | (code_blob[ptr + 7]));
+                    int defaultByte = ((codeBlob[ptr] << 24)
+                                       | (codeBlob[ptr + 1] << 16)
+                                       | (codeBlob[ptr + 2] << 8)
+                                       | (codeBlob[ptr + 3]));
+                    int count = ((codeBlob[ptr + 4] << 24)
+                                 | (codeBlob[ptr + 5] << 16)
+                                 | (codeBlob[ptr + 6] << 8)
+                                 | (codeBlob[ptr + 7]));
                     ptr += 8;
 
                     // jump_table
                     std::unordered_map<int, int> jumpTable;
                     for (int i = 0; i < count; i++) {
-                        int value = ((code_blob[ptr] << 24)
-                                     | (code_blob[ptr + 1] << 16)
-                                     | (code_blob[ptr + 2] << 8)
-                                     | (code_blob[ptr + 3]));
-                        int position = ((code_blob[ptr + 4] << 24)
-                                        | (code_blob[ptr + 5] << 16)
-                                        | (code_blob[ptr + 6] << 8)
-                                        | (code_blob[ptr + 7]))
+                        int value = ((codeBlob[ptr] << 24)
+                                     | (codeBlob[ptr + 1] << 16)
+                                     | (codeBlob[ptr + 2] << 8)
+                                     | (codeBlob[ptr + 3]));
+                        int position = ((codeBlob[ptr + 4] << 24)
+                                        | (codeBlob[ptr + 5] << 16)
+                                        | (codeBlob[ptr + 6] << 8)
+                                        | (codeBlob[ptr + 7]))
                                        + originBc;
                         ptr += 8;
                         jumpTable[value] = position;
@@ -1315,7 +1316,7 @@ namespace kivm {
                 }
                 OPCODE(GETSTATIC)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::getField(thread, currentClass->getRuntimeConstantPool(),
                                         nullptr, stack, constantIndex);
@@ -1323,7 +1324,7 @@ namespace kivm {
                 }
                 OPCODE(PUTSTATIC)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::putField(thread, currentClass->getRuntimeConstantPool(),
                                         stack, constantIndex);
@@ -1331,7 +1332,7 @@ namespace kivm {
                 }
                 OPCODE(GETFIELD)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
@@ -1348,7 +1349,7 @@ namespace kivm {
                 }
                 OPCODE(PUTFIELD)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::putField(thread, currentClass->getRuntimeConstantPool(),
                                         stack, constantIndex);
@@ -1356,7 +1357,7 @@ namespace kivm {
                 }
                 OPCODE(INVOKEVIRTUAL)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::invokeVirtual(thread, currentClass->getRuntimeConstantPool(),
                                              stack, constantIndex);
@@ -1364,7 +1365,7 @@ namespace kivm {
                 }
                 OPCODE(INVOKESPECIAL)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::invokeSpecial(thread, currentClass->getRuntimeConstantPool(),
                                              stack, constantIndex);
@@ -1372,7 +1373,7 @@ namespace kivm {
                 }
                 OPCODE(INVOKESTATIC)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::invokeStatic(thread, currentClass->getRuntimeConstantPool(),
                                             stack, constantIndex);
@@ -1380,9 +1381,9 @@ namespace kivm {
                 }
                 OPCODE(INVOKEINTERFACE)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
-                    int count = code_blob[pc + 2];
-                    int zero = code_blob[pc + 3];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
+                    int count = codeBlob[pc + 2];
+                    int zero = codeBlob[pc + 3];
                     pc += 4;
 
                     if (zero != 0) {
@@ -1401,7 +1402,7 @@ namespace kivm {
                 }
                 OPCODE(NEW)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     stack.pushReference(Execution::newInstance(thread, currentClass->getRuntimeConstantPool(),
                                                                constantIndex));
@@ -1409,14 +1410,14 @@ namespace kivm {
                 }
                 OPCODE(NEWARRAY)
                 {
-                    int arrayType = code_blob[pc++];
+                    int arrayType = codeBlob[pc++];
                     int length = stack.popInt();
                     stack.pushReference(Execution::newPrimitiveArray(thread, arrayType, length));
                     NEXT();
                 }
                 OPCODE(ANEWARRAY)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     int length = stack.popInt();
                     stack.pushReference(Execution::newObjectArray(thread, currentClass->getRuntimeConstantPool(),
@@ -1444,7 +1445,7 @@ namespace kivm {
                 }
                 OPCODE(CHECKCAST)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::instanceOf(currentClass->getRuntimeConstantPool(),
                                           stack, constantIndex, true);
@@ -1452,7 +1453,7 @@ namespace kivm {
                 }
                 OPCODE(INSTANCEOF)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::instanceOf(currentClass->getRuntimeConstantPool(),
                                           stack, constantIndex, false);
@@ -1493,8 +1494,8 @@ namespace kivm {
                 }
                 OPCODE(MULTIANEWARRAY)
                 {
-                    int constantIndex = code_blob[pc] << 8 | code_blob[pc + 1];
-                    int dimension = code_blob[pc + 2];
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
+                    int dimension = codeBlob[pc + 2];
                     pc += 3;
                     std::deque<int> length;
                     for (int i = 0; i < dimension; ++i) {
@@ -1533,7 +1534,7 @@ namespace kivm {
                     NEXT();
                 }
                 OTHERWISE() {
-                    PANIC("Unrecognized bytecode: %d at %d", code_blob[pc - 1], pc - 1);
+                    PANIC("Unrecognized bytecode: %d at %d", codeBlob[pc - 1], pc - 1);
                     NEXT();
                 }
             END()
