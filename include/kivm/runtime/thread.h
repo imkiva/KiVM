@@ -29,6 +29,10 @@ namespace kivm {
         std::list<oop> _args;
         u4 _pc;
 
+        // note: this is not the current method
+        // use getCurrentMethod() instead
+        Method *_method;
+
         virtual void start() = 0;
 
         virtual bool shouldRecordInThreadTable();
