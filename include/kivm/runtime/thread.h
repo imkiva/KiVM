@@ -65,6 +65,10 @@ namespace kivm {
         void setThreadState(ThreadState threadState) {
             Thread::_state = threadState;
         }
+
+        Method* getCurrentMethod() const {
+            return _method;
+        }
     };
 
     // The Java app thread

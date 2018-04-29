@@ -188,7 +188,7 @@ set(SOURCE_FILES
         src/kivm/native/java_io_FileInputStream.cpp
         src/kivm/native/java_io_FileOutputStream.cpp
         src/kivm/native/java_io_FileDescriptor.cpp
-        src/kivm/native/sun_misc_Unsafe.cpp)
+        src/kivm/native/sun_misc_Unsafe.cpp src/kivm/native/sun_reflect_Reflection.cpp)
 
 
 #### libkivm
