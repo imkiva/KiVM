@@ -25,7 +25,6 @@ namespace kivm {
         std::thread *_nativeThread;
 
         ThreadState _state;
-        Method *_method;
         FrameList _frames;
         std::list<oop> _args;
         u4 _pc;
@@ -66,8 +65,11 @@ namespace kivm {
             Thread::_state = threadState;
         }
 
-        Method* getCurrentMethod() const {
-            return _method;
+        Method *getCurrentMethod() const {
+            if (_frames.getSize() == 0) {
+                return nullptr;
+            }
+            return _frames.getCurrentFrame()->getMethod();
         }
     };
 
