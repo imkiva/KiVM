@@ -102,21 +102,22 @@ namespace kivm {
     }
 
     void Method::linkExceptionAttribute(cp_info **pool, Exceptions_attribute *attr) {
-        for (int i = 0; i < attr->number_of_exceptions; ++i) {
-            u2 exception_index = attr->exception_index_table[i];
-            auto *class_info = requireConstant<CONSTANT_Class_info>(pool, exception_index);
-            auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(pool, class_info->name_index);
-            Klass *loaded = ClassLoader::requireClass(getClass()->getClassLoader(),
-                                                      utf8_info->getConstant());
-            if (loaded->getClassType() != ClassType::INSTANCE_CLASS) {
-                // TODO: throw VerifyError
-                assert(false);
-                continue;
-            }
-
-            auto *exception_class = (InstanceKlass *) loaded;
-            _throws.push_back(exception_class);
-        }
+        this->_exceptionAttr = attr;
+//        for (int i = 0; i < attr->number_of_exceptions; ++i) {
+//            u2 exception_index = attr->exception_index_table[i];
+//            auto *class_info = requireConstant<CONSTANT_Class_info>(pool, exception_index);
+//            auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(pool, class_info->name_index);
+//            Klass *loaded = ClassLoader::requireClass(getClass()->getClassLoader(),
+//                                                      utf8_info->getConstant());
+//            if (loaded->getClassType() != ClassType::INSTANCE_CLASS) {
+//                // TODO: throw VerifyError
+//                assert(false);
+//                continue;
+//            }
+//
+//            auto *exception_class = (InstanceKlass *) loaded;
+//            _throws.push_back(exception_class);
+//        }
     }
 
     void Method::linkCodeAttribute(cp_info **pool, Code_attribute *attr) {
