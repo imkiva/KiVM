@@ -18,8 +18,8 @@ namespace kivm {
                 return mirrors;
             }
 
-            std::queue<kivm::ArrayKlass *> &Class::getDelayedArrayClassMirrors() {
-                static std::queue<kivm::ArrayKlass *> mirrors;
+            std::queue<kivm::Klass *> &Class::getDelayedArrayClassMirrors() {
+                static std::queue<kivm::Klass *> mirrors;
                 return mirrors;
             }
 
@@ -139,7 +139,7 @@ namespace kivm {
                 auto &M = getDelayedArrayClassMirrors();
                 long size = M.size();
                 for (int i = 0; i < size; ++i) {
-                    auto klass = M.front();
+                    auto klass = (ArrayKlass *) M.front();
                     M.pop();
 
                     Class::createMirror(klass, klass->getJavaLoader());
@@ -153,7 +153,7 @@ namespace kivm {
                         getDelayedMirrors().push(klass->getName());
 
                     else if (klass->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
-                        PANIC("Class::createMirror(): use of deprecated mirroring policy");
+                        getDelayedArrayClassMirrors().push(klass);
 
                     } else {
                         PANIC("Class::createMirror(): use of illegal mirroring policy: "
@@ -181,10 +181,6 @@ namespace kivm {
                     PANIC("Class::createMirror(): use of illegal mirroring policy: "
                           "unknown class type");
                 }
-            }
-
-            void Class::createMirrorForArrayClass(ArrayKlass *klass, mirrorOop javaLoader) {
-                getDelayedArrayClassMirrors().push(klass);
             }
         }
     }

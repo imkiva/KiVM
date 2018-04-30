@@ -83,7 +83,7 @@ namespace kivm {
     }
 
     void ObjectArrayKlass::linkClass() {
-        java::lang::Class::createMirrorForArrayClass(this, getJavaLoader());
+        java::lang::Class::createMirror(this, getJavaLoader());
         ArrayKlass::linkClass();
     }
 }
