@@ -9,6 +9,7 @@
 #include <kivm/oop/arrayOop.h>
 #include <unordered_map>
 #include <sstream>
+#include <kivm/bytecode/execution.h>
 
 namespace kivm {
     namespace java {
@@ -130,4 +131,12 @@ namespace kivm {
             }
         }
     }
+}
+
+using namespace kivm;
+
+JAVA_NATIVE jstring Java_java_lang_String_intern(JNIEnv *env, jobject javaString) {
+    auto stringOop = (instanceOop) Resolver::resolveInstance(javaString);
+    const String &nativeString = java::lang::String::toNativeString(stringOop);
+    return java::lang::String::intern(nativeString);
 }

@@ -79,6 +79,9 @@ namespace kivm {
         Stack &stack = currentFrame->getStack();
         Locals &locals = currentFrame->getLocals();
 
+#undef D
+#define D(...)
+
         BEGIN(codeBlob, pc)
 
                 OPCODE(NOP)
