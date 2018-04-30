@@ -240,3 +240,24 @@ JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass j
 JAVA_NATIVE jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, jclass java_lang_Class) {
     return JNI_FALSE;
 }
+
+JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env, jboolean publicOnly) {
+    // TODO: reflection support
+    auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
+        ->loadClass(L"[Ljava/lang/reflect/Field;");
+    return arrayClass->newInstance(0);
+}
+
+JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredMethods0(JNIEnv *env, jboolean publicOnly) {
+    // TODO: reflection support
+    auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
+        ->loadClass(L"[Ljava/lang/reflect/Method;");
+    return arrayClass->newInstance(0);
+}
+
+JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *env, jboolean publicOnly) {
+    // TODO: reflection support
+    auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
+        ->loadClass(L"[Ljava/lang/reflect/Constructor;");
+    return arrayClass->newInstance(0);
+}
