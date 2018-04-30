@@ -34,7 +34,9 @@ namespace kivm {
             return getClassType() == ClassType::OBJECT_ARRAY_CLASS;
         }
 
-        void linkAndInit() override;
+        void linkClass() override;
+
+        void initClass() override;
     };
 
     class TypeArrayKlass : public ArrayKlass {
@@ -54,7 +56,7 @@ namespace kivm {
             return _componentType;
         }
 
-        void linkAndInit() override;
+        void linkClass() override;
 
         TypeArrayKlass *getDownDimensionType() const {
             return _downDimensionType;
@@ -80,7 +82,7 @@ namespace kivm {
             return _componentType;
         }
 
-        void linkAndInit() override;
+        void linkClass() override;
 
         ObjectArrayKlass *getDownDimensionType() const {
             return _downDimensionType;

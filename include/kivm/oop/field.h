@@ -39,6 +39,7 @@ namespace kivm {
          * Only available when _value_type is OBJECT or ARRAY
          */
         Klass *_valueClassType;
+        String _valueClassTypeName;
 
         field_info *_fieldInfo;
         ConstantValue_attribute *_constantAttr;
@@ -47,7 +48,7 @@ namespace kivm {
 
         void linkAttributes(cp_info **pool);
 
-        void linkValueType();
+        void postLinkValueType();
 
     public:
         Field(InstanceKlass *clazz, field_info *fieldInfo);
@@ -57,6 +58,8 @@ namespace kivm {
         InstanceKlass *getClass() const {
             return _klass;
         }
+
+        Klass *getValueTypeClass();
 
         const String &getName() const {
             return _name;

@@ -129,7 +129,9 @@ namespace kivm {
             return _vtable;
         }
 
-        void linkAndInit() override;
+        void linkClass() override;
+
+        void initClass() override;
 
         /**
          * Search field in this class.

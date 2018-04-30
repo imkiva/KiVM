@@ -119,7 +119,9 @@ namespace kivm {
 
         virtual ~Klass() = default;
 
-        virtual void linkAndInit() = 0;
+        virtual void linkClass() = 0;
+
+        virtual void initClass() = 0;
     };
 }
 

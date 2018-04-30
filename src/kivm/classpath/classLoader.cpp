@@ -49,7 +49,7 @@ namespace kivm {
         if (klass != nullptr) {
             SystemDictionary::get()->put(className, klass);
             klass->setClassState(ClassState::LOADED);
-            klass->linkAndInit();
+            klass->linkClass();
         }
         return klass;
     }

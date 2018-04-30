@@ -58,7 +58,7 @@ namespace kivm {
         this->_name = name_info->getConstant();
         this->_descriptor = desc_info->getConstant();
         linkAttributes(pool);
-        linkValueType();
+        postLinkValueType();
         this->_linked = true;
     }
 
@@ -87,7 +87,7 @@ namespace kivm {
         }
     }
 
-    void Field::linkValueType() {
+    void Field::postLinkValueType() {
         switch (_descriptor[0]) {
             case L'Z':
                 _valueType = ValueType::BOOLEAN;
@@ -115,15 +115,12 @@ namespace kivm {
                 break;
             case L'L': {
                 _valueType = ValueType::OBJECT;
-                const String &class_name = _descriptor.substr(1, _descriptor.size() - 2);
-                _valueClassType = ClassLoader::requireClass(getClass()->getClassLoader(),
-                                                              class_name);
+                _valueClassTypeName = _descriptor.substr(1, _descriptor.size() - 2);
                 break;
             }
             case L'[': {
                 _valueType = ValueType::ARRAY;
-                _valueClassType = ClassLoader::requireClass(getClass()->getClassLoader(),
-                                                              _descriptor);
+                _valueClassTypeName = _descriptor;
                 break;
             }
             default:
@@ -131,5 +128,13 @@ namespace kivm {
                 PANIC("java.lang.VerifyError");
                 break;
         }
+    }
+
+    Klass *Field::getValueTypeClass() {
+        if (_valueClassType == nullptr) {
+            _valueClassType = ClassLoader::requireClass(getClass()->getClassLoader(),
+                                                        _valueClassTypeName);
+        }
+        return _valueClassType;
     }
 }

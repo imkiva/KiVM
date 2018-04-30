@@ -43,7 +43,29 @@ namespace kivm {
         return (InstanceKlass *) loaded;
     }
 
-    void InstanceKlass::linkAndInit() {
+    void InstanceKlass::initClass() {
+        D("%s: initializing static fields",
+          strings::toStdString(getName()).c_str());
+
+        for (auto &e : this->_staticFields) {
+            auto field = e.second->_field;
+            // static final fields should be initialized with constant values in constant pool.
+            // static non-final fields should be initialized with specified values.
+            if (field->isFinal()) {
+                if (!helperInitConstantField(_staticFieldValues, e.second->_offset,
+                                             _classFile->constant_pool, field)) {
+                    // TODO: throw VerifyError
+                    PANIC("java.lang.VerifyError: static final fields must be initialized");
+                }
+            } else {
+                helperInitField(_staticFieldValues, e.second->_offset, field);
+            }
+        }
+        D("%s: class inited",
+          strings::toStdString(getName()).c_str());
+    }
+
+    void InstanceKlass::linkClass() {
         cp_info **pool = _classFile->constant_pool;
         this->setAccessFlag(_classFile->access_flags);
 
@@ -55,12 +77,17 @@ namespace kivm {
         java::lang::Class::createMirror(this, _javaLoader);
 
         linkSuperClass(pool);
+        linkFields(pool);
+
         linkInterfaces(pool);
         linkMethods(pool);
-        linkFields(pool);
-        linkAttributes(pool);
+
         linkConstantPool(pool);
+        linkAttributes(pool);
+
         this->setClassState(ClassState::LINKED);
+        D("%s: class linked",
+          strings::toStdString(getName()).c_str());
     }
 
     void InstanceKlass::linkSuperClass(cp_info **pool) {
@@ -97,7 +124,7 @@ namespace kivm {
 
         // for a easy implementation, I just copy superclass's vtable.
         if (getSuperClass() != nullptr) {
-            auto *sc = (InstanceKlass *) getSuperClass();
+            auto *sc = getSuperClass();
             this->_vtable = sc->_vtable;
         }
 
@@ -128,76 +155,49 @@ namespace kivm {
         using std::make_pair;
 
         // for a easy implementation, I just copy superclass's instance fields layout.
-        int instance_field_index = 0;
+        int instanceFieldIndex = 0;
 
         // instance fields in superclass
         if (this->_superClass != nullptr) {
             auto *super = this->_superClass;
-            for (auto e : super->_instanceFields) {
-                D("%s: Extended instance field: #%-d %s",
-                  strings::toStdString(getName()).c_str(),
-                  instance_field_index,
-                  strings::toStdString(e.first).c_str());
-                this->_instanceFields.insert(
-                    make_pair(e.first,
-                              new FieldID(instance_field_index++, e.second->_field)));
-            }
+            this->_instanceFields = super->_instanceFields;
+            instanceFieldIndex += (int) this->_instanceFields.size();
         }
 
-        // instance fields in interfaces
-        for (auto interface : this->_interfaces) {
-            for (auto field : interface.second->_instanceFields) {
-                D("%s: Extended interface instance field: #%-d %s",
-                  strings::toStdString(getName()).c_str(),
-                  instance_field_index,
-                  strings::toStdString(field.first).c_str());
-
-                this->_instanceFields.insert(
-                    make_pair(field.first,
-                              new FieldID(instance_field_index++, field.second->_field)));
-            }
-        }
+        D("%s: Extended instance field count: %d",
+          strings::toStdString(getName()).c_str(),
+          instanceFieldIndex);
 
         // link our fields
-        int static_field_index = 0;
+        int staticFieldIndex = 0;
         for (int i = 0; i < _classFile->fields_count; ++i) {
             auto *field = new Field(this, _classFile->fields + i);
             field->linkField(pool);
             FieldPool::add(field);
 
-            if (field->isStatic()) {
-                // static final fields should be initialized with constant values in constant pool.
-                // static non-final fields should be initialized with specified values.
-                if (field->isFinal()) {
-                    if (!helperInitConstantField(_staticFieldValues, static_field_index, pool, field)) {
-                        // TODO: throw VerifyError
-                        PANIC("java.lang.VerifyError: static final fields must be initialized");
-                    }
-                } else {
-                    helperInitField(_staticFieldValues, static_field_index, field);
-                }
+            bool isStatic = field->isStatic();
+            D("%s: New %s field (final: %s): #%-d %s",
+              strings::toStdString(getName()).c_str(),
+              isStatic ? "static" : "instance",
+              field->isFinal() ? "true" : "false",
+              isStatic ? staticFieldIndex : instanceFieldIndex,
+              strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
-                D("%s: New static field (final: %s): #%-d %s",
-                  strings::toStdString(getName()).c_str(),
-                  field->isFinal() ? "true" : "false",
-                  static_field_index,
-                  strings::toStdString(Field::makeIdentity(this, field)).c_str());
-
+            if (isStatic) {
                 _staticFields.insert(make_pair(Field::makeIdentity(this, field),
-                                               new FieldID(static_field_index++, field)));
+                                               new FieldID(staticFieldIndex++, field)));
             } else {
-                D("%s: New instance field (final: %s): #%-d %s",
-                  strings::toStdString(getName()).c_str(),
-                  field->isFinal() ? "true" : "false",
-                  instance_field_index,
-                  strings::toStdString(Field::makeIdentity(this, field)).c_str());
-
                 _instanceFields.insert(make_pair(Field::makeIdentity(this, field),
-                                                 new FieldID(instance_field_index++, field)));
+                                                 new FieldID(instanceFieldIndex++, field)));
             }
         }
-        this->_nStaticFields = static_field_index;
-        this->_nInstanceFields = instance_field_index;
+
+        this->_nStaticFields = staticFieldIndex;
+        this->_nInstanceFields = instanceFieldIndex;
+
+        // We need to allocate memory
+        // because before initClass(), there might be field access
+        this->_staticFieldValues.resize(this->_staticFields.size(), nullptr);
     }
 
     void InstanceKlass::linkConstantPool(cp_info **pool) {

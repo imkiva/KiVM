@@ -31,6 +31,7 @@ namespace kivm {
                 Execution::initializeClass(javaThread, (InstanceKlass *) super_klass);
             }
 
+            klass->initClass();
             auto *clinit = klass->getThisClassMethod(L"<clinit>", L"()V");
             if (clinit != nullptr && clinit->getClass() == klass) {
                 D("<clinit> found in %s, invoking.",

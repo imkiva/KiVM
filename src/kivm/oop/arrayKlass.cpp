@@ -18,8 +18,12 @@ namespace kivm {
         this->setJavaMirror(nullptr);
     }
 
-    void ArrayKlass::linkAndInit() {
+    void ArrayKlass::linkClass() {
         this->setClassState(ClassState::LINKED);
+    }
+
+    void ArrayKlass::initClass() {
+        // do nothing
     }
 
     TypeArrayKlass::TypeArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
@@ -47,10 +51,10 @@ namespace kivm {
         return new typeArrayOopDesc(this, length);
     }
 
-    void TypeArrayKlass::linkAndInit() {
+    void TypeArrayKlass::linkClass() {
         // Type array classes are already
         // mirrored in java::lang::Class::initialize()
-        ArrayKlass::linkAndInit();
+        ArrayKlass::linkClass();
     }
 
     ObjectArrayKlass::ObjectArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
@@ -78,8 +82,8 @@ namespace kivm {
         return new objectArrayOopDesc(this, length);
     }
 
-    void ObjectArrayKlass::linkAndInit() {
+    void ObjectArrayKlass::linkClass() {
         java::lang::Class::createMirrorForArrayClass(this, getJavaLoader());
-        ArrayKlass::linkAndInit();
+        ArrayKlass::linkClass();
     }
 }
