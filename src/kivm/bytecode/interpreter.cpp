@@ -14,8 +14,6 @@
 #include <unordered_map>
 #include <deque>
 
-#define OPCODE_DEBUG
-
 #define BEGIN(code, pc) \
     while ((code).validateOffset(pc)) \
         switch ((code)[(pc)++]) {
@@ -24,7 +22,7 @@
 #define NEXT() break
 #define END() }
 
-#ifdef OPCODE_DEBUG
+#ifdef KIVM_INTERPRETER_DEBUG
 #define OPCODE(opcode) \
     case OPC_##opcode: \
         D("interpreter: pc: %d, opcode: %d, name: %s", pc - 1, codeBlob[pc - 1], #opcode);
@@ -78,9 +76,6 @@ namespace kivm {
 
         Stack &stack = currentFrame->getStack();
         Locals &locals = currentFrame->getLocals();
-
-#undef D
-#define D(...)
 
         BEGIN(codeBlob, pc)
 

@@ -8,6 +8,11 @@
 
 #include <sstream>
 
+#ifndef KIVM_CLASSPATH_DEBUG
+#undef D
+#define D(...)
+#endif
+
 namespace kivm {
     void ClassPathManager::initialize() {
         ClassPathManager *cpm = ClassPathManager::get();

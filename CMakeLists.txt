@@ -8,7 +8,7 @@ include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 
-#### Check c++11
+#### Check C++11
 check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
 check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 if (COMPILER_SUPPORTS_CXX11)
@@ -20,7 +20,7 @@ else ()
 endif ()
 set(CMAKE_CXX_STANDARD 11)
 
-#### Check c11
+#### Check C11
 check_c_compiler_flag("-std=c11" COMPILER_SUPPORTS_C11)
 if (COMPILER_SUPPORTS_CXX11)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
@@ -31,6 +31,12 @@ set(CMAKE_C_STANDARD 11)
 
 if (DEFINED ENV{KIVM_DEBUG})
     add_definitions(-DKIVM_DEBUG)
+endif ()
+
+if (DEFINED ENV{KIVM_DEBUG_ALL})
+    add_definitions(-DKIVM_DEBUG)
+    add_definitions(-DKIVM_INTERPRETER_DEBUG)
+    add_definitions(-DKIVM_CLASSPATH_DEBUG)
 endif ()
 
 #### Check platform
