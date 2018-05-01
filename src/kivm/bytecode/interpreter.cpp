@@ -1395,7 +1395,7 @@ namespace kivm {
                 OPCODE(INVOKEDYNAMIC)
                 {
                     pc += 4;
-                    PANIC("INVOKEDYNAMIC");
+                    PANIC("invokedynamic");
                     NEXT();
                 }
                 OPCODE(NEW)
@@ -1438,7 +1438,7 @@ namespace kivm {
                 }
                 OPCODE(ATHROW)
                 {
-                    PANIC("ATHROW");
+                    PANIC("athrow: I havn't implement athrow. What about exiting JVM?");
                     NEXT();
                 }
                 OPCODE(CHECKCAST)
