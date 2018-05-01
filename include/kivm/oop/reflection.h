@@ -89,5 +89,30 @@ namespace kivm {
         }
     }
 
+    inline String valueTypeToPrimitiveTypeName(ValueType v) {
+        switch (v) {
+            case ValueType::BOOLEAN:
+                return L"boolean";
+            case ValueType::BYTE:
+                return L"byte";
+            case ValueType::CHAR:
+                return L"char";
+            case ValueType::SHORT:
+                return L"short";
+            case ValueType::INT:
+                return L"int";
+            case ValueType::FLOAT:
+                return L"float";
+            case ValueType::LONG:
+                return L"long";
+            case ValueType::DOUBLE:
+                return L"double";
+            case ValueType::VOID:
+                return L"void";
+            default:
+                PANIC("primitive type required");
+        }
+    }
+
     instanceOop newJavaLangReflectField(FieldID *fieldID);
 }

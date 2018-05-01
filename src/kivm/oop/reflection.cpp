@@ -37,10 +37,13 @@ namespace kivm {
         fieldOop->setFieldValue(classFieldId, fieldInfo->getClass()->getJavaMirror());
         fieldOop->setFieldValue(slotField, new intOopDesc(fieldID->_offset));
         fieldOop->setFieldValue(nameField, java::lang::String::intern(fieldInfo->getName()));
-        fieldOop->setFieldValue(signatureField, java::lang::String::intern(fieldInfo->getSignature()));
         fieldOop->setFieldValue(typeFieldId, fieldTypeMirror);
         fieldOop->setFieldValue(overrideField, new intOopDesc(JNI_FALSE));
 
+        const auto &signature = fieldInfo->getSignature();
+        if (!signature.empty()) {
+            fieldOop->setFieldValue(signatureField, java::lang::String::intern(signature));
+        }
         return fieldOop;
     }
 }

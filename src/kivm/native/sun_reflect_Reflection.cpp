@@ -33,8 +33,8 @@ JAVA_NATIVE jint Java_sun_reflect_Reflection_getClassAccessFlags(JNIEnv *env,
     auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
     auto mirrorTarget = classMirror->getMirrorTarget();
 
-    if (mirrorTarget->getClassType() != ClassType::INSTANCE_CLASS) {
-        PANIC("native: attempt to get fields of non-instance oops");
+    if (mirrorTarget == nullptr) {
+        return ACC_ABSTRACT | ACC_FINAL | ACC_PUBLIC;
     }
 
     auto instanceClass = (InstanceKlass *) mirrorTarget;

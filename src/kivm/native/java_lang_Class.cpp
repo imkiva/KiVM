@@ -10,6 +10,7 @@
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/oop/arrayOop.h>
 #include <kivm/bytecode/execution.h>
+#include <sstream>
 
 namespace kivm {
     namespace java {
@@ -303,10 +304,23 @@ JAVA_NATIVE jstring Java_java_lang_Class_getName0(JNIEnv *env, jobject java_lang
     auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
     auto mirrorTarget = classMirror->getMirrorTarget();
 
-    if (mirrorTarget->getClassType() != ClassType::INSTANCE_CLASS) {
-        PANIC("native: attempt to get fields of non-instance oops");
+    if (mirrorTarget == nullptr) {
+        return java::lang::String::intern(valueTypeToPrimitiveTypeName(
+            classMirror->getMirroringPrimitiveType()));
     }
 
     auto instanceClass = (InstanceKlass *) mirrorTarget;
     return java::lang::String::intern(instanceClass->getName());
+}
+
+JAVA_NATIVE jstring Java_java_lang_Class_getSuperclass(JNIEnv *env, jobject java_lang_Class_mirror) {
+    auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
+    auto mirrorTarget = classMirror->getMirrorTarget();
+
+    if (mirrorTarget == nullptr || mirrorTarget == Global::java_lang_Object) {
+        return nullptr;
+    }
+
+    auto instanceClass = (InstanceKlass *) mirrorTarget;
+    return instanceClass->getSuperClass()->getJavaMirror();
 }
