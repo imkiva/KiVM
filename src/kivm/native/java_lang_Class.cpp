@@ -238,7 +238,8 @@ JAVA_NATIVE jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, j
     return JNI_FALSE;
 }
 
-JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env, jobject java_lang_Class_mirror,
+JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env,
+                                                                 jobject java_lang_Class_mirror,
                                                                  jboolean publicOnly) {
     // TODO: reflection support
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
@@ -280,14 +281,18 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env, jo
     return fieldOopArray;
 }
 
-JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredMethods0(JNIEnv *env, jboolean publicOnly) {
+JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredMethods0(JNIEnv *env,
+                                                                  jobject java_lang_Class_mirror,
+                                                                  jboolean publicOnly) {
     // TODO: reflection support
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/reflect/Method;");
     return arrayClass->newInstance(0);
 }
 
-JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *env, jboolean publicOnly) {
+JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *env,
+                                                                       jobject java_lang_Class_mirror,
+                                                                       jboolean publicOnly) {
     // TODO: reflection support
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/reflect/Constructor;");
