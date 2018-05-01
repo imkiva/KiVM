@@ -14,7 +14,7 @@
 #ifdef KIVM_DEBUG
 #define D(fmt, ...) \
     do { \
-       (void) fprintf(stderr, "===> (KIVM DEBUG) [%s:%d]: " fmt "\n", \
+       (void) fprintf(stderr, "(debug) [%s:%d]: " fmt "\n", \
                 __FILE__, \
                 __LINE__, \
                 ##__VA_ARGS__); \
@@ -25,7 +25,7 @@
 
 #define PANIC(fmt, ...) \
     do { \
-       (void) fprintf(stderr, "\n\n\n*** (PANIC) *** [%s:%d]: " fmt "\n\n\n", \
+       (void) fprintf(stderr, "\n\n\n*** (panic) *** [%s:%d]: " fmt "\n\n\n", \
                 __FILE__, __LINE__, ##__VA_ARGS__); \
        exit(1); \
     } while (false)
