@@ -298,3 +298,15 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *e
         ->loadClass(L"[Ljava/lang/reflect/Constructor;");
     return arrayClass->newInstance(0);
 }
+
+JAVA_NATIVE jstring Java_java_lang_Class_getName0(JNIEnv *env, jobject java_lang_Class_mirror) {
+    auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
+    auto mirrorTarget = classMirror->getMirrorTarget();
+
+    if (mirrorTarget->getClassType() != ClassType::INSTANCE_CLASS) {
+        PANIC("native: attempt to get fields of non-instance oops");
+    }
+
+    auto instanceClass = (InstanceKlass *) mirrorTarget;
+    return java::lang::String::intern(instanceClass->getName());
+}
