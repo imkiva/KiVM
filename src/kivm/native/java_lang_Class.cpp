@@ -8,6 +8,7 @@
 #include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/mirrorKlass.h>
 #include <kivm/oop/mirrorOop.h>
+#include <kivm/oop/arrayOop.h>
 #include <kivm/bytecode/execution.h>
 
 namespace kivm {
@@ -237,11 +238,46 @@ JAVA_NATIVE jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, j
     return JNI_FALSE;
 }
 
-JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env, jboolean publicOnly) {
+JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env, jobject java_lang_Class_mirror,
+                                                                 jboolean publicOnly) {
     // TODO: reflection support
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/reflect/Field;");
-    return arrayClass->newInstance(0);
+
+    std::vector<instanceOop> fields;
+    auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
+    auto mirrorTarget = classMirror->getMirrorTarget();
+
+    if (mirrorTarget->getClassType() != ClassType::INSTANCE_CLASS) {
+        PANIC("native: attempt to get fields of non-instance oops");
+    }
+
+    auto instanceClass = (InstanceKlass *) mirrorTarget;
+
+    // TODO: consider refactoring
+    for (const auto &e : instanceClass->getStaticFields()) {
+        FieldID *fieldId = e.second;
+        if (publicOnly && !fieldId->_field->isPublic()) {
+            continue;
+        }
+
+        fields.push_back(newJavaLangReflectField(fieldId));
+    }
+
+    for (const auto &e : instanceClass->getInstanceFields()) {
+        FieldID *fieldId = e.second;
+        if (publicOnly && !fieldId->_field->isPublic()) {
+            continue;
+        }
+
+        fields.push_back(newJavaLangReflectField(fieldId));
+    }
+
+    auto fieldOopArray = arrayClass->newInstance((int) fields.size());
+    for (int i = 0; i < fields.size(); ++i) {
+        fieldOopArray->setElementAt(i, fields[i]);
+    }
+    return fieldOopArray;
 }
 
 JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredMethods0(JNIEnv *env, jboolean publicOnly) {

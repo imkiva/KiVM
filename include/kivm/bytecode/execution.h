@@ -26,6 +26,8 @@ namespace kivm {
 
         static instanceOop resolveInstance(jobject obj);
 
+        static mirrorOop resolveMirror(jobject obj);
+
         static arrayOop resolveArray(jobject obj);
 
         static typeArrayOop resolveTypeArray(jobject obj);

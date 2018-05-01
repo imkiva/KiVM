@@ -111,7 +111,7 @@ set(SOURCE_FILES
         include/kivm/runtime/slot.h
         include/kivm/runtime/stack.h
         include/kivm/runtime/frame.h
-        include/kivm/oop/reflectionSupport.h
+        include/kivm/oop/reflection.h
         include/kivm/runtime/thread.h
         include/kivm/oop/helper.h
         include/kivm/runtime/runtimeConfig.h
@@ -196,8 +196,8 @@ set(SOURCE_FILES
         src/kivm/native/java_io_FileDescriptor.cpp
         src/kivm/native/sun_misc_Unsafe.cpp
         src/kivm/native/sun_reflect_Reflection.cpp
-        src/kivm/native/java_security_AccessController.cpp)
-
+        src/kivm/native/java_security_AccessController.cpp
+        src/kivm/oop/reflection.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC})

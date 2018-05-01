@@ -11,7 +11,9 @@ namespace kivm {
         int _offset;
         Field *_field;
 
-        FieldID(int _offset, Field *_field) : _offset(_offset), _field(_field) {}
+        FieldID(int _offset, Field *_field)
+            : _offset(_offset), _field(_field) {
+        }
     };
 
     inline ValueType primitiveTypeToValueType(wchar_t c) {
@@ -86,4 +88,6 @@ namespace kivm {
                 PANIC("primitive type required");
         }
     }
+
+    instanceOop newJavaLangReflectField(FieldID *fieldID);
 }

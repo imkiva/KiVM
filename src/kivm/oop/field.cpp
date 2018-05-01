@@ -131,7 +131,7 @@ namespace kivm {
     }
 
     Klass *Field::getValueTypeClass() {
-        if (_valueClassType == nullptr) {
+        if (_valueClassType == nullptr && !_valueClassTypeName.empty()) {
             _valueClassType = ClassLoader::requireClass(getClass()->getClassLoader(),
                                                         _valueClassTypeName);
         }

@@ -4,7 +4,7 @@
 #pragma once
 
 #include <kivm/oop/oopfwd.h>
-#include <kivm/oop/reflectionSupport.h>
+#include <kivm/oop/reflection.h>
 #include <kivm/classfile/constantPool.h>
 #include <kivm/native/java_lang_String.h>
 #include <kivm/classpath/classLoader.h>

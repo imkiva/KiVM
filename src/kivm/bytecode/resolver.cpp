@@ -31,6 +31,11 @@ namespace kivm {
         return nullptr;
     }
 
+    mirrorOop Resolver::resolveMirror(jobject obj) {
+        auto n = resolveInstance(obj);
+        return (mirrorOop) n;
+    }
+
     arrayOop Resolver::resolveArray(jobject obj) {
         auto n = resolveJObject(obj);
         if (n == nullptr) {

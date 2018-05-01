@@ -2,7 +2,7 @@
 // Created by kiva on 2018/2/28.
 //
 
-#include <kivm/oop/reflectionSupport.h>
+#include <kivm/oop/reflection.h>
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/helper.h>
 

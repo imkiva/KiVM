@@ -5,7 +5,7 @@
 
 #include <kivm/oop/klass.h>
 #include <kivm/oop/oopfwd.h>
-#include <kivm/oop/reflectionSupport.h>
+#include <kivm/oop/reflection.h>
 #include <kivm/runtime/constantPool.h>
 #include <shared/monitor.h>
 #include <unordered_map>
@@ -132,6 +132,14 @@ namespace kivm {
         void linkClass() override;
 
         void initClass() override;
+
+        inline const std::unordered_map<String, FieldID *> &getStaticFields() {
+            return _staticFields;
+        }
+
+        inline const std::unordered_map<String, FieldID *> &getInstanceFields() {
+            return _instanceFields;
+        }
 
         /**
          * Search field in this class.

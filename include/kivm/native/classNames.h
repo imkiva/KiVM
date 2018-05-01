@@ -15,3 +15,7 @@
 #define J_PRINT_STREAM L"java/io/PrintStream"
 #define J_SECURITY_MANAGER L"java/lang/SecurityManager"
 
+#define J_FIELD L"java/lang/reflect/Field"
+#define J_METHOD L"java/lang/reflect/Method"
+#define J_ACCESSIBLE_OBJECT L"java/lang/reflect/AccessibleObject"
+
