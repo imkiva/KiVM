@@ -309,7 +309,9 @@ JAVA_NATIVE jstring Java_java_lang_Class_getName0(JNIEnv *env, jobject java_lang
     }
 
     auto instanceClass = (InstanceKlass *) mirrorTarget;
-    return java::lang::String::intern(instanceClass->getName());
+    const auto &nativeClassName = instanceClass->getName();
+    const auto &javaClassName = strings::replaceAll(nativeClassName, Global::SLASH, Global::DOT);
+    return java::lang::String::intern(javaClassName);
 }
 
 JAVA_NATIVE jstring Java_java_lang_Class_getSuperclass(JNIEnv *env, jobject java_lang_Class_mirror) {
