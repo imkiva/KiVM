@@ -11,3 +11,9 @@ JAVA_NATIVE jobject Java_java_lang_System_initProperties(JNIEnv *env, jobject pr
     return propertiesObject;
 }
 
+JAVA_NATIVE void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
+                                                 jobject javaSrc, jint srcPos,
+                                                 jobject JavaDest, jint destPos,
+                                                 jint length) {
+    PANIC("System.arraycopy() not implemented.");
+}
