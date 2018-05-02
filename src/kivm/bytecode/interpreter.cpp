@@ -166,7 +166,8 @@ namespace kivm {
                 }
                 OPCODE(BIPUSH)
                 {
-                    stack.pushInt(codeBlob[pc++]);
+                    auto bi = (signed char) codeBlob[pc++];
+                    stack.pushInt(bi);
                     NEXT();
                 }
                 OPCODE(SIPUSH)
