@@ -122,6 +122,8 @@ namespace kivm {
         void* getNativePointer();
 
     public:
+        int findExceptionHandler(u4 currentPc, InstanceKlass *exceptionClass);
+
         /*
          * Public getters and setters
          */

@@ -297,4 +297,33 @@ namespace kivm {
         }
         PANIC("non-native methods have no native pointers");
     }
+
+    int Method::findExceptionHandler(u4 currentPc, InstanceKlass *exceptionClass) {
+        if (this->_exceptionAttr == nullptr) {
+            return -1;
+        }
+
+        auto codeAttr = this->_codeAttr;
+        auto pool = this->getClass()->getRuntimeConstantPool();
+
+        for (int i = 0; i < codeAttr->exception_table_length; ++i) {
+            auto ex = codeAttr->exception_table[i];
+            if (currentPc < ex.start_pc || currentPc >= ex.end_pc) {
+                continue;
+            }
+
+            if (ex.catch_type == 0) {
+                // the finally block
+                return ex.handler_pc;
+            }
+
+            auto checkClass = pool->getClass(ex.catch_type);
+            if (checkClass == exceptionClass) {
+                // Yes! we got exception handler
+                return ex.handler_pc;
+            }
+        }
+
+        return -1;
+    }
 }

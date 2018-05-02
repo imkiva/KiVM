@@ -31,17 +31,23 @@
     case OPC_##opcode:
 #endif
 
-#define GOTO_PC(branch) \
+#define GOTO_ABSOLUTE(newPc) \
+                    pc = newPc
+
+#define GOTO_BY_OFFSET(branch) \
                     pc += branch
 
-#define GOTO_UNCONDITIONALLY(occupied) \
+#define GOTO_BY_OFFSET_WITH_OCCUPIED(branch, occupied) \
+                    GOTO_BY_OFFSET(branch); \
+                    GOTO_BY_OFFSET(-((occupied) - 1))
+
+#define GOTO_BY_OFFSET_HARDCODEDED(occupied) \
                     short branch = codeBlob[pc] << 8 | codeBlob[pc + 1]; \
-                    GOTO_PC(branch); \
-                    GOTO_PC(-((occupied) - 1))
+                    GOTO_BY_OFFSET_WITH_OCCUPIED(branch, occupied)
 
 #define __IF_GOTO_FACTORY(func, target, occupied, op) \
                     if (stack.func() op target) { \
-                        GOTO_UNCONDITIONALLY(occupied); \
+                        GOTO_BY_OFFSET_HARDCODEDED(occupied); \
                     } else { \
                         pc += (occupied); \
                     }
@@ -50,7 +56,7 @@
                     auto v2 = stack.func(); \
                     auto v1 = stack.func(); \
                     if (v1 op v2) { \
-                        GOTO_UNCONDITIONALLY(occupied); \
+                        GOTO_BY_OFFSET_HARDCODEDED(occupied); \
                     } else { \
                         pc += (occupied); \
                     }
@@ -1170,7 +1176,7 @@ namespace kivm {
                 }
                 OPCODE(GOTO)
                 {
-                    GOTO_UNCONDITIONALLY(2);
+                    GOTO_BY_OFFSET_HARDCODEDED(2);
                     NEXT();
                 }
                 OPCODE(JSR)
@@ -1229,9 +1235,9 @@ namespace kivm {
                     if (topValue > (int) (jumpTable.size() - 1 + lowByte)
                         || topValue < lowByte) {
                         // jump to default
-                        GOTO_PC(static_cast<u4>(jumpTable.back()));
+                        GOTO_BY_OFFSET(static_cast<u4>(jumpTable.back()));
                     } else {
-                        GOTO_PC(static_cast<u4>(jumpTable[topValue - lowByte]));
+                        GOTO_BY_OFFSET(static_cast<u4>(jumpTable[topValue - lowByte]));
                     }
                     NEXT();
                 }
@@ -1275,9 +1281,9 @@ namespace kivm {
                     int topValue = stack.popInt();
                     auto iter = jumpTable.find(topValue);
                     if (iter == jumpTable.end()) {
-                        GOTO_PC(defaultByte + originBc);
+                        GOTO_BY_OFFSET(defaultByte + originBc);
                     } else {
-                        GOTO_PC(iter->second);
+                        GOTO_BY_OFFSET(iter->second);
                     }
                     break;
                     NEXT();
@@ -1438,7 +1444,21 @@ namespace kivm {
                 }
                 OPCODE(ATHROW)
                 {
-                    PANIC("athrow: I havn't implement athrow. What about exiting JVM?");
+                    jobject ref = stack.popReference();
+                    if (ref == nullptr) {
+                        // TODO: throw NullPointerException
+                        PANIC("java.lang.NullPointerException");
+                    }
+                    auto exceptionOop = Resolver::resolveInstance(ref);
+                    int handler = currentMethod->findExceptionHandler(pc,
+                                                                      exceptionOop->getInstanceClass());
+
+                    if (handler > 0) {
+                        D("athrow: exception handler found at offset: %d", handler);
+                        GOTO_ABSOLUTE(handler);
+                    }
+
+                    PANIC("athrow: TODO: exception handler not found in current method, rethrowing");
                     NEXT();
                 }
                 OPCODE(CHECKCAST)
