@@ -4,8 +4,8 @@
 
 #include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/arrayOop.h>
-#include <sstream>
 #include <kivm/native/java_lang_Class.h>
+#include <sstream>
 
 namespace kivm {
 
@@ -57,7 +57,17 @@ namespace kivm {
         ArrayKlass::linkClass();
     }
 
-    void TypeArrayKlass::copyArrayTo(arrayOop desc, int secPos, int destPos, int length) {
+    void TypeArrayKlass::copyArrayTo(arrayOop dest, int secPos, int destPos, int length) {
+        if (dest->getClass()->getClassType() != ClassType::TYPE_ARRAY_CLASS) {
+            PANIC("java.lang.ArrayStoreException");
+        }
+
+        auto destOop = (typeArrayOop) dest;
+        auto destClass = (TypeArrayKlass *) destOop->getClass();
+        if (destClass->getComponentType() != this->getComponentType()) {
+            PANIC("java.lang.ArrayStoreException");
+        }
+
         PANIC("TypeArrayKlass::copyArrayTo()");
     }
 
@@ -91,7 +101,7 @@ namespace kivm {
         ArrayKlass::linkClass();
     }
 
-    void ObjectArrayKlass::copyArrayTo(arrayOop desc, int secPos, int destPos, int length) {
+    void ObjectArrayKlass::copyArrayTo(arrayOop dest, int secPos, int destPos, int length) {
         PANIC("ObjectArrayKlass::copyArrayTo()");
     }
 }
