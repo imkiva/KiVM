@@ -37,6 +37,8 @@ namespace kivm {
         void linkClass() override;
 
         void initClass() override;
+
+        void copyArrayTo(arrayOop pDesc, jint i, jint i1, jint i2);
     };
 
     class TypeArrayKlass : public ArrayKlass {
