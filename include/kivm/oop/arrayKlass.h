@@ -38,7 +38,7 @@ namespace kivm {
 
         void initClass() override;
 
-        virtual void copyArrayTo(arrayOop desc, int secPos, int destPos, int length) = 0;
+        virtual void copyArrayTo(arrayOop src, arrayOop desc, int srcPos, int destPos, int length) = 0;
     };
 
     class TypeArrayKlass : public ArrayKlass {
@@ -66,7 +66,7 @@ namespace kivm {
 
         typeArrayOop newInstance(int length);
 
-        void copyArrayTo(arrayOop dest, int secPos, int destPos, int length) override;
+        void copyArrayTo(arrayOop src, arrayOop dest, int srcPos, int destPos, int length) override;
     };
 
     class ObjectArrayKlass : public ArrayKlass {
@@ -94,6 +94,6 @@ namespace kivm {
 
         objectArrayOop newInstance(int length);
 
-        void copyArrayTo(arrayOop dest, int secPos, int destPos, int length) override;
+        void copyArrayTo(arrayOop src, arrayOop dest, int srcPos, int destPos, int length) override;
     };
 }

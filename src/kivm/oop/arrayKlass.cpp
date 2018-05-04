@@ -57,18 +57,38 @@ namespace kivm {
         ArrayKlass::linkClass();
     }
 
-    void TypeArrayKlass::copyArrayTo(arrayOop dest, int secPos, int destPos, int length) {
-        if (dest->getClass()->getClassType() != ClassType::TYPE_ARRAY_CLASS) {
+    void TypeArrayKlass::copyArrayTo(arrayOop src, arrayOop dest, int srcPos, int destPos, int length) {
+        if (src->getClass()->getClassType() != ClassType::TYPE_ARRAY_CLASS
+            || dest->getClass()->getClassType() != ClassType::TYPE_ARRAY_CLASS) {
             PANIC("java.lang.ArrayStoreException");
         }
 
+        auto srcOop = (typeArrayOop) src;
         auto destOop = (typeArrayOop) dest;
         auto destClass = (TypeArrayKlass *) destOop->getClass();
         if (destClass->getComponentType() != this->getComponentType()) {
             PANIC("java.lang.ArrayStoreException");
         }
 
-        PANIC("TypeArrayKlass::copyArrayTo()");
+        // Check is all offsets and lengths are non negative
+        if (srcPos < 0 || destPos < 0 || length < 0) {
+            PANIC("java.lang.ArrayIndexOutOfBoundsException");
+        }
+
+        // Check if the ranges are valid
+        if ((((unsigned int) length + (unsigned int) srcPos) > (unsigned int) srcOop->getLength())
+            || (((unsigned int) length + (unsigned int) destPos) > (unsigned int) destOop->getLength())) {
+            PANIC("java.lang.ArrayIndexOutOfBoundsException");
+        }
+
+        // Check zero copy
+        if (length == 0) {
+            return;
+        }
+
+        std::copy(srcOop->_elements.begin() + srcPos,
+                  srcOop->_elements.begin() + srcPos + length,
+                  destOop->_elements.begin() + destPos);
     }
 
     ObjectArrayKlass::ObjectArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
@@ -101,7 +121,7 @@ namespace kivm {
         ArrayKlass::linkClass();
     }
 
-    void ObjectArrayKlass::copyArrayTo(arrayOop dest, int secPos, int destPos, int length) {
+    void ObjectArrayKlass::copyArrayTo(arrayOop src, arrayOop dest, int srcPos, int destPos, int length) {
         PANIC("ObjectArrayKlass::copyArrayTo()");
     }
 }

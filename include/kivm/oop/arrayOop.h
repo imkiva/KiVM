@@ -10,6 +10,9 @@
 
 namespace kivm {
     class arrayOopDesc : public oopDesc {
+        // copyArrayTo() needs to use _elements
+        friend class TypeArrayKlass;
+
     private:
         std::vector<oop> _elements;
 
