@@ -278,9 +278,9 @@ namespace kivm {
                                                  const String &name,
                                                  const String &descriptor) const {
         RETURN_IF(iter, this->_instanceFields,
-                  KEY_MAKER(className, name, descriptor),
-                  iter->second,
-                  nullptr);
+                          KEY_MAKER(className, name, descriptor),
+                          iter->second,
+                          nullptr);
     }
 
     Method *InstanceKlass::getThisClassMethod(const String &name, const String &descriptor) const {
