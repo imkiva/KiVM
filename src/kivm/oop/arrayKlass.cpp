@@ -58,7 +58,7 @@ namespace kivm {
     }
 
     void TypeArrayKlass::copyArrayTo(arrayOop desc, int secPos, int destPos, int length) {
-
+        PANIC("TypeArrayKlass::copyArrayTo()");
     }
 
     ObjectArrayKlass::ObjectArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
@@ -92,6 +92,6 @@ namespace kivm {
     }
 
     void ObjectArrayKlass::copyArrayTo(arrayOop desc, int secPos, int destPos, int length) {
-
+        PANIC("ObjectArrayKlass::copyArrayTo()");
     }
 }
