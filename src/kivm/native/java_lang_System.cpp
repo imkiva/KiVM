@@ -26,5 +26,5 @@ JAVA_NATIVE void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_S
     }
 
     auto arrayClass = (ArrayKlass *) srcOop->getClass();
-    arrayClass->copyArrayTo(destOop, srcPos, destPos, length);
+    arrayClass->copyArrayTo(srcOop, destOop, srcPos, destPos, length);
 }
