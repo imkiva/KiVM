@@ -57,6 +57,10 @@ namespace kivm {
         ArrayKlass::linkClass();
     }
 
+    void TypeArrayKlass::copyArrayTo(arrayOop desc, int secPos, int destPos, int length) {
+
+    }
+
     ObjectArrayKlass::ObjectArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
                                        int dimension, InstanceKlass *componentType)
         : ArrayKlass(classLoader, javaLoader, dimension, ClassType::OBJECT_ARRAY_CLASS),
@@ -85,5 +89,9 @@ namespace kivm {
     void ObjectArrayKlass::linkClass() {
         java::lang::Class::createMirror(this, getJavaLoader());
         ArrayKlass::linkClass();
+    }
+
+    void ObjectArrayKlass::copyArrayTo(arrayOop desc, int secPos, int destPos, int length) {
+
     }
 }
