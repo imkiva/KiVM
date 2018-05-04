@@ -11,79 +11,95 @@ namespace kivm {
         : _classLoader(instanceKlass->getClassLoader()) {
     }
 
-    /********************** pools ***********************/
-    pools::ClassPoolEntey pools::ClassCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-        auto classInfo = (CONSTANT_Class_info *) pool[index];
-        return BootstrapClassLoader::get()->loadClass(
-            rt->getUtf8(classInfo->name_index));
-    }
-
-    pools::StringPoolEntry pools::StringCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-        auto classInfo = (CONSTANT_String_info *) pool[index];
-        return java::lang::String::intern(
-            rt->getUtf8(classInfo->string_index));
-    }
-
-    pools::MethodPoolEntry pools::MethodCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-        int tag = rt->getConstantTag(index);
-        u2 classIndex = 0;
-        u2 nameAndTypeIndex = 0;
-        if (tag == CONSTANT_Methodref) {
-            auto methodRef = (CONSTANT_Methodref_info *) pool[index];
-            classIndex = methodRef->class_index;
-            nameAndTypeIndex = methodRef->name_and_type_index;
-
-        } else if (tag == CONSTANT_InterfaceMethodref) {
-            auto interfaceMethodRef = (CONSTANT_InterfaceMethodref_info *) pool[index];
-            classIndex = interfaceMethodRef->class_index;
-            nameAndTypeIndex = interfaceMethodRef->name_and_type_index;
-
-        } else {
-            PANIC("Unsupported method & class type.");
-        }
-
-        Klass *klass = rt->getClass(classIndex);
-        if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
-            auto instanceKlass = (InstanceKlass *) klass;
-            const auto &nameAndType = rt->getNameAndType(nameAndTypeIndex);
-
-            if (tag == CONSTANT_Methodref) {
-                // invokespecial and invokestatic
-                auto found = instanceKlass->getThisClassMethod(nameAndType.first, nameAndType.second);
-                if (found == nullptr) {
-                    // invokevirtual
-                    found = instanceKlass->getVirtualMethod(nameAndType.first, nameAndType.second);
+    namespace pools {
+        namespace impl {
+            FieldPoolEntry getField(RuntimeConstantPool *rt, cp_info **pool, int index, bool isStatic) {
+                auto fieldRef = (CONSTANT_Fieldref_info *) pool[index];
+                Klass *klass = rt->getClass(fieldRef->class_index);
+                if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
+                    auto instanceKlass = (InstanceKlass *) klass;
+                    const auto &nameAndType = rt->getNameAndType(fieldRef->name_and_type_index);
+                    if (isStatic) {
+                        return instanceKlass->getThisClassField(nameAndType.first, nameAndType.second);
+                    } else {
+                        return instanceKlass->getInstanceFieldInfo(instanceKlass->getName(),
+                                                                   nameAndType.first, nameAndType.second);
+                    }
                 }
-                return found;
-
-            } else {
-                // invokeinterface
-                // interface methods are virtual methods
-                return instanceKlass->getVirtualMethod(nameAndType.first, nameAndType.second);
+                PANIC("Unsupported field & class type.");
+                return nullptr;
             }
         }
-        return nullptr;
-    }
 
-    pools::FieldPoolEntry pools::FieldCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-        auto fieldRef = (CONSTANT_Fieldref_info *) pool[index];
-        Klass *klass = rt->getClass(fieldRef->class_index);
-        if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
-            auto instanceKlass = (InstanceKlass *) klass;
-            const auto &nameAndType = rt->getNameAndType(fieldRef->name_and_type_index);
-            return instanceKlass->getThisClassField(nameAndType.first, nameAndType.second);
+        FieldPoolEntry
+        StaticFieldCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+            return impl::getField(rt, pool, index, true);
         }
-        PANIC("Unsupported field & class type.");
-        return nullptr;
-    }
 
-    pools::NameAndTypePoolEntry
-    pools::NameAndTypeCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
-        auto nameAndType = (CONSTANT_NameAndType_info *) pool[index];
-        return std::make_pair(rt->getUtf8(nameAndType->name_index),
-                              rt->getUtf8(nameAndType->descriptor_index));
-    }
+        FieldPoolEntry
+        InstanceFieldCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+            return impl::getField(rt, pool, index, false);
+        }
 
-    /********************** pools ***********************/
+        ClassPoolEntey ClassCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+            auto classInfo = (CONSTANT_Class_info *) pool[index];
+            return BootstrapClassLoader::get()->loadClass(
+                rt->getUtf8(classInfo->name_index));
+        }
+
+        StringPoolEntry StringCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+            auto classInfo = (CONSTANT_String_info *) pool[index];
+            return java::lang::String::intern(
+                rt->getUtf8(classInfo->string_index));
+        }
+
+        MethodPoolEntry MethodCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+            int tag = rt->getConstantTag(index);
+            u2 classIndex = 0;
+            u2 nameAndTypeIndex = 0;
+            if (tag == CONSTANT_Methodref) {
+                auto methodRef = (CONSTANT_Methodref_info *) pool[index];
+                classIndex = methodRef->class_index;
+                nameAndTypeIndex = methodRef->name_and_type_index;
+
+            } else if (tag == CONSTANT_InterfaceMethodref) {
+                auto interfaceMethodRef = (CONSTANT_InterfaceMethodref_info *) pool[index];
+                classIndex = interfaceMethodRef->class_index;
+                nameAndTypeIndex = interfaceMethodRef->name_and_type_index;
+
+            } else {
+                PANIC("Unsupported method & class type.");
+            }
+
+            Klass *klass = rt->getClass(classIndex);
+            if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
+                auto instanceKlass = (InstanceKlass *) klass;
+                const auto &nameAndType = rt->getNameAndType(nameAndTypeIndex);
+
+                if (tag == CONSTANT_Methodref) {
+                    // invokespecial and invokestatic
+                    auto found = instanceKlass->getThisClassMethod(nameAndType.first, nameAndType.second);
+                    if (found == nullptr) {
+                        // invokevirtual
+                        found = instanceKlass->getVirtualMethod(nameAndType.first, nameAndType.second);
+                    }
+                    return found;
+
+                } else {
+                    // invokeinterface
+                    // interface methods are virtual methods
+                    return instanceKlass->getVirtualMethod(nameAndType.first, nameAndType.second);
+                }
+            }
+            return nullptr;
+        }
+
+        NameAndTypePoolEntry
+        NameAndTypeCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+            auto nameAndType = (CONSTANT_NameAndType_info *) pool[index];
+            return std::make_pair(rt->getUtf8(nameAndType->name_index),
+                                  rt->getUtf8(nameAndType->descriptor_index));
+        }
+    }
 }
 

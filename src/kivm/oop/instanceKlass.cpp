@@ -256,12 +256,6 @@ namespace kivm {
         return this->getStaticFieldInfo(className, name, descriptor)->_offset;
     }
 
-    int InstanceKlass::getInstanceFieldOffset(const String &className,
-                                              const String &name,
-                                              const String &descriptor) const {
-        return this->getInstanceFieldInfo(className, name, descriptor)->_offset;
-    }
-
     FieldID *InstanceKlass::getThisClassField(const String &name, const String &descriptor) const {
         auto id = getInstanceFieldInfo(getName(), name, descriptor);
         if (id != nullptr && id->_field != nullptr) {

@@ -76,7 +76,11 @@ namespace kivm {
             MethodPoolEntry operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
-        struct FieldCreator {
+        struct StaticFieldCreator {
+            FieldPoolEntry operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
+        };
+
+        struct InstanceFieldCreator {
             FieldPoolEntry operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
@@ -95,7 +99,8 @@ namespace kivm {
         using StringPool = Pool<StringPoolEntry, StringCreator, CONSTANT_String>;
         using MethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_Methodref>;
         using InterfaceMethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_InterfaceMethodref>;
-        using FieldPool = Pool<FieldPoolEntry, FieldCreator, CONSTANT_Fieldref>;
+        using StaticFieldPool = Pool<FieldPoolEntry, StaticFieldCreator, CONSTANT_Fieldref>;
+        using InstanceFieldPool = Pool<FieldPoolEntry, InstanceFieldCreator, CONSTANT_Fieldref>;
     }
 
     class RuntimeConstantPool {
@@ -105,7 +110,8 @@ namespace kivm {
         pools::ClassPool _classPool;
         pools::StringPool _stringPool;
         pools::MethodPool _methodPool;
-        pools::FieldPool _fieldPool;
+        pools::StaticFieldPool _staticFieldPool;
+        pools::InstanceFieldPool _instanceFieldPool;
         pools::InterfaceMethodPool _interfaceMethodPool;
         pools::NameAndTypePool _nameAndTypePool;
         pools::Utf8Pool _utf8Pool;
@@ -122,7 +128,8 @@ namespace kivm {
             _classPool.setRawPool(pool);
             _stringPool.setRawPool(pool);
             _methodPool.setRawPool(pool);
-            _fieldPool.setRawPool(pool);
+            _staticFieldPool.setRawPool(pool);
+            _instanceFieldPool.setRawPool(pool);
             _interfaceMethodPool.setRawPool(pool);
             _intPool.setRawPool(pool);
             _floatPool.setRawPool(pool);
@@ -160,9 +167,14 @@ namespace kivm {
             return _interfaceMethodPool.findOrNew(this, index);
         }
 
-        inline pools::FieldPoolEntry getField(int index) {
+        inline pools::FieldPoolEntry getStaticField(int index) {
             assert(this->_rawPool != nullptr);
-            return _fieldPool.findOrNew(this, index);
+            return _staticFieldPool.findOrNew(this, index);
+        }
+
+        inline pools::FieldPoolEntry getInstanceField(int index) {
+            assert(this->_rawPool != nullptr);
+            return _instanceFieldPool.findOrNew(this, index);
         }
 
         inline pools::Utf8PoolEntry getUtf8(int index) {

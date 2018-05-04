@@ -60,7 +60,7 @@ namespace kivm {
                                   Stack &stack, int constantIndex);
 
         static void putField(JavaThread *thread, RuntimeConstantPool *rt,
-                             Stack &stack, int constantIndex);
+                             Stack &stack, int constantIndex, bool isStatic);
 
         static void getField(JavaThread *thread, RuntimeConstantPool *rt,
                              instanceOop receiver, Stack &stack,

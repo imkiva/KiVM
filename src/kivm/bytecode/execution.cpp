@@ -380,7 +380,11 @@ namespace kivm {
 
     void Execution::getField(JavaThread *thread, RuntimeConstantPool *rt, instanceOop receiver, Stack &stack,
                              int constantIndex) {
-        auto field = rt->getField(constantIndex);
+        bool isStatic = receiver == nullptr;
+        auto field = isStatic
+                     ? rt->getStaticField(constantIndex)
+                     : rt->getInstanceField(constantIndex);
+
         if (field == nullptr) {
             PANIC("FieldID is null, constantIndex: %d", constantIndex);
         }
@@ -446,8 +450,12 @@ namespace kivm {
         }
     }
 
-    void Execution::putField(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
-        auto field = rt->getField(constantIndex);
+    void Execution::putField(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
+                             int constantIndex, bool isStatic) {
+        auto field = isStatic
+                     ? rt->getStaticField(constantIndex)
+                     : rt->getInstanceField(constantIndex);
+
         if (field == nullptr) {
             PANIC("FieldID is null, constantIndex: %d", constantIndex);
         }
@@ -455,7 +463,7 @@ namespace kivm {
         auto instanceKlass = field->_field->getClass();
         Execution::initializeClass(thread, instanceKlass);
 
-        bool isStatic = field->_field->isStatic();
+        assert(isStatic == field->_field->isStatic());
 
 #define PUTFIELD(value) \
         if (isStatic) { \

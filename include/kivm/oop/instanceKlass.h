@@ -173,17 +173,6 @@ namespace kivm {
                                     const String &descriptor) const;
 
         /**
-         * Get instance field offset.
-         * @param className Where the wanted field belongs to
-         * @param name Field name
-         * @param descriptor Field descriptor
-         * @return vector offset if found, otherwise -1
-         */
-        int getInstanceFieldOffset(const String &className,
-                                   const String &name,
-                                   const String &descriptor) const;
-
-        /**
          * Get instance field info.
          * @param className Where the wanted field belongs to
          * @param name Field name
