@@ -201,6 +201,7 @@ set(SOURCE_FILES
         src/kivm/native/sun_misc_Unsafe.cpp
         src/kivm/native/sun_reflect_Reflection.cpp
         src/kivm/native/java_security_AccessController.cpp
+        src/kivm/native/java_lang_Throwable.cpp
         src/kivm/oop/reflection.cpp)
 
 #### libkivm
