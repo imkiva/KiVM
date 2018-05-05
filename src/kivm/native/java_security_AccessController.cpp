@@ -17,8 +17,8 @@ JAVA_NATIVE jobject Java_java_security_AccessController_doPrivileged(JNIEnv *env
         return nullptr;
     }
 
-    // there are so many versions of doPrivileged().
-    // but we can do the simplest
+    // there are many versions of doPrivileged().
+    // but we can do the simplest one
     auto actionClass = (InstanceKlass *) actionOop->getClass();
     auto run = actionClass->getVirtualMethod(L"run", L"()Ljava/lang/Object;");
     if (run == nullptr) {
@@ -36,4 +36,9 @@ JAVA_NATIVE jobject Java_java_security_AccessController_doPrivileged(JNIEnv *env
 
     // TODO: check whether exception occurred
     return result;
+}
+
+JAVA_NATIVE jobject Java_java_security_AccessController_getStackAccessControlContext(JNIEnv *env,
+                                                                                     jclass java_security_AccessController) {
+    return nullptr;
 }

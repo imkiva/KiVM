@@ -32,6 +32,8 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifdef KIVM_JAR_CLASS_LOADING
+
 #include <zip.h>
 #include <cerrno>
 #include <fstream>
@@ -330,3 +332,5 @@ ZipArchive::readEntry(const ZipEntry &zipEntry, std::ofstream &ofOutput, State s
     }
     return iRes;
 }
+
+#endif

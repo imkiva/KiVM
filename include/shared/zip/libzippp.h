@@ -31,9 +31,9 @@
   OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#pragma once
 
-#ifndef LIBZIPPP_H
-#define    LIBZIPPP_H
+#ifdef KIVM_JAR_CLASS_LOADING
 
 #include <cstdio>
 #include <string>

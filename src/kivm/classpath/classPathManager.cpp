@@ -27,6 +27,7 @@ namespace kivm {
     }
 
     void ClassPathManager::destroy() {
+#ifdef KIVM_JAR_CLASS_LOADING
         auto it = _runtimeClassPath.begin();
         while (it != _runtimeClassPath.end()) {
             const ClassPathEntry &entry = *it++;
@@ -35,6 +36,7 @@ namespace kivm {
                 delete zip;
             }
         }
+#endif
     }
 
     ClassPathManager *ClassPathManager::get() {
@@ -84,6 +86,7 @@ namespace kivm {
                 }
 
             } else if (entry._source == ClassSource::JAR) {
+#ifdef KIVM_JAR_CLASS_LOADING
                 auto zip = (ZipArchive *) entry._cookie;
                 const auto &zipEntry = zip->getEntry(strings::toStdString(tempPath), false);
 
@@ -94,6 +97,9 @@ namespace kivm {
                     classFile = entry._path;
                     break;
                 }
+#else
+                D("jar class loading disabled, skipping jars in class path");
+#endif
             }
         }
 
@@ -113,12 +119,16 @@ namespace kivm {
         }
 
         if (FileSystem::canRead(path)) {
+#ifdef KIVM_JAR_CLASS_LOADING
             auto zip = new ZipArchive(path);
             zip->open(ZipArchive::OpenMode::READ_ONLY);
             if (zip->isOpen()) {
                 _runtimeClassPath.push_back({ClassSource::JAR, path, zip});
                 return;
             }
+#else
+            D("jar class loading disabled, skipping jar files");
+#endif
         }
 
         D("ClassPathManager: ignoring unrecognized classpath: %s",
@@ -135,7 +145,9 @@ namespace kivm {
         if (_source == ClassSource::DIR) {
             FileSystem::destroyFileMapping(_buffer, _fd, _bufferSize);
         } else if (_source == ClassSource::JAR) {
+#ifdef KIVM_JAR_CLASS_LOADING
             delete[] _buffer;
+#endif
         }
     }
 }
