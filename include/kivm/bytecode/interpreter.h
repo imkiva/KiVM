@@ -10,6 +10,13 @@
 namespace kivm {
     class ByteCodeInterpreter {
     public:
+        /**
+         * Run a thread method
+         *
+         * @param thread Java Thread that contains method
+         * @return method return value(nullptr if void) o
+         *         exception object(if thrown and not handled)
+         */
         static oop interp(JavaThread *thread);
     };
 }
