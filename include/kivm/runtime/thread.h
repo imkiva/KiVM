@@ -28,6 +28,8 @@ namespace kivm {
         FrameList _frames;
         std::list<oop> _args;
         u4 _pc;
+        
+        instanceOop _exceptionOop;
 
         // note: this is not the current method
         // use getCurrentMethod() instead
