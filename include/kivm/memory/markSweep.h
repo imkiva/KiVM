@@ -26,16 +26,20 @@ namespace kivm {
 
         void initializeAll() override;
 
-        void *getHeapStart() override {
+        inline void *getHeapStart() override {
             return _memoryStart;
         }
 
-        void *getHeapEnd() override {
+        inline void *getHeapEnd() override {
             return _memoryStart + getHeapSize();
         }
 
-        size_t getHeapSize() override {
+        inline size_t getHeapSize() override {
             return _totalSize;
+        }
+
+        inline bool isHeapObject(void *addr) override {
+            return addr >= _memoryStart && addr < _memoryStart + _totalSize;
         }
     };
 }

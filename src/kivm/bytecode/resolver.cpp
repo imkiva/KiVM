@@ -8,15 +8,14 @@
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/runtime/nativeMethodPool.h>
+#include <kivm/memory/universe.h>
 
 namespace kivm {
     oop Resolver::resolveJObject(jobject obj) {
-        if (obj == nullptr) {
-            return nullptr;
+        if (Universe::isHeapObject(obj)) {
+            return (oop) obj;
         }
-
-        // TODO: check whether obj is an oop
-        return (oop) obj;
+        return nullptr;
     }
 
     instanceOop Resolver::resolveInstance(jobject obj) {

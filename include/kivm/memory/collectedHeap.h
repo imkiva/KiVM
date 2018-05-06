@@ -19,5 +19,7 @@ namespace kivm {
         virtual void *getHeapEnd() = 0;
 
         virtual size_t getHeapSize() = 0;
+
+        virtual bool isHeapObject(void *addr) = 0;
     };
 }

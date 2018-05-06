@@ -67,4 +67,11 @@ namespace kivm {
             free(memory);
         }
     }
+
+    bool Universe::isHeapObject(void *addr) {
+        if (sCollectedHeapInstance == nullptr) {
+            PANIC("heap not initialized");
+        }
+        return sCollectedHeapInstance->isHeapObject(addr);
+    }
 }

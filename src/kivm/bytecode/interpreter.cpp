@@ -1446,12 +1446,12 @@ namespace kivm {
                 }
                 OPCODE(ATHROW)
                 {
-                    jobject ref = stack.popReference();
-                    if (ref == nullptr) {
+                    auto exceptionOop = Resolver::resolveInstance(stack.popReference());
+                    if (exceptionOop == nullptr) {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
                     }
-                    auto exceptionOop = Resolver::resolveInstance(ref);
+
                     int handler = currentMethod->findExceptionHandler(pc,
                         exceptionOop->getInstanceClass());
 
@@ -1462,6 +1462,7 @@ namespace kivm {
                         GOTO_ABSOLUTE(handler);
                     }
 
+                    D("athrow: exception handler not found, rethrowing it to caller");
                     thread->_exceptionOop = exceptionOop;
                     return exceptionOop;
                     NEXT();

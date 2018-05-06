@@ -23,5 +23,7 @@ namespace kivm {
         static void *allocCObject(size_t size);
 
         static void deallocCObject(void *memory);
+
+        static bool isHeapObject(void *addr);
     };
 }
