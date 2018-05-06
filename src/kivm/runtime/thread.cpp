@@ -42,6 +42,19 @@ namespace kivm {
         return (long) this->_nativeThread->native_handle();
     }
 
+    int Thread::tryHandleException(instanceOop exceptionOop) {
+        auto currentMethod = _frames.getCurrentFrame()->getMethod();
+        int handler = currentMethod->findExceptionHandler(_pc,
+            exceptionOop->getInstanceClass());
+
+        if (handler > 0) {
+            return handler;
+        }
+
+        this->_exceptionOop = exceptionOop;
+        return -1;
+    }
+
     Thread::~Thread() = default;
 
     JavaThread::JavaThread(Method *method, const std::list<oop> &args)
@@ -72,7 +85,7 @@ namespace kivm {
 
     oop JavaThread::runMethod(Method *method, const std::list<oop> &args) {
         D("### JavaThread::runMethod(), maxLocals: %d, maxStack: %d",
-          method->getMaxLocals(), method->getMaxStack());
+            method->getMaxLocals(), method->getMaxStack());
 
         Frame frame(method->getMaxLocals(), method->getMaxStack());
         Locals &locals = frame.getLocals();
@@ -146,8 +159,8 @@ namespace kivm {
         this->_pc = 0;
         oop result = ByteCodeInterpreter::interp(this);
         this->_frames.pop();
-
         this->_pc = frame.getReturnPc();
+
 
         if (_frames.getSize() > 0) {
             auto returnTo = this->_frames.getCurrentFrame()->getMethod();
@@ -158,6 +171,15 @@ namespace kivm {
                 strings::toStdString(returnTo->getClass()->getName()).c_str(),
                 strings::toStdString(returnTo->getName()).c_str(),
                 strings::toStdString(returnTo->getDescriptor()).c_str());
+
+            // if this method cannot handle this exception
+            // we should throw it to its caller
+            while (isExceptionOccurred()) {
+                int handler = this->tryHandleException(this->_exceptionOop);
+                if (handler > 0) {
+                    this->_exceptionOop = nullptr;
+                }
+            }
 
         } else {
             D("returned from %s.%s:%s to the top method",

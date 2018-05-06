@@ -1452,8 +1452,7 @@ namespace kivm {
                         PANIC("java.lang.NullPointerException");
                     }
 
-                    int handler = currentMethod->findExceptionHandler(pc,
-                        exceptionOop->getInstanceClass());
+                    int handler = thread->tryHandleException(exceptionOop);
 
                     if (handler > 0) {
                         D("athrow: exception handler found at offset: %d", handler);
@@ -1463,7 +1462,6 @@ namespace kivm {
                     }
 
                     D("athrow: exception handler not found, rethrowing it to caller");
-                    thread->_exceptionOop = exceptionOop;
                     return exceptionOop;
                     NEXT();
                 }

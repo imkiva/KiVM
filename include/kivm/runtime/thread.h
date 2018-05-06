@@ -48,6 +48,8 @@ namespace kivm {
             this->_javaThreadObject = javaThread;
         }
 
+        int tryHandleException(instanceOop exceptionOop);
+
     public:
         Thread(Method *method, const std::list<oop> &args);
 
