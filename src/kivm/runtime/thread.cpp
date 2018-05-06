@@ -149,11 +149,22 @@ namespace kivm {
 
         this->_pc = frame.getReturnPc();
 
-        D("returnedFrom: %s.%s:%s",
-          strings::toStdString(method->getClass()->getName()).c_str(),
-          strings::toStdString(method->getName()).c_str(),
-          strings::toStdString(method->getDescriptor()).c_str());
+        if (_frames.getSize() > 0) {
+            auto returnTo = this->_frames.getCurrentFrame()->getMethod();
+            D("returned from %s.%s:%s to %s.%s:%s",
+                strings::toStdString(method->getClass()->getName()).c_str(),
+                strings::toStdString(method->getName()).c_str(),
+                strings::toStdString(method->getDescriptor()).c_str(),
+                strings::toStdString(returnTo->getClass()->getName()).c_str(),
+                strings::toStdString(returnTo->getName()).c_str(),
+                strings::toStdString(returnTo->getDescriptor()).c_str());
 
+        } else {
+            D("returned from %s.%s:%s to the top method",
+                strings::toStdString(method->getClass()->getName()).c_str(),
+                strings::toStdString(method->getName()).c_str(),
+                strings::toStdString(method->getDescriptor()).c_str());
+        }
         return result;
     }
 
