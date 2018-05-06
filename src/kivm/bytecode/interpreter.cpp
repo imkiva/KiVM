@@ -76,9 +76,9 @@ namespace kivm {
         u4 &pc = thread->_pc;
 
         D("currentMethod: %s.%s:%s",
-          strings::toStdString(currentClass->getName()).c_str(),
-          strings::toStdString(currentMethod->getName()).c_str(),
-          strings::toStdString(currentMethod->getDescriptor()).c_str());
+            strings::toStdString(currentClass->getName()).c_str(),
+            strings::toStdString(currentMethod->getName()).c_str(),
+            strings::toStdString(currentMethod->getDescriptor()).c_str());
 
         Stack &stack = currentFrame->getStack();
         Locals &locals = currentFrame->getLocals();
@@ -181,7 +181,7 @@ namespace kivm {
                 {
                     int constantIndex = codeBlob[pc++];
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
-                                            stack, constantIndex);
+                        stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(LDC_W)
@@ -189,7 +189,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
-                                            stack, constantIndex);
+                        stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(LDC2_W)
@@ -197,7 +197,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::loadConstant(currentClass->getRuntimeConstantPool(),
-                                            stack, constantIndex);
+                        stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(ILOAD)
@@ -1324,7 +1324,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::getField(thread, currentClass->getRuntimeConstantPool(),
-                                        nullptr, stack, constantIndex);
+                        nullptr, stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(PUTSTATIC)
@@ -1332,7 +1332,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::putField(thread, currentClass->getRuntimeConstantPool(),
-                                        stack, constantIndex, true);
+                        stack, constantIndex, true);
                     NEXT();
                 }
                 OPCODE(GETFIELD)
@@ -1349,7 +1349,7 @@ namespace kivm {
                         PANIC("Not an instance oop");
                     }
                     Execution::getField(thread, currentClass->getRuntimeConstantPool(),
-                                        receiver, stack, constantIndex);
+                        receiver, stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(PUTFIELD)
@@ -1357,7 +1357,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::putField(thread, currentClass->getRuntimeConstantPool(),
-                                        stack, constantIndex, false);
+                        stack, constantIndex, false);
                     NEXT();
                 }
                 OPCODE(INVOKEVIRTUAL)
@@ -1365,7 +1365,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::invokeVirtual(thread, currentClass->getRuntimeConstantPool(),
-                                             stack, constantIndex);
+                        stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(INVOKESPECIAL)
@@ -1373,7 +1373,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::invokeSpecial(thread, currentClass->getRuntimeConstantPool(),
-                                             stack, constantIndex);
+                        stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(INVOKESTATIC)
@@ -1381,7 +1381,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::invokeStatic(thread, currentClass->getRuntimeConstantPool(),
-                                            stack, constantIndex);
+                        stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(INVOKEINTERFACE)
@@ -1396,7 +1396,7 @@ namespace kivm {
                               "the value of the fourth operand byte must always be zero.");
                     }
                     Execution::invokeInterface(thread, currentClass->getRuntimeConstantPool(),
-                                               stack, constantIndex, count);
+                        stack, constantIndex, count);
                     NEXT();
                 }
                 OPCODE(INVOKEDYNAMIC)
@@ -1410,7 +1410,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     stack.pushReference(Execution::newInstance(thread, currentClass->getRuntimeConstantPool(),
-                                                               constantIndex));
+                        constantIndex));
                     NEXT();
                 }
                 OPCODE(NEWARRAY)
@@ -1425,8 +1425,9 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     int length = stack.popInt();
-                    stack.pushReference(Execution::newObjectArray(thread, currentClass->getRuntimeConstantPool(),
-                                                                  constantIndex, length));
+                    stack.pushReference(Execution::newObjectArray(thread,
+                        currentClass->getRuntimeConstantPool(),
+                        constantIndex, length));
                     NEXT();
                 }
                 OPCODE(ARRAYLENGTH)
@@ -1452,14 +1453,17 @@ namespace kivm {
                     }
                     auto exceptionOop = Resolver::resolveInstance(ref);
                     int handler = currentMethod->findExceptionHandler(pc,
-                                                                      exceptionOop->getInstanceClass());
+                        exceptionOop->getInstanceClass());
 
                     if (handler > 0) {
                         D("athrow: exception handler found at offset: %d", handler);
+                        stack.clear();
+                        stack.pushReference(exceptionOop);
                         GOTO_ABSOLUTE(handler);
                     }
 
-                    PANIC("athrow: TODO: exception handler not found in current method, rethrowing");
+                    thread->_exceptionOop = exceptionOop;
+                    return exceptionOop;
                     NEXT();
                 }
                 OPCODE(CHECKCAST)
@@ -1467,7 +1471,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::instanceOf(currentClass->getRuntimeConstantPool(),
-                                          stack, constantIndex, true);
+                        stack, constantIndex, true);
                     NEXT();
                 }
                 OPCODE(INSTANCEOF)
@@ -1475,7 +1479,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     Execution::instanceOf(currentClass->getRuntimeConstantPool(),
-                                          stack, constantIndex, false);
+                        stack, constantIndex, false);
                     NEXT();
                 }
                 OPCODE(MONITORENTER)
@@ -1526,8 +1530,8 @@ namespace kivm {
                         length.push_back(sub);
                     }
                     stack.pushReference(Execution::newMultiObjectArray(thread,
-                                                                       currentClass->getRuntimeConstantPool(),
-                                                                       constantIndex, dimension, length));
+                        currentClass->getRuntimeConstantPool(),
+                        constantIndex, dimension, length));
                     NEXT();
                 }
                 OPCODE(IFNULL)

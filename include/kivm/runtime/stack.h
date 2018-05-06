@@ -132,6 +132,10 @@ namespace kivm {
         inline void dropTop() {
             --_sp;
         }
+
+        inline void clear() {
+            this->_sp = 0;
+        }
     };
 
     class Locals {

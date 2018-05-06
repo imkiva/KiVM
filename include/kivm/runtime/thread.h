@@ -63,19 +63,23 @@ namespace kivm {
             return _javaThreadObject;
         }
 
-        ThreadState getThreadState() const {
+        inline ThreadState getThreadState() const {
             return _state;
         }
 
-        void setThreadState(ThreadState threadState) {
+        inline void setThreadState(ThreadState threadState) {
             Thread::_state = threadState;
         }
 
-        Method *getCurrentMethod() const {
+        inline Method *getCurrentMethod() const {
             if (_frames.getSize() == 0) {
                 return nullptr;
             }
             return _frames.getCurrentFrame()->getMethod();
+        }
+
+        inline bool isExceptionOccurred() const {
+            return _exceptionOop != nullptr;
         }
     };
 
