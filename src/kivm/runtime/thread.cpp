@@ -161,7 +161,6 @@ namespace kivm {
         this->_frames.pop();
         this->_pc = frame.getReturnPc();
 
-
         if (_frames.getSize() > 0) {
             auto returnTo = this->_frames.getCurrentFrame()->getMethod();
             D("returned from %s.%s:%s to %s.%s:%s",
@@ -171,15 +170,6 @@ namespace kivm {
                 strings::toStdString(returnTo->getClass()->getName()).c_str(),
                 strings::toStdString(returnTo->getName()).c_str(),
                 strings::toStdString(returnTo->getDescriptor()).c_str());
-
-            // if this method cannot handle this exception
-            // we should throw it to its caller
-            while (isExceptionOccurred()) {
-                int handler = this->tryHandleException(this->_exceptionOop);
-                if (handler > 0) {
-                    this->_exceptionOop = nullptr;
-                }
-            }
 
         } else {
             D("returned from %s.%s:%s to the top method",
