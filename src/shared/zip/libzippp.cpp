@@ -32,6 +32,8 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <compileTimeConfig.h>
+
 #ifdef KIVM_JAR_CLASS_LOADING
 
 #include <zip.h>
@@ -41,7 +43,6 @@
 
 #include <shared/zip/libzippp.h>
 #include <shared/string.h>
-#include <compileTimeConfig.h>
 
 #ifdef HAVE_ZIP_FLAGS_T
 #define ZIPPP_ZIP_FLAGS_T zip_flags_t

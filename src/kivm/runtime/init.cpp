@@ -12,7 +12,10 @@
 namespace kivm {
     static inline InstanceKlass *use(ClassLoader *cl, JavaMainThread *thread, const String &name) {
         auto klass = (InstanceKlass *) cl->loadClass(name);
-        assert(klass != nullptr);
+        if (klass == nullptr) {
+            PANIC("java.lang.LinkError: class not found: %s",
+                  strings::toStdString(name).c_str());
+        }
         Execution::initializeClass(thread, klass);
         return klass;
     }

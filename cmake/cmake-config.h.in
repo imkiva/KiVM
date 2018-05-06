@@ -1,9 +1,13 @@
 #pragma once
 
-#ifdef KIVM_JAR_CLASS_LOADING
+#ifdef HAVE_CONFIG_H
 
-#cmakedefine KIVM_JAR_CLASS_LOADING
 #cmakedefine HAVE_ZIP_FLAGS_T
 #cmakedefine HAVE_ZIP_FL_ENC_GUESS
+#cmakedefine HAVE_ZIP_H
 
+#endif
+
+#ifdef HAVE_ZIP_H
+#define KIVM_JAR_CLASS_LOADING
 #endif

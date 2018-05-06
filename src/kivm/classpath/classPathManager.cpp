@@ -2,6 +2,7 @@
 // Created by kiva on 2018/4/21.
 //
 
+#include <compileTimeConfig.h>
 #include <kivm/classpath/classPathManager.h>
 #include <shared/filesystem.h>
 #include <shared/zip.h>

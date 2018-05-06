@@ -56,21 +56,23 @@ include_directories(${FFI_INCLUDE_DIRS})
 link_directories(${FFI_LIBRARIES})
 
 #### libzip
-check_include_files(zip.h KIVM_JAR_CLASS_LOADING)
-check_c_source_compiles("#include <zip.h>
-int main(int argc, char *argv[]) { zip_flags_t flag = 0; }" HAVE_ZIP_FLAGS_T)
-check_c_source_compiles("#include <zip.h>
-int main(int argc, char *argv[]) { unsigned int flag = ZIP_FL_ENC_GUESS; }" HAVE_ZIP_FL_ENC_GUESS)
+check_include_files(zip.h HAVE_ZIP_H)
 
-if (KIVM_JAR_CLASS_LOADING)
+if (HAVE_ZIP_H)
+    check_c_source_compiles("#include <zip.h>
+        int main(int argc, char *argv[]) { zip_flags_t flag = 0; }" HAVE_ZIP_FLAGS_T)
+    check_c_source_compiles("#include <zip.h>
+        int main(int argc, char *argv[]) { unsigned int flag = ZIP_FL_ENC_GUESS; }" HAVE_ZIP_FL_ENC_GUESS)
+
     # check libz if libzip is required
     if (NOT EXISTS "/system/framework/framework-res.apk")
         find_package(ZLIB REQUIRED)
         include_directories(${ZLIB_INCLUDE_DIR})
-set(CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIR})
+        set(CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIR})
         if (ZLIB_VERSION_STRING VERSION_LESS "1.1.2")
             message(FATAL_ERROR "zlib version too old, please install at least v1.1.2 to enable jar class loading.")
         endif ()
+        message(STATUS "Jar class loading enabled")
     else ()
         message(STATUS "Detected building on Android, skipping zlib check")
     endif ()
@@ -210,7 +212,7 @@ target_link_libraries(kivm ffi)
 IF (UNIX)
     target_link_libraries(kivm pthread)
     target_link_libraries(kivm dl)
-    if (KIVM_JAR_CLASS_LOADING)
+    if (HAVE_ZIP_H)
         target_link_libraries(kivm z)
         target_link_libraries(kivm zip)
     endif ()
