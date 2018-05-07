@@ -53,20 +53,85 @@ namespace kivm {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypesNoWrap();
 
         D("nativeInvocationContext: %s.%s:%s, static: %s, native: %s, nargs: %zd",
-          strings::toStdString(_instanceKlass->getName()).c_str(),
-          strings::toStdString(_method->getName()).c_str(),
-          strings::toStdString(_method->getDescriptor()).c_str(),
-          hasThis ? "false" : "true",
-          _method->isNative() ? "true" : "false",
-          descriptorMap.size());
+            strings::toStdString(_instanceKlass->getName()).c_str(),
+            strings::toStdString(_method->getName()).c_str(),
+            strings::toStdString(_method->getDescriptor()).c_str(),
+            hasThis ? "false" : "true",
+            _method->isNative() ? "true" : "false",
+            descriptorMap.size());
+
+        bool stackIsAllocated = false;
+
+        // TODO: make it elegant
+        // XXX: Temporary workaround: allocate a stack to hold arguments
+        if (_stack == nullptr) {
+            _stack = new Stack((int) _args.size());
+            stackIsAllocated = true;
+            int localVariableIndex = 0;
+            bool isStatic = !hasThis;
+
+            std::for_each(_args.begin(), _args.end(), [&](oop arg) {
+                if (arg == nullptr) {
+                    _stack->pushReference(nullptr);
+                    return;
+                }
+
+                switch (arg->getMarkOop()->getOopType()) {
+                    case oopType::INSTANCE_OOP:
+                    case oopType::OBJECT_ARRAY_OOP:
+                    case oopType::TYPE_ARRAY_OOP: {
+                        D("nativeInvocationContext: copying reference: #%d - %p", localVariableIndex++, arg);
+                        _stack->pushReference(arg);
+                        break;
+                    }
+
+                    case oopType::PRIMITIVE_OOP: {
+                        ValueType valueType = descriptorMap[isStatic ? localVariableIndex : localVariableIndex - 1];
+                        switch (valueType) {
+                            case ValueType::INT: {
+                                int value = ((intOop) arg)->getValue();
+                                D("Copying int: #%d - %d", localVariableIndex++, value);
+                                _stack->pushInt(value);
+                                break;
+                            }
+                            case ValueType::FLOAT: {
+                                float value = ((floatOop) arg)->getValue();
+                                D("Copying float: #%d - %f", localVariableIndex++, value);
+                                _stack->pushFloat(value);
+                                break;
+                            }
+                            case ValueType::DOUBLE: {
+                                double value = ((doubleOop) arg)->getValue();
+                                D("Copying double: #%d - %lf", localVariableIndex++, value);
+                                _stack->pushDouble(value);
+                                break;
+                            }
+                            case ValueType::LONG: {
+                                long value = ((longOop) arg)->getValue();
+                                D("Copying long: #%d - %ld", localVariableIndex++, value);
+                                _stack->pushLong(value);
+                                break;
+                            }
+                            default:
+                                PANIC("Unknown value type: %d", valueType);
+                                break;
+                        }
+                        break;
+                    }
+
+                    default:
+                        PANIC("Unknown oop type");
+                }
+            });
+        }
 
         // native methods
         void *nativeMethod = _method->getNativePointer();
         if (nativeMethod == nullptr) {
             PANIC("UnsatisfiedLinkError: %s.%s:%s",
-                  strings::toStdString(_instanceKlass->getName()).c_str(),
-                  strings::toStdString(_method->getName()).c_str(),
-                  strings::toStdString(_method->getDescriptor()).c_str());
+                strings::toStdString(_instanceKlass->getName()).c_str(),
+                strings::toStdString(_method->getName()).c_str(),
+                strings::toStdString(_method->getDescriptor()).c_str());
         }
 
         D("nativeInvocationContext: native method found at: %p", nativeMethod);
@@ -191,11 +256,13 @@ namespace kivm {
         // prepare the call
         ffi_cif cif{};
         ffi_status result = ffi_prep_cif(&cif, FFI_DEFAULT_ABI,
-                                         (unsigned int) argumentCount,
-                                         rtype, argsType);
+            (unsigned int) argumentCount,
+            rtype, argsType);
         if (result != FFI_OK) {
             PANIC("invokeNative: ffi_prep_cif() failed: %d", result);
         }
+
+        oop resultOop = nullptr;
 
         D("nativeInvocationContext: invoke and push result onto the stack (if has)");
         switch (returnValueType) {
@@ -205,39 +272,48 @@ namespace kivm {
             }
             case ValueType::BOOLEAN: {
                 CALL(jboolean, pushInt);
+                resultOop = new intOopDesc(r);
                 break;
             }
             case ValueType::BYTE: {
                 CALL(jbyte, pushInt);
+                resultOop = new intOopDesc(r);
                 break;
             }
             case ValueType::CHAR: {
                 CALL(jchar, pushInt);
+                resultOop = new intOopDesc(r);
                 break;
             }
             case ValueType::SHORT: {
                 CALL(jshort, pushInt);
+                resultOop = new intOopDesc(r);
                 break;
             }
             case ValueType::INT: {
                 CALL(jint, pushInt);
+                resultOop = new intOopDesc(r);
                 break;
             }
             case ValueType::FLOAT: {
                 CALL(jfloat, pushFloat);
+                resultOop = new floatOopDesc(r);
                 break;
             }
             case ValueType::LONG: {
                 CALL(jlong, pushLong);
+                resultOop = new longOopDesc(r);
                 break;
             }
             case ValueType::DOUBLE: {
                 CALL(jdouble, pushDouble);
+                resultOop = new doubleOopDesc(r);
                 break;
             }
             case ValueType::OBJECT:
             case ValueType::ARRAY: {
                 CALL(jobject, pushReference);
+                resultOop = Resolver::resolveJObject(r);
                 break;
             }
 
@@ -246,6 +322,13 @@ namespace kivm {
         }
 
         finishSynchronized(thisObject);
-        return nullptr;
+
+        // TODO: make it elegant
+        // XXX: Temporary workaround: allocate a stack to hold arguments
+        if (stackIsAllocated) {
+            delete _stack;
+            _stack = nullptr;
+        }
+        return resultOop;
     }
 }

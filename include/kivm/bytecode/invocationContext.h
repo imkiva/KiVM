@@ -53,9 +53,6 @@ namespace kivm {
 
     public:
         static inline oop invokeWithArgs(JavaThread *thread, Method *method, const std::list<oop> &args) {
-            if (method->isNative()) {
-                PANIC("InvocationContext: directly invoke native methods with args is not supported yet");
-            }
             return InvocationContext(thread, method, args).invoke();
         }
 
