@@ -7,6 +7,7 @@
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
 #include <ffi.h>
+#include <algorithm>
 
 #define FILL_ARG_VALUE(value, field) \
         argsHolder[fillIndex].field = value; \

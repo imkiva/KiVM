@@ -7,8 +7,8 @@
 #include <kivm/runtime/runtimeConfig.h>
 #include <kivm/bytecode/interpreter.h>
 #include <kivm/oop/primitiveOop.h>
-#include <algorithm>
 #include <kivm/bytecode/invocationContext.h>
+#include <algorithm>
 
 namespace kivm {
     Thread::Thread(Method *method, const std::list<oop> &args)
