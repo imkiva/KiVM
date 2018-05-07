@@ -31,8 +31,13 @@ namespace kivm {
 
         oop invokeJava(bool hasThis, bool resolveTwice);
 
-        inline oop invoke(bool hasThis, bool resolveTwice) {
+        oop callInterpreter();
+
+        inline oop invoke() {
             prepareEnvironment();
+            bool hasThis = !_method->isStatic();
+            bool resolveTwice = _method->isAbstract()
+                                || (_method->isPublic() && !_method->isFinal());
 
             if (_method->isNative()) {
                 return this->invokeNative(hasThis, resolveTwice);
@@ -48,12 +53,14 @@ namespace kivm {
 
     public:
         static inline oop invokeWithArgs(JavaThread *thread, Method *method, const std::list<oop> &args) {
-            return InvocationContext(thread, method, args).invoke(false, false);
+            if (method->isNative()) {
+                PANIC("InvocationContext: directly invoke native methods with args is not supported yet");
+            }
+            return InvocationContext(thread, method, args).invoke();
         }
 
-        static inline oop invokeWithStack(JavaThread *thread, Method *method, Stack *stack,
-                                           bool hasThis, bool resolveTwice) {
-            return InvocationContext(thread, method, stack).invoke(hasThis, resolveTwice);
+        static inline oop invokeWithStack(JavaThread *thread, Method *method, Stack *stack) {
+            return InvocationContext(thread, method, stack).invoke();
         }
     };
 }

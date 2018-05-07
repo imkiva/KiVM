@@ -89,9 +89,6 @@ namespace kivm {
     class JavaThread : public Thread {
         friend class InvocationContext;
 
-    private:
-        oop runMethod(Method *method, const std::list<oop> &args);
-
     public:
         JavaThread(Method *method, const std::list<oop> &args);
 

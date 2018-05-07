@@ -198,7 +198,6 @@ namespace kivm {
         }
 
         D("nativeInvocationContext: invoke and push result onto the stack (if has)");
-        // invoke and push the result onto the stack(if has)
         switch (returnValueType) {
             case ValueType::VOID: {
                 ffi_call(&cif, (void (*)()) nativeMethod, nullptr, argsPointer);
@@ -247,5 +246,6 @@ namespace kivm {
         }
 
         finishSynchronized(thisObject);
+        return nullptr;
     }
 }

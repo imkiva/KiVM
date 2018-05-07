@@ -27,7 +27,7 @@ namespace kivm {
             panicNoSuchMethod(rt, constantIndex);
         }
 
-        InvocationContext::invokeWithStack(thread, method, &stack, true, false);
+        InvocationContext::invokeWithStack(thread, method, &stack);
     }
 
     void Execution::invokeStatic(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
@@ -41,7 +41,7 @@ namespace kivm {
             PANIC("invalid invokeStatic");
         }
 
-        InvocationContext::invokeWithStack(thread, method, &stack, false, false);
+        InvocationContext::invokeWithStack(thread, method, &stack);
     }
 
     void Execution::invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
@@ -58,7 +58,7 @@ namespace kivm {
         // abstract methods need to be resolve by name
         // but currently we cannot get exact method
         // until we got `this` object
-        InvocationContext::invokeWithStack(thread, method, &stack, true, true);
+        InvocationContext::invokeWithStack(thread, method, &stack);
     }
 
     void Execution::invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
@@ -78,6 +78,6 @@ namespace kivm {
         // interface methods need to be resolve by name
         // but currently we cannot get exact method
         // until we got `this` object
-        InvocationContext::invokeWithStack(thread, method, &stack, true, true);
+        InvocationContext::invokeWithStack(thread, method, &stack);
     }
 }
