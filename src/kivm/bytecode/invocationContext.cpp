@@ -123,6 +123,7 @@ namespace kivm {
         _thread->_pc = frame.getReturnPc();
 
         if (_thread->isExceptionOccurred()) {
+            // TODO: find handler in caller
             PANIC("Throw exception");
         }
 
