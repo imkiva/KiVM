@@ -11,7 +11,7 @@ namespace kivm {
     private:
         JavaThread *_thread;
         Method *_method;
-        Stack &_stack;
+        Stack *_stack;
 
         InstanceKlass *_instanceKlass;
 
@@ -30,8 +30,17 @@ namespace kivm {
         void invokeJava(bool hasThis, bool resolveTwice);
 
     public:
-        InvocationContext(JavaThread *thread, Method *method, Stack &stack);
+        InvocationContext(JavaThread *thread, Method *method, Stack *stack);
 
-        void invoke(bool hasThis, bool resolveTwice);
+        inline void invoke(bool hasThis, bool resolveTwice) {
+            prepareEnvironment();
+
+            if (_method->isNative()) {
+                this->invokeNative(hasThis, resolveTwice);
+
+            } else {
+                this->invokeJava(hasThis, resolveTwice);
+            }
+        }
     };
 }

@@ -12,12 +12,12 @@
         argsHolder[fillIndex].field = value; \
         argsPointer[fillIndex] = (void *) &argsHolder[fillIndex].field
 
-#define FILL_ARG(popFunc, field) FILL_ARG_VALUE(_stack.popFunc(), field)
+#define FILL_ARG(popFunc, field) FILL_ARG_VALUE(_stack->popFunc(), field)
 
 #define CALL(type, pushFunc) \
         type r; \
         ffi_call(&cif, (void (*)()) nativeMethod, (void *) &r, argsPointer); \
-        _stack.pushFunc(r)
+        _stack->pushFunc(r)
 
 namespace kivm {
     static ffi_type *valueTypeToFFIType(ValueType valueType) {

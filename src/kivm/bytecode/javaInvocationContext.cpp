@@ -26,20 +26,20 @@ namespace kivm {
 
             switch (valueType) {
                 case ValueType::INT:
-                    callingArgs.push_front(new intOopDesc(_stack.popInt()));
+                    callingArgs.push_front(new intOopDesc(_stack->popInt()));
                     break;
                 case ValueType::LONG:
-                    callingArgs.push_front(new longOopDesc(_stack.popLong()));
+                    callingArgs.push_front(new longOopDesc(_stack->popLong()));
                     break;
                 case ValueType::FLOAT:
-                    callingArgs.push_front(new floatOopDesc(_stack.popFloat()));
+                    callingArgs.push_front(new floatOopDesc(_stack->popFloat()));
                     break;
                 case ValueType::DOUBLE:
-                    callingArgs.push_front(new doubleOopDesc(_stack.popDouble()));
+                    callingArgs.push_front(new doubleOopDesc(_stack->popDouble()));
                     break;
                 case ValueType::OBJECT:
                 case ValueType::ARRAY:
-                    callingArgs.push_front(Resolver::resolveJObject(_stack.popReference()));
+                    callingArgs.push_front(Resolver::resolveJObject(_stack->popReference()));
                     break;
                 default:
                     PANIC("Unknown value type: %d", valueType);
@@ -48,7 +48,7 @@ namespace kivm {
 
         oop thisObject = nullptr;
         if (hasThis) {
-            thisObject = Resolver::resolveJObject(_stack.popReference());
+            thisObject = Resolver::resolveJObject(_stack->popReference());
             if (thisObject == nullptr) {
                 PANIC("java.lang.NullPointerException");
             }
@@ -68,20 +68,20 @@ namespace kivm {
         oop result = _thread->runMethod(_method, callingArgs);
         switch (_method->getReturnType()) {
             case ValueType::INT:
-                _stack.pushInt(((intOop) result)->getValue());
+                _stack->pushInt(((intOop) result)->getValue());
                 break;
             case ValueType::LONG:
-                _stack.pushLong(((longOop) result)->getValue());
+                _stack->pushLong(((longOop) result)->getValue());
                 break;
             case ValueType::FLOAT:
-                _stack.pushFloat(((floatOop) result)->getValue());
+                _stack->pushFloat(((floatOop) result)->getValue());
                 break;
             case ValueType::DOUBLE:
-                _stack.pushDouble(((doubleOop) result)->getValue());
+                _stack->pushDouble(((doubleOop) result)->getValue());
                 break;
             case ValueType::OBJECT:
             case ValueType::ARRAY:
-                _stack.pushReference(result);
+                _stack->pushReference(result);
                 break;
             case ValueType::VOID:
                 break;

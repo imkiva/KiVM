@@ -161,6 +161,10 @@ namespace kivm {
         this->_frames.pop();
         this->_pc = frame.getReturnPc();
 
+        if (this->isExceptionOccurred()) {
+            PANIC("Throw exception");
+        }
+
         if (_frames.getSize() > 0) {
             auto returnTo = this->_frames.getCurrentFrame()->getMethod();
             D("returned from %s.%s:%s to %s.%s:%s",

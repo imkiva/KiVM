@@ -8,23 +8,12 @@
 #include <kivm/oop/mirrorOop.h>
 
 namespace kivm {
-    InvocationContext::InvocationContext(JavaThread *thread, Method *method, Stack &stack)
+    InvocationContext::InvocationContext(JavaThread *thread, Method *method, Stack *stack)
         : _thread(thread), _method(method), _stack(stack), _instanceKlass(_method->getClass()) {
     }
 
     void InvocationContext::prepareEnvironment() {
         Execution::initializeClass(_thread, _instanceKlass);
-    }
-
-    void InvocationContext::invoke(bool hasThis, bool resolveTwice) {
-        prepareEnvironment();
-
-        if (_method->isNative()) {
-            this->invokeNative(hasThis, resolveTwice);
-
-        } else {
-            this->invokeJava(hasThis, resolveTwice);
-        }
     }
 
     void InvocationContext::prepareSynchronized(oop thisObject) {
