@@ -8,13 +8,14 @@
 #include <kivm/native/java_lang_Class.h>
 #include <kivm/native/java_lang_Thread.h>
 #include <kivm/native/java_lang_String.h>
+#include <kivm/bytecode/invocationContext.h>
 
 namespace kivm {
     static inline InstanceKlass *use(ClassLoader *cl, JavaMainThread *thread, const String &name) {
         auto klass = (InstanceKlass *) cl->loadClass(name);
         if (klass == nullptr) {
             PANIC("java.lang.LinkError: class not found: %s",
-                  strings::toStdString(name).c_str());
+                strings::toStdString(name).c_str());
         }
         Execution::initializeClass(thread, klass);
         return klass;
@@ -37,7 +38,7 @@ namespace kivm {
         // but JavaThread::run_method() is still available.
         D("Threads::initializeJVM() succeed. Lunching main()");
         PANIC("JavaMainThread::start() not implemented.");
-        JavaThread::runMethod(_method, _args);
+        InvocationContext::invokeWithArgs(this, _method, _args);
     }
 
     void JavaMainThread::onThreadLaunched() {
@@ -82,9 +83,9 @@ namespace kivm {
         instanceOop init_thread = thread_class->newInstance();
         // eetop is a pointer to the underlying OS-level native thread instance of the JVM.
         init_thread->setFieldValue(J_THREAD, L"eetop", L"J",
-                                   new longOopDesc(thread->getEetop()));
+            new longOopDesc(thread->getEetop()));
         init_thread->setFieldValue(J_THREAD, L"priority", L"I",
-                                   new intOopDesc(java::lang::ThreadPriority::NORMAL_PRIORITY));
+            new intOopDesc(java::lang::ThreadPriority::NORMAL_PRIORITY));
 
         // JavaMainThread is created with javaThreadObject == nullptr
         // Now we have created a thread for it.
@@ -93,7 +94,8 @@ namespace kivm {
 
         // Create and construct the system thread group.
         instanceOop init_tg = tg_class->newInstance();
-        Execution::callDefaultConstructor(thread, init_tg);
+        auto tgDefaultCtor = tg_class->getThisClassMethod(L"<init>", L"()V");
+        InvocationContext::invokeWithArgs(thread, tgDefaultCtor, {init_tg});
 
         // Create the main thread group
         instanceOop main_tg = tg_class->newInstance();
@@ -110,7 +112,7 @@ namespace kivm {
         // Construct the main thread group
         // use getThisClassMethod() to get a private method
         auto tg_ctor = tg_class->getThisClassMethod(L"<init>",
-                                                    L"(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
+            L"(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
         {
             std::list<oop> args;
             args.push_back(main_tg);
@@ -119,7 +121,7 @@ namespace kivm {
             args.push_back(nullptr);
             args.push_back(init_tg);
             args.push_back(java::lang::String::intern(L"main"));
-            Execution::callVoidMethod(thread, tg_ctor, args);
+            InvocationContext::invokeWithArgs(thread, tg_ctor, args);
         }
 
 
@@ -129,14 +131,13 @@ namespace kivm {
 
         // Construct the init thread by attaching the main thread group to it.
         auto thread_ctor = thread_class->getThisClassMethod(L"<init>",
-                                                            L"(Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
-        Execution::callVoidMethod(thread, thread_ctor,
-                                  {init_thread, main_tg, java::lang::String::intern(L"main")});
-
+            L"(Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
+        InvocationContext::invokeWithArgs(thread, thread_ctor,
+            {init_thread, main_tg, java::lang::String::intern(L"main")});
 
         // Initialize system classes.
         auto init_system_classes = system_class->getStaticMethod(L"initializeSystemClass", L"()V");
-        Execution::callVoidMethod(thread, init_system_classes, {});
+        InvocationContext::invokeWithArgs(thread, init_system_classes, {});
 
         // re-enable sun.security.util.Debug
         sunDebug_class->setClassState(ClassState::FULLY_INITIALIZED);

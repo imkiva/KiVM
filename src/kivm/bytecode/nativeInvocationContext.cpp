@@ -49,7 +49,7 @@ namespace kivm {
         }
     }
 
-    void InvocationContext::invokeNative(bool hasThis, bool resolveTwice) {
+    oop InvocationContext::invokeNative(bool hasThis, bool resolveTwice) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypesNoWrap();
 
         D("nativeInvocationContext: %s.%s:%s, static: %s, native: %s, nargs: %zd",

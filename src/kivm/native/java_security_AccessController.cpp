@@ -5,6 +5,7 @@
 #include <kivm/kivm.h>
 #include <kivm/native/classNames.h>
 #include <kivm/bytecode/execution.h>
+#include <kivm/bytecode/invocationContext.h>
 
 using namespace kivm;
 
@@ -32,7 +33,7 @@ JAVA_NATIVE jobject Java_java_security_AccessController_doPrivileged(JNIEnv *env
     }
 
     D("native: AccessController.doPrivileged(): performing privileged actions");
-    oop result = currentThread->runMethod(run, {actionOop});
+    oop result = InvocationContext::invokeWithArgs(currentThread, run, {actionOop});
 
     // TODO: check whether exception occurred
     return result;

@@ -8,7 +8,7 @@
 #include <kivm/oop/mirrorOop.h>
 
 namespace kivm {
-    void InvocationContext::invokeJava(bool hasThis, bool resolveTwice) {
+    oop InvocationContext::invokeJava(bool hasThis, bool resolveTwice) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypes();
 
         D("javaInvocationContext: invokeTarget: %s.%s:%s, static: %s, native: %s, nargs: %zd",

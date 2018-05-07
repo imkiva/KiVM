@@ -9,7 +9,13 @@
 
 namespace kivm {
     InvocationContext::InvocationContext(JavaThread *thread, Method *method, Stack *stack)
-        : _thread(thread), _method(method), _stack(stack), _instanceKlass(_method->getClass()) {
+        : _thread(thread), _method(method), _stack(stack), _instanceKlass(_method->getClass()),
+          _obtainArgsFromStack(true) {
+    }
+
+    InvocationContext::InvocationContext(JavaThread *thread, Method *method, const std::list<oop> &args)
+        : _thread(thread), _method(method), _stack(nullptr), _instanceKlass(_method->getClass()),
+          _obtainArgsFromStack(false), _args(args) {
     }
 
     void InvocationContext::prepareEnvironment() {

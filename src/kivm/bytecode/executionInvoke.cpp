@@ -16,9 +16,9 @@ namespace kivm {
         auto methodDesc = requireConstant<CONSTANT_Utf8_info>(pool, nameAndTypeInfo->descriptor_index);
 
         PANIC("NoSuchMethodError: %s.%s:%s",
-              strings::toStdString(className->getConstant()).c_str(),
-              strings::toStdString(methodName->getConstant()).c_str(),
-              strings::toStdString(methodDesc->getConstant()).c_str());
+            strings::toStdString(className->getConstant()).c_str(),
+            strings::toStdString(methodName->getConstant()).c_str(),
+            strings::toStdString(methodDesc->getConstant()).c_str());
     }
 
     void Execution::invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
@@ -27,7 +27,7 @@ namespace kivm {
             panicNoSuchMethod(rt, constantIndex);
         }
 
-        InvocationContext(thread, method, &stack).invoke(true, false);
+        InvocationContext::invokeWithStack(thread, method, &stack, true, false);
     }
 
     void Execution::invokeStatic(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
@@ -41,7 +41,7 @@ namespace kivm {
             PANIC("invalid invokeStatic");
         }
 
-        InvocationContext(thread, method, &stack).invoke(false, false);
+        InvocationContext::invokeWithStack(thread, method, &stack, false, false);
     }
 
     void Execution::invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
@@ -58,7 +58,7 @@ namespace kivm {
         // abstract methods need to be resolve by name
         // but currently we cannot get exact method
         // until we got `this` object
-        InvocationContext(thread, method, &stack).invoke(true, true);
+        InvocationContext::invokeWithStack(thread, method, &stack, true, true);
     }
 
     void Execution::invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
@@ -78,6 +78,6 @@ namespace kivm {
         // interface methods need to be resolve by name
         // but currently we cannot get exact method
         // until we got `this` object
-        InvocationContext(thread, method, &stack).invoke(true, true);
+        InvocationContext::invokeWithStack(thread, method, &stack, true, true);
     }
 }

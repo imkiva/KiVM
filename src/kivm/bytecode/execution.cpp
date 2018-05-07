@@ -36,21 +36,10 @@ namespace kivm {
             if (clinit != nullptr && clinit->getClass() == klass) {
                 D("<clinit> found in %s, invoking.",
                   strings::toStdString(klass->getName()).c_str());
-                javaThread->runMethod(clinit, {});
+                InvocationContext::invokeWithArgs(javaThread, clinit, {});
             }
             klass->setClassState(ClassState::FULLY_INITIALIZED);
         }
-    }
-
-    void Execution::callDefaultConstructor(JavaThread *javaThread, instanceOop oop) {
-        auto klass = (InstanceKlass *) oop->getClass();
-        auto ctor = klass->getThisClassMethod(L"<init>", L"()V");
-        assert(ctor != nullptr);
-        javaThread->runMethod(ctor, {oop});
-    }
-
-    void Execution::callVoidMethod(JavaThread *javaThread, Method *method, const std::list<oop> &args) {
-        javaThread->runMethod(method, args);
     }
 
     void Execution::loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex) {

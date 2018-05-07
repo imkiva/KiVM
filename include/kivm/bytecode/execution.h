@@ -91,11 +91,6 @@ namespace kivm {
 
         static void initializeClass(JavaThread *javaThread, InstanceKlass *klass);
 
-        static void callDefaultConstructor(JavaThread *javaThread, instanceOop oop);
-
-        static void callVoidMethod(JavaThread *javaThread, Method *method,
-                                   const std::list<oop> &args);
-
         static bool instanceOf(Klass *S, Klass *T);
 
         static void instanceOf(RuntimeConstantPool *rt, Stack &stack, int constantIndex,
