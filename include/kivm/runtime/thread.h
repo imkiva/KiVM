@@ -20,6 +20,8 @@ namespace kivm {
 
         friend class ByteCodeInterpreter;
 
+        friend class InvocationContext;
+
     protected:
         instanceOop _javaThreadObject;
         std::thread *_nativeThread;
