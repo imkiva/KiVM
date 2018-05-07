@@ -65,6 +65,7 @@ namespace kivm {
         // TODO: make it elegant
         // XXX: Temporary workaround: allocate a stack to hold arguments
         if (_stack == nullptr) {
+            D("nativeInvocation(call from args): allocate a stack to hold arguments");
             _stack = new Stack((int) _args.size());
             stackIsAllocated = true;
             int localVariableIndex = 0;
