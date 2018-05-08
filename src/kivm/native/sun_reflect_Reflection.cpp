@@ -17,6 +17,7 @@ JAVA_NATIVE jobject Java_sun_reflect_Reflection_getCallerClass(JNIEnv *env, jcla
         PANIC("currentThread cannot be null");
     }
 
+    PANIC("TODO: getCallerClass()");
     auto method = currentThread->getCurrentMethod();
     if (method == nullptr) {
         // we have walked through the calling stack
