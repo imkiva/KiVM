@@ -10,6 +10,7 @@
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/bytecode/interpreter.h>
 #include <kivm/native/classNames.h>
+#include <algorithm>
 
 namespace kivm {
     InvocationContext::InvocationContext(JavaThread *thread, Method *method, Stack *stack)
