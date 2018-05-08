@@ -47,16 +47,16 @@ namespace kivm {
      */
     class Execution {
     public:
-        static void invokeInterface(JavaThread *thread, RuntimeConstantPool *rt,
+        static oop invokeInterface(JavaThread *thread, RuntimeConstantPool *rt,
                                     Stack &stack, int constantIndex, int count);
 
-        static void invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt,
+        static oop invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt,
                                   Stack &stack, int constantIndex);
 
-        static void invokeStatic(JavaThread *thread, RuntimeConstantPool *rt,
+        static oop invokeStatic(JavaThread *thread, RuntimeConstantPool *rt,
                                  Stack &stack, int constantIndex);
 
-        static void invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt,
+        static oop invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt,
                                   Stack &stack, int constantIndex);
 
         static void putField(JavaThread *thread, RuntimeConstantPool *rt,
