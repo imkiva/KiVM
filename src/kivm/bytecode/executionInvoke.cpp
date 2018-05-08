@@ -21,34 +21,35 @@ namespace kivm {
             strings::toStdString(methodDesc->getConstant()).c_str());
     }
 
-    void Execution::invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+    oop Execution::invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
         Method *method = rt->getMethod(constantIndex);
         if (method == nullptr) {
             panicNoSuchMethod(rt, constantIndex);
+            return nullptr;
         }
 
-        InvocationContext::invokeWithStack(thread, method, &stack);
+        return InvocationContext::invokeWithStack(thread, method, &stack);
     }
 
-    void Execution::invokeStatic(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+    oop Execution::invokeStatic(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
         Method *method = rt->getMethod(constantIndex);
         if (method == nullptr) {
             panicNoSuchMethod(rt, constantIndex);
-            return;
+            return nullptr;
         }
 
         if (!method->isStatic() || method->isAbstract()) {
             PANIC("invalid invokeStatic");
         }
 
-        InvocationContext::invokeWithStack(thread, method, &stack);
+        return InvocationContext::invokeWithStack(thread, method, &stack);
     }
 
-    void Execution::invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
+    oop Execution::invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
         Method *method = rt->getMethod(constantIndex);
         if (method == nullptr) {
             panicNoSuchMethod(rt, constantIndex);
-            return;
+            return nullptr;
         }
 
         if (method->isStatic()) {
@@ -58,17 +59,17 @@ namespace kivm {
         // abstract methods need to be resolve by name
         // but currently we cannot get exact method
         // until we got `this` object
-        InvocationContext::invokeWithStack(thread, method, &stack);
+        return InvocationContext::invokeWithStack(thread, method, &stack);
     }
 
-    void Execution::invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
-                                    int constantIndex, int count) {
+    oop Execution::invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
+                                   int constantIndex, int count) {
         // Do not use invokeVirtual()
         // we need rt->getInterfaceMethod()
         Method *method = rt->getInterfaceMethod(constantIndex);
         if (method == nullptr) {
             panicNoSuchMethod(rt, constantIndex);
-            return;
+            return nullptr;
         }
 
         if (method->isStatic()) {
@@ -78,6 +79,6 @@ namespace kivm {
         // interface methods need to be resolve by name
         // but currently we cannot get exact method
         // until we got `this` object
-        InvocationContext::invokeWithStack(thread, method, &stack);
+        return InvocationContext::invokeWithStack(thread, method, &stack);
     }
 }

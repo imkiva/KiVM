@@ -122,11 +122,6 @@ namespace kivm {
         _thread->_frames.pop();
         _thread->_pc = frame.getReturnPc();
 
-        if (_thread->isExceptionOccurred()) {
-            // TODO: find handler in caller
-            PANIC("Throw exception");
-        }
-
         if (_thread->_frames.getSize() > 0) {
             auto returnTo = _thread->_frames.getCurrentFrame()->getMethod();
             D("returned from %s.%s:%s to %s.%s:%s",

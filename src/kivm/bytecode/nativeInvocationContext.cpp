@@ -18,7 +18,9 @@
 #define CALL(type, pushFunc) \
         type r; \
         ffi_call(&cif, (void (*)()) nativeMethod, (void *) &r, argsPointer); \
-        _stack->pushFunc(r)
+        if (!_thread->isExceptionOccurred()) { \
+            _stack->pushFunc(r); \
+        }
 
 namespace kivm {
     static ffi_type *valueTypeToFFIType(ValueType valueType) {

@@ -76,7 +76,7 @@ namespace kivm {
 
         oop result = callInterpreter();
 
-        if (_stack != nullptr) {
+        if (_stack != nullptr && !_thread->isExceptionOccurred()) {
             switch (_method->getReturnType()) {
                 case ValueType::INT:
                     _stack->pushInt(((intOop) result)->getValue());
