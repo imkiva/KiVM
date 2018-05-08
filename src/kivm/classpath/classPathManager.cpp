@@ -49,7 +49,6 @@ namespace kivm {
         String fileName = strings::replaceAll(className, Global::SLASH, Global::PATH_SEPARATOR);
         fileName.assign(strings::replaceAll(fileName, Global::DOT, Global::PATH_SEPARATOR));
 
-        std::wstringstream filePathBuilder;
         String tempPath;
         auto it = _runtimeClassPath.begin();
 
@@ -61,7 +60,7 @@ namespace kivm {
 
         while (it != _runtimeClassPath.end()) {
             const ClassPathEntry &entry = *it++;
-            filePathBuilder.clear();
+            std::wstringstream filePathBuilder;
             tempPath.clear();
 
             if (entry._source == ClassSource::DIR) {
