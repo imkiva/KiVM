@@ -4,9 +4,12 @@
 #include <kivm/bytecode/invocationContext.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/runtime/thread.h>
+#include <kivm/oop/oopfwd.h>
+#include <kivm/oop/instanceOop.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/bytecode/interpreter.h>
+#include <kivm/native/classNames.h>
 
 namespace kivm {
     InvocationContext::InvocationContext(JavaThread *thread, Method *method, Stack *stack)
@@ -137,6 +140,28 @@ namespace kivm {
                 strings::toStdString(_method->getClass()->getName()).c_str(),
                 strings::toStdString(_method->getName()).c_str(),
                 strings::toStdString(_method->getDescriptor()).c_str());
+
+            if (_thread->isExceptionOccurred()) {
+                auto ex = _thread->_exceptionOop;
+                oop messageOop = nullptr;
+
+                if (ex->getFieldValue(L"java/lang/Throwable", L"detailMessage", L"Ljava/lang/String;", &messageOop)) {
+
+                    if (messageOop->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
+                        auto instance = (instanceOop) messageOop;
+                        PANIC("UncaughtException: %s: %s",
+                            strings::toStdString(ex->getInstanceClass()->getName()).c_str(),
+                            strings::toStdString(java::lang::String::toNativeString(instance)).c_str());
+                    } else {
+                        PANIC("UncaughtException: %s (failed to convert message oop)",
+                            strings::toStdString(ex->getInstanceClass()->getName()).c_str());
+                    }
+
+                } else {
+                    PANIC("UncaughtException: %s (failed to obtain message)",
+                        strings::toStdString(ex->getInstanceClass()->getName()).c_str());
+                }
+            }
         }
         return result;
     }

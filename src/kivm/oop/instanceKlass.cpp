@@ -322,7 +322,7 @@ namespace kivm {
     }
 
     void InstanceKlass::setStaticFieldValue(FieldID *fieldID, oop value) {
-        if (fieldID->_field == nullptr) {
+        if (fieldID == nullptr || fieldID->_field == nullptr) {
             // TODO: throw java.lang.NoSuchFieldError
             PANIC("java.lang.NoSuchFieldError");
         }
@@ -347,7 +347,7 @@ namespace kivm {
     }
 
     bool InstanceKlass::getStaticFieldValue(FieldID *fieldID, oop *result) {
-        if (fieldID->_field == nullptr) {
+        if (fieldID == nullptr || fieldID->_field == nullptr) {
             return false;
         }
 
@@ -365,7 +365,7 @@ namespace kivm {
     }
 
     void InstanceKlass::setInstanceFieldValue(instanceOop receiver, FieldID *fieldID, oop value) {
-        if (fieldID->_field == nullptr) {
+        if (fieldID == nullptr || fieldID->_field == nullptr) {
             // throw java.lang.NoSuchFieldError
             PANIC("java.lang.NoSuchFieldError");
         }
@@ -382,13 +382,13 @@ namespace kivm {
                                               const String &name,
                                               const String &descriptor,
                                               oop *result) {
-        const auto &fieldID = getInstanceFieldInfo(className, name, descriptor);
+        auto fieldID = getInstanceFieldInfo(className, name, descriptor);
         return getInstanceFieldValue(receiver, fieldID, result);
     }
 
     bool InstanceKlass::getInstanceFieldValue(instanceOop receiver, FieldID *fieldID,
                                               oop *result) {
-        if (fieldID->_field == nullptr) {
+        if (fieldID == nullptr || fieldID->_field == nullptr) {
             return false;
         }
 

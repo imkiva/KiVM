@@ -1432,6 +1432,11 @@ namespace kivm {
                     pc += 2;
                     stack.pushReference(Execution::newInstance(thread, currentClass->getRuntimeConstantPool(),
                         constantIndex));
+                    if (thread->isExceptionOccurred()) {
+                        stack.clear();
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    }
                     NEXT();
                 }
                 OPCODE(NEWARRAY)
