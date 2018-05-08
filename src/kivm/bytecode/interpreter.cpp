@@ -1366,6 +1366,12 @@ namespace kivm {
                     pc += 2;
                     Execution::invokeVirtual(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex);
+
+                    if (thread->isExceptionOccurred()) {
+                        stack.clear();
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    }
                     NEXT();
                 }
                 OPCODE(INVOKESPECIAL)
@@ -1374,6 +1380,11 @@ namespace kivm {
                     pc += 2;
                     Execution::invokeSpecial(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex);
+                    if (thread->isExceptionOccurred()) {
+                        stack.clear();
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    }
                     NEXT();
                 }
                 OPCODE(INVOKESTATIC)
@@ -1382,6 +1393,11 @@ namespace kivm {
                     pc += 2;
                     Execution::invokeStatic(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex);
+                    if (thread->isExceptionOccurred()) {
+                        stack.clear();
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    }
                     NEXT();
                 }
                 OPCODE(INVOKEINTERFACE)
@@ -1397,6 +1413,11 @@ namespace kivm {
                     }
                     Execution::invokeInterface(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex, count);
+                    if (thread->isExceptionOccurred()) {
+                        stack.clear();
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    }
                     NEXT();
                 }
                 OPCODE(INVOKEDYNAMIC)
@@ -1446,6 +1467,7 @@ namespace kivm {
                 }
                 OPCODE(ATHROW)
                 {
+                    exceptionHandler:
                     auto exceptionOop = Resolver::resolveInstance(stack.popReference());
                     if (exceptionOop == nullptr) {
                         // TODO: throw NullPointerException

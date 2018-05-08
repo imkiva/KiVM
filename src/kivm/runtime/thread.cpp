@@ -44,15 +44,17 @@ namespace kivm {
     }
 
     int Thread::tryHandleException(instanceOop exceptionOop) {
+        this->_exceptionOop = exceptionOop;
+
         auto currentMethod = _frames.getCurrentFrame()->getMethod();
         int handler = currentMethod->findExceptionHandler(_pc,
             exceptionOop->getInstanceClass());
 
         if (handler > 0) {
+            this->_exceptionOop = nullptr;
             return handler;
         }
 
-        this->_exceptionOop = exceptionOop;
         return -1;
     }
 
