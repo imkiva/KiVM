@@ -21,13 +21,22 @@ JAVA_NATIVE jobject Java_sun_reflect_Reflection_getCallerClass(JNIEnv *env, jcla
     auto previousFrame = currentFrame->getPrevious();
     Frame *found = nullptr;
 
-    D("getCallerClass(): walk %s",
-        strings::toStdString(currentFrame->getMethod()->getName()).c_str());
+    if (currentFrame->getMethod()->getName() != L"getCallerClass") {
+        PANIC("getCallerClass(): current method should be getCallerClass()");
+    }
 
     while (previousFrame != nullptr) {
         D("getCallerClass(): walk %s",
             strings::toStdString(previousFrame->getMethod()->getName()).c_str());
-        previousFrame = previousFrame->getPrevious();
+
+        // TODO: ignore some special methods and annotations (sun/reflect/CallerSensitive, etc.)
+//        if (false) {
+//            previousFrame = previousFrame->getPrevious();
+//            continue;
+//        }
+
+        found = previousFrame;
+        break;
     }
 
     if (found == nullptr) {
