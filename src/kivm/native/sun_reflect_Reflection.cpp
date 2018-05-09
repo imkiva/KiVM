@@ -17,15 +17,24 @@ JAVA_NATIVE jobject Java_sun_reflect_Reflection_getCallerClass(JNIEnv *env, jcla
         PANIC("currentThread cannot be null");
     }
 
-    PANIC("TODO: getCallerClass()");
-    auto method = currentThread->getCurrentMethod();
-    if (method == nullptr) {
-        // we have walked through the calling stack
-        PANIC("wtf");
+    auto currentFrame = currentThread->getCurrentFrame();
+    auto previousFrame = currentFrame->getPrevious();
+    Frame *found = nullptr;
+
+    D("getCallerClass(): walk %s",
+        strings::toStdString(currentFrame->getMethod()->getName()).c_str());
+
+    while (previousFrame != nullptr) {
+        D("getCallerClass(): walk %s",
+            strings::toStdString(previousFrame->getMethod()->getName()).c_str());
+        previousFrame = previousFrame->getPrevious();
     }
 
-    // TODO: security stack walk check
-    return method->getClass()->getJavaMirror();
+    if (found == nullptr) {
+        PANIC("getCallerClass(): not previous frame available");
+    }
+
+    return found->getMethod()->getClass()->getJavaMirror();
 }
 
 JAVA_NATIVE jint Java_sun_reflect_Reflection_getClassAccessFlags(JNIEnv *env,

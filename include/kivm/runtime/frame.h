@@ -17,7 +17,6 @@ namespace kivm {
         Method *_method;
 
         bool _nativeFrame;
-        bool _exceptionOccurred;
         u4 _returnPc;
 
         Locals _locals;
@@ -26,16 +25,16 @@ namespace kivm {
     public:
         Frame(int maxLocals, int maxStacks);
 
+        Frame *getPrevious() {
+            return _previous;
+        }
+
         Method *getMethod() {
             return _method;
         }
 
         bool isNativeFrame() const {
             return _nativeFrame;
-        }
-
-        bool isExceptionOccurred() const {
-            return _exceptionOccurred;
         }
 
         Locals &getLocals() {
@@ -56,10 +55,6 @@ namespace kivm {
 
         void setNativeFrame(bool _native_frame) {
             this->_nativeFrame = _native_frame;
-        }
-
-        void setExceptionOccurred(bool _exception_occurred) {
-            this->_exceptionOccurred = _exception_occurred;
         }
 
         void setReturnPc(u4 _return_pc) {
@@ -90,7 +85,7 @@ namespace kivm {
         inline Frame *pop() {
             if (_size == 0 || _current == nullptr) {
                 // TODO: throw java.lang.StackOverflowException
-                PANIC("java.lang.StackOverflowException");
+                PANIC("java.lang.StackOverflowException: frame list empty");
             }
 
             Frame *current = _current;

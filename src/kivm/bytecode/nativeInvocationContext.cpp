@@ -257,6 +257,13 @@ namespace kivm {
         // OK, let's make the call.
         prepareSynchronized(thisObject);
 
+        // setup frame for native methods
+        Frame frame(_method->getMaxLocals(), _method->getMaxStack());
+        frame.setMethod(_method);
+        frame.setReturnPc(_thread->_pc);
+        frame.setNativeFrame(_method->isNative());
+        _thread->_frames.push(&frame);
+
         // prepare the call
         ffi_cif cif{};
         ffi_status result = ffi_prep_cif(&cif, FFI_DEFAULT_ABI,
@@ -275,22 +282,22 @@ namespace kivm {
                 break;
             }
             case ValueType::BOOLEAN: {
-                CALL(jboolean, pushInt);
+                CALL(jint, pushInt);
                 resultOop = new intOopDesc(r);
                 break;
             }
             case ValueType::BYTE: {
-                CALL(jbyte, pushInt);
+                CALL(jint, pushInt);
                 resultOop = new intOopDesc(r);
                 break;
             }
             case ValueType::CHAR: {
-                CALL(jchar, pushInt);
+                CALL(jint, pushInt);
                 resultOop = new intOopDesc(r);
                 break;
             }
             case ValueType::SHORT: {
-                CALL(jshort, pushInt);
+                CALL(jint, pushInt);
                 resultOop = new intOopDesc(r);
                 break;
             }
@@ -333,6 +340,11 @@ namespace kivm {
             delete _stack;
             _stack = nullptr;
         }
+
+        // drop frame
+        _thread->_frames.pop();
+        _thread->_pc = frame.getReturnPc();
+
         return resultOop;
     }
 }

@@ -30,7 +30,7 @@ namespace kivm {
         FrameList _frames;
         std::list<oop> _args;
         u4 _pc;
-        
+
         instanceOop _exceptionOop;
 
         // note: this is not the current method
@@ -42,10 +42,6 @@ namespace kivm {
         virtual bool shouldRecordInThreadTable();
 
     protected:
-        Frame *getCurrentFrame() {
-            return _frames.getCurrentFrame();
-        }
-
         void setJavaThreadObject(instanceOop javaThread) {
             this->_javaThreadObject = javaThread;
         }
@@ -73,6 +69,10 @@ namespace kivm {
 
         inline void setThreadState(ThreadState threadState) {
             Thread::_state = threadState;
+        }
+
+        Frame *getCurrentFrame() {
+            return _frames.getCurrentFrame();
         }
 
         inline Method *getCurrentMethod() const {
