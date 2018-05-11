@@ -93,14 +93,14 @@ namespace kivm {
                 }
                 case ATTRIBUTE_RuntimeVisibleAnnotations: {
                     auto r = ((RuntimeVisibleAnnotations_attribute *) attr)->parameter_annotations;
-                    this->_runtimeVisibleAnnos = new ParameterAnnotation(&r);
+                    this->_runtimeVisibleAnnos = new ParameterAnnotation(pool, &r);
                     break;
                 }
                 case ATTRIBUTE_RuntimeVisibleParameterAnnotations: {
                     auto r = ((RuntimeVisibleParameterAnnotations_attribute *) attr);
                     for (int j = 0; j < r->num_parameters; ++j) {
                         auto p = r->parameter_annotations[j];
-                        this->_runtimeVisibleParameterAnnos.push_back(new ParameterAnnotation(&p));
+                        this->_runtimeVisibleParameterAnnos.push_back(new ParameterAnnotation(pool, &p));
                     }
                     break;
                 }
@@ -108,7 +108,7 @@ namespace kivm {
                     auto r = ((RuntimeVisibleTypeAnnotations_attribute *) attr);
                     for (int j = 0; j < r->num_annotations; ++j) {
                         auto p = r->annotations[j];
-                        this->_runtimeVisibleTypeAnnos.push_back(new TypeAnnotation(&p));
+                        this->_runtimeVisibleTypeAnnos.push_back(new TypeAnnotation(pool, &p));
                     }
                     break;
                 }
