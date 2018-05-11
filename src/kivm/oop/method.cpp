@@ -350,7 +350,8 @@ namespace kivm {
     }
 
     bool Method::checkAnnotation(const String &annotationName) {
-        if (_runtimeVisibleAnnos->checkTypeName(annotationName)) {
+        if (_runtimeVisibleAnnos != nullptr &&
+            _runtimeVisibleAnnos->checkTypeName(annotationName)) {
             return true;
         }
         for (auto &_runtimeVisibleParameterAnno : _runtimeVisibleParameterAnnos) {

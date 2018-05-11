@@ -29,11 +29,11 @@ JAVA_NATIVE jobject Java_sun_reflect_Reflection_getCallerClass(JNIEnv *env, jcla
         D("getCallerClass(): walk %s",
             strings::toStdString(previousFrame->getMethod()->getName()).c_str());
 
-        // TODO: ignore some special methods and annotations (sun/reflect/CallerSensitive, etc.)
-//        if (false) {
-//            previousFrame = previousFrame->getPrevious();
-//            continue;
-//        }
+        // ignore some special methods and annotations (sun/reflect/CallerSensitive, etc.)
+        if (previousFrame->getMethod()->checkAnnotation(L"Lsun/reflect/CallerSensitive;")) {
+            previousFrame = previousFrame->getPrevious();
+            continue;
+        }
 
         found = previousFrame;
         break;
@@ -42,6 +42,9 @@ JAVA_NATIVE jobject Java_sun_reflect_Reflection_getCallerClass(JNIEnv *env, jcla
     if (found == nullptr) {
         PANIC("getCallerClass(): not previous frame available");
     }
+
+    D("getCallerClass(): found caller class: %s",
+        strings::toStdString(found->getMethod()->getClass()->getName()).c_str());
 
     return found->getMethod()->getClass()->getJavaMirror();
 }
