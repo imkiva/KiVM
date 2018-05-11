@@ -49,6 +49,7 @@ namespace kivm {
         this->_argumentValueTypesResolved = false;
         this->_returnTypeResolved = false;
         this->_nativePointer = nullptr;
+        this->_runtimeVisibleAnnos = nullptr;
     }
 
     bool Method::isPcCorrect(u4 pc) {
@@ -90,10 +91,30 @@ namespace kivm {
                     _signature = utf8->getConstant();
                     break;
                 }
-                case ATTRIBUTE_RuntimeVisibleAnnotations:
-                case ATTRIBUTE_RuntimeVisibleParameterAnnotations:
-                case ATTRIBUTE_RuntimeVisibleTypeAnnotations:
-                case ATTRIBUTE_AnnotationDefault:
+                case ATTRIBUTE_RuntimeVisibleAnnotations: {
+                    auto r = ((RuntimeVisibleAnnotations_attribute *) attr)->parameter_annotations;
+                    this->_runtimeVisibleAnnos = new ParameterAnnotation(&r);
+                    break;
+                }
+                case ATTRIBUTE_RuntimeVisibleParameterAnnotations: {
+                    auto r = ((RuntimeVisibleParameterAnnotations_attribute *) attr);
+                    for (int j = 0; j < r->num_parameters; ++j) {
+                        auto p = r->parameter_annotations[j];
+                        this->_runtimeVisibleParameterAnnos.push_back(new ParameterAnnotation(&p));
+                    }
+                    break;
+                }
+                case ATTRIBUTE_RuntimeVisibleTypeAnnotations: {
+                    auto r = ((RuntimeVisibleTypeAnnotations_attribute *) attr);
+                    for (int j = 0; j < r->num_annotations; ++j) {
+                        auto p = r->annotations[j];
+                        this->_runtimeVisibleTypeAnnos.push_back(new TypeAnnotation(&p));
+                    }
+                    break;
+                }
+                case ATTRIBUTE_AnnotationDefault: {
+                    break;
+                }
                 default: {
                     break;
                 }
@@ -260,31 +281,31 @@ namespace kivm {
 
     const std::vector<ValueType> &Method::getArgumentValueTypes() {
         getArgumentValueTypesHelper(&_argumentValueTypes,
-                                    &_argumentValueTypesResolved,
-                                    getDescriptor(), true);
+            &_argumentValueTypesResolved,
+            getDescriptor(), true);
         return _argumentValueTypes;
     }
 
     ValueType Method::getReturnType() {
         getReturnTypeHelper(&_returnType,
-                            &_returnTypeResolved,
-                            getDescriptor(),
-                            true);
+            &_returnTypeResolved,
+            getDescriptor(),
+            true);
         return _returnType;
     }
 
     const std::vector<ValueType> &Method::getArgumentValueTypesNoWrap() {
         getArgumentValueTypesHelper(&_argumentValueTypesNoWrap,
-                                    &_argumentValueTypesNoWrapResolved,
-                                    getDescriptor(),
-                                    false);
+            &_argumentValueTypesNoWrapResolved,
+            getDescriptor(),
+            false);
         return _argumentValueTypesNoWrap;
     }
 
     ValueType Method::getReturnTypeNoWrap() {
         getReturnTypeHelper(&_returnTypeNoWrap,
-                            &_returnTypeNoWrapResolved,
-                            getDescriptor(), false);
+            &_returnTypeNoWrapResolved,
+            getDescriptor(), false);
         return _returnTypeNoWrap;
     }
 

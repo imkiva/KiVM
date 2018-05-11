@@ -7,6 +7,7 @@
 #include <kivm/oop/oopfwd.h>
 #include <kivm/bytecode/codeBlob.h>
 #include <kivm/classfile/attributeInfo.h>
+#include <kivm/classfile/annotation.h>
 #include <list>
 #include <unordered_map>
 #include <vector>
@@ -71,6 +72,13 @@ namespace kivm {
         /** map<start-pc, line-number> **/
         std::unordered_map<u2, u2> _lineNumberTable;
 
+        /**
+         * annotations
+         */
+        ParameterAnnotation *_runtimeVisibleAnnos;
+        std::list<ParameterAnnotation *> _runtimeVisibleParameterAnnos;
+        std::list<TypeAnnotation *> _runtimeVisibleTypeAnnos;
+
     private:
         void linkAttributes(cp_info **pool);
 
@@ -119,7 +127,7 @@ namespace kivm {
          * Locate native method address
          * @return address of the native method
          */
-        void* getNativePointer();
+        void *getNativePointer();
 
     public:
         int findExceptionHandler(u4 currentPc, InstanceKlass *exceptionClass);
