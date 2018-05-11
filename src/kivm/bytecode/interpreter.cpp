@@ -1317,6 +1317,7 @@ namespace kivm {
                 OPCODE(RETURN)
                 {
                     // monitor released in invokeXXX
+                    return nullptr;
                     NEXT();
                 }
                 OPCODE(GETSTATIC)
@@ -1588,7 +1589,6 @@ namespace kivm {
                 }
             END()
 
-        oop resultOop = nullptr;
-        return resultOop;
+        return nullptr;
     }
 }
