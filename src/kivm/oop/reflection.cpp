@@ -15,7 +15,7 @@ namespace kivm {
             ->loadClass(L"java/lang/reflect/Field");
 
         static auto classFieldId = fieldClass->getInstanceFieldInfo(J_FIELD, L"clazz", L"Ljava/lang/Class;");
-        static auto typeFieldId = fieldClass->getInstanceFieldInfo(J_FIELD, L"clazz", L"Ljava/lang/Class;");
+        static auto typeFieldId = fieldClass->getInstanceFieldInfo(J_FIELD, L"type", L"Ljava/lang/Class;");
         static auto slotField = fieldClass->getInstanceFieldInfo(J_FIELD, L"slot", L"I");
         static auto nameField = fieldClass->getInstanceFieldInfo(J_FIELD, L"name", L"Ljava/lang/String;");
         static auto signatureField = fieldClass->getInstanceFieldInfo(J_FIELD, L"signature", L"Ljava/lang/String;");
