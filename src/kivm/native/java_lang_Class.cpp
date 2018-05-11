@@ -330,3 +330,19 @@ JAVA_NATIVE jboolean Java_java_lang_Class_isPrimitive(JNIEnv *env, jobject java_
     auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
     return classMirror->getMirrorTarget() == nullptr ? JNI_TRUE : JNI_FALSE;
 }
+
+JAVA_NATIVE jboolean Java_java_lang_Class_isAssignableFrom(JNIEnv *env,
+                                                           jobject java_lang_Class_mirror_lhs,
+                                                           jobject java_lang_Class_mirror_rhs) {
+    auto lhs = Resolver::resolveMirror(java_lang_Class_mirror_lhs);
+    auto rhs = Resolver::resolveMirror(java_lang_Class_mirror_rhs);
+
+    auto lhsKlass = lhs->getMirrorTarget();
+    auto rhsKlass = rhs->getMirrorTarget();
+
+    if (lhsKlass == nullptr && rhsKlass == nullptr) {
+        return JBOOLEAN(lhs == rhs);
+    }
+
+    return JBOOLEAN(Execution::instanceOf(lhsKlass, rhsKlass));
+}
