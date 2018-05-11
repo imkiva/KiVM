@@ -14,6 +14,6 @@ namespace kivm {
     };
 
     struct TypeAnnotation {
-        TypeAnnotation(type_annotation *source);
+        explicit TypeAnnotation(type_annotation *source);
     };
 }
