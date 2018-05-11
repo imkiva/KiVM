@@ -353,17 +353,13 @@ namespace kivm {
         if (_runtimeVisibleAnnos->checkTypeName(annotationName)) {
             return true;
         }
-        for (auto it = _runtimeVisibleParameterAnnos.begin();
-             it != _runtimeVisibleParameterAnnos.end();
-             ++it) {
-            if ((*it)->checkTypeName(annotationName)) {
+        for (auto &_runtimeVisibleParameterAnno : _runtimeVisibleParameterAnnos) {
+            if (_runtimeVisibleParameterAnno->checkTypeName(annotationName)) {
                 return true;
             }
         }
-        for (auto it = _runtimeVisibleTypeAnnos.begin();
-             it != _runtimeVisibleTypeAnnos.end();
-             ++it) {
-            if ((*it)->checkTypeName(annotationName)) {
+        for (auto &_runtimeVisibleTypeAnno : _runtimeVisibleTypeAnnos) {
+            if (_runtimeVisibleTypeAnno->checkTypeName(annotationName)) {
                 return true;
             }
         }
