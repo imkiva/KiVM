@@ -110,8 +110,9 @@ typedef enum _jobjectType {
  * jboolean constants
  */
 
-#define JNI_FALSE 0
-#define JNI_TRUE 1
+#define JNI_FALSE ((jboolean) 0)
+#define JNI_TRUE ((jboolean) 1)
+#define JBOOLEAN(x) ((jboolean) (x))
 
 /*
  * possible return values for JNI functions.

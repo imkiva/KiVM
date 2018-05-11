@@ -93,7 +93,7 @@ namespace kivm {
                         mirrorOop mirror = mirrorKlass::newMirror(klass, nullptr);
                         klass->setJavaMirror(mirror);
                         D("native: Class::mirrorCoreAndDelayedClasses: mirroring %s",
-                          strings::toStdString(klass->getName()).c_str());
+                            strings::toStdString(klass->getName()).c_str());
 
                     } else {
                         if (primitiveType == L'V' && isPrimitiveArray) {
@@ -113,7 +113,7 @@ namespace kivm {
                                 mirrorOop mirror = mirrorKlass::newMirror(nullptr, nullptr);
                                 getPrimitiveTypeMirrors().insert(std::make_pair(name, mirror));
                                 D("native: Class::mirrorCoreAndDelayedClasses: mirroring primitive type %s",
-                                  strings::toStdString(name).c_str());
+                                    strings::toStdString(name).c_str());
 
                                 if (isPrimitiveArray) {
                                     // Only arrays need them.
@@ -128,7 +128,7 @@ namespace kivm {
                             }
                             default:
                                 PANIC("Cannot make mirror for primitive type %c",
-                                      primitiveType);
+                                    primitiveType);
                         }
                     }
                 }
@@ -232,7 +232,7 @@ JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass j
     }
 
     PANIC("Class.getPrimitiveClass(String): unknown primitive type: %s",
-          strings::toStdString(signature).c_str());
+        strings::toStdString(signature).c_str());
 }
 
 JAVA_NATIVE jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, jclass java_lang_Class) {
@@ -324,4 +324,9 @@ JAVA_NATIVE jstring Java_java_lang_Class_getSuperclass(JNIEnv *env, jobject java
 
     auto instanceClass = (InstanceKlass *) mirrorTarget;
     return instanceClass->getSuperClass()->getJavaMirror();
+}
+
+JAVA_NATIVE jboolean Java_java_lang_Class_isPrimitive(JNIEnv *env, jobject java_lang_Class_mirror) {
+    auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
+    return classMirror->getMirrorTarget() == nullptr ? JNI_TRUE : JNI_FALSE;
 }
