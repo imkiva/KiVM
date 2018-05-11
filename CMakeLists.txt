@@ -204,7 +204,7 @@ set(SOURCE_FILES
         src/kivm/native/sun_reflect_Reflection.cpp
         src/kivm/native/java_security_AccessController.cpp
         src/kivm/native/java_lang_Throwable.cpp
-        src/kivm/oop/reflection.cpp)
+        src/kivm/oop/reflection.cpp include/kivm/classfile/annotation.h src/kivm/classfile/annotation.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC})
