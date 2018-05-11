@@ -348,4 +348,26 @@ namespace kivm {
 
         return -1;
     }
+
+    bool Method::checkAnnotation(const String &annotationName) {
+        if (_runtimeVisibleAnnos->checkTypeName(annotationName)) {
+            return true;
+        }
+        for (auto it = _runtimeVisibleParameterAnnos.begin();
+             it != _runtimeVisibleParameterAnnos.end();
+             ++it) {
+            if ((*it)->checkTypeName(annotationName)) {
+                return true;
+            }
+        }
+        for (auto it = _runtimeVisibleTypeAnnos.begin();
+             it != _runtimeVisibleTypeAnnos.end();
+             ++it) {
+            if ((*it)->checkTypeName(annotationName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

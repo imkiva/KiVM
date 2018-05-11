@@ -160,6 +160,8 @@ namespace kivm {
             return _codeBlob;
         }
 
+        bool checkAnnotation(const String &annotationName);
+
         bool isLinked() const {
             return _linked;
         }
