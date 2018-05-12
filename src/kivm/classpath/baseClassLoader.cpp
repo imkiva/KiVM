@@ -29,8 +29,10 @@ namespace kivm {
                            : nullptr;
                 }
 
-                // for example: LI -> I
-                ValueType component_type = primitiveTypeToValueType(className[1]);
+                // for example: LI -> I, LB -> B
+                // use primitiveTypeToValueTypeNoWrap() instead of primitiveTypeToValueType()
+                // because in Java, booleans, chars, shorts and bytes are not ints
+                ValueType component_type = primitiveTypeToValueTypeNoWrap(className[1]);
                 return new TypeArrayKlass(this, nullptr, dimension, component_type);
             }
 

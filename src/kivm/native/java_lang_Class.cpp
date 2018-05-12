@@ -121,7 +121,9 @@ namespace kivm {
                                     mirror->setMirrorTarget(array_klass);
                                     array_klass->setJavaMirror(mirror);
                                 } else {
-                                    mirror->setMirroringPrimitiveType(primitiveTypeToValueType(primitiveType));
+                                    // use primitiveTypeToValueTypeNoWrap() instead of primitiveTypeToValueType()
+                                    // because in Java, booleans, chars, shorts and bytes are not ints
+                                    mirror->setMirroringPrimitiveType(primitiveTypeToValueTypeNoWrap(primitiveType));
                                 }
 
                                 break;

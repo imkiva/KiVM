@@ -30,6 +30,7 @@
        exit(1); \
     } while (false)
 
+#define SHOULD_NOT_REACH_HERE() PANIC("should not reach here")
 
 #define JNI_ENTRY_NAME(nameAndSignature) jni_##nameAndSignature
 #define JNI_ENTRY(returnType, nameAndSignature) returnType JNI_ENTRY_NAME(nameAndSignature)
