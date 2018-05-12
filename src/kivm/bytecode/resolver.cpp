@@ -11,15 +11,15 @@
 #include <kivm/memory/universe.h>
 
 namespace kivm {
-    oop Resolver::resolveJObject(jobject obj) {
+    oop Resolver::javaOop(jobject obj) {
         if (Universe::isHeapObject(obj)) {
             return (oop) obj;
         }
         return nullptr;
     }
 
-    instanceOop Resolver::resolveInstance(jobject obj) {
-        auto n = resolveJObject(obj);
+    instanceOop Resolver::instance(jobject obj) {
+        auto n = javaOop(obj);
         if (n == nullptr) {
             return nullptr;
         }
@@ -30,13 +30,13 @@ namespace kivm {
         return nullptr;
     }
 
-    mirrorOop Resolver::resolveMirror(jobject obj) {
-        auto n = resolveInstance(obj);
+    mirrorOop Resolver::mirror(jobject obj) {
+        auto n = instance(obj);
         return (mirrorOop) n;
     }
 
-    arrayOop Resolver::resolveArray(jobject obj) {
-        auto n = resolveJObject(obj);
+    arrayOop Resolver::array(jobject obj) {
+        auto n = javaOop(obj);
         if (n == nullptr) {
             return nullptr;
         }
@@ -48,8 +48,8 @@ namespace kivm {
         return nullptr;
     }
 
-    typeArrayOop Resolver::resolveTypeArray(jobject obj) {
-        auto n = resolveJObject(obj);
+    typeArrayOop Resolver::typeArray(jobject obj) {
+        auto n = javaOop(obj);
         if (n == nullptr) {
             return nullptr;
         }
@@ -60,8 +60,8 @@ namespace kivm {
         return nullptr;
     }
 
-    objectArrayOop Resolver::resolveObjectArray(jobject obj) {
-        auto n = resolveJObject(obj);
+    objectArrayOop Resolver::objectArray(jobject obj) {
+        auto n = javaOop(obj);
         if (n == nullptr) {
             return nullptr;
         }
@@ -72,19 +72,19 @@ namespace kivm {
         return nullptr;
     }
 
-    void *Resolver::resolveNativePointer(Method *method) {
+    void *Resolver::nativePointer(Method *method) {
         return NativeMethodPool::get()->resolve(method);
     }
 
-    Klass *Resolver::resolveJClass(jclass clazz) {
+    Klass *Resolver::javaClass(jclass clazz) {
         if (clazz != nullptr) {
             return (Klass *) clazz;
         }
         return nullptr;
     }
 
-    InstanceKlass *Resolver::resolveInstanceClass(jclass *clazz) {
-        auto klass = Resolver::resolveJClass(clazz);
+    InstanceKlass *Resolver::instanceClass(jclass clazz) {
+        auto klass = Resolver::javaClass(clazz);
         if (klass == nullptr) {
             return nullptr;
         }

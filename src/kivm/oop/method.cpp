@@ -312,7 +312,7 @@ namespace kivm {
     void *Method::getNativePointer() {
         if (this->isNative()) {
             if (this->_nativePointer == nullptr) {
-                this->_nativePointer = Resolver::resolveNativePointer(this);
+                this->_nativePointer = Resolver::nativePointer(this);
             }
             return this->_nativePointer;
         }

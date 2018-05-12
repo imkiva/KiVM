@@ -40,7 +40,7 @@ namespace kivm {
                         break;
                     case ValueType::OBJECT:
                     case ValueType::ARRAY:
-                        callingArgs.push_front(Resolver::resolveJObject(_stack->popReference()));
+                        callingArgs.push_front(Resolver::javaOop(_stack->popReference()));
                         break;
                     default:
                         PANIC("Unknown value type: %d", valueType);
@@ -48,7 +48,7 @@ namespace kivm {
             }
 
             if (hasThis) {
-                oop thisObjectOnStack = Resolver::resolveJObject(_stack->popReference());
+                oop thisObjectOnStack = Resolver::javaOop(_stack->popReference());
                 callingArgs.push_front(thisObjectOnStack);
             }
 

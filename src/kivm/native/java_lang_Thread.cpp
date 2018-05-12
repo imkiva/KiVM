@@ -23,6 +23,6 @@ JAVA_NATIVE jobject Java_java_lang_Thread_currentThread(JNIEnv *env, jclass java
 }
 
 JAVA_NATIVE void Java_java_lang_Thread_setPriority0(JNIEnv *env, jobject threadObject, jint priority) {
-    auto instanceOop = Resolver::resolveInstance(threadObject);
+    auto instanceOop = Resolver::instance(threadObject);
     // TODO: set native thread's priority
 }

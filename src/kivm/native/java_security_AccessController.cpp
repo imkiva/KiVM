@@ -12,7 +12,7 @@ using namespace kivm;
 JAVA_NATIVE jobject Java_java_security_AccessController_doPrivileged(JNIEnv *env,
                                                                      jclass java_security_AccessController,
                                                                      jobject javaPrivilegedExceptionAction) {
-    auto actionOop = Resolver::resolveInstance(javaPrivilegedExceptionAction);
+    auto actionOop = Resolver::instance(javaPrivilegedExceptionAction);
     if (actionOop == nullptr) {
         PANIC("java.lang.NullPointerException");
         return nullptr;

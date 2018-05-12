@@ -93,7 +93,7 @@ namespace kivm {
             return;
         }
 
-        oop obj = Resolver::resolveJObject(ref);
+        oop obj = Resolver::javaOop(ref);
         Klass *objClass = obj->getClass();
         Klass *targetClass = rt->getClass(constantIndex);
 
@@ -214,7 +214,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::resolveTypeArray(ref);
+        auto array = Resolver::typeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -230,7 +230,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::resolveTypeArray(ref);
+        auto array = Resolver::typeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -246,7 +246,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::resolveTypeArray(ref);
+        auto array = Resolver::typeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -262,7 +262,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::resolveTypeArray(ref);
+        auto array = Resolver::typeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -279,7 +279,7 @@ namespace kivm {
             PANIC("java.lang.NullPointerException");
         }
 
-        auto array = Resolver::resolveObjectArray(ref);
+        auto array = Resolver::objectArray(ref);
         if (array == nullptr) {
             PANIC("not an object array");
         }
@@ -295,7 +295,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::resolveTypeArray(ref);
+        auto array = Resolver::typeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -311,7 +311,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::resolveTypeArray(ref);
+        auto array = Resolver::typeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -327,7 +327,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::resolveTypeArray(ref);
+        auto array = Resolver::typeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -343,7 +343,7 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::resolveTypeArray(ref);
+        auto array = Resolver::typeArray(ref);
         if (array == nullptr) {
             PANIC("not a type array");
         }
@@ -359,12 +359,12 @@ namespace kivm {
             // TODO: throw NullPointerException
             PANIC("java.lang.NullPointerException");
         }
-        auto array = Resolver::resolveObjectArray(ref);
+        auto array = Resolver::objectArray(ref);
         if (array == nullptr) {
             PANIC("not an object array");
         }
 
-        array->setElementAt(index, Resolver::resolveJObject(value));
+        array->setElementAt(index, Resolver::javaOop(value));
     }
 
     void Execution::getField(JavaThread *thread, RuntimeConstantPool *rt, instanceOop receiver, Stack &stack,
@@ -462,7 +462,7 @@ namespace kivm {
             if (receiverRef == nullptr) { \
                 PANIC("java.lang.NullPointerException"); \
             } \
-            instanceOop receiver = Resolver::resolveInstance(receiverRef); \
+            instanceOop receiver = Resolver::instance(receiverRef); \
             if (receiver == nullptr) { \
                 PANIC("Not an instance oop"); \
             } \
@@ -473,7 +473,7 @@ namespace kivm {
             case ValueType::OBJECT:
             case ValueType::ARRAY: {
                 jobject ref = stack.popReference();
-                oop value = Resolver::resolveJObject(ref);
+                oop value = Resolver::javaOop(ref);
                 PUTFIELD(value);
                 break;
             }

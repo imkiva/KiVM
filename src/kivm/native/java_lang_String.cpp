@@ -136,7 +136,7 @@ namespace kivm {
 using namespace kivm;
 
 JAVA_NATIVE jstring Java_java_lang_String_intern(JNIEnv *env, jobject javaString) {
-    auto stringOop = (instanceOop) Resolver::resolveInstance(javaString);
+    auto stringOop = (instanceOop) Resolver::instance(javaString);
     const String &nativeString = java::lang::String::toNativeString(stringOop);
     return java::lang::String::intern(nativeString);
 }

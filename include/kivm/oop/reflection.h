@@ -89,6 +89,31 @@ namespace kivm {
         }
     }
 
+    inline String valueTypeToPrimitiveTypeDesc(ValueType v) {
+        switch (v) {
+            case ValueType::BOOLEAN:
+                return L"Z";
+            case ValueType::BYTE:
+                return L"B";
+            case ValueType::CHAR:
+                return L"C";
+            case ValueType::SHORT:
+                return L"S";
+            case ValueType::INT:
+                return L"I";
+            case ValueType::FLOAT:
+                return L"F";
+            case ValueType::LONG:
+                return L"J";
+            case ValueType::DOUBLE:
+                return L"D";
+            case ValueType::VOID:
+                return L"V";
+            default:
+                PANIC("primitive type required");
+        }
+    }
+
     inline String valueTypeToPrimitiveTypeName(ValueType v) {
         switch (v) {
             case ValueType::BOOLEAN:

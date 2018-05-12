@@ -32,7 +32,7 @@ JAVA_NATIVE jint Java_sun_misc_Unsafe_addressSize(JNIEnv *env, jobject javaUnsaf
 }
 
 JAVA_NATIVE jlong Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject javaField) {
-    auto fieldOop = Resolver::resolveInstance(javaField);
+    auto fieldOop = Resolver::instance(javaField);
     instanceOop p = nullptr;
 
     if (!fieldOop->getFieldValue(J_FIELD, L"name", L"Ljava/lang/String;", (oop *) &p)) {
@@ -46,9 +46,9 @@ JAVA_NATIVE jlong Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject ja
         SHOULD_NOT_REACH_HERE();
     }
 
-    auto fieldTypeMirror = Resolver::resolveMirror(p);
+    auto fieldTypeMirror = Resolver::mirror(p);
     if (fieldTypeMirror->getMirrorTarget() == nullptr) {
-        fieldDesc = valueTypeToPrimitiveTypeName(fieldTypeMirror->getMirroringPrimitiveType());
+        fieldDesc = valueTypeToPrimitiveTypeDesc(fieldTypeMirror->getMirroringPrimitiveType());
 
     } else {
         auto target = fieldTypeMirror->getMirrorTarget();
@@ -67,7 +67,7 @@ JAVA_NATIVE jlong Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject ja
         SHOULD_NOT_REACH_HERE();
     }
 
-    auto fieldOwnerMirror = Resolver::resolveMirror(p);
+    auto fieldOwnerMirror = Resolver::mirror(p);
     if (fieldOwnerMirror->getMirrorTarget() == nullptr
         || fieldOwnerMirror->getMirrorTarget()->getClassType() != ClassType::INSTANCE_CLASS) {
         SHOULD_NOT_REACH_HERE();
@@ -80,4 +80,3 @@ JAVA_NATIVE jlong Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject ja
     }
     return fieldInfo->_offset;
 }
-

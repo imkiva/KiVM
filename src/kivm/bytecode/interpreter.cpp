@@ -1311,7 +1311,7 @@ namespace kivm {
                 }
                 OPCODE(ARETURN)
                 {
-                    return Resolver::resolveJObject(stack.popReference());
+                    return Resolver::javaOop(stack.popReference());
                     NEXT();
                 }
                 OPCODE(RETURN)
@@ -1345,7 +1345,7 @@ namespace kivm {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
                     }
-                    instanceOop receiver = Resolver::resolveInstance(ref);
+                    instanceOop receiver = Resolver::instance(ref);
                     if (receiver == nullptr) {
                         PANIC("Not an instance oop");
                     }
@@ -1464,7 +1464,7 @@ namespace kivm {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
                     }
-                    arrayOop array = Resolver::resolveArray(ref);
+                    arrayOop array = Resolver::array(ref);
                     if (array == nullptr) {
                         PANIC("Attempt to use arraylength on non-array objects");
                     }
@@ -1474,7 +1474,7 @@ namespace kivm {
                 OPCODE(ATHROW)
                 {
                     exceptionHandler:
-                    auto exceptionOop = Resolver::resolveInstance(stack.popReference());
+                    auto exceptionOop = Resolver::instance(stack.popReference());
                     if (exceptionOop == nullptr) {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
@@ -1516,7 +1516,7 @@ namespace kivm {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
                     }
-                    auto object = Resolver::resolveJObject(ref);
+                    auto object = Resolver::javaOop(ref);
                     if (object == nullptr) {
                         PANIC("not an object");
                     }
@@ -1530,7 +1530,7 @@ namespace kivm {
                         // TODO: throw NullPointerException
                         PANIC("java.lang.NullPointerException");
                     }
-                    auto object = Resolver::resolveJObject(ref);
+                    auto object = Resolver::javaOop(ref);
                     if (object == nullptr) {
                         PANIC("not an object");
                     }

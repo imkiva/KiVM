@@ -22,23 +22,23 @@
 namespace kivm {
     class Resolver {
     public:
-        static oop resolveJObject(jobject obj);
+        static oop javaOop(jobject obj);
 
-        static instanceOop resolveInstance(jobject obj);
+        static instanceOop instance(jobject obj);
 
-        static mirrorOop resolveMirror(jobject obj);
+        static mirrorOop mirror(jobject obj);
 
-        static arrayOop resolveArray(jobject obj);
+        static arrayOop array(jobject obj);
 
-        static typeArrayOop resolveTypeArray(jobject obj);
+        static typeArrayOop typeArray(jobject obj);
 
-        static objectArrayOop resolveObjectArray(jobject object);
+        static objectArrayOop objectArray(jobject object);
 
-        static Klass* resolveJClass(jclass clazz);
+        static Klass* javaClass(jclass clazz);
 
-        static InstanceKlass *resolveInstanceClass(jclass *clazz);
+        static InstanceKlass *instanceClass(jclass clazz);
 
-        static void *resolveNativePointer(Method *method);
+        static void *nativePointer(Method *method);
     };
 
     /**

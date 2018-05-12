@@ -198,7 +198,7 @@ JAVA_NATIVE void Java_java_lang_Class_registerNatives(JNIEnv *env, jclass java_l
 
 JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass java_lang_Class,
                                                            jstring className) {
-    auto stringInstance = Resolver::resolveInstance(className);
+    auto stringInstance = Resolver::instance(className);
     if (stringInstance == nullptr) {
         // TODO: throw java.lang.NullPointerException
         PANIC("java.lang.NullPointerException");
@@ -248,7 +248,7 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env,
         ->loadClass(L"[Ljava/lang/reflect/Field;");
 
     std::vector<instanceOop> fields;
-    auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
+    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
     auto mirrorTarget = classMirror->getMirrorTarget();
 
     if (mirrorTarget->getClassType() != ClassType::INSTANCE_CLASS) {
@@ -302,7 +302,7 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *e
 }
 
 JAVA_NATIVE jstring Java_java_lang_Class_getName0(JNIEnv *env, jobject java_lang_Class_mirror) {
-    auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
+    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
     auto mirrorTarget = classMirror->getMirrorTarget();
 
     if (mirrorTarget == nullptr) {
@@ -317,7 +317,7 @@ JAVA_NATIVE jstring Java_java_lang_Class_getName0(JNIEnv *env, jobject java_lang
 }
 
 JAVA_NATIVE jstring Java_java_lang_Class_getSuperclass(JNIEnv *env, jobject java_lang_Class_mirror) {
-    auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
+    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
     auto mirrorTarget = classMirror->getMirrorTarget();
 
     if (mirrorTarget == nullptr || mirrorTarget == Global::java_lang_Object) {
@@ -329,15 +329,15 @@ JAVA_NATIVE jstring Java_java_lang_Class_getSuperclass(JNIEnv *env, jobject java
 }
 
 JAVA_NATIVE jboolean Java_java_lang_Class_isPrimitive(JNIEnv *env, jobject java_lang_Class_mirror) {
-    auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
+    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
     return classMirror->getMirrorTarget() == nullptr ? JNI_TRUE : JNI_FALSE;
 }
 
 JAVA_NATIVE jboolean Java_java_lang_Class_isAssignableFrom(JNIEnv *env,
                                                            jobject java_lang_Class_mirror_lhs,
                                                            jobject java_lang_Class_mirror_rhs) {
-    auto lhs = Resolver::resolveMirror(java_lang_Class_mirror_lhs);
-    auto rhs = Resolver::resolveMirror(java_lang_Class_mirror_rhs);
+    auto lhs = Resolver::mirror(java_lang_Class_mirror_lhs);
+    auto rhs = Resolver::mirror(java_lang_Class_mirror_rhs);
 
     auto lhsKlass = lhs->getMirrorTarget();
     auto rhsKlass = rhs->getMirrorTarget();

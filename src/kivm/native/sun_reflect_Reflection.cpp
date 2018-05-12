@@ -52,7 +52,7 @@ JAVA_NATIVE jobject Java_sun_reflect_Reflection_getCallerClass(JNIEnv *env, jcla
 JAVA_NATIVE jint Java_sun_reflect_Reflection_getClassAccessFlags(JNIEnv *env,
                                                                  jclass sun_reflect_Reflection,
                                                                  jobject java_lang_Class_mirror) {
-    auto classMirror = Resolver::resolveMirror(java_lang_Class_mirror);
+    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
     auto mirrorTarget = classMirror->getMirrorTarget();
 
     if (mirrorTarget == nullptr) {

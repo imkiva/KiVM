@@ -18,8 +18,8 @@ JAVA_NATIVE void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_S
                                                  jobject javaSrc, jint srcPos,
                                                  jobject javaDest, jint destPos,
                                                  jint length) {
-    auto srcOop = Resolver::resolveArray(javaSrc);
-    auto destOop = Resolver::resolveArray(javaDest);
+    auto srcOop = Resolver::array(javaSrc);
+    auto destOop = Resolver::array(javaDest);
 
     if (srcOop == nullptr || destOop == nullptr) {
         PANIC("java.lang.NullPointerException");
@@ -27,4 +27,22 @@ JAVA_NATIVE void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_S
 
     auto arrayClass = (ArrayKlass *) srcOop->getClass();
     arrayClass->copyArrayTo(srcOop, destOop, srcPos, destPos, length);
+}
+
+JAVA_NATIVE void Java_java_lang_System_setIn0(JNIEnv *env, jclass java_lang_System, jobject javaInputStream) {
+    auto inputStreamOop = Resolver::instance(javaInputStream);
+    auto system = Resolver::instanceClass(java_lang_System);
+    system->setStaticFieldValue(J_SYSTEM, L"in", L"Ljava/io/InputStream;", inputStreamOop);
+}
+
+JAVA_NATIVE void Java_java_lang_System_setOut0(JNIEnv *env, jclass java_lang_System, jobject javaPrintStream) {
+    auto printStreamOop = Resolver::instance(javaPrintStream);
+    auto system = Resolver::instanceClass(java_lang_System);
+    system->setStaticFieldValue(J_SYSTEM, L"out", L"Ljava/io/PrintStream;", printStreamOop);
+}
+
+JAVA_NATIVE void Java_java_lang_System_setErr0(JNIEnv *env, jclass java_lang_System, jobject javaPrintStream) {
+    auto printStreamOop = Resolver::instance(javaPrintStream);
+    auto system = Resolver::instanceClass(java_lang_System);
+    system->setStaticFieldValue(J_SYSTEM, L"err", L"Ljava/io/PrintStream;", printStreamOop);
 }

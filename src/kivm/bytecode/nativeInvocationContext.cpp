@@ -225,7 +225,7 @@ namespace kivm {
             FILL_ARG(popReference, l);
             argsType[fillIndex] = &ffi_type_pointer;
 
-            thisObject = Resolver::resolveJObject(argsHolder[fillIndex].l);
+            thisObject = Resolver::javaOop(argsHolder[fillIndex].l);
             if (thisObject == nullptr) {
                 PANIC("NullPointerException");
             }
@@ -324,7 +324,7 @@ namespace kivm {
             case ValueType::OBJECT:
             case ValueType::ARRAY: {
                 CALL(jobject, pushReference);
-                resultOop = Resolver::resolveJObject(r);
+                resultOop = Resolver::javaOop(r);
                 break;
             }
 

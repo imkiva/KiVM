@@ -9,6 +9,6 @@
 using namespace kivm;
 
 JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobject javaThrowable, jint depth) {
-    auto instanceOop = Resolver::resolveInstance(javaThrowable);
+    auto instanceOop = Resolver::instance(javaThrowable);
     return instanceOop;
 }
