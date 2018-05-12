@@ -18,7 +18,7 @@
 #define CALL(type, pushFunc) \
         type r; \
         ffi_call(&cif, (void (*)()) nativeMethod, (void *) &r, argsPointer); \
-        if (!_thread->isExceptionOccurred()) { \
+        if (!_thread->isExceptionOccurred() && !stackIsAllocated) { \
             _stack->pushFunc(r); \
         }
 

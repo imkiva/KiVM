@@ -229,6 +229,9 @@ target_link_libraries(test_stack-and-frame kivm)
 add_executable(bench-allocation tests/bench-allocation.cpp)
 target_link_libraries(bench-allocation kivm)
 
+add_executable(test-encode-decode tests/encode-decode-offset.cpp)
+target_link_libraries(test-encode-decode kivm)
+
 #### CovScript extension
 if (DEFINED ENV{CS_SRC})
     set(CS_SRC $ENV{CS_SRC})

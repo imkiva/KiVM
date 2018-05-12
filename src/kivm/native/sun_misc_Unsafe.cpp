@@ -7,8 +7,47 @@
 #include <kivm/native/java_lang_String.h>
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/bytecode/execution.h>
+#include <tuple>
 
 using namespace kivm;
+
+//union OffsetEncoder {
+//    struct {
+//        int isStatic;
+//        int offset;
+//    };
+//    jlong result;
+//
+//    std::tuple<int, bool> decode() {
+//        return std::make_tuple(offset, isStatic != 0);
+//    };
+//
+//    OffsetEncoder(int offset, bool isStatic) {
+//        this->offset = offset;
+//        this->isStatic = isStatic;
+//    }
+//
+//    OffsetEncoder(jlong encoded) {
+//        this->result = encoded;
+//    }
+//};
+
+static jlong encodeOffset(int offset, bool isStatic) {
+//    return OffsetEncoder(offset, isStatic).result;
+    ++offset;
+    if (isStatic) {
+        return offset * 2;
+    }
+    return offset * 2 + 1;
+}
+
+static std::tuple<int, bool> decodeOffset(jlong encoded) {
+//    return OffsetEncoder(encoded).decode();
+    if (encoded % 2 == 0) {
+        return std::make_tuple((int) (encoded / 2) - 1, true);
+    }
+    return std::make_tuple((int) ((encoded - 1) / 2) - 1, false);
+};
 
 JAVA_NATIVE void Java_sun_misc_Unsafe_registerNatives(JNIEnv *env, jclass sun_misc_Unsafe) {
     D("sun/misc/Unsafe.registerNatives()V");
@@ -78,5 +117,23 @@ JAVA_NATIVE jlong Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject ja
     if (fieldInfo == nullptr) {
         SHOULD_NOT_REACH_HERE();
     }
-    return fieldInfo->_offset;
+
+    auto n = encodeOffset(fieldInfo->_offset, fieldInfo->_field->isStatic());
+    D("encode offset: %d %s -> %lld", fieldInfo->_offset,
+        fieldInfo->_field->isStatic() ? "true" : "false",
+        n);
+    return n;
+}
+
+JAVA_NATIVE jlong Java_sun_misc_Unsafe_staticFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject javaField) {
+    return Java_sun_misc_Unsafe_objectFieldOffset(env, javaUnsafe, javaField);
+}
+
+JAVA_NATIVE jint
+Java_sun_misc_Unsafe_getIntVolatile(JNIEnv *env, jobject javaUnsafe, jobject javaOwner, jlong encodedOffset) {
+    int offset = 0;
+    bool isStatic = false;
+    std::tie(offset, isStatic) = decodeOffset(encodedOffset);
+    D("decode offset: %lld -> %d, %s", encodedOffset, offset, isStatic ? "true" : "false");
+    SHOULD_NOT_REACH_HERE();
 }
