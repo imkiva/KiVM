@@ -12,10 +12,17 @@ namespace kivm {
     };
 
     template<>
-    struct PrimitiveHelper<int> {
+    struct PrimitiveHelper<jint> {
         constexpr static ValueType getValueType() {
             return ValueType::INT;
         }
+    };
+
+    template<>
+    struct PrimitiveHelper<jlong> {
+        constexpr static ValueType getValueType() {
+            return ValueType::LONG;
+        };
     };
 
     template<>
@@ -26,14 +33,14 @@ namespace kivm {
     };
 
     template<>
-    struct PrimitiveHelper<float> {
+    struct PrimitiveHelper<jfloat> {
         constexpr static ValueType getValueType() {
             return ValueType::FLOAT;
         };
     };
 
     template<>
-    struct PrimitiveHelper<double> {
+    struct PrimitiveHelper<jdouble> {
         constexpr static ValueType getValueType() {
             return ValueType::DOUBLE;
         }
@@ -46,7 +53,7 @@ namespace kivm {
 
     public:
         explicit primitiveOopDesc(T value)
-                : oopDesc(nullptr, oopType::PRIMITIVE_OOP), _value(value) {
+            : oopDesc(nullptr, oopType::PRIMITIVE_OOP), _value(value) {
         }
 
         ValueType getPrimitiveType() const {
@@ -58,23 +65,23 @@ namespace kivm {
         }
     };
 
-    class intOopDesc : public primitiveOopDesc<int> {
+    class intOopDesc : public primitiveOopDesc<jint> {
     public:
-        explicit intOopDesc(int value);
+        explicit intOopDesc(jint value);
     };
 
-    class longOopDesc : public primitiveOopDesc<long> {
+    class longOopDesc : public primitiveOopDesc<jlong> {
     public:
-        explicit longOopDesc(long value);
+        explicit longOopDesc(jlong value);
     };
 
-    class floatOopDesc : public primitiveOopDesc<float> {
+    class floatOopDesc : public primitiveOopDesc<jfloat> {
     public:
-        explicit floatOopDesc(float value);
+        explicit floatOopDesc(jfloat value);
     };
 
-    class doubleOopDesc : public primitiveOopDesc<double> {
+    class doubleOopDesc : public primitiveOopDesc<jdouble> {
     public:
-        explicit doubleOopDesc(double value);
+        explicit doubleOopDesc(jdouble value);
     };
 }

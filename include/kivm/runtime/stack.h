@@ -110,6 +110,7 @@ namespace kivm {
 
         inline void pushLong(jlong v) {
             _array.setLong(_sp, v);
+            D("stack: pushing jlong: %lld -> stack(%lld)", v, _array.getLong(_sp));
             _sp += 2;
         }
 
@@ -157,6 +158,7 @@ namespace kivm {
 
         inline void setLong(int position, jlong j) {
             _array.setLong(position, j);
+            D("local: pushing jlong: %lld -> local(%lld)", j, _array.getLong(position));
         }
 
         inline jlong getLong(int position) {

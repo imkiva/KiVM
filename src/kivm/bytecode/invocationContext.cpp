@@ -57,62 +57,73 @@ namespace kivm {
 
         // copy args to local variable table
         int localVariableIndex = 0;
+        int localSlotIndex = 0;
         bool isStatic = _method->isStatic();
         const std::vector<ValueType> descriptorMap = _method->getArgumentValueTypes();
 
         std::for_each(_args.begin(), _args.end(), [&](oop arg) {
             if (arg == nullptr) {
-                D("Copying reference: #%d - null", localVariableIndex);
-                locals.setReference(localVariableIndex++, nullptr);
-                return;
-            }
+                D("Copying reference: #%d - null to locals:(%d)", localVariableIndex, localSlotIndex);
+                locals.setReference(localSlotIndex++, nullptr);
 
-            switch (arg->getMarkOop()->getOopType()) {
-                case oopType::INSTANCE_OOP:
-                case oopType::OBJECT_ARRAY_OOP:
-                case oopType::TYPE_ARRAY_OOP: {
-                    D("Copying reference: #%d - %p", localVariableIndex, arg);
-                    locals.setReference(localVariableIndex++, arg);
-                    break;
-                }
-
-                case oopType::PRIMITIVE_OOP: {
-                    ValueType valueType = descriptorMap[isStatic ? localVariableIndex : localVariableIndex - 1];
-                    switch (valueType) {
-                        case ValueType::INT: {
-                            int value = ((intOop) arg)->getValue();
-                            D("Copying int: #%d - %d", localVariableIndex, value);
-                            locals.setInt(localVariableIndex++, value);
-                            break;
-                        }
-                        case ValueType::FLOAT: {
-                            float value = ((floatOop) arg)->getValue();
-                            D("Copying float: #%d - %f", localVariableIndex, value);
-                            locals.setFloat(localVariableIndex++, value);
-                            break;
-                        }
-                        case ValueType::DOUBLE: {
-                            double value = ((doubleOop) arg)->getValue();
-                            D("Copying double: #%d - %lf", localVariableIndex, value);
-                            locals.setDouble(localVariableIndex++, value);
-                            break;
-                        }
-                        case ValueType::LONG: {
-                            long value = ((longOop) arg)->getValue();
-                            D("Copying long: #%d - %ld", localVariableIndex, value);
-                            locals.setLong(localVariableIndex++, value);
-                            break;
-                        }
-                        default:
-                            PANIC("Unknown value type: %d", valueType);
-                            break;
+            } else {
+                switch (arg->getMarkOop()->getOopType()) {
+                    case oopType::INSTANCE_OOP:
+                    case oopType::OBJECT_ARRAY_OOP:
+                    case oopType::TYPE_ARRAY_OOP: {
+                        D("Copying reference: #%d - %p to locals:(%d)", localVariableIndex, arg,
+                            localSlotIndex);
+                        locals.setReference(localSlotIndex++, arg);
+                        break;
                     }
-                    break;
-                }
 
-                default:
-                    PANIC("Unknown oop type");
+                    case oopType::PRIMITIVE_OOP: {
+                        ValueType valueType = descriptorMap[isStatic
+                                                            ? localVariableIndex
+                                                            : localVariableIndex - 1];
+                        switch (valueType) {
+                            case ValueType::INT: {
+                                int value = ((intOop) arg)->getValue();
+                                D("Copying int: #%d - %d to locals:(%d)", localVariableIndex,
+                                    value, localSlotIndex);
+                                locals.setInt(localSlotIndex++, value);
+                                break;
+                            }
+                            case ValueType::FLOAT: {
+                                float value = ((floatOop) arg)->getValue();
+                                D("Copying float: #%d - %f to locals:(%d)", localVariableIndex,
+                                    value, localSlotIndex);
+                                locals.setFloat(localSlotIndex++, value);
+                                break;
+                            }
+                            case ValueType::DOUBLE: {
+                                double value = ((doubleOop) arg)->getValue();
+                                D("Copying double: #%d - %lf to locals:(%d)", localVariableIndex,
+                                    value, localSlotIndex);
+                                locals.setDouble(localSlotIndex, value);
+                                localSlotIndex += 2;
+                                break;
+                            }
+                            case ValueType::LONG: {
+                                jlong value = ((longOop) arg)->getValue();
+                                D("Copying long: #%d - %lld to locals:(%d)", localVariableIndex,
+                                    value, localSlotIndex);
+                                locals.setLong(localSlotIndex, value);
+                                localSlotIndex += 2;
+                                break;
+                            }
+                            default:
+                                PANIC("Unknown value type: %d", valueType);
+                                break;
+                        }
+                        break;
+                    }
+
+                    default:
+                        PANIC("Unknown oop type");
+                }
             }
+            ++localVariableIndex;
         });
 
         // give them to interpreter
