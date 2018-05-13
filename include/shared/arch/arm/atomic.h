@@ -7,6 +7,12 @@
 
 #if KIVM_ARCH_arm
 
+/*
+ * Use the __kuser_memory_barrier helper in the CPU helper page. See
+ * arch/arm/kernel/entry-armv.S in the kernel source for details.
+ */
+#define mbarrier() ((void(*)(void))0xffff0fa0)()
+
 #define COMPARE_AND_SWAP_32(addr, old_val, new_val)       \
 ({                                                        \
     int result, read_val;                                 \
@@ -26,12 +32,7 @@
     result;                                               \
 })
 
-#define COMPARE_AND_SWAP(addr, old_val, new_val)          \
+#define cmpxchg(addr, old_val, new_val)          \
         COMPARE_AND_SWAP_32(addr, old_val, new_val)
-
-#define LOCKWORD_READ(addr) *addr
-#define LOCKWORD_WRITE(addr, value) *(addr) = value
-#define LOCKWORD_COMPARE_AND_SWAP(addr, old_val, new_val) \
-        COMPARE_AND_SWAP(addr, old_val, new_val)
 
 #endif
