@@ -136,29 +136,32 @@ Java_sun_misc_Unsafe_staticFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject 
     return Java_sun_misc_Unsafe_objectFieldOffset(env, javaUnsafe, javaField);
 }
 
+#define DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset, fieldType, field) \
+    int offset = 0; \
+    bool isStatic = false; \
+    std::tie(offset, isStatic) = decodeOffset(encodedOffset); \
+    D("decode offset: %lld -> %d, %s", encodedOffset, offset, isStatic ? "true" : "false"); \
+    auto owner = Resolver::instance(javaOwner); \
+    fieldType field = nullptr; \
+    if (isStatic) { \
+        SHOULD_NOT_REACH_HERE(); \
+    } else { \
+        if (!owner->getFieldValueUnsafe(offset, (oop *) &result)) { \
+            SHOULD_NOT_REACH_HERE(); \
+        } \
+    }
+
 JAVA_NATIVE jint
 Java_sun_misc_Unsafe_getIntVolatile(JNIEnv *env, jobject javaUnsafe, jobject javaOwner, jlong encodedOffset) {
-    int offset = 0;
-    bool isStatic = false;
-    std::tie(offset, isStatic) = decodeOffset(encodedOffset);
-    D("decode offset: %lld -> %d, %s", encodedOffset, offset, isStatic ? "true" : "false");
-
-    auto owner = Resolver::instance(javaOwner);
-    intOop result = nullptr;
-    if (isStatic) {
-        SHOULD_NOT_REACH_HERE();
-
-    } else {
-        if (!owner->getFieldValueUnsafe(offset, (oop *) &result)) {
-            SHOULD_NOT_REACH_HERE();
-        }
-    }
+    DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset, intOop, result);
     return result->getValueVolatile();
 }
 
 JAVA_NATIVE jboolean
 Java_sun_misc_Unsafe_compareAndSwapInt(JNIEnv *env, jobject javaUnsafe,
-                                       jobject javaOwner, jlong javaOffset,
-                                       jint oldInt, jint newInt) {
-    return JNI_TRUE;
+                                       jobject javaOwner, jlong encodedOffset,
+                                       jint expected, jint update) {
+    DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset, intOop, result);
+    auto ptr = result->getValueUnsafe();
+    return JBOOLEAN(cmpxchg(ptr, expected, update) == expected);
 }

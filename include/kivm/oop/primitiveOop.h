@@ -67,6 +67,10 @@ namespace kivm {
         T getValueVolatile() const {
             return *static_cast<const volatile T *>(&_value);
         }
+
+        volatile T *getValueUnsafe() {
+            return static_cast<volatile T *>(&_value);
+        }
     };
 
     class intOopDesc : public primitiveOopDesc<jint> {
