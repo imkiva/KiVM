@@ -308,6 +308,15 @@ namespace kivm {
          */
         bool getInstanceFieldValue(instanceOop receiver, FieldID *fieldID, oop *result);
 
+        /**
+         * Get instance field's value.
+         * @param receiver Java object that contains the wanted field
+         * @param offset field offset
+         * @param result pointer to result
+         * @return {@code true} if found, otherwise {@code false}
+         */
+        bool getInstanceFieldValueUnsafe(instanceOop receiver, int offset, oop *result);
+
         instanceOop newInstance();
 
         bool checkInterface(InstanceKlass *interfaceClass);

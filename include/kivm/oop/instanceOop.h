@@ -43,7 +43,7 @@ namespace kivm {
          * @param fieldID field descriptor
          * @param value field value
          */
-        void setFieldValue(FieldID *fieldID, oop value) {
+        inline void setFieldValue(FieldID *fieldID, oop value) {
             getInstanceClass()->setInstanceFieldValue(this, fieldID, value);
         }
 
@@ -56,10 +56,10 @@ namespace kivm {
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        bool getFieldValue(const String &className,
-                           const String &name,
-                           const String &descriptor,
-                           oop *result) {
+        inline bool getFieldValue(const String &className,
+                                  const String &name,
+                                  const String &descriptor,
+                                  oop *result) {
             return getInstanceClass()
                 ->getInstanceFieldValue(this, className, name, descriptor, result);
         }
@@ -71,8 +71,20 @@ namespace kivm {
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        bool getFieldValue(FieldID *fieldID, oop *result) {
+        inline bool getFieldValue(FieldID *fieldID, oop *result) {
             return getInstanceClass()->getInstanceFieldValue(this, fieldID, result);
+        }
+
+        /**
+         * Mirrored from {@code InstanceKlass}
+         * Get instance field's value.
+         * @param receiver Java object that contains the wanted field
+         * @param offset field offset
+         * @param result pointer to result
+         * @return {@code true} if found, otherwise {@code false}
+         */
+        inline bool getFieldValueUnsafe(int offset, oop *result) {
+            return getInstanceClass()->getInstanceFieldValueUnsafe(this, offset, result);
         }
     };
 }

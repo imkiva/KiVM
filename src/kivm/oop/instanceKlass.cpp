@@ -29,9 +29,9 @@ namespace kivm {
 
     InstanceKlass *InstanceKlass::requireInstanceClass(u2 classInfoIndex) {
         auto *class_info = requireConstant<CONSTANT_Class_info>(_classFile->constant_pool,
-                                                                classInfoIndex);
+            classInfoIndex);
         auto *utf8_info = requireConstant<CONSTANT_Utf8_info>(_classFile->constant_pool,
-                                                              class_info->name_index);
+            class_info->name_index);
 
         Klass *loaded = ClassLoader::requireClass(getClassLoader(), utf8_info->getConstant());
         if (loaded->getClassType() != ClassType::INSTANCE_CLASS) {
@@ -45,7 +45,7 @@ namespace kivm {
 
     void InstanceKlass::initClass() {
         D("%s: initializing static fields",
-          strings::toStdString(getName()).c_str());
+            strings::toStdString(getName()).c_str());
 
         for (auto &e : this->_staticFields) {
             auto field = e.second->_field;
@@ -53,7 +53,7 @@ namespace kivm {
             // static non-final fields should be initialized with specified values.
             if (field->isFinal()) {
                 if (!helperInitConstantField(_staticFieldValues, e.second->_offset,
-                                             _classFile->constant_pool, field)) {
+                    _classFile->constant_pool, field)) {
                     // TODO: throw VerifyError
                     PANIC("java.lang.VerifyError: static final fields must be initialized");
                 }
@@ -62,7 +62,7 @@ namespace kivm {
             }
         }
         D("%s: class inited",
-          strings::toStdString(getName()).c_str());
+            strings::toStdString(getName()).c_str());
     }
 
     void InstanceKlass::linkClass() {
@@ -87,7 +87,7 @@ namespace kivm {
 
         this->setClassState(ClassState::LINKED);
         D("%s: class linked",
-          strings::toStdString(getName()).c_str());
+            strings::toStdString(getName()).c_str());
     }
 
     void InstanceKlass::linkSuperClass(cp_info **pool) {
@@ -165,8 +165,8 @@ namespace kivm {
         }
 
         D("%s: Extended instance field count: %d",
-          strings::toStdString(getName()).c_str(),
-          instanceFieldIndex);
+            strings::toStdString(getName()).c_str(),
+            instanceFieldIndex);
 
         // link our fields
         int staticFieldIndex = 0;
@@ -177,18 +177,18 @@ namespace kivm {
 
             bool isStatic = field->isStatic();
             D("%s: New %s field (final: %s): #%-d %s",
-              strings::toStdString(getName()).c_str(),
-              isStatic ? "static" : "instance",
-              field->isFinal() ? "true" : "false",
-              isStatic ? staticFieldIndex : instanceFieldIndex,
-              strings::toStdString(Field::makeIdentity(this, field)).c_str());
+                strings::toStdString(getName()).c_str(),
+                isStatic ? "static" : "instance",
+                field->isFinal() ? "true" : "false",
+                isStatic ? staticFieldIndex : instanceFieldIndex,
+                strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
             if (isStatic) {
                 _staticFields.insert(make_pair(Field::makeIdentity(this, field),
-                                               new FieldID(staticFieldIndex++, field)));
+                    new FieldID(staticFieldIndex++, field)));
             } else {
                 _instanceFields.insert(make_pair(Field::makeIdentity(this, field),
-                                                 new FieldID(instanceFieldIndex++, field)));
+                    new FieldID(instanceFieldIndex++, field)));
             }
         }
 
@@ -269,48 +269,48 @@ namespace kivm {
                                                const String &name,
                                                const String &descriptor) const {
         RETURN_IF(iter, this->_staticFields,
-                  KEY_MAKER(className, name, descriptor),
-                  iter->second,
-                  nullptr);
+            KEY_MAKER(className, name, descriptor),
+            iter->second,
+            nullptr);
     }
 
     FieldID *InstanceKlass::getInstanceFieldInfo(const String &className,
                                                  const String &name,
                                                  const String &descriptor) const {
         RETURN_IF(iter, this->_instanceFields,
-                          KEY_MAKER(className, name, descriptor),
-                          iter->second,
-                          nullptr);
+            KEY_MAKER(className, name, descriptor),
+            iter->second,
+            nullptr);
     }
 
     Method *InstanceKlass::getThisClassMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_allMethods,
-                  ND_KEY_MAKER(name, descriptor),
-                  iter->second, nullptr);
+            ND_KEY_MAKER(name, descriptor),
+            iter->second, nullptr);
     }
 
     Method *InstanceKlass::getVirtualMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_vtable,
-                  ND_KEY_MAKER(name, descriptor),
-                  iter->second, nullptr);
+            ND_KEY_MAKER(name, descriptor),
+            iter->second, nullptr);
     }
 
     Method *InstanceKlass::getNonVirtualMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_pftable,
-                  ND_KEY_MAKER(name, descriptor),
-                  iter->second, nullptr);
+            ND_KEY_MAKER(name, descriptor),
+            iter->second, nullptr);
     }
 
     Method *InstanceKlass::getStaticMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_stable,
-                  ND_KEY_MAKER(name, descriptor),
-                  iter->second, nullptr);
+            ND_KEY_MAKER(name, descriptor),
+            iter->second, nullptr);
     }
 
     InstanceKlass *InstanceKlass::getInterface(const String &interfaceClassName) const {
         RETURN_IF(iter, this->_interfaces,
-                  interfaceClassName,
-                  iter->second, nullptr);
+            interfaceClassName,
+            iter->second, nullptr);
     }
 
     void InstanceKlass::setStaticFieldValue(const String &className,
@@ -328,13 +328,13 @@ namespace kivm {
         }
 
         D("Set field %s::%s(%s) (slot: %d, max: %zd) to %p in %s",
-          strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
-          strings::toStdString(fieldID->_field->getName()).c_str(),
-          strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
-          fieldID->_offset,
-          this->_staticFieldValues.size(),
-          value,
-          strings::toStdString(this->getName()).c_str());
+            strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
+            strings::toStdString(fieldID->_field->getName()).c_str(),
+            strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
+            fieldID->_offset,
+            this->_staticFieldValues.size(),
+            value,
+            strings::toStdString(this->getName()).c_str());
         this->_staticFieldValues[fieldID->_offset] = value;
     }
 
@@ -371,10 +371,10 @@ namespace kivm {
         }
 
         D("Set field %s::%s(%s) to %p",
-          strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
-          strings::toStdString(fieldID->_field->getName()).c_str(),
-          strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
-          value);
+            strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
+            strings::toStdString(fieldID->_field->getName()).c_str(),
+            strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
+            value);
         receiver->_instanceFieldValues[fieldID->_offset] = value;
     }
 
@@ -393,6 +393,15 @@ namespace kivm {
         }
 
         *result = receiver->_instanceFieldValues[fieldID->_offset];
+        return true;
+    }
+
+    bool InstanceKlass::getInstanceFieldValueUnsafe(instanceOop receiver, int offset, oop *result) {
+        if (offset >= receiver->_instanceFieldValues.size()) {
+            return false;
+        }
+
+        *result = receiver->_instanceFieldValues[offset];
         return true;
     }
 

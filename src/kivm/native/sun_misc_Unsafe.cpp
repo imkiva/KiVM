@@ -6,7 +6,9 @@
 #include <kivm/native/classNames.h>
 #include <kivm/native/java_lang_String.h>
 #include <kivm/oop/mirrorOop.h>
+#include <kivm/oop/primitiveOop.h>
 #include <kivm/bytecode/execution.h>
+#include <shared/atomic.h>
 #include <tuple>
 
 using namespace kivm;
@@ -49,28 +51,32 @@ static std::tuple<int, bool> decodeOffset(jlong encoded) {
     return std::make_tuple((int) ((encoded - 1) / 2) - 1, false);
 };
 
-JAVA_NATIVE void Java_sun_misc_Unsafe_registerNatives(JNIEnv *env, jclass sun_misc_Unsafe) {
+JAVA_NATIVE void
+Java_sun_misc_Unsafe_registerNatives(JNIEnv *env, jclass sun_misc_Unsafe) {
     D("sun/misc/Unsafe.registerNatives()V");
 }
 
-JAVA_NATIVE jint Java_sun_misc_Unsafe_arrayBaseOffset(JNIEnv *env, jobject javaUnsafe,
-                                                      jobject mirror) {
+JAVA_NATIVE jint
+Java_sun_misc_Unsafe_arrayBaseOffset(JNIEnv *env, jobject javaUnsafe, jobject mirror) {
     D("sun/misc/Unsafe.arrayBaseOffset(Ljava/lang/Class;)I");
     return 0;
 }
 
-JAVA_NATIVE jint Java_sun_misc_Unsafe_arrayIndexScale(JNIEnv *env, jobject javaUnsafe,
-                                                      jobject mirror) {
+JAVA_NATIVE jint
+Java_sun_misc_Unsafe_arrayIndexScale(JNIEnv *env, jobject javaUnsafe,
+                                     jobject mirror) {
     D("sun/misc/Unsafe.arrayIndexScale(Ljava/lang/Class;)I");
     return sizeof(intptr_t);
 }
 
-JAVA_NATIVE jint Java_sun_misc_Unsafe_addressSize(JNIEnv *env, jobject javaUnsafe) {
+JAVA_NATIVE jint
+Java_sun_misc_Unsafe_addressSize(JNIEnv *env, jobject javaUnsafe) {
     D("sun/misc/Unsafe.addressSize()I");
     return sizeof(intptr_t);
 }
 
-JAVA_NATIVE jlong Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject javaField) {
+JAVA_NATIVE jlong
+Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject javaField) {
     auto fieldOop = Resolver::instance(javaField);
     instanceOop p = nullptr;
 
@@ -125,7 +131,8 @@ JAVA_NATIVE jlong Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject ja
     return n;
 }
 
-JAVA_NATIVE jlong Java_sun_misc_Unsafe_staticFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject javaField) {
+JAVA_NATIVE jlong
+Java_sun_misc_Unsafe_staticFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject javaField) {
     return Java_sun_misc_Unsafe_objectFieldOffset(env, javaUnsafe, javaField);
 }
 
@@ -135,5 +142,23 @@ Java_sun_misc_Unsafe_getIntVolatile(JNIEnv *env, jobject javaUnsafe, jobject jav
     bool isStatic = false;
     std::tie(offset, isStatic) = decodeOffset(encodedOffset);
     D("decode offset: %lld -> %d, %s", encodedOffset, offset, isStatic ? "true" : "false");
-    SHOULD_NOT_REACH_HERE();
+
+    auto owner = Resolver::instance(javaOwner);
+    intOop result = nullptr;
+    if (isStatic) {
+        SHOULD_NOT_REACH_HERE();
+
+    } else {
+        if (!owner->getFieldValueUnsafe(offset, (oop *) &result)) {
+            SHOULD_NOT_REACH_HERE();
+        }
+    }
+    return result->getValueVolatile();
+}
+
+JAVA_NATIVE jboolean
+Java_sun_misc_Unsafe_compareAndSwapInt(JNIEnv *env, jobject javaUnsafe,
+                                       jobject javaOwner, jlong javaOffset,
+                                       jint oldInt, jint newInt) {
+    return JNI_TRUE;
 }

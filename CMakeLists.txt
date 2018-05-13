@@ -39,7 +39,7 @@ if (DEFINED ENV{KIVM_DEBUG_ALL})
     add_definitions(-DKIVM_CLASSPATH_DEBUG)
 endif ()
 
-#### Check platform
+#### check platform
 if (WIN32)
     add_definitions(-DKIVM_PLATFORM_WINDOWS)
     aux_source_directory(src/shared/platform/windows KIVM_PLATFORM_SRC)
@@ -49,6 +49,24 @@ elseif (UNIX)
 else ()
     message(STATUS "Cannot detect current system, disabling platform related features.")
 endif ()
+
+#### check arch
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "[xX]86_64|(amd|AMD)64")
+    set(KIVM_ARCH_x86_64 1)
+    set(ARCH_NAME x86_64)
+elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "[xX]86|i.86")
+    set(KIVM_ARCH_x86 1)
+    set(ARCH_NAME x86)
+elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "arm(v.*)?")
+    set(KIVM_ARCH_arm 1)
+    set(ARCH_NAME arm)
+elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "(AARCH|aarch)64")
+    set(KIVM_ARCH_aarch64 1)
+    set(ARCH_NAME aarch64)
+endif ()
+
+aux_source_directory(include/shared/arch/${ARCH_NAME} KIVM_ARCH_SRC)
+message(STATUS "System arch: ${ARCH_NAME}")
 
 #### libffi
 find_package(FFI REQUIRED)
@@ -79,7 +97,6 @@ if (HAVE_ZIP_H)
 else ()
     message(STATUS "libzip not found: jar class loading disabled")
 endif ()
-
 
 #### post configuration
 add_definitions("-DHAVE_CONFIG_H")
@@ -204,10 +221,12 @@ set(SOURCE_FILES
         src/kivm/native/sun_reflect_Reflection.cpp
         src/kivm/native/java_security_AccessController.cpp
         src/kivm/native/java_lang_Throwable.cpp
-        src/kivm/oop/reflection.cpp include/kivm/classfile/annotation.h src/kivm/classfile/annotation.cpp)
+        src/kivm/oop/reflection.cpp include/kivm/classfile/annotation.h
+        src/kivm/classfile/annotation.cpp
+        include/shared/atomic.h)
 
 #### libkivm
-add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC})
+add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})
 target_link_libraries(kivm ffi)
 IF (UNIX)
     target_link_libraries(kivm pthread)
