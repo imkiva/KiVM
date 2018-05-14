@@ -44,13 +44,13 @@
 #include <shared/zip/libzippp.h>
 #include <shared/string.h>
 
-#ifdef HAVE_ZIP_FLAGS_T
+#if HAVE_ZIP_FLAGS_T
 #define ZIPPP_ZIP_FLAGS_T zip_flags_t
 #else
 #define ZIPPP_ZIP_FLAGS_T unsigned int
 #endif
 
-#ifdef HAVE_ZIP_FL_ENC_GUESS
+#if HAVE_ZIP_FL_ENC_GUESS
 #define ZIPPP_ZIP_INITIAL_FLAGS ZIP_FL_ENC_GUESS
 #else
 #define ZIPPP_ZIP_INITIAL_FLAGS 0
