@@ -9,6 +9,7 @@
 #cmakedefine01 KIVM_ARCH_x86_64
 #cmakedefine01 KIVM_ARCH_arm
 #cmakedefine01 KIVM_ARCH_aarch64
+#define KIVM_ARCH_NAME L"@ARCH_NAME@"
 
 #endif
 
