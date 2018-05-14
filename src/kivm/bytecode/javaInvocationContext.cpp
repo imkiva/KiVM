@@ -63,6 +63,8 @@ namespace kivm {
             }
         }
 
+        bool x = _method->getName() == L"charsetForName";
+
         if (resolveTwice && thisObject != nullptr) {
             auto resolvedVirtualMethod = resolveVirtualMethod(thisObject, _method);
             if (resolvedVirtualMethod == nullptr) {
