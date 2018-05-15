@@ -18,9 +18,6 @@ namespace kivm {
         Method *resolved = nullptr;
         if (thisObject->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
             auto instanceClass = (InstanceKlass *) thisObject->getClass();
-            // FIXME: class B extends abstract class A, class C extends class B
-            // FIXME: cannot find abstract method declared in A
-            // FIXME: class B implements it and class C uses the implementation provided by B
             resolved = instanceClass->getVirtualMethod(tagMethod->getName(), tagMethod->getDescriptor());
         }
         return resolved;
