@@ -137,16 +137,19 @@ namespace kivm {
             const auto &pair = make_pair(id, method);
             _allMethods.insert(pair);
 
-            if (method->isStatic()) {
-                _stable.insert(pair);
-
-            } else if (method->isFinal() || method->isPrivate()) {
-                _pftable.insert(pair);
+            if (_vtable.find(id) != _vtable.end()) {
+                _vtable[id] = method;
 
             } else {
-                // Do not use _vtable.insert()
-                // This may override superclass's virtual methods.
-                _vtable[id] = method;
+                if (method->isStatic()) {
+                    _stable.insert(pair);
+
+                } else if (method->isFinal() || method->isPrivate()) {
+                    _pftable.insert(pair);
+
+                } else {
+                    _vtable.insert(pair);
+                }
             }
         }
     }
