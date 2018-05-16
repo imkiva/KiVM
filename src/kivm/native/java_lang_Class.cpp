@@ -348,3 +348,38 @@ JAVA_NATIVE jboolean Java_java_lang_Class_isAssignableFrom(JNIEnv *env,
 
     return JBOOLEAN(Execution::instanceOf(lhsKlass, rhsKlass));
 }
+
+JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_Class,
+                                                 jstring javaName,
+                                                 jboolean initialize,
+                                                 jobject javaClassLoader,
+                                                 jobject javaCallerClass_mirror) {
+    if (javaClassLoader != nullptr) {
+        // TODO: support app class loader
+        PANIC("More work to do");
+    }
+
+    auto nameOop = Resolver::instance(javaName);
+    if (nameOop == nullptr) {
+        PANIC("java.lang.NullPointerException");
+    }
+
+    const String &fixedName = strings::replaceAll(java::lang::String::toNativeString(nameOop),
+        Global::DOT, Global::SLASH);
+    D("Class.forName0(): %s", strings::toStdString(fixedName).c_str());
+
+    auto klass = BootstrapClassLoader::get()->loadClass(fixedName);
+    if (klass == nullptr || klass->getClassType() != ClassType::INSTANCE_CLASS) {
+        PANIC("java.lang.ClassNotFoundException: %s", strings::toStdString(fixedName).c_str());
+    }
+
+    if (initialize) {
+        auto thread = (JavaThread *) Threads::currentThread();
+        if (thread == nullptr) {
+            PANIC("thread cannot be null");
+        }
+        Execution::initializeClass(thread, (InstanceKlass *) klass);
+    }
+
+    return klass;
+}
