@@ -383,3 +383,10 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
 
     return klass->getJavaMirror();
 }
+
+JAVA_NATIVE jboolean Java_java_lang_Class_isInterface(JNIEnv *env, jobject java_lang_Class_mirror) {
+    auto mirrorOop = Resolver::mirror(java_lang_Class_mirror);
+    return JBOOLEAN(mirrorOop != nullptr
+                    && mirrorOop->getMirrorTarget() != nullptr
+                    && mirrorOop->getMirrorTarget()->isInterface());
+}
