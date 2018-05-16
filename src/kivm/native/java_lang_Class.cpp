@@ -381,5 +381,5 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
         Execution::initializeClass(thread, (InstanceKlass *) klass);
     }
 
-    return klass;
+    return klass->getJavaMirror();
 }
