@@ -31,9 +31,6 @@
     case OPC_##opcode:
 #endif
 
-#undef D
-#define D(...)
-
 #define GOTO_ABSOLUTE(newPc) \
                     pc = newPc
 
@@ -1490,10 +1487,11 @@ namespace kivm {
                         stack.clear();
                         stack.pushReference(exceptionOop);
                         GOTO_ABSOLUTE(handler);
-                    }
 
-                    D("athrow: exception handler not found, rethrowing it to caller");
-                    return exceptionOop;
+                    } else {
+                        D("athrow: exception handler not found, rethrowing it to caller");
+                        return exceptionOop;
+                    }
                     NEXT();
                 }
                 OPCODE(CHECKCAST)

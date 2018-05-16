@@ -36,6 +36,9 @@ JAVA_NATIVE jobject Java_java_security_AccessController_doPrivileged(JNIEnv *env
     oop result = InvocationContext::invokeWithArgs(currentThread, run, {actionOop});
 
     // TODO: check whether exception occurred
+    if (currentThread->isExceptionOccurred()) {
+        PANIC("doPrivileged(): exception occurred");
+    }
     return result;
 }
 
