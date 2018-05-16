@@ -148,7 +148,7 @@ namespace kivm {
                 strings::toStdString(returnTo->getDescriptor()).c_str());
 
         } else {
-            D("returned from %s.%s:%s to the top method",
+            D("returned from %s.%s:%s to the Java Virtual Machine",
                 strings::toStdString(_method->getClass()->getName()).c_str(),
                 strings::toStdString(_method->getName()).c_str(),
                 strings::toStdString(_method->getDescriptor()).c_str());
