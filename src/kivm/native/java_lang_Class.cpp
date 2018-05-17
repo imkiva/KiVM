@@ -264,7 +264,7 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env,
             continue;
         }
 
-        fields.push_back(newJavaLangReflectField(fieldId));
+        fields.push_back(newJavaFieldObject(fieldId));
     }
 
     for (const auto &e : instanceClass->getInstanceFields()) {
@@ -273,7 +273,7 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env,
             continue;
         }
 
-        fields.push_back(newJavaLangReflectField(fieldId));
+        fields.push_back(newJavaFieldObject(fieldId));
     }
 
     auto fieldOopArray = arrayClass->newInstance((int) fields.size());
@@ -289,7 +289,26 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredMethods0(JNIEnv *env,
     // TODO: reflection support
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/reflect/Method;");
-    return arrayClass->newInstance(0);
+
+    std::vector<instanceOop> methods;
+    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
+    auto mirrorTarget = classMirror->getMirrorTarget();
+
+    if (mirrorTarget->getClassType() != ClassType::INSTANCE_CLASS) {
+        PANIC("native: attempt to get fields of non-instance oops");
+    }
+
+    auto instanceClass = (InstanceKlass *) mirrorTarget;
+
+    for (const auto &e : instanceClass->getDeclaredMethods()) {
+        methods.push_back(newJavaMethodObject(e.second));
+    }
+
+    auto methodOopArray = arrayClass->newInstance((int) methods.size());
+    for (int i = 0; i < methods.size(); ++i) {
+        methodOopArray->setElementAt(i, methods[i]);
+    }
+    return methodOopArray;
 }
 
 JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *env,
@@ -298,7 +317,29 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *e
     // TODO: reflection support
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/reflect/Constructor;");
-    return arrayClass->newInstance(0);
+
+    std::vector<instanceOop> ctors;
+    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
+    auto mirrorTarget = classMirror->getMirrorTarget();
+
+    if (mirrorTarget->getClassType() != ClassType::INSTANCE_CLASS) {
+        PANIC("native: attempt to get fields of non-instance oops");
+    }
+
+    auto instanceClass = (InstanceKlass *) mirrorTarget;
+
+    for (const auto &e : instanceClass->getDeclaredMethods()) {
+        auto methodId = e.second;
+        if (methodId->_method->getName() == L"<init>") {
+            ctors.push_back(newJavaConstructorObject(e.second));
+        }
+    }
+
+    auto ctorOopArray = arrayClass->newInstance((int) ctors.size());
+    for (int i = 0; i < ctors.size(); ++i) {
+        ctorOopArray->setElementAt(i, ctors[i]);
+    }
+    return ctorOopArray;
 }
 
 JAVA_NATIVE jstring Java_java_lang_Class_getName0(JNIEnv *env, jobject java_lang_Class_mirror) {

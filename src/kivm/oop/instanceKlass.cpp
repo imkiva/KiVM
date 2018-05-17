@@ -128,17 +128,22 @@ namespace kivm {
             this->_vtable = sc->_vtable;
         }
 
-        for (int i = 0; i < _classFile->methods_count; ++i) {
+        auto methodSlot = (int) this->_vtable.size();
+
+        for (int i = 0; i < _classFile->methods_count; ++i, ++methodSlot) {
             auto *method = new Method(this, _classFile->methods + i);
             method->linkMethod(pool);
             MethodPool::add(method);
 
+            auto methodID = new MethodID(methodSlot, method);
             const auto &id = Method::makeIdentity(method);
-            const auto &pair = make_pair(id, method);
+            const auto &pair = make_pair(id, methodID);
             _allMethods.insert(pair);
 
-            if (_vtable.find(id) != _vtable.end()) {
-                _vtable[id] = method;
+            decltype(_vtable)::iterator iter;
+            if ((iter = _vtable.find(id)) != _vtable.end()) {
+                methodID->_offset = iter->second->_offset;
+                _vtable[id] = methodID;
 
             } else {
                 if (method->isStatic()) {
@@ -289,25 +294,25 @@ namespace kivm {
     Method *InstanceKlass::getThisClassMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_allMethods,
             ND_KEY_MAKER(name, descriptor),
-            iter->second, nullptr);
+            iter->second->_method, nullptr);
     }
 
     Method *InstanceKlass::getVirtualMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_vtable,
             ND_KEY_MAKER(name, descriptor),
-            iter->second, nullptr);
+            iter->second->_method, nullptr);
     }
 
     Method *InstanceKlass::getNonVirtualMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_pftable,
             ND_KEY_MAKER(name, descriptor),
-            iter->second, nullptr);
+            iter->second->_method, nullptr);
     }
 
     Method *InstanceKlass::getStaticMethod(const String &name, const String &descriptor) const {
         RETURN_IF(iter, this->_stable,
             ND_KEY_MAKER(name, descriptor),
-            iter->second, nullptr);
+            iter->second->_method, nullptr);
     }
 
     InstanceKlass *InstanceKlass::getInterface(const String &interfaceClassName) const {

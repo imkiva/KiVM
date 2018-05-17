@@ -5,6 +5,7 @@
 
 #include <kivm/oop/oopfwd.h>
 #include <kivm/oop/field.h>
+#include <kivm/oop/method.h>
 
 namespace kivm {
     struct FieldID {
@@ -13,6 +14,15 @@ namespace kivm {
 
         FieldID(int _offset, Field *_field)
             : _offset(_offset), _field(_field) {
+        }
+    };
+
+    struct MethodID {
+        int _offset;
+        Method *_method;
+
+        MethodID(int _offset, Method *_method)
+            : _offset(_offset), _method(_method) {
         }
     };
 
@@ -139,5 +149,9 @@ namespace kivm {
         }
     }
 
-    instanceOop newJavaLangReflectField(FieldID *fieldID);
+    instanceOop newJavaFieldObject(FieldID *fieldID);
+
+    instanceOop newJavaMethodObject(MethodID *method);
+
+    instanceOop newJavaConstructorObject(MethodID *method);
 }

@@ -47,25 +47,25 @@ namespace kivm {
          * all methods in this class.
          * map<name + " " + descriptor, method>
          */
-        std::unordered_map<String, Method *> _allMethods;
+        std::unordered_map<String, MethodID *> _allMethods;
 
         /**
          * virtual methods (public or protected methods).
          * map<name + " " + descriptor, method>
          */
-        std::unordered_map<String, Method *> _vtable;
+        std::unordered_map<String, MethodID *> _vtable;
 
         /**
          * private or final methods.
          * map<name + " " + descriptor, method>
          */
-        std::unordered_map<String, Method *> _pftable;
+        std::unordered_map<String, MethodID *> _pftable;
 
         /**
          * static methods.
          * map<name + " " + descriptor, method>
          */
-        std::unordered_map<String, Method *> _stable;
+        std::unordered_map<String, MethodID *> _stable;
 
         /**
          * static fields.
@@ -125,7 +125,7 @@ namespace kivm {
             return &this->_runtimePool;
         }
 
-        inline const std::unordered_map<String, Method *> &getVtable() const {
+        inline const std::unordered_map<String, MethodID *> &getVtable() const {
             return _vtable;
         }
 
@@ -139,6 +139,10 @@ namespace kivm {
 
         inline const std::unordered_map<String, FieldID *> &getInstanceFields() {
             return _instanceFields;
+        }
+
+        inline const std::unordered_map<String, MethodID*> &getDeclaredMethods() {
+            return _allMethods;
         }
 
         /**

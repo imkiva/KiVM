@@ -31,6 +31,9 @@
     case OPC_##opcode:
 #endif
 
+#undef D
+#define D(...)
+
 #define GOTO_ABSOLUTE(newPc) \
                     pc = newPc
 
