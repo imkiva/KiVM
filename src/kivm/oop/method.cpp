@@ -69,7 +69,7 @@ namespace kivm {
             }
         }
 
-        static void argumentListParser(std::vector<mirrorOop> argumentTypes, bool *flag,
+        static void argumentListParser(std::vector<mirrorOop> *argumentTypes, bool *flag,
                                        const String &desc) {
             if (*flag) {
                 return;
@@ -164,12 +164,11 @@ namespace kivm {
             }
         }
 
-        static void returnTypeParser(mirrorOop *returnType, bool *flag,
+        static void returnTypeParser(mirrorOop *returnType,
                                      const String &desc) {
-            if (*flag) {
+            if (*returnType != nullptr) {
                 return;
             }
-            *flag = true;
 
             const String &returnTypeDesc = desc.substr(desc.find_first_of(L')') + 1);
             wchar_t ch = returnTypeDesc[0];
@@ -245,6 +244,7 @@ namespace kivm {
         this->_returnTypeResolved = false;
         this->_nativePointer = nullptr;
         this->_runtimeVisibleAnnos = nullptr;
+        this->_returnClassType = nullptr;
     }
 
     bool Method::isPcCorrect(u4 pc) {
@@ -465,12 +465,12 @@ namespace kivm {
     }
 
     mirrorOop Method::getReturnClassType() {
-        PANIC("parse return type");
-        return nullptr;
+        helper::returnTypeParser(&_returnClassType, getDescriptor());
+        return _returnClassType;
     }
 
     const std::vector<mirrorOop> &Method::getArgumentClassTypes() {
-        helper::argumentListParser(_argumentClassTypes, &_argumentClassTypesResolved,
+        helper::argumentListParser(&_argumentClassTypes, &_argumentClassTypesResolved,
             getDescriptor());
         return _argumentClassTypes;
     }
