@@ -83,7 +83,28 @@ namespace kivm {
     }
 
     instanceOop newJavaConstructorObject(MethodID *method) {
+        static auto constructorClass = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/lang/reflect/Constructor");
+
+        static auto classField = constructorClass->getInstanceFieldInfo(J_METHOD,
+            L"clazz", L"Ljava/lang/Class;");
+        static auto slotField = constructorClass->getInstanceFieldInfo(J_METHOD,
+            L"slot", L"I");
+        static auto nameField = constructorClass->getInstanceFieldInfo(J_METHOD,
+            L"name", L"Ljava/lang/String;");
+        static auto parameterTypesField = constructorClass->getInstanceFieldInfo(J_METHOD,
+            L"parameterTypes", L"[Ljava/lang/Class;");
+        static auto exceptionTypesField = constructorClass->getInstanceFieldInfo(J_METHOD,
+            L"exceptionTypes", L"[Ljava/lang/Class;");
+        static auto modifiersField = constructorClass->getInstanceFieldInfo(J_METHOD,
+            L"modifiers", L"I");
+        static auto signatureField = constructorClass->getInstanceFieldInfo(J_METHOD,
+            L"signature", L"Ljava/lang/String;");
+        static auto overrideField = constructorClass->getInstanceFieldInfo(J_ACCESSIBLE_OBJECT,
+            L"override", L"Z");
+
         PANIC("more work to do");
-        return nullptr;
+        instanceOop methodOop = constructorClass->newInstance();
+        return methodOop;
     }
 }
