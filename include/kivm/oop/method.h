@@ -13,8 +13,6 @@
 #include <vector>
 
 namespace kivm {
-    class Klass;
-
     class InstanceKlass;
 
     class method_info;
