@@ -103,6 +103,8 @@ namespace kivm {
         static auto overrideField = constructorClass->getInstanceFieldInfo(J_ACCESSIBLE_OBJECT,
             L"override", L"Z");
 
+        method->_method->getArgumentClassTypes();
+
         PANIC("more work to do");
         instanceOop methodOop = constructorClass->newInstance();
         return methodOop;

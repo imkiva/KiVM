@@ -7,8 +7,203 @@
 #include <kivm/bytecode/execution.h>
 #include <shared/lock.h>
 #include <sstream>
+#include <kivm/native/java_lang_Class.h>
 
 namespace kivm {
+    namespace helper {
+        static void argumentListParser(std::vector<ValueType> *valueTypes, bool *flag,
+                                       const String &desc, bool wrap) {
+            if (*flag) {
+                return;
+            }
+            *flag = true;
+
+            bool isArray = false;
+
+            for (int i = 0; i < desc.size(); ++i) {
+                wchar_t ch = desc[i];
+                switch (ch) {
+                    case L'[' :
+                        isArray = true;
+                        break;
+
+                    case L'B':    // byte
+                    case L'Z':    // boolean
+                    case L'S':    // short
+                    case L'C':    // char
+                    case L'I':    // int
+                    case L'J':    // long
+                    case L'F':    // float
+                    case L'D':    // double
+                        if (isArray) {
+                            valueTypes->push_back(ValueType::ARRAY);
+                            isArray = false;
+                        } else {
+                            valueTypes->push_back(wrap
+                                                  ? primitiveTypeToValueType(ch)
+                                                  : primitiveTypeToValueTypeNoWrap(ch));
+                        }
+                        break;
+
+                    case L'L':
+                        while (desc[i] != ';') {
+                            ++i;
+                        }
+                        if (isArray) {
+                            valueTypes->push_back(ValueType::ARRAY);
+                            isArray = false;
+                        } else {
+                            valueTypes->push_back(ValueType::OBJECT);
+                        }
+                        break;
+
+                    case L'(':
+                        break;
+
+                    case L')':
+                        return;
+
+                    default:
+                        PANIC("Unrecognized char %c in descriptor", ch);
+                }
+            }
+        }
+
+        static void argumentListParser(std::vector<mirrorOop> argumentTypes, bool *flag,
+                                       const String &desc) {
+            if (*flag) {
+                return;
+            }
+            *flag = true;
+
+            int startIndex = 0;
+            bool inClassName = false;
+
+            for (int i = 0; i < desc.size(); ++i) {
+                wchar_t ch = desc[i];
+                if (ch == L')') {
+                    break;
+                }
+
+                switch (ch) {
+                    case L'(':
+                    case L'[' :
+                        startIndex = i;
+                        break;
+
+                    case L'L':
+                        inClassName = true;
+                        startIndex = i;
+                        break;
+
+                    case L'B':    // byte
+                    case L'Z':    // boolean
+                    case L'S':    // short
+                    case L'C':    // char
+                    case L'I':    // int
+                    case L'J':    // long
+                    case L'F':    // float
+                    case L'D':    // double
+                    {
+                        const auto &part = desc.substr(startIndex, i - startIndex);
+                        D("oop: parsing arg list: primitive type: %s",
+                            strings::toStdString(part).c_str());
+                        startIndex = i;
+                        break;
+                    }
+
+                    case ';':
+                        if (inClassName) {
+                            inClassName = false;
+                            const auto &part = desc.substr(startIndex, i - startIndex);
+                            D("oop: parsing arg list: reference type: %s",
+                                strings::toStdString(part).c_str());
+                        }
+                        break;
+
+                    default:
+                        PANIC("Unrecognized char %c in descriptor", ch);
+                }
+            }
+        }
+
+        static void returnTypeParser(ValueType *returnType, bool *flag,
+                                     const String &desc, bool wrap) {
+            if (*flag) {
+                return;
+            }
+            *flag = true;
+
+            const String &returnTypeDesc = desc.substr(desc.find_first_of(L')') + 1);
+            wchar_t ch = returnTypeDesc[0];
+            switch (ch) {
+                case L'B':    // byte
+                case L'Z':    // boolean
+                case L'S':    // short
+                case L'C':    // char
+                case L'I':    // int
+                case L'J':    // long
+                case L'F':    // float
+                case L'D':    // double
+                case L'V':    // void
+                    *returnType = wrap
+                                  ? primitiveTypeToValueType(ch)
+                                  : primitiveTypeToValueTypeNoWrap(ch);
+                    break;
+
+                case L'L':
+                    *returnType = ValueType::OBJECT;
+                    break;
+
+                case L'[':
+                    *returnType = ValueType::ARRAY;
+                    break;
+
+                default:
+                    PANIC("Unrecognized char %c in descriptor", ch);
+            }
+        }
+
+        static void returnTypeParser(mirrorOop *returnType, bool *flag,
+                                     const String &desc) {
+            if (*flag) {
+                return;
+            }
+            *flag = true;
+
+            const String &returnTypeDesc = desc.substr(desc.find_first_of(L')') + 1);
+            wchar_t ch = returnTypeDesc[0];
+            switch (ch) {
+                case L'B':    // byte
+                case L'Z':    // boolean
+                case L'S':    // short
+                case L'C':    // char
+                case L'I':    // int
+                case L'J':    // long
+                case L'F':    // float
+                case L'D':    // double
+                case L'V':    // void
+                {
+                    *returnType = java::lang::Class::findPrimitiveTypeMirror(returnTypeDesc);
+                    break;
+                }
+
+                case L'L':
+                case L'[': {
+                    auto returnClass = BootstrapClassLoader::get()->loadClass(returnTypeDesc);
+                    if (returnClass == nullptr) {
+                        PANIC("cannot parse return type of method");
+                    }
+                    *returnType = returnClass->getJavaMirror();
+                    break;
+                }
+
+                default:
+                    PANIC("Unrecognized char %c in descriptor", ch);
+            }
+        }
+    }
+
     static Lock &get_method_pool_lock() {
         static Lock _method_pool_lock;
         return _method_pool_lock;
@@ -180,114 +375,15 @@ namespace kivm {
         _codeBlob.init(_codeAttr->code, _codeAttr->code_length);
     }
 
-    static void getArgumentValueTypesHelper(std::vector<ValueType> *valueTypes, bool *flag,
-                                            const String &desc, bool wrap) {
-        if (*flag) {
-            return;
-        }
-        *flag = true;
-
-        bool isArray = false;
-
-        for (int i = 0; i < desc.size(); ++i) {
-            wchar_t ch = desc[i];
-            switch (ch) {
-                case L'[' :
-                    isArray = true;
-                    break;
-
-                case L'B':    // byte
-                case L'Z':    // boolean
-                case L'S':    // short
-                case L'C':    // char
-                case L'I':    // int
-                case L'J':    // long
-                case L'F':    // float
-                case L'D':    // double
-                    if (isArray) {
-                        valueTypes->push_back(ValueType::ARRAY);
-                        isArray = false;
-                    } else {
-                        valueTypes->push_back(wrap
-                                              ? primitiveTypeToValueType(ch)
-                                              : primitiveTypeToValueTypeNoWrap(ch));
-                    }
-                    break;
-
-                case L'L':
-                    while (desc[i] != ';') {
-                        ++i;
-                    }
-                    if (isArray) {
-                        valueTypes->push_back(ValueType::ARRAY);
-                        isArray = false;
-                    } else {
-                        valueTypes->push_back(ValueType::OBJECT);
-                    }
-                    break;
-
-                case L'(':
-                    break;
-
-                case L')':
-                    return;
-
-                default:
-                    PANIC("Unrecognized char %c in descriptor", ch);
-            }
-        }
-    }
-
-    static void getReturnTypeHelper(ValueType *returnType, bool *flag,
-                                    const String &desc, bool wrap) {
-        if (*flag) {
-            return;
-        }
-        *flag = true;
-
-        const String &returnTypeDesc = desc.substr(desc.find_first_of(L')') + 1);
-        int i = 0;
-        wchar_t ch = returnTypeDesc[i];
-        switch (ch) {
-            case L'B':    // byte
-            case L'Z':    // boolean
-            case L'S':    // short
-            case L'C':    // char
-            case L'I':    // int
-            case L'J':    // long
-            case L'F':    // float
-            case L'D':    // double
-            case L'V':    // void
-                *returnType = wrap
-                              ? primitiveTypeToValueType(ch)
-                              : primitiveTypeToValueTypeNoWrap(ch);
-                break;
-
-            case L'L':
-//                while (returnTypeDesc[i] != ';') {
-//                    ++i;
-//                }
-                *returnType = ValueType::OBJECT;
-                break;
-
-            case L'[':
-                *returnType = ValueType::ARRAY;
-                break;
-
-            default:
-                PANIC("Unrecognized char %c in descriptor", ch);
-        }
-    }
-
     const std::vector<ValueType> &Method::getArgumentValueTypes() {
-        getArgumentValueTypesHelper(&_argumentValueTypes,
+        helper::argumentListParser(&_argumentValueTypes,
             &_argumentValueTypesResolved,
             getDescriptor(), true);
         return _argumentValueTypes;
     }
 
     ValueType Method::getReturnType() {
-        getReturnTypeHelper(&_returnType,
+        helper::returnTypeParser(&_returnType,
             &_returnTypeResolved,
             getDescriptor(),
             true);
@@ -295,7 +391,7 @@ namespace kivm {
     }
 
     const std::vector<ValueType> &Method::getArgumentValueTypesNoWrap() {
-        getArgumentValueTypesHelper(&_argumentValueTypesNoWrap,
+        helper::argumentListParser(&_argumentValueTypesNoWrap,
             &_argumentValueTypesNoWrapResolved,
             getDescriptor(),
             false);
@@ -303,7 +399,7 @@ namespace kivm {
     }
 
     ValueType Method::getReturnTypeNoWrap() {
-        getReturnTypeHelper(&_returnTypeNoWrap,
+        helper::returnTypeParser(&_returnTypeNoWrap,
             &_returnTypeNoWrapResolved,
             getDescriptor(), false);
         return _returnTypeNoWrap;
@@ -366,5 +462,16 @@ namespace kivm {
         }
 
         return false;
+    }
+
+    mirrorOop Method::getReturnClassType() {
+        PANIC("parse return type");
+        return nullptr;
+    }
+
+    const std::vector<mirrorOop> &Method::getArgumentClassTypes() {
+        helper::argumentListParser(_argumentClassTypes, &_argumentClassTypesResolved,
+            getDescriptor());
+        return _argumentClassTypes;
     }
 }

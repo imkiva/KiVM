@@ -13,6 +13,8 @@
 #include <vector>
 
 namespace kivm {
+    class Klass;
+
     class InstanceKlass;
 
     class method_info;
@@ -54,6 +56,7 @@ namespace kivm {
          */
         bool _argumentValueTypesResolved;
         bool _argumentValueTypesNoWrapResolved;
+        bool _argumentClassTypesResolved;
         bool _returnTypeNoWrapResolved;
         bool _returnTypeResolved;
         bool _linked;
@@ -65,6 +68,8 @@ namespace kivm {
         ValueType _returnTypeNoWrap;
         std::vector<ValueType> _argumentValueTypes;
         std::vector<ValueType> _argumentValueTypesNoWrap;
+        std::vector<mirrorOop> _argumentClassTypes;
+        mirrorOop _returnClassType;
 
         /** this method is likely to throw these exceptions **/
         std::list<InstanceKlass *> _throws;
@@ -109,6 +114,18 @@ namespace kivm {
         ValueType getReturnType();
 
         /**
+         * Extract result class type from method descriptor
+         * @return return type
+         */
+        mirrorOop getReturnClassType();
+
+        /**
+         * Extract argument list from method descriptor
+         * @return argument list
+         */
+        const std::vector<mirrorOop> &getArgumentClassTypes();
+
+        /**
          * Used for JNI calls.
          * Parse descriptor and map arguments to value types
          * short, boolean, bool and char will remains its original value type
@@ -128,6 +145,7 @@ namespace kivm {
          * @return address of the native method
          */
         void *getNativePointer();
+
 
     public:
         int findExceptionHandler(u4 currentPc, InstanceKlass *exceptionClass);
