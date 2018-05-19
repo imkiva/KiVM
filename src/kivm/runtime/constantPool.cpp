@@ -86,6 +86,7 @@ namespace kivm {
             }
 
             Klass *klass = rt->getClass(classIndex);
+
             if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
                 auto instanceKlass = (InstanceKlass *) klass;
                 const auto &nameAndType = rt->getNameAndType(nameAndTypeIndex);
@@ -104,7 +105,12 @@ namespace kivm {
                     // interface methods are virtual methods
                     return instanceKlass->getVirtualMethod(nameAndType.first, nameAndType.second);
                 }
+
+            } else if (klass->getClassType() == ClassType::OBJECT_ARRAY_CLASS
+                || klass->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
+                PANIC("Resolving methods of an array is not supported");
             }
+
             return nullptr;
         }
 
