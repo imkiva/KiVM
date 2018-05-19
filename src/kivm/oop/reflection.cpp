@@ -7,6 +7,8 @@
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/oop/primitiveOop.h>
+#include <kivm/oop/arrayKlass.h>
+#include <kivm/oop/arrayOop.h>
 #include <kivm/native/java_lang_Class.h>
 
 namespace kivm {
@@ -54,6 +56,34 @@ namespace kivm {
         return fieldOop;
     }
 
+    static void fillMethodParameterTypes(MethodID *methodID, instanceOop methodOop, FieldID *field) {
+        static auto classArrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"[Ljava/lang/Class;");
+
+        const auto &argList = methodID->_method->getArgumentClassTypes();
+        objectArrayOop parameterTypes = classArrayClass->newInstance((int) argList.size());
+        for (int i = 0; i < parameterTypes->getLength(); ++i) {
+            parameterTypes->setElementAt(i, argList[i]);
+        }
+
+        methodOop->setFieldValue(field, parameterTypes);
+    }
+
+    static void fillMethodBasicFields(MethodID *methodID, instanceOop methodOop,
+                                      FieldID *classField, FieldID *slotField,
+                                      FieldID *modifiersField, FieldID *signatureField,
+                                      FieldID *overrideField) {
+        methodOop->setFieldValue(modifiersField, new intOopDesc(
+            methodID->_method->getAccessFlag() & (~ACC_ANNOTATION)));
+        methodOop->setFieldValue(classField, methodID->_method->getClass()->getJavaMirror());
+        methodOop->setFieldValue(slotField, new intOopDesc(methodID->_offset));
+        methodOop->setFieldValue(overrideField, new intOopDesc(JNI_FALSE));
+        const auto &signature = methodID->_method->getSignature();
+        if (!signature.empty()) {
+            methodOop->setFieldValue(signatureField, java::lang::String::intern(signature));
+        }
+    }
+
     instanceOop newJavaMethodObject(MethodID *method) {
         static auto methodClass = (InstanceKlass *) BootstrapClassLoader::get()
             ->loadClass(L"java/lang/reflect/Method");
@@ -86,27 +116,28 @@ namespace kivm {
         static auto constructorClass = (InstanceKlass *) BootstrapClassLoader::get()
             ->loadClass(L"java/lang/reflect/Constructor");
 
-        static auto classField = constructorClass->getInstanceFieldInfo(J_METHOD,
+        static auto classField = constructorClass->getInstanceFieldInfo(J_CTOR,
             L"clazz", L"Ljava/lang/Class;");
-        static auto slotField = constructorClass->getInstanceFieldInfo(J_METHOD,
+        static auto slotField = constructorClass->getInstanceFieldInfo(J_CTOR,
             L"slot", L"I");
-        static auto nameField = constructorClass->getInstanceFieldInfo(J_METHOD,
-            L"name", L"Ljava/lang/String;");
-        static auto parameterTypesField = constructorClass->getInstanceFieldInfo(J_METHOD,
+        static auto parameterTypesField = constructorClass->getInstanceFieldInfo(J_CTOR,
             L"parameterTypes", L"[Ljava/lang/Class;");
-        static auto exceptionTypesField = constructorClass->getInstanceFieldInfo(J_METHOD,
+        static auto exceptionTypesField = constructorClass->getInstanceFieldInfo(J_CTOR,
             L"exceptionTypes", L"[Ljava/lang/Class;");
-        static auto modifiersField = constructorClass->getInstanceFieldInfo(J_METHOD,
+        static auto modifiersField = constructorClass->getInstanceFieldInfo(J_CTOR,
             L"modifiers", L"I");
-        static auto signatureField = constructorClass->getInstanceFieldInfo(J_METHOD,
+        static auto signatureField = constructorClass->getInstanceFieldInfo(J_CTOR,
             L"signature", L"Ljava/lang/String;");
         static auto overrideField = constructorClass->getInstanceFieldInfo(J_ACCESSIBLE_OBJECT,
             L"override", L"Z");
 
-        method->_method->getArgumentClassTypes();
-
-        PANIC("more work to do");
         instanceOop methodOop = constructorClass->newInstance();
+
+        fillMethodBasicFields(method, methodOop, classField, slotField,
+            modifiersField, signatureField, overrideField);
+        fillMethodParameterTypes(method, methodOop, parameterTypesField);
+
+        // TODO: fill exceptionTypes and annotations
         return methodOop;
     }
 }

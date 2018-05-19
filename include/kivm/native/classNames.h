@@ -18,5 +18,6 @@
 
 #define J_FIELD L"java/lang/reflect/Field"
 #define J_METHOD L"java/lang/reflect/Method"
+#define J_CTOR L"java/lang/reflect/Constructor"
 #define J_ACCESSIBLE_OBJECT L"java/lang/reflect/AccessibleObject"
 
