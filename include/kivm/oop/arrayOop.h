@@ -22,9 +22,17 @@ namespace kivm {
     public:
         explicit arrayOopDesc(ArrayKlass *arrayClass, oopType type, int length);
 
-        int getDimension() const;
+        inline arrayOop shallowCopy() {
+            return nullptr;
+        }
 
-        int getLength() const;
+        inline int getDimension() const {
+            return ((ArrayKlass *) getClass())->getDimension();
+        }
+
+        inline int getLength() const {
+            return static_cast<int>(_elements.size());
+        }
 
         oop getElementAt(int position) const;
 

@@ -10,14 +10,6 @@ namespace kivm {
         _elements.resize(static_cast<unsigned>(length));
     }
 
-    int arrayOopDesc::getDimension() const {
-        return ((ArrayKlass *) getClass())->getDimension();
-    }
-
-    int arrayOopDesc::getLength() const {
-        return static_cast<int>(_elements.size());
-    }
-
     oop arrayOopDesc::getElementAt(int position) const {
         if (position < 0 || position >= getLength()) {
             arrayIndexOutOfBounds(position);

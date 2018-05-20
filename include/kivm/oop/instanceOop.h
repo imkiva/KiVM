@@ -13,6 +13,12 @@ namespace kivm {
 
         std::vector<oop> _instanceFieldValues;
 
+    private:
+        explicit instanceOopDesc(instanceOop other)
+            : oopDesc(getClass(), getMarkOop()->getOopType()),
+              _instanceFieldValues(other->_instanceFieldValues) {
+        }
+
     public:
         explicit instanceOopDesc(InstanceKlass *klass);
 
@@ -20,6 +26,10 @@ namespace kivm {
 
         inline InstanceKlass *getInstanceClass() const {
             return (InstanceKlass *) getClass();
+        }
+
+        inline instanceOop shallowCopy() {
+            return new instanceOopDesc(this);
         }
 
         /**
