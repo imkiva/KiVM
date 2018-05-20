@@ -19,6 +19,9 @@ namespace kivm {
     }
 
     void ArrayKlass::linkClass() {
+        this->setSuperClass((InstanceKlass *) BootstrapClassLoader::requireClass(
+            BootstrapClassLoader::get(), L"java/lang/Object"
+        ));
         this->setClassState(ClassState::LINKED);
     }
 
@@ -41,9 +44,9 @@ namespace kivm {
 
     TypeArrayKlass::TypeArrayKlass(ClassLoader *classLoader, TypeArrayKlass *downType)
         : TypeArrayKlass(classLoader,
-                         downType->getJavaMirror(),
-                         downType->getDimension() + 1,
-                         downType->getComponentType()) {
+        downType->getJavaMirror(),
+        downType->getDimension() + 1,
+        downType->getComponentType()) {
         this->_downDimensionType = downType;
     }
 
@@ -87,8 +90,8 @@ namespace kivm {
         }
 
         std::copy(srcOop->_elements.begin() + srcPos,
-                  srcOop->_elements.begin() + srcPos + length,
-                  destOop->_elements.begin() + destPos);
+            srcOop->_elements.begin() + srcPos + length,
+            destOop->_elements.begin() + destPos);
     }
 
     ObjectArrayKlass::ObjectArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
@@ -106,9 +109,9 @@ namespace kivm {
 
     ObjectArrayKlass::ObjectArrayKlass(ClassLoader *classLoader, ObjectArrayKlass *downType)
         : ObjectArrayKlass(classLoader,
-                           downType->getJavaMirror(),
-                           downType->getDimension() + 1,
-                           downType->getComponentType()) {
+        downType->getJavaMirror(),
+        downType->getDimension() + 1,
+        downType->getComponentType()) {
         this->_downDimensionType = downType;
     }
 

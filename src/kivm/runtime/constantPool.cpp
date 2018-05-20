@@ -28,8 +28,8 @@ namespace kivm {
                         auto currentClass = instanceKlass;
                         while (currentClass != nullptr) {
                             auto found = currentClass->getInstanceFieldInfo(currentClass->getName(),
-                                                                            nameAndType.first,
-                                                                            nameAndType.second);
+                                nameAndType.first,
+                                nameAndType.second);
                             if (found != nullptr) {
                                 return found;
                             }
@@ -86,10 +86,10 @@ namespace kivm {
             }
 
             Klass *klass = rt->getClass(classIndex);
+            const auto &nameAndType = rt->getNameAndType(nameAndTypeIndex);
 
             if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
                 auto instanceKlass = (InstanceKlass *) klass;
-                const auto &nameAndType = rt->getNameAndType(nameAndTypeIndex);
 
                 if (tag == CONSTANT_Methodref) {
                     // invokespecial and invokestatic
@@ -107,8 +107,9 @@ namespace kivm {
                 }
 
             } else if (klass->getClassType() == ClassType::OBJECT_ARRAY_CLASS
-                || klass->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
-                PANIC("Resolving methods of an array is not supported");
+                       || klass->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
+                auto arrayKlass = (ArrayKlass *) klass;
+                return arrayKlass->getSuperClass()->getThisClassMethod(nameAndType.first, nameAndType.second);
             }
 
             return nullptr;
@@ -118,7 +119,7 @@ namespace kivm {
         NameAndTypeCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
             auto nameAndType = (CONSTANT_NameAndType_info *) pool[index];
             return std::make_pair(rt->getUtf8(nameAndType->name_index),
-                                  rt->getUtf8(nameAndType->descriptor_index));
+                rt->getUtf8(nameAndType->descriptor_index));
         }
     }
 }
