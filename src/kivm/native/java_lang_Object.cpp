@@ -20,7 +20,7 @@ JAVA_NATIVE jint Java_java_lang_Object_hashCode(JNIEnv *env, jobject javaObject)
 }
 
 JAVA_NATIVE jobject Java_java_lang_Object_clone(JNIEnv *env, jobject javaObject) {
-    static auto java_lang_Cloneable = (InstanceKlass*) BootstrapClassLoader::get()
+    static auto java_lang_Cloneable = (InstanceKlass *) BootstrapClassLoader::get()
         ->loadClass(L"java/lang/Cloneable");
     auto thisObject = Resolver::javaOop(javaObject);
 
@@ -33,7 +33,7 @@ JAVA_NATIVE jobject Java_java_lang_Object_clone(JNIEnv *env, jobject javaObject)
     }
 
     if (thisObject->getClass()->getClassType() == ClassType::TYPE_ARRAY_CLASS
-        || thisObject->getClass()->getClassType()==ClassType::OBJECT_ARRAY_CLASS) {
+        || thisObject->getClass()->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
         PANIC("not supported");
     }
 
