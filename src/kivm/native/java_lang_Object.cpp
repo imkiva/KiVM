@@ -14,8 +14,15 @@ JAVA_NATIVE void Java_java_lang_Object_registerNatives(JNIEnv *env, jclass java_
 
 JAVA_NATIVE jint Java_java_lang_Object_hashCode(JNIEnv *env, jobject javaObject) {
     D("java/lang/Object.hashCode()I");
+    auto obj = Resolver::instance(javaObject);
+    auto hash = obj->getMarkOop()->getHash();
+    if (hash != 0) {
+        return hash;
+    }
+
     intptr_t addrBits = intptr_t(javaObject) >> 3;
     intptr_t value = addrBits ^(addrBits >> 5) ^Global::runtimeRandom;
+    obj->getMarkOop()->setHash((jint) value);
     return (jint) value;
 }
 

@@ -38,6 +38,7 @@ namespace kivm {
     private:
         oopType _type;
         Monitor _monitor;
+        jint _hash;
 
     public:
         markOopDesc(oopType type, oop _oop);
@@ -52,6 +53,14 @@ namespace kivm {
         void monitorExit() {
             _monitor.leave();
             D("MonitorExited");
+        }
+
+        inline void setHash(jint hash) {
+            this->_hash = hash;
+        }
+
+        inline jint getHash() const {
+            return this->_hash;
         }
 
         inline void wait() { _monitor.wait(); }
