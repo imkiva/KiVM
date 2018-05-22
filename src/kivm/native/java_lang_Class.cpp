@@ -431,3 +431,15 @@ JAVA_NATIVE jboolean Java_java_lang_Class_isInterface(JNIEnv *env, jobject java_
                     && mirrorOop->getMirrorTarget() != nullptr
                     && mirrorOop->getMirrorTarget()->isInterface());
 }
+
+JAVA_NATIVE jint Java_java_lang_Class_getModifiers(JNIEnv *env, jobject java_lang_Class_mirror) {
+    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
+    auto mirrorTarget = classMirror->getMirrorTarget();
+
+    if (mirrorTarget == nullptr) {
+        return ACC_ABSTRACT | ACC_FINAL | ACC_PUBLIC;
+    }
+
+    auto instanceClass = (InstanceKlass *) mirrorTarget;
+    return instanceClass->getAccessFlag();
+}
