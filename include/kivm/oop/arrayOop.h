@@ -19,11 +19,16 @@ namespace kivm {
     private:
         void arrayIndexOutOfBounds(int position) const;
 
+        explicit arrayOopDesc(arrayOop other)
+            : oopDesc(getClass(), getMarkOop()->getOopType()),
+              _elements(other->_elements) {
+        }
+
     public:
         explicit arrayOopDesc(ArrayKlass *arrayClass, oopType type, int length);
 
         inline arrayOop shallowCopy() {
-            return nullptr;
+            return new arrayOopDesc(this);
         }
 
         inline int getDimension() const {

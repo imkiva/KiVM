@@ -5,6 +5,7 @@
 #include <kivm/kivm.h>
 #include <kivm/native/classNames.h>
 #include <kivm/bytecode/execution.h>
+#include <kivm/oop/arrayOop.h>
 
 using namespace kivm;
 
@@ -41,7 +42,8 @@ JAVA_NATIVE jobject Java_java_lang_Object_clone(JNIEnv *env, jobject javaObject)
 
     if (thisObject->getClass()->getClassType() == ClassType::TYPE_ARRAY_CLASS
         || thisObject->getClass()->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
-        PANIC("not supported");
+        auto array = (arrayOop) thisObject;
+        return array->shallowCopy();
     }
 
     PANIC("Unknown class type");
