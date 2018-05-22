@@ -15,7 +15,7 @@ namespace kivm {
 
     private:
         explicit instanceOopDesc(instanceOop other)
-            : oopDesc(getClass(), getMarkOop()->getOopType()),
+            : oopDesc(other->getClass(), other->getMarkOop()->getOopType()),
               _instanceFieldValues(other->_instanceFieldValues) {
         }
 

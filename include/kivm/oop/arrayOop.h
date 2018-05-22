@@ -20,7 +20,7 @@ namespace kivm {
         void arrayIndexOutOfBounds(int position) const;
 
         explicit arrayOopDesc(arrayOop other)
-            : oopDesc(getClass(), getMarkOop()->getOopType()),
+            : oopDesc(other->getClass(), other->getMarkOop()->getOopType()),
               _elements(other->_elements) {
         }
 
