@@ -13,6 +13,8 @@ namespace kivm {
 
     namespace pools {
         namespace impl {
+            typedef FieldID* (InstanceKlass::*FieldInfoGetterType)(const String &, const String &, const String &) const;
+
             FieldPoolEntry getField(RuntimeConstantPool *rt, cp_info **pool, int index, bool isStatic) {
                 auto fieldRef = (CONSTANT_Fieldref_info *) pool[index];
                 Klass *klass = rt->getClass(fieldRef->class_index);
@@ -21,24 +23,54 @@ namespace kivm {
                     auto instanceKlass = (InstanceKlass *) klass;
                     const auto &nameAndType = rt->getNameAndType(fieldRef->name_and_type_index);
 
-                    if (isStatic) {
-                        return instanceKlass->getThisClassField(nameAndType.first, nameAndType.second);
+                    FieldInfoGetterType fieldInfoGetter = isStatic
+                                                ? &InstanceKlass::getStaticFieldInfo
+                                                : &InstanceKlass::getInstanceFieldInfo;
 
-                    } else {
-                        auto currentClass = instanceKlass;
-                        while (currentClass != nullptr) {
-                            auto found = currentClass->getInstanceFieldInfo(currentClass->getName(),
-                                nameAndType.first,
-                                nameAndType.second);
-                            if (found != nullptr) {
-                                return found;
-                            }
-
-                            // field not found in current method
-                            // try superclass
-                            currentClass = currentClass->getSuperClass();
+                    auto currentClass = instanceKlass;
+                    while (currentClass != nullptr) {
+                        auto found = (currentClass->*fieldInfoGetter)(currentClass->getName(),
+                            nameAndType.first,
+                            nameAndType.second);
+                        if (found != nullptr) {
+                            return found;
                         }
+
+                        // field not found in current method
+                        // try superclass
+                        currentClass = currentClass->getSuperClass();
                     }
+
+//                    if (isStatic) {
+//                        auto currentClass = instanceKlass;
+//                        while (currentClass != nullptr) {
+//                            auto found = currentClass->getStaticFieldInfo(currentClass->getName(),
+//                                nameAndType.first,
+//                                nameAndType.second);
+//                            if (found != nullptr) {
+//                                return found;
+//                            }
+//
+//                            // field not found in current method
+//                            // try superclass
+//                            currentClass = currentClass->getSuperClass();
+//                        }
+//
+//                    } else {
+//                        auto currentClass = instanceKlass;
+//                        while (currentClass != nullptr) {
+//                            auto found = currentClass->getInstanceFieldInfo(currentClass->getName(),
+//                                nameAndType.first,
+//                                nameAndType.second);
+//                            if (found != nullptr) {
+//                                return found;
+//                            }
+//
+//                            // field not found in current method
+//                            // try superclass
+//                            currentClass = currentClass->getSuperClass();
+//                        }
+//                    }
                 }
                 PANIC("Unsupported field & class type.");
                 return nullptr;
