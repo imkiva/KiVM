@@ -16,5 +16,7 @@ JAVA_NATIVE jobject Java_sun_reflect_NativeConstructorAccessorImpl_newInstance0(
                                                                                 jobjectArray javaArguments) {
     auto ctorOop = Resolver::instance(javaConstructor);
     auto targetClass = getClassFromConstructor(ctorOop);
+    auto slot = getSlotFromConstructor(ctorOop);
+    PANIC("more work to do");
     return nullptr;
 }
