@@ -13,8 +13,6 @@ namespace kivm {
             return tagMethod;
         }
 
-        bool x = tagMethod->getName() == L"charsetForName";
-
         Method *resolved = nullptr;
         if (thisObject->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
             auto instanceClass = (InstanceKlass *) thisObject->getClass();
