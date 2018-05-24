@@ -124,6 +124,8 @@ namespace kivm {
             return appThreads;
         }
 
+        static void initializeVMStructs(BootstrapClassLoader *cl, JavaMainThread *thread);
+
     public:
         static void initializeJVM(JavaMainThread *thread);
 

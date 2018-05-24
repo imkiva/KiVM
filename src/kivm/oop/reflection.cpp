@@ -10,6 +10,8 @@
 #include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/arrayOop.h>
 #include <kivm/native/java_lang_Class.h>
+#include <kivm/native/java_lang_reflect_Constructor.h>
+#include <kivm/native/java_lang_reflect_Method.h>
 
 namespace kivm {
     instanceOop newJavaFieldObject(FieldID *fieldID) {
@@ -85,13 +87,8 @@ namespace kivm {
     }
 
     instanceOop newJavaMethodObject(MethodID *method) {
-        static auto methodClass = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass(L"java/lang/reflect/Method");
+        static auto methodClass = java::lang::reflect::Method::CLASS;
 
-        static auto classField = methodClass->getInstanceFieldInfo(J_METHOD,
-            L"clazz", L"Ljava/lang/Class;");
-        static auto slotField = methodClass->getInstanceFieldInfo(J_METHOD,
-            L"slot", L"I");
         static auto nameField = methodClass->getInstanceFieldInfo(J_METHOD,
             L"name", L"Ljava/lang/String;");
         static auto returnTypeField = methodClass->getInstanceFieldInfo(J_METHOD,
@@ -113,13 +110,8 @@ namespace kivm {
     }
 
     instanceOop newJavaConstructorObject(MethodID *method) {
-        static auto constructorClass = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass(L"java/lang/reflect/Constructor");
+        auto constructorClass = java::lang::reflect::Constructor::CLASS;
 
-        static auto classField = constructorClass->getInstanceFieldInfo(J_CTOR,
-            L"clazz", L"Ljava/lang/Class;");
-        static auto slotField = constructorClass->getInstanceFieldInfo(J_CTOR,
-            L"slot", L"I");
         static auto parameterTypesField = constructorClass->getInstanceFieldInfo(J_CTOR,
             L"parameterTypes", L"[Ljava/lang/Class;");
         static auto exceptionTypesField = constructorClass->getInstanceFieldInfo(J_CTOR,
@@ -133,11 +125,29 @@ namespace kivm {
 
         instanceOop methodOop = constructorClass->newInstance();
 
-        fillMethodBasicFields(method, methodOop, classField, slotField,
+        fillMethodBasicFields(method, methodOop,
+            java::lang::reflect::Constructor::FIELD_CLAZZ,
+            java::lang::reflect::Constructor::FIELD_SLOT,
             modifiersField, signatureField, overrideField);
         fillMethodParameterTypes(method, methodOop, parameterTypesField);
 
         // TODO: fill exceptionTypes and annotations
         return methodOop;
+    }
+
+    mirrorOop getClassFromConstructor(instanceOop ctorOop) {
+        mirrorOop r = nullptr;
+        return java::lang::reflect::Constructor::CLASS->getInstanceFieldValue(
+            ctorOop, java::lang::reflect::Constructor::FIELD_CLAZZ, (oop *) &r)
+               ? r
+               : nullptr;
+    }
+
+    jint getSlotFromConstructor(instanceOop ctorOop) {
+        intOop r = nullptr;
+        return java::lang::reflect::Constructor::CLASS->getInstanceFieldValue(
+            ctorOop, java::lang::reflect::Constructor::FIELD_SLOT, (oop *) &r)
+               ? r->getValue()
+               : -1;
     }
 }

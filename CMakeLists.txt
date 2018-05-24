@@ -223,7 +223,7 @@ set(SOURCE_FILES
         src/kivm/native/java_lang_Throwable.cpp
         src/kivm/oop/reflection.cpp include/kivm/classfile/annotation.h
         src/kivm/classfile/annotation.cpp
-        include/shared/atomic.h src/kivm/native/java_lang_ClassLoader.cpp)
+        include/shared/atomic.h src/kivm/native/java_lang_ClassLoader.cpp src/kivm/native/sun_reflect_NativeConstructorAccessorImpl.cpp include/kivm/native/java_lang_reflect_Constructor.h src/kivm/native/java_lang_reflect_Constructor.cpp include/kivm/native/java_lang_reflect_Method.h src/kivm/native/java_lang_reflect_Method.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})

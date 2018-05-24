@@ -149,6 +149,10 @@ namespace kivm {
         }
     }
 
+    mirrorOop getClassFromConstructor(instanceOop ctorOop);
+
+    jint getSlotFromConstructor(instanceOop ctorOop);
+
     instanceOop newJavaFieldObject(FieldID *fieldID);
 
     instanceOop newJavaMethodObject(MethodID *method);

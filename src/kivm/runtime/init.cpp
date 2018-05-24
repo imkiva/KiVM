@@ -9,6 +9,8 @@
 #include <kivm/native/java_lang_Thread.h>
 #include <kivm/native/java_lang_String.h>
 #include <kivm/bytecode/invocationContext.h>
+#include <kivm/native/java_lang_reflect_Constructor.h>
+#include <kivm/native/java_lang_reflect_Method.h>
 
 namespace kivm {
     static inline InstanceKlass *use(ClassLoader *cl, JavaMainThread *thread, const String &name) {
@@ -66,14 +68,7 @@ namespace kivm {
         // TODO: put initialization logic here.
         auto cl = BootstrapClassLoader::get();
 
-        java::lang::Class::initialize();
-        auto class_class = use(cl, thread, J_CLASS);
-        java::lang::Class::mirrorCoreAndDelayedClasses();
-        java::lang::Class::mirrorDelayedArrayClasses();
-
-        Global::java_lang_Object = use(cl, thread, J_OBJECT);
-        Global::java_lang_Cloneable = use(cl, thread, J_CLONEABLE);
-        Global::java_lang_Serializable = use(cl, thread, J_SERIALIZABLE);
+        Threads::initializeVMStructs(cl, thread);
 
         use(cl, thread, J_STRING);
         auto thread_class = use(cl, thread, J_THREAD);
@@ -100,7 +95,6 @@ namespace kivm {
         // Create the main thread group
         instanceOop main_tg = tg_class->newInstance();
         init_thread->setFieldValue(J_THREAD, L"group", L"Ljava/lang/ThreadGroup;", main_tg);
-        class_class->setStaticFieldValue(J_CLASS, L"useCaches", L"Z", new intOopDesc(false));
 
         // Load system classes.
         auto system_class = (InstanceKlass *) cl->loadClass(L"java/lang/System");
@@ -141,5 +135,19 @@ namespace kivm {
 
         // re-enable sun.security.util.Debug
         sunDebug_class->setClassState(ClassState::FULLY_INITIALIZED);
+    }
+
+    void Threads::initializeVMStructs(BootstrapClassLoader *cl, JavaMainThread *thread) {
+        java::lang::Class::initialize();
+        auto java_lang_Class = use(cl, thread, J_CLASS);
+        java::lang::Class::mirrorCoreAndDelayedClasses();
+        java::lang::Class::mirrorDelayedArrayClasses();
+        Global::java_lang_Object = use(cl, thread, J_OBJECT);
+        Global::java_lang_Cloneable = use(cl, thread, J_CLONEABLE);
+        Global::java_lang_Serializable = use(cl, thread, J_SERIALIZABLE);
+        java::lang::reflect::Constructor::initialize();
+        java::lang::reflect::Method::initialize();
+
+        java_lang_Class->setStaticFieldValue(J_CLASS, L"useCaches", L"Z", new intOopDesc(false));
     }
 }
