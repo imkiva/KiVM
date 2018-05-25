@@ -28,11 +28,11 @@ namespace kivm {
 
         static mirrorOop mirror(jobject obj);
 
-        static arrayOop array(jobject obj);
+        static arrayOop array(jarray obj);
 
-        static typeArrayOop typeArray(jobject obj);
+        static typeArrayOop typeArray(jarray obj);
 
-        static objectArrayOop objectArray(jobject object);
+        static objectArrayOop objectArray(jobjectArray object);
 
         static Klass* javaClass(jclass clazz);
 

@@ -35,7 +35,7 @@ namespace kivm {
         return (mirrorOop) n;
     }
 
-    arrayOop Resolver::array(jobject obj) {
+    arrayOop Resolver::array(jarray obj) {
         auto n = javaOop(obj);
         if (n == nullptr) {
             return nullptr;
@@ -48,7 +48,7 @@ namespace kivm {
         return nullptr;
     }
 
-    typeArrayOop Resolver::typeArray(jobject obj) {
+    typeArrayOop Resolver::typeArray(jarray obj) {
         auto n = javaOop(obj);
         if (n == nullptr) {
             return nullptr;
@@ -60,7 +60,7 @@ namespace kivm {
         return nullptr;
     }
 
-    objectArrayOop Resolver::objectArray(jobject obj) {
+    objectArrayOop Resolver::objectArray(jobjectArray obj) {
         auto n = javaOop(obj);
         if (n == nullptr) {
             return nullptr;

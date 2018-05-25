@@ -436,4 +436,14 @@ namespace kivm {
         }
         return false;
     }
+
+    Method *InstanceKlass::getDeclaredMethodByOffset(int offset) {
+        assert(offset >= 0 && offset < _allMethods.size());
+        for (const auto &e : _allMethods) {
+            if (e.second->_offset == offset) {
+                return e.second->_method;
+            }
+        }
+        SHOULD_NOT_REACH_HERE();
+    }
 }

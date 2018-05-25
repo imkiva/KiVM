@@ -145,6 +145,8 @@ namespace kivm {
             return _allMethods;
         }
 
+        Method* getDeclaredMethodByOffset(int offset);
+
         /**
          * Search field in this class.
          * @param name Field name
