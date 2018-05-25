@@ -48,3 +48,8 @@ JAVA_NATIVE jobject Java_java_lang_Object_clone(JNIEnv *env, jobject javaObject)
 
     PANIC("Unknown class type");
 }
+
+JAVA_NATIVE jclass Java_java_lang_Object_getClass(JNIEnv *env, jobject javaObject) {
+    auto object = Resolver::instance(javaObject);
+    return object->getClass()->getJavaMirror();
+}
