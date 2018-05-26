@@ -6,6 +6,7 @@
 #include <kivm/native/classNames.h>
 #include <unordered_map>
 #include <kivm/bytecode/execution.h>
+#include <csignal>
 
 using namespace kivm;
 
@@ -46,7 +47,7 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
         {L"USR2",   SIGUSR2},        /* User-defined signal 2 (POSIX).  */
     };
 #elif defined __linux__
-    static std::unordered_map<wstring, int> SIGNAL_TABLE{
+    static std::unordered_map<String, int> SIGNAL_TABLE{
         {L"HUP", SIGHUP},         /* Hangup (POSIX).  */
         {L"INT", SIGINT},         /* Interrupt (ANSI).  */
         {L"QUIT", SIGQUIT},        /* Quit (POSIX).  */
