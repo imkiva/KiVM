@@ -22,4 +22,8 @@
 #define KIVM_JAR_CLASS_LOADING
 #endif
 
+#if KIVM_ARCH_x86_64 || KIVM_ARCH_x86
+#define KIVM_SUPPORT_CS8
+#endif
+
 #endif
