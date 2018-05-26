@@ -120,3 +120,8 @@ JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass jav
 #endif
     return java::lang::String::intern(mappedName);
 }
+
+// TODO: support System.load() and System.loadLibrary()
+JAVA_NATIVE void Java_java_lang_System_loadLibrary(JNIEnv *, jclass, jstring) {}
+
+JAVA_NATIVE void Java_java_lang_System_load(JNIEnv *, jclass, jstring) {}
