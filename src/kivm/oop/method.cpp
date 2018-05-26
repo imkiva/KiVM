@@ -241,7 +241,9 @@ namespace kivm {
         this->_codeAttr = nullptr;
         this->_exceptionAttr = nullptr;
         this->_argumentValueTypesResolved = false;
+        this->_argumentValueTypesNoWrapResolved = false;
         this->_returnTypeResolved = false;
+        this->_returnTypeNoWrapResolved = false;
         this->_nativePointer = nullptr;
         this->_runtimeVisibleAnnos = nullptr;
         this->_returnClassType = nullptr;

@@ -158,9 +158,13 @@ namespace kivm {
         // store actual value of arguments
         jvalue argsHolder[argumentCount];
 
+        memset(argsHolder, '\0', sizeof(argsHolder));
+        memset(argsPointer, '\0', sizeof(argsPointer));
+        memset(argsType, '\0', sizeof(argsType));
+
         oop thisObject = nullptr;
 
-        // fill arguments
+        // fill arguments, `this` not included
         int fillIndex = argumentCount - 1;
         for (auto it = descriptorMap.rbegin(); it != descriptorMap.rend(); ++it, --fillIndex) {
             ValueType valueType = *it;

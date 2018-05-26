@@ -196,3 +196,13 @@ JAVA_NATIVE jbyte Java_sun_misc_Unsafe_getByte(JNIEnv *env, jobject javaUnsafe, 
     return *ptr;
 }
 
+JAVA_NATIVE void Java_sun_misc_Unsafe_freeMemory(JNIEnv *env, jobject javaUnsafe, jlong addr) {
+    if (addr == 0) {
+        return;
+    }
+
+    auto ptr = (void *) addr;
+    D("Unsafe: free memory at: %p -> %lld", ptr, addr);
+    Universe::deallocCObject(ptr);
+}
+
