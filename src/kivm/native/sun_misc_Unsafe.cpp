@@ -171,7 +171,9 @@ JAVA_NATIVE jlong Java_sun_misc_Unsafe_allocateMemory(JNIEnv *env, jobject javaU
     if (size <= 0) {
         return 0;
     }
-    return (jlong) Universe::allocCObject(size);
+    auto result = (jlong) Universe::allocCObject(size);
+    D("Unsafe: allocated memory at: %p -> %lld", (void *) result, result);
+    return result;
 }
 
 JAVA_NATIVE void Java_sun_misc_Unsafe_putLong(JNIEnv *env, jobject javaUnsafe, jlong addr, jlong value) {
@@ -179,7 +181,9 @@ JAVA_NATIVE void Java_sun_misc_Unsafe_putLong(JNIEnv *env, jobject javaUnsafe, j
         return;
     }
 
-    *((jlong *) addr) = value;
+    auto ptr = (jlong *) addr;
+    D("Unsafe: put long at: %p -> %lld", ptr, addr);
+    *ptr = value;
 }
 
 JAVA_NATIVE jbyte Java_sun_misc_Unsafe_getByte(JNIEnv *env, jobject javaUnsafe, jlong addr) {
@@ -187,6 +191,8 @@ JAVA_NATIVE jbyte Java_sun_misc_Unsafe_getByte(JNIEnv *env, jobject javaUnsafe, 
         return 0;
     }
 
-    return *((jbyte *) addr);
+    auto ptr = (jbyte *) addr;
+    D("Unsafe: get byte at: %p -> %lld", ptr, addr);
+    return *ptr;
 }
 

@@ -25,14 +25,31 @@ namespace kivm {
         }
 
         inline void setLong(int position, jlong j) {
-            setInt(position, static_cast<jint>(j));
-            setInt(position + 1, static_cast<jint>(j >> 32));
+            union _Cvt {
+                jlong j;
+                struct {
+                    jint h;
+                    jint l;
+                };
+            };
+            _Cvt X{};
+            X.j = j;
+            setInt(position, X.l);
+            setInt(position + 1, X.h);
         }
 
         inline jlong getLong(int position) {
-            jint low = getInt(position);
-            jint high = getInt(position + 1);
-            return static_cast<jlong>(high) << 32 | low;
+            union _Cvt {
+                jlong j;
+                struct {
+                    jint h;
+                    jint l;
+                };
+            };
+            _Cvt X{};
+            X.l = getInt(position);
+            X.h = getInt(position + 1);
+            return X.j;
         }
 
         inline void setFloat(int position, jfloat f) {
