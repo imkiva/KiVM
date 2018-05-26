@@ -221,6 +221,10 @@ namespace kivm {
         int getMaxStack() const {
             return _codeAttr != nullptr ? _codeAttr->max_stack : 0;
         }
+
+        inline void hackAsNative() {
+            this->_accessFlag |= ACC_NATIVE;
+        }
     };
 
     /**

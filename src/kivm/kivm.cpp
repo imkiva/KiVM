@@ -28,6 +28,7 @@ namespace kivm {
     InstanceKlass *Global::java_lang_Cloneable = nullptr;
     InstanceKlass *Global::java_lang_Serializable = nullptr;
     int Global::runtimeRandom = 0;
+    O("java/nio/charset/Charset") Global::DEFAULT_UTF8_CHARSET = nullptr;
 
     JavaVM *KiVM::sJavaVMInstance = nullptr;
     JNIEnv *KiVM::sJNIEnvInstance = nullptr;

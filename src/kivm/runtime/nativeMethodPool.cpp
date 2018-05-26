@@ -21,8 +21,6 @@ namespace kivm {
             return it->second;
         }
 
-        D("Native method not registered, looking up in loaded libraries");
-
         std::wstringstream nativeSymbolBuilder;
 
         nativeSymbolBuilder

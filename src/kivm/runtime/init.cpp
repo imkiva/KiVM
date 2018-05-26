@@ -130,16 +130,7 @@ namespace kivm {
             {init_thread, main_tg, java::lang::String::intern(L"main")});
 
         // TODO: java.nio.charset.Charset.forName() cannot find any charsets
-        // hack java.nio.charset.Charset.defaultCharset
-        auto charsetClass = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass(L"java/nio/charset/Charset");
-        Execution::initializeClass(thread, charsetClass);
-        auto utf8CharsetClass = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass(L"sun/nio/cs/UTF_8");
-        Execution::initializeClass(thread, utf8CharsetClass);
-        charsetClass->setStaticFieldValue(charsetClass->getName(),
-            L"defaultCharset", L"Ljava/nio/charset/Charset;",
-            utf8CharsetClass->newInstance());
+        hackJavaClasses(cl, thread);
 
         // Initialize system classes.
         auto init_system_classes = system_class->getStaticMethod(L"initializeSystemClass", L"()V");
@@ -161,5 +152,26 @@ namespace kivm {
         java::lang::reflect::Method::initialize();
 
         java_lang_Class->setStaticFieldValue(J_CLASS, L"useCaches", L"Z", new intOopDesc(false));
+    }
+
+    void Threads::hackJavaClasses(BootstrapClassLoader *cl, JavaMainThread *thread) {
+        // hack java.nio.charset.Charset.defaultCharset
+        auto charsetClass = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/nio/charset/Charset");
+        Execution::initializeClass(thread, charsetClass);
+        auto utf8CharsetClass = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"sun/nio/cs/UTF_8");
+        Execution::initializeClass(thread, utf8CharsetClass);
+        Global::DEFAULT_UTF8_CHARSET = utf8CharsetClass->newInstance();
+        charsetClass->setStaticFieldValue(charsetClass->getName(),
+            L"defaultCharset", L"Ljava/nio/charset/Charset;",
+            Global::DEFAULT_UTF8_CHARSET);
+
+        // The extremely powerful magic
+        auto encoder = (InstanceKlass*) BootstrapClassLoader::get()
+            ->loadClass(L"sun/nio/cs/StreamEncoder");
+        auto method = encoder->getStaticMethod(L"forOutputStreamWriter",
+            L"(Ljava/io/OutputStream;Ljava/lang/Object;Ljava/lang/String;)Lsun/nio/cs/StreamEncoder;");
+        method->hackAsNative();
     }
 }

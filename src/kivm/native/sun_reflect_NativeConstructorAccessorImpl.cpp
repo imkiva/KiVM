@@ -39,6 +39,6 @@ JAVA_NATIVE jobject Java_sun_reflect_NativeConstructorAccessorImpl_newInstance0(
             callingArgs.push_back(arguments->getElementAt(i));
         }
     }
-    InvocationContext::invokeWithArgs(thread, ctorMethod, callingArgs);
+    InvocationContext::invokeWithArgs(thread, ctorMethod, callingArgs, true);
     return instance;
 }

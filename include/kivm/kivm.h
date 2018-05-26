@@ -10,6 +10,7 @@
 #include <cassert>
 #include <shared/types.h>
 #include <shared/string.h>
+#include <kivm/oop/oopfwd.h>
 
 #ifdef KIVM_DEBUG
 #define D(fmt, ...) \
@@ -35,6 +36,8 @@
 #define JNI_ENTRY_NAME(nameAndSignature) jni_##nameAndSignature
 #define JNI_ENTRY(returnType, nameAndSignature) returnType JNI_ENTRY_NAME(nameAndSignature)
 
+#define O(X) instanceOop
+
 namespace kivm {
     class InstanceKlass;
 
@@ -49,6 +52,8 @@ namespace kivm {
         static InstanceKlass *java_lang_Object;
         static InstanceKlass *java_lang_Cloneable;
         static InstanceKlass *java_lang_Serializable;
+
+        static O("java/nio/charset/Charset") DEFAULT_UTF8_CHARSET;
 
         static int runtimeRandom;
     };

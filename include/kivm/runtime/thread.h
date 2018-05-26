@@ -128,6 +128,8 @@ namespace kivm {
 
         static void initializeVMStructs(BootstrapClassLoader *cl, JavaMainThread *thread);
 
+        static void hackJavaClasses(BootstrapClassLoader *cl, JavaMainThread *thread);
+
     public:
         static void initializeJVM(JavaMainThread *thread);
 
