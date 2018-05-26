@@ -129,6 +129,18 @@ namespace kivm {
         InvocationContext::invokeWithArgs(thread, thread_ctor,
             {init_thread, main_tg, java::lang::String::intern(L"main")});
 
+        // TODO: java.nio.charset.Charset.forName() cannot find any charsets
+        // hack java.nio.charset.Charset.defaultCharset
+        auto charsetClass = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/nio/charset/Charset");
+        Execution::initializeClass(thread, charsetClass);
+        auto utf8CharsetClass = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"sun/nio/cs/UTF_8");
+        Execution::initializeClass(thread, utf8CharsetClass);
+        charsetClass->setStaticFieldValue(charsetClass->getName(),
+            L"defaultCharset", L"Ljava/nio/charset/Charset;",
+            utf8CharsetClass->newInstance());
+
         // Initialize system classes.
         auto init_system_classes = system_class->getStaticMethod(L"initializeSystemClass", L"()V");
         InvocationContext::invokeWithArgs(thread, init_system_classes, {});

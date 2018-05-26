@@ -351,18 +351,19 @@ namespace kivm {
 
     void KiVM::uncaughtException(JavaThread *exceptionThread) {
         auto ex = exceptionThread->_exceptionOop;
-        instanceOop charsetName = nullptr;
-        ex->getFieldValue(L"java/nio/charset/UnsupportedCharsetException", L"charsetName", L"Ljava/lang/String;",
-            (oop *) &charsetName);
-        const auto &s = java::lang::String::toNativeString(charsetName);
         oop messageOop = nullptr;
 
         if (ex->getFieldValue(L"java/lang/Throwable", L"detailMessage", L"Ljava/lang/String;", &messageOop)) {
-            if (messageOop->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
+            if (messageOop == nullptr) {
+                PANIC("UncaughtException: %s",
+                    strings::toStdString(ex->getInstanceClass()->getName()).c_str());
+
+            } else if (messageOop->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
                 auto instance = (instanceOop) messageOop;
                 PANIC("UncaughtException: %s: %s",
                     strings::toStdString(ex->getInstanceClass()->getName()).c_str(),
                     strings::toStdString(java::lang::String::toNativeString(instance)).c_str());
+
             } else {
                 PANIC("UncaughtException: %s (failed to convert message oop)",
                     strings::toStdString(ex->getInstanceClass()->getName()).c_str());
