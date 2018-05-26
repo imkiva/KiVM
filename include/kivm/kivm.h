@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <cstddef>
 #include <cassert>
+#include <cstring>
+#include <cstdlib>
 #include <shared/types.h>
 #include <shared/string.h>
 #include <kivm/oop/oopfwd.h>
