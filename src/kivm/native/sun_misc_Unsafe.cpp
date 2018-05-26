@@ -171,7 +171,7 @@ JAVA_NATIVE jlong Java_sun_misc_Unsafe_allocateMemory(JNIEnv *env, jobject javaU
     if (size <= 0) {
         return 0;
     }
-    auto result = (jlong) Universe::allocCObject(size);
+    auto result = (jlong) Universe::allocCObject((size_t) size);
     D("Unsafe: allocated memory at: %p -> %lld", (void *) result, result);
     return result;
 }

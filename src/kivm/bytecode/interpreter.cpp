@@ -34,9 +34,6 @@
 #undef D
 #define D(...)
 
-#define GOTO_ABSOLUTE(newPc) \
-                    pc = newPc
-
 #define GOTO_BY_OFFSET(branch) \
                     pc += branch
 
@@ -47,6 +44,13 @@
 #define GOTO_BY_OFFSET_HARDCODEDED(occupied) \
                     short branch = codeBlob[pc] << 8 | codeBlob[pc + 1]; \
                     GOTO_BY_OFFSET_WITH_OCCUPIED(branch, occupied)
+
+#define GOTO_ABSOLUTE(newPc) \
+                    pc = newPc
+
+#define GOTO_ABSOLUTE_WITH_OCCUPIED(newPc, occupied) \
+                    GOTO_ABSOLUTE(newPc); \
+                    GOTO_BY_OFFSET(-((occupied) - 1))
 
 #define __IF_GOTO_FACTORY(func, target, occupied, op) \
                     if (stack.func() op target) { \
@@ -1239,9 +1243,9 @@ namespace kivm {
                     if (topValue > (int) (jumpTable.size() - 1 + lowByte)
                         || topValue < lowByte) {
                         // jump to default
-                        GOTO_BY_OFFSET(static_cast<u4>(jumpTable.back()));
+                        GOTO_ABSOLUTE_WITH_OCCUPIED(static_cast<u4>(jumpTable.back()), -1);
                     } else {
-                        GOTO_BY_OFFSET(static_cast<u4>(jumpTable[topValue - lowByte]));
+                        GOTO_ABSOLUTE_WITH_OCCUPIED(static_cast<u4>(jumpTable[topValue - lowByte]), -1);
                     }
                     NEXT();
                 }
@@ -1285,9 +1289,9 @@ namespace kivm {
                     int topValue = stack.popInt();
                     auto iter = jumpTable.find(topValue);
                     if (iter == jumpTable.end()) {
-                        GOTO_BY_OFFSET(defaultByte + originBc);
+                        GOTO_ABSOLUTE_WITH_OCCUPIED(defaultByte + originBc, -2);
                     } else {
-                        GOTO_BY_OFFSET(iter->second);
+                        GOTO_ABSOLUTE_WITH_OCCUPIED(iter->second, -2);
                     }
                     break;
                     NEXT();
