@@ -6,7 +6,7 @@
 
 namespace kivm {
     markOopDesc::markOopDesc(oopType type, oop _oop)
-        : _type(type) {
+        : _type(type), _hash(0) {
     }
 
     oopDesc::oopDesc(Klass *klass, oopType type) {
