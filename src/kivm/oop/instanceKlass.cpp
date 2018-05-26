@@ -128,31 +128,22 @@ namespace kivm {
             this->_vtable = sc->_vtable;
         }
 
-        auto methodSlot = (int) this->_vtable.size();
-
-        for (int i = 0; i < _classFile->methods_count; ++i, ++methodSlot) {
+        for (int i = 0; i < _classFile->methods_count; ++i) {
             auto *method = new Method(this, _classFile->methods + i);
             method->linkMethod(pool);
             MethodPool::add(method);
 
-            auto methodID = new MethodID(methodSlot, method);
+            auto methodID = new MethodID(i, method);
             const auto &id = Method::makeIdentity(method);
             const auto &pair = make_pair(id, methodID);
             _allMethods.insert(pair);
 
-            decltype(_vtable)::iterator iter;
-            if ((iter = _vtable.find(id)) != _vtable.end()) {
-                methodID->_offset = iter->second->_offset;
-                _vtable[id] = methodID;
+            auto iter = _vtable.find(id);
+            if (iter != _vtable.end()) {
+                iter->second = methodID;
 
             } else {
-                if (method->isStatic()) {
-                    _stable.insert(pair);
-
-                } else if (method->isFinal() || method->isPrivate()) {
-                    _pftable.insert(pair);
-
-                } else {
+                if (!method->isStatic()) {
                     _vtable.insert(pair);
                 }
             }
@@ -303,14 +294,8 @@ namespace kivm {
             iter->second->_method, nullptr);
     }
 
-    Method *InstanceKlass::getNonVirtualMethod(const String &name, const String &descriptor) const {
-        RETURN_IF(iter, this->_pftable,
-            ND_KEY_MAKER(name, descriptor),
-            iter->second->_method, nullptr);
-    }
-
     Method *InstanceKlass::getStaticMethod(const String &name, const String &descriptor) const {
-        RETURN_IF(iter, this->_stable,
+        RETURN_IF(iter, this->_allMethods,
             ND_KEY_MAKER(name, descriptor),
             iter->second->_method, nullptr);
     }

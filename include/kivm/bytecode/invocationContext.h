@@ -33,11 +33,13 @@ namespace kivm {
 
         oop callInterpreter();
 
-        inline oop invoke() {
+        inline oop invoke(bool forceNoResolve) {
             prepareEnvironment();
             bool hasThis = !_method->isStatic();
-            bool resolveTwice = _method->isAbstract()
+            bool resolveTwice = forceNoResolve ? false :
+                                _method->isAbstract()
                                 || (_method->isPublic() && !_method->isFinal());
+
 
             if (_method->isNative()) {
                 return this->invokeNative(hasThis, resolveTwice);
@@ -52,12 +54,14 @@ namespace kivm {
         InvocationContext(JavaThread *thread, Method *method, const std::list<oop> &args);
 
     public:
-        static inline oop invokeWithArgs(JavaThread *thread, Method *method, const std::list<oop> &args) {
-            return InvocationContext(thread, method, args).invoke();
+        static inline oop invokeWithArgs(JavaThread *thread, Method *method,
+                                         const std::list<oop> &args, bool forceNoResolve = false) {
+            return InvocationContext(thread, method, args).invoke(forceNoResolve);
         }
 
-        static inline oop invokeWithStack(JavaThread *thread, Method *method, Stack *stack) {
-            return InvocationContext(thread, method, stack).invoke();
+        static inline oop invokeWithStack(JavaThread *thread, Method *method,
+                                          Stack *stack, bool forceNoResolve = false) {
+            return InvocationContext(thread, method, stack).invoke(forceNoResolve);
         }
     };
 }

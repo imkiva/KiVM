@@ -56,18 +56,6 @@ namespace kivm {
         std::unordered_map<String, MethodID *> _vtable;
 
         /**
-         * private or final methods.
-         * map<name + " " + descriptor, method>
-         */
-        std::unordered_map<String, MethodID *> _pftable;
-
-        /**
-         * static methods.
-         * map<name + " " + descriptor, method>
-         */
-        std::unordered_map<String, MethodID *> _stable;
-
-        /**
          * static fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
@@ -204,14 +192,6 @@ namespace kivm {
          * @return method pointer if found, otherwise {@code nullptr}
          */
         Method *getVirtualMethod(const String &name, const String &descriptor) const;
-
-        /**
-         * Get non-virtual method(private or final).
-         * @param name Method name
-         * @param descriptor Method descriptor
-         * @return method pointer if found, otherwise {@code nullptr}
-         */
-        Method *getNonVirtualMethod(const String &name, const String &descriptor) const;
 
         /**
          * Get static method.

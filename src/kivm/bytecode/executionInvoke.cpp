@@ -28,7 +28,7 @@ namespace kivm {
             return nullptr;
         }
 
-        return InvocationContext::invokeWithStack(thread, method, &stack);
+        return InvocationContext::invokeWithStack(thread, method, &stack, true);
     }
 
     oop Execution::invokeStatic(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
@@ -42,7 +42,7 @@ namespace kivm {
             PANIC("invalid invokeStatic");
         }
 
-        return InvocationContext::invokeWithStack(thread, method, &stack);
+        return InvocationContext::invokeWithStack(thread, method, &stack, true);
     }
 
     oop Execution::invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {

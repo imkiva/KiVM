@@ -6,17 +6,17 @@
 
 namespace kivm {
     Method *InvocationContext::resolveVirtualMethod(oop thisObject, Method *tagMethod) {
-        // if method is not an interface method
-        // there's no need to resolve twice
-        // just return itself
-        if (tagMethod->getMaxLocals() != 0) {
-            return tagMethod;
-        }
-
+        auto thisClass = thisObject->getClass();
         Method *resolved = nullptr;
-        if (thisObject->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
-            auto instanceClass = (InstanceKlass *) thisObject->getClass();
+
+        if (thisClass->getClassType() == ClassType::INSTANCE_CLASS) {
+            auto instanceClass = (InstanceKlass *) thisClass;
             resolved = instanceClass->getVirtualMethod(tagMethod->getName(), tagMethod->getDescriptor());
+        } else if (thisClass->getClassType() == ClassType::OBJECT_ARRAY_CLASS
+                   || thisClass->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
+            resolved = tagMethod;
+        } else {
+            SHOULD_NOT_REACH_HERE();
         }
         return resolved;
     }
