@@ -23,7 +23,6 @@ namespace kivm {
             std::list<oop> callingArgs;
             for (auto it = descriptorMap.rbegin(); it != descriptorMap.rend(); ++it) {
                 ValueType valueType = *it;
-                D("javaInvocationContext: Passing stack argument whose value type is %d", valueType);
 
                 switch (valueType) {
                     case ValueType::INT:
@@ -71,7 +70,6 @@ namespace kivm {
             this->_method = resolvedVirtualMethod;
         }
 
-        D("javaInvocationContext: invoke and push result onto the stack (if has)");
         prepareSynchronized(thisObject);
 
         oop result = callInterpreter();

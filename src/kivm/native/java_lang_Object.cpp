@@ -21,8 +21,7 @@ JAVA_NATIVE jint Java_java_lang_Object_hashCode(JNIEnv *env, jobject javaObject)
         return hash;
     }
 
-    intptr_t addrBits = intptr_t(javaObject) >> 3;
-    intptr_t value = addrBits ^(addrBits >> 5) ^Global::runtimeRandom;
+    auto value = intptr_t(javaObject);
     obj->getMarkOop()->setHash((jint) value);
     return (jint) value;
 }

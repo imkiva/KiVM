@@ -22,6 +22,8 @@ namespace kivm {
 
         friend class InvocationContext;
 
+        friend class KiVM;
+
     protected:
         instanceOop _javaThreadObject;
         std::thread *_nativeThread;

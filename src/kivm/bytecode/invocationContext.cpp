@@ -154,25 +154,7 @@ namespace kivm {
                 strings::toStdString(_method->getDescriptor()).c_str());
 
             if (_thread->isExceptionOccurred()) {
-                auto ex = _thread->_exceptionOop;
-                oop messageOop = nullptr;
-
-                if (ex->getFieldValue(L"java/lang/Throwable", L"detailMessage", L"Ljava/lang/String;", &messageOop)) {
-
-                    if (messageOop->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
-                        auto instance = (instanceOop) messageOop;
-                        PANIC("UncaughtException: %s: %s",
-                            strings::toStdString(ex->getInstanceClass()->getName()).c_str(),
-                            strings::toStdString(java::lang::String::toNativeString(instance)).c_str());
-                    } else {
-                        PANIC("UncaughtException: %s (failed to convert message oop)",
-                            strings::toStdString(ex->getInstanceClass()->getName()).c_str());
-                    }
-
-                } else {
-                    PANIC("UncaughtException: %s (failed to obtain message)",
-                        strings::toStdString(ex->getInstanceClass()->getName()).c_str());
-                }
+                KiVM::uncaughtException(_thread);
             }
         }
         return result;

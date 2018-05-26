@@ -53,6 +53,8 @@ namespace kivm {
         static int runtimeRandom;
     };
 
+    class JavaThread;
+
     class KiVM {
     private:
         static JavaVM *sJavaVMInstance;
@@ -74,5 +76,7 @@ namespace kivm {
         static int createVirtualMachine(JavaVM **pJavaVM, JNIEnv **pEnv, JavaVMInitArgs *initArgs);
 
         static int destroyJavaVM(JavaVM *vm);
+
+        static void uncaughtException(JavaThread *exceptionThread);
     };
 }

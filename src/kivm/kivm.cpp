@@ -5,6 +5,7 @@
 #include <kivm/jni/jniJavaVM.h>
 #include <kivm/jni/jniEnv.h>
 #include <kivm/memory/universe.h>
+#include <kivm/runtime/thread.h>
 #include <kivm/classpath/classPathManager.h>
 #include <random>
 
@@ -346,5 +347,30 @@ namespace kivm {
         nativeInterface->NewDirectByteBuffer = JNI_ENTRY_NAME(NewDirectByteBuffer);
         nativeInterface->GetDirectBufferAddress = JNI_ENTRY_NAME(GetDirectBufferAddress);
         nativeInterface->GetDirectBufferCapacity = JNI_ENTRY_NAME(GetDirectBufferCapacity);
+    }
+
+    void KiVM::uncaughtException(JavaThread *exceptionThread) {
+        auto ex = exceptionThread->_exceptionOop;
+        instanceOop charsetName = nullptr;
+        ex->getFieldValue(L"java/nio/charset/UnsupportedCharsetException", L"charsetName", L"Ljava/lang/String;",
+            (oop *) &charsetName);
+        const auto &s = java::lang::String::toNativeString(charsetName);
+        oop messageOop = nullptr;
+
+        if (ex->getFieldValue(L"java/lang/Throwable", L"detailMessage", L"Ljava/lang/String;", &messageOop)) {
+            if (messageOop->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
+                auto instance = (instanceOop) messageOop;
+                PANIC("UncaughtException: %s: %s",
+                    strings::toStdString(ex->getInstanceClass()->getName()).c_str(),
+                    strings::toStdString(java::lang::String::toNativeString(instance)).c_str());
+            } else {
+                PANIC("UncaughtException: %s (failed to convert message oop)",
+                    strings::toStdString(ex->getInstanceClass()->getName()).c_str());
+            }
+
+        } else {
+            PANIC("UncaughtException: %s (failed to obtain message)",
+                strings::toStdString(ex->getInstanceClass()->getName()).c_str());
+        }
     }
 }

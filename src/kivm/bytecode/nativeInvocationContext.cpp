@@ -84,7 +84,8 @@ namespace kivm {
                     case oopType::INSTANCE_OOP:
                     case oopType::OBJECT_ARRAY_OOP:
                     case oopType::TYPE_ARRAY_OOP: {
-                        D("nativeInvocationContext: copying reference: #%d - %p", localVariableIndex++, arg);
+                        D("nativeInvocationContext: copying reference: #%d - %p", localVariableIndex, arg);
+                        localVariableIndex++;
                         _stack->pushReference(arg);
                         break;
                     }
@@ -94,25 +95,29 @@ namespace kivm {
                         switch (valueType) {
                             case ValueType::INT: {
                                 int value = ((intOop) arg)->getValue();
-                                D("Copying int: #%d - %d", localVariableIndex++, value);
+                                D("Copying int: #%d - %d", localVariableIndex, value);
+                                localVariableIndex++;
                                 _stack->pushInt(value);
                                 break;
                             }
                             case ValueType::FLOAT: {
                                 float value = ((floatOop) arg)->getValue();
-                                D("Copying float: #%d - %f", localVariableIndex++, value);
+                                D("Copying float: #%d - %f", localVariableIndex, value);
+                                localVariableIndex++;
                                 _stack->pushFloat(value);
                                 break;
                             }
                             case ValueType::DOUBLE: {
                                 double value = ((doubleOop) arg)->getValue();
-                                D("Copying double: #%d - %lf", localVariableIndex++, value);
+                                D("Copying double: #%d - %lf", localVariableIndex, value);
+                                localVariableIndex++;
                                 _stack->pushDouble(value);
                                 break;
                             }
                             case ValueType::LONG: {
                                 long value = ((longOop) arg)->getValue();
-                                D("Copying long: #%d - %ld", localVariableIndex++, value);
+                                D("Copying long: #%d - %ld", localVariableIndex, value);
+                                localVariableIndex++;
                                 _stack->pushLong(value);
                                 break;
                             }
@@ -138,8 +143,6 @@ namespace kivm {
                 strings::toStdString(_method->getDescriptor()).c_str());
         }
 
-        D("nativeInvocationContext: native method found at: %p", nativeMethod);
-
         ValueType returnValueType = _method->getReturnTypeNoWrap();
         ffi_type *rtype = valueTypeToFFIType(returnValueType);
 
@@ -147,7 +150,6 @@ namespace kivm {
         // 1. JNIEnv *
         // 2. jobject or jclass
         auto argumentCount = ((int) descriptorMap.size()) + 2;
-        D("nativeInvocationContext: Calculated exact argument count: %d", argumentCount);
 
         // arguments to pass to ffi_call()
         void *argsPointer[argumentCount];
@@ -162,7 +164,6 @@ namespace kivm {
         int fillIndex = argumentCount - 1;
         for (auto it = descriptorMap.rbegin(); it != descriptorMap.rend(); ++it, --fillIndex) {
             ValueType valueType = *it;
-            D("nativeInvocationContext: Passing stack argument whose value type is %d", valueType);
 
             // fill types
             argsType[fillIndex] = valueTypeToFFIType(valueType);
@@ -275,7 +276,6 @@ namespace kivm {
 
         oop resultOop = nullptr;
 
-        D("nativeInvocationContext: invoke and push result onto the stack (if has)");
         switch (returnValueType) {
             case ValueType::VOID: {
                 ffi_call(&cif, (void (*)()) nativeMethod, nullptr, argsPointer);
