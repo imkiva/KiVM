@@ -101,3 +101,22 @@ JAVA_NATIVE void Java_java_lang_System_setErr0(JNIEnv *env, jclass java_lang_Sys
     auto system = Resolver::instanceClass(java_lang_System);
     system->setStaticFieldValue(J_SYSTEM, L"err", L"Ljava/io/PrintStream;", printStreamOop);
 }
+
+JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass java_lang_System, jstring javaLibName) {
+    auto stringOop = Resolver::instance(javaLibName);
+    if (stringOop == nullptr) {
+        PANIC("java.lang.NullPointerException");
+    }
+
+    auto libraryName = java::lang::String::toNativeString(stringOop);
+#if defined(KIVM_PLATFORM_APPLE)
+    auto mappedName = L"lib" + libraryName + L".dylib";
+#elif defined(KIVM_PLATFORM_UNIX)
+    auto mappedName = L"lib" + libraryName + L".so";
+#elif defined(KIVM_PLATFORM_WINDOWS)
+    auto mappedName = libraryName + L".dll";
+#else
+#error Unknown platform
+#endif
+    return java::lang::String::intern(mappedName);
+}

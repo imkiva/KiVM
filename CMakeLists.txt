@@ -44,6 +44,9 @@ if (WIN32)
     add_definitions(-DKIVM_PLATFORM_WINDOWS)
     aux_source_directory(src/shared/platform/windows KIVM_PLATFORM_SRC)
 elseif (UNIX)
+    if (APPLE)
+        add_definitions(-DKIVM_PLATFORM_APPLE)
+    endif ()
     add_definitions(-DKIVM_PLATFORM_UNIX)
     aux_source_directory(src/shared/platform/unix KIVM_PLATFORM_SRC)
 else ()
@@ -230,7 +233,8 @@ set(SOURCE_FILES
         src/kivm/native/java_lang_reflect_Constructor.cpp
         src/kivm/native/java_lang_reflect_Method.cpp
         src/kivm/native/sun_nio_cs_StreamEncoder.cpp
-        src/kivm/native/java_util_concurrent_atomic_AtomicLong.cpp src/kivm/native/java_io_UnixFileSystem.cpp)
+        src/kivm/native/java_util_concurrent_atomic_AtomicLong.cpp
+        src/kivm/native/java_io_UnixFileSystem.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})
