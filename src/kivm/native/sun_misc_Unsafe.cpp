@@ -10,6 +10,7 @@
 #include <kivm/bytecode/execution.h>
 #include <shared/atomic.h>
 #include <tuple>
+#include <kivm/memory/universe.h>
 
 using namespace kivm;
 
@@ -165,3 +166,27 @@ Java_sun_misc_Unsafe_compareAndSwapInt(JNIEnv *env, jobject javaUnsafe,
     auto ptr = result->getValueUnsafe();
     return JBOOLEAN(cmpxchg(ptr, expected, update) == expected);
 }
+
+JAVA_NATIVE jlong Java_sun_misc_Unsafe_allocateMemory(JNIEnv *env, jobject javaUnsafe, jlong size) {
+    if (size <= 0) {
+        return 0;
+    }
+    return (jlong) Universe::allocCObject(size);
+}
+
+JAVA_NATIVE void Java_sun_misc_Unsafe_putLong(JNIEnv *env, jobject javaUnsafe, jlong addr, jlong value) {
+    if (addr == 0) {
+        return;
+    }
+
+    *((jlong *) addr) = value;
+}
+
+JAVA_NATIVE jbyte Java_sun_misc_Unsafe_getByte(JNIEnv *env, jobject javaUnsafe, jlong addr) {
+    if (addr == 0) {
+        return 0;
+    }
+
+    return *((jbyte *) addr);
+}
+
