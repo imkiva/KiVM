@@ -62,3 +62,12 @@ JAVA_NATIVE void Java_java_lang_Object_notify(JNIEnv *env, jobject javaObject) {
     auto object = Resolver::javaOop(javaObject);
     object->getMarkOop()->notify();
 }
+
+JAVA_NATIVE void Java_java_lang_Object_wait(JNIEnv *env, jobject javaObject, jlong timeout) {
+    auto object = Resolver::javaOop(javaObject);
+    if (timeout == 0) {
+        object->getMarkOop()->wait();
+    } else {
+        object->getMarkOop()->wait(timeout);
+    }
+}

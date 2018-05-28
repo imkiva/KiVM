@@ -43,7 +43,7 @@ namespace kivm {
             _cond.wait(_lock);
         }
 
-        void wait(long millisecond) {
+        void wait(jlong millisecond) {
             _cond.wait_for(_lock, std::chrono::milliseconds(millisecond));
         }
 

@@ -26,9 +26,11 @@ namespace kivm {
         static void *operator new(size_t size, bool = true) noexcept;
 
         static void *operator new(size_t size, const std::nothrow_t &) noexcept = delete;
+
         static void *operator new[](size_t size, bool = true) throw();
 
         static void *operator new[](size_t size, const std::nothrow_t &) noexcept = delete;
+
         static void operator delete(void *ptr);
 
         static void operator delete[](void *ptr);
@@ -65,7 +67,7 @@ namespace kivm {
 
         inline void wait() { _monitor.wait(); }
 
-        inline void wait(long macro_sec) { _monitor.wait(macro_sec); }
+        inline void wait(jlong timeout) { _monitor.wait((jlong) timeout); }
 
         inline void notify() { _monitor.notify(); }
 
