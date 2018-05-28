@@ -31,14 +31,11 @@ namespace kivm {
         // Initialize Java Virtual Machine
         Threads::initializeJVM(this);
 
-        // TODO: find main(String[]) method and build arg list
+        // TODO: invoke main(String[])
         // OK, call main() with args
         // this->_method = main_method;
         // this->_args = main_args;
-        // Run method manually, we cannot use JavaThread::run()
-        // because it is designed for app threads,
-        // but JavaThread::run_method() is still available.
-        D("Threads::initializeJVM() succeed. Lunching main()");
+        D("Threads::initializeJVM() succeeded. Lunching main()");
         PANIC("JavaMainThread::start() not implemented.");
         InvocationContext::invokeWithArgs(this, _method, _args);
     }
