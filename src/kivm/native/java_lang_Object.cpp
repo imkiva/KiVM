@@ -15,7 +15,7 @@ JAVA_NATIVE void Java_java_lang_Object_registerNatives(JNIEnv *env, jclass java_
 
 JAVA_NATIVE jint Java_java_lang_Object_hashCode(JNIEnv *env, jobject javaObject) {
     D("java/lang/Object.hashCode()I");
-    auto obj = Resolver::instance(javaObject);
+    auto obj = Resolver::javaOop(javaObject);
     auto hash = obj->getMarkOop()->getHash();
     if (hash != 0) {
         return hash;
@@ -49,6 +49,16 @@ JAVA_NATIVE jobject Java_java_lang_Object_clone(JNIEnv *env, jobject javaObject)
 }
 
 JAVA_NATIVE jclass Java_java_lang_Object_getClass(JNIEnv *env, jobject javaObject) {
-    auto object = Resolver::instance(javaObject);
+    auto object = Resolver::javaOop(javaObject);
     return object->getClass()->getJavaMirror();
+}
+
+JAVA_NATIVE void Java_java_lang_Object_notifyAll(JNIEnv *env, jobject javaObject) {
+    auto object = Resolver::javaOop(javaObject);
+    object->getMarkOop()->notifyAll();
+}
+
+JAVA_NATIVE void Java_java_lang_Object_notify(JNIEnv *env, jobject javaObject) {
+    auto object = Resolver::javaOop(javaObject);
+    object->getMarkOop()->notify();
 }
