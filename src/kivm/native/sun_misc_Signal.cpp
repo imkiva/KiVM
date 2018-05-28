@@ -10,8 +10,15 @@
 
 using namespace kivm;
 
+static void defaultSignalHandler(int signo) {
+    if (signo == SIGINT) {
+        D("VM: DefaultSignalHandler: received SIGINT, exiting...");
+        exit(0);
+    }
+}
+
 JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jstring javaSignalName) {
-#ifdef __APPLE__
+#if defined(__APPLE__)
     static std::unordered_map<String, int> SIGNAL_TABLE{
         /* derived from /usr/include/bits/signum.h on RH7.2 */
         {L"HUP",    SIGHUP},         /* Hangup (POSIX).  */
@@ -46,7 +53,7 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
         {L"USR1",   SIGUSR1},        /* User-defined signal 1 (POSIX).  */
         {L"USR2",   SIGUSR2},        /* User-defined signal 2 (POSIX).  */
     };
-#elif defined __linux__
+#elif defined(__linux__)
     static std::unordered_map<String, int> SIGNAL_TABLE{
         {L"HUP", SIGHUP},         /* Hangup (POSIX).  */
         {L"INT", SIGINT},         /* Interrupt (ANSI).  */
@@ -101,4 +108,72 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
     }
 
     return iter->second;
+}
+
+JAVA_NATIVE jlong Java_sun_misc_Signal_handle0(JNIEnv *env, jclass unused, jint signo, jlong handlerAddr) {
+    void *realHandler = (handlerAddr == 2)
+                        ? (void *) defaultSignalHandler
+                        : (void *) handlerAddr;
+
+    // copied from jvm_bsd.cpp
+    switch (signo) {
+        case SIGUSR1:
+        case SIGFPE:
+        case SIGKILL:
+        case SIGSEGV:
+        case SIGQUIT:
+            // these signals are unmodifiable
+            return -1;
+
+        case SIGINT:
+            // already used defaultSignalHandler(int)
+            return 2;
+
+        case SIGHUP:
+        case SIGTERM: {
+            // detect whether the sig is `ignored`. if not, set the handler. if yes, return 1.
+            struct sigaction oldAction{};
+            if (sigaction(signo, nullptr, &oldAction) == -1) {
+                PANIC("sigaction() returned -1");
+            }
+
+#if defined(__APPLE__)
+            void *oldHandler = (void *) oldAction.__sigaction_u.__sa_handler;        // this is the `current handler`.
+#elif defined(__linux__)
+            void *oldHandler = (void *)oldAction.sa_handler;
+#endif
+            if (oldHandler == (void *) SIG_IGN) {
+                return 1;
+            }
+            break;
+        }
+
+        default:
+            SHOULD_NOT_REACH_HERE();
+    }
+
+    // register new handler
+    struct sigaction act{}, oact{};
+    sigfillset(&act.sa_mask);
+    act.sa_flags = SA_RESTART;
+
+#if defined(__APPLE__)
+    act.__sigaction_u.__sa_handler = (void (*)(int)) realHandler;
+    void *old_handler = (void *) oact.__sigaction_u.__sa_handler;
+
+#elif defined(__linux__)
+    act.sa_handler = (void (*)(int))realHandler;
+    void *old_handler = (void *)oact.sa_handler;
+#endif
+
+    if (sigaction(signo, &act, &oact) != -1) {
+        if (old_handler == (void *) defaultSignalHandler) {
+            return 2;
+        } else {
+            return (jlong) old_handler;
+        }
+    } else {
+        // error
+        return -1;
+    }
 }
