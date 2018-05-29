@@ -21,7 +21,14 @@ int main(int argc, const char **argv) {
         PANIC("JNI_CreateJavaVM() failed");
     }
 
-    JavaMainThread javaMainThread(mainClassName, {});
+    std::vector<String> arguments;
+    // skip argv[0] and main class name
+    argv += 2;
+    while (argv[0]) {
+        arguments.push_back(strings::fromStdString(argv[0]));
+        ++argv;
+    }
+    JavaMainThread javaMainThread(mainClassName, arguments);
     javaMainThread.create(nullptr);
 
     javaVM->DestroyJavaVM();
