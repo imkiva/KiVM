@@ -7,7 +7,7 @@ int main(int argc, const char **argv) {
     using namespace kivm;
 
     if (argc == 1) {
-        fprintf(stderr, "Usage: java <class-name>\n");
+        fprintf(stderr, "Usage: java <class-name> [args]\n");
         return 1;
     }
 
