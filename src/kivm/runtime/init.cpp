@@ -51,6 +51,11 @@ namespace kivm {
         auto stringArrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[Ljava/lang/String;");
         auto argumentArrayOop = stringArrayClass->newInstance((int) _arguments.size());
 
+        for (int i = 0; i < argumentArrayOop->getLength(); ++i) {
+            auto stringOop = java::lang::String::intern(_arguments[i]);
+            argumentArrayOop->setElementAt(i, stringOop);
+        }
+
         this->_method = mainMethod;
         this->_args.push_back(argumentArrayOop);
         InvocationContext::invokeWithArgs(this, _method, _args);
