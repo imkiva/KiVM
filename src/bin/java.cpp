@@ -11,13 +11,17 @@ int main(int argc, const char **argv) {
         return 1;
     }
 
+    String mainClassName = strings::replaceAll(strings::fromStdString(argv[1]),
+        Global::DOT, Global::SLASH);
+    D("java: main class name: %s\n", strings::toStdString(mainClassName).c_str());
+
     JavaVM *javaVM = nullptr;
     JNIEnv *env = nullptr;
     if (JNI_CreateJavaVM(&javaVM, (void **) &env, nullptr) != JNI_OK) {
         PANIC("JNI_CreateJavaVM() failed");
     }
 
-    JavaMainThread javaMainThread;
+    JavaMainThread javaMainThread(mainClassName, {});
     javaMainThread.create(nullptr);
 
     javaVM->DestroyJavaVM();

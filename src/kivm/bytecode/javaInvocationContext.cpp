@@ -11,7 +11,7 @@ namespace kivm {
     oop InvocationContext::invokeJava(bool hasThis, bool resolveTwice) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypes();
 
-        D("javaInvocationContext: invokeTarget: %s.%s:%s, static: %s, native: %s, nargs: %zd",
+        D("javaInvocationContext: %s.%s:%s, static: %s, native: %s, nargs: %zd",
             strings::toStdString(_instanceKlass->getName()).c_str(),
             strings::toStdString(_method->getName()).c_str(),
             strings::toStdString(_method->getDescriptor()).c_str(),

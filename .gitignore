@@ -35,4 +35,5 @@
 cmake-build-*/
 
 .DS_Store
+./java-out
 

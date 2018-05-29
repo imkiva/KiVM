@@ -4,6 +4,8 @@
 #include <kivm/runtime/thread.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/oop/primitiveOop.h>
+#include <kivm/oop/arrayKlass.h>
+#include <kivm/oop/arrayOop.h>
 #include <kivm/native/classNames.h>
 #include <kivm/native/java_lang_Class.h>
 #include <kivm/native/java_lang_Thread.h>
@@ -23,8 +25,9 @@ namespace kivm {
         return klass;
     }
 
-    JavaMainThread::JavaMainThread()
-        : JavaThread(nullptr, {}) {
+    JavaMainThread::JavaMainThread(const String &mainClassName, const std::vector<String> &arguments)
+        : JavaThread(nullptr, {}),
+          _mainClassName(mainClassName), _arguments(arguments) {
     }
 
     void JavaMainThread::start() {
@@ -32,11 +35,24 @@ namespace kivm {
         Threads::initializeJVM(this);
 
         // TODO: invoke main(String[])
-        // OK, call main() with args
-        // this->_method = main_method;
-        // this->_args = main_args;
         D("Threads::initializeJVM() succeeded. Lunching main()");
-        PANIC("JavaMainThread::start() not implemented.");
+
+        auto mainClass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(_mainClassName);
+        if (mainClass == nullptr) {
+            PANIC("main class not found: %s", strings::toStdString(_mainClassName).c_str());
+        }
+
+        auto mainMethod = mainClass->getStaticMethod(L"main", L"([Ljava/lang/String;)V");
+        if (mainMethod == nullptr) {
+            PANIC("method main(String[]) not found in class %s",
+                strings::toStdString(_mainClassName).c_str());
+        }
+
+        auto stringArrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[Ljava/lang/String;");
+        auto argumentArrayOop = stringArrayClass->newInstance((int) _arguments.size());
+
+        this->_method = mainMethod;
+        this->_args.push_back(argumentArrayOop);
         InvocationContext::invokeWithArgs(this, _method, _args);
     }
 
