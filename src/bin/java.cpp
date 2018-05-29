@@ -3,11 +3,16 @@
 #include <kivm/runtime/thread.h>
 #include <kivm/classpath/classPathManager.h>
 
-int main() {
+int main(int argc, const char **argv) {
     using namespace kivm;
 
-    JavaVM *javaVM;
-    JNIEnv *env;
+    if (argc == 1) {
+        fprintf(stderr, "Usage: java <class-name>\n");
+        return 1;
+    }
+
+    JavaVM *javaVM = nullptr;
+    JNIEnv *env = nullptr;
     if (JNI_CreateJavaVM(&javaVM, (void **) &env, nullptr) != JNI_OK) {
         PANIC("JNI_CreateJavaVM() failed");
     }
