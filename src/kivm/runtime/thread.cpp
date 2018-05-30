@@ -61,6 +61,10 @@ namespace kivm {
     }
 
     void JavaThread::start() {
+        // No other threads will join this thread.
+        // So it is OK to detach()
+        this->_nativeThread->detach();
+
         // A thread must start with an empty frame
         assert(_frames.getSize() == 0);
 

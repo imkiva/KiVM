@@ -31,10 +31,6 @@ namespace kivm {
     }
 
     void JavaMainThread::start() {
-        // No other threads will join this thread.
-        // So it is OK to detach()
-        this->_nativeThread->detach();
-
         // Initialize Java Virtual Machine
         Threads::initializeJVM(this);
 
