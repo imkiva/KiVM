@@ -29,37 +29,24 @@ namespace kivm {
         std::thread *_nativeThread;
 
         ThreadState _state;
-        FrameList _frames;
-        std::list<oop> _args;
-        u4 _pc;
-
-        instanceOop _exceptionOop;
-
-        // note: this is not the current method
-        // use getCurrentMethod() instead
-        Method *_method;
 
         virtual void start() = 0;
-
-        virtual bool shouldRecordInThreadTable();
 
     protected:
         void setJavaThreadObject(instanceOop javaThread) {
             this->_javaThreadObject = javaThread;
         }
 
-        int tryHandleException(instanceOop exceptionOop);
-
     public:
-        Thread(Method *method, const std::list<oop> &args);
+        Thread();
 
         virtual ~Thread();
 
-        void create(instanceOop javaThread);
-
-        long getEetop() const;
+        virtual void create(instanceOop javaThread);
 
         virtual void onThreadLaunched();
+
+        long getEetop() const;
 
         inline instanceOop getJavaThreadObject() const {
             return _javaThreadObject;
@@ -72,8 +59,42 @@ namespace kivm {
         inline void setThreadState(ThreadState threadState) {
             Thread::_state = threadState;
         }
+    };
 
-        Frame *getCurrentFrame() {
+    // The Java app thread
+    class JavaThread : public Thread {
+        friend class Threads;
+
+        friend class ByteCodeInterpreter;
+
+        friend class InvocationContext;
+
+        friend class KiVM;
+
+        friend class InvocationContext;
+
+    protected:
+        FrameList _frames;
+        std::list<oop> _args;
+        u4 _pc;
+
+        instanceOop _exceptionOop;
+
+        // note: this is not the current method
+        // use getCurrentMethod() instead
+        Method *_method;
+
+    protected:
+        void start() override;
+
+        int tryHandleException(instanceOop exceptionOop);
+
+    public:
+        JavaThread(Method *method, const std::list<oop> &args);
+
+        void create(instanceOop javaThread) override;
+
+        inline Frame *getCurrentFrame() {
             return _frames.getCurrentFrame();
         }
 
@@ -87,17 +108,6 @@ namespace kivm {
         inline bool isExceptionOccurred() const {
             return _exceptionOop != nullptr;
         }
-    };
-
-    // The Java app thread
-    class JavaThread : public Thread {
-        friend class InvocationContext;
-
-    public:
-        JavaThread(Method *method, const std::list<oop> &args);
-
-    protected:
-        void start() override;
     };
 
     // The Java main thread
@@ -114,19 +124,17 @@ namespace kivm {
         void start() override;
 
         void onThreadLaunched() override;
-
-        bool shouldRecordInThreadTable() override;
     };
 
     class Threads {
     private:
-        static int &getAppThreadCount() {
+        static int &getRunningJavaThreadCount() {
             static int appThreadCount;
             return appThreadCount;
         }
 
-        static std::vector<Thread *> &getAppThreadList() {
-            static std::vector<Thread *> appThreads;
+        static std::vector<JavaThread *> &getJavaThreadList() {
+            static std::vector<JavaThread *> appThreads;
             return appThreads;
         }
 
@@ -137,11 +145,11 @@ namespace kivm {
     public:
         static void initializeJVM(JavaMainThread *thread);
 
-        static Thread *currentThread();
+        static JavaThread *currentThread();
 
-        static void forEachAppThread(const std::function<bool(Thread *)> &callback) {
+        static void forEach(const std::function<bool(JavaThread *)> &callback) {
             LockGuard lockGuard(appThreadLock());
-            for (auto it : getAppThreadList()) {
+            for (auto it : getJavaThreadList()) {
                 if (callback(it)) {
                     break;
                 }
@@ -158,27 +166,22 @@ namespace kivm {
             return lock;
         }
 
-        static inline void add(Thread *javaThread) {
+        static inline void addJavaThread(JavaThread *javaThread) {
             D("Adding thread: %p", javaThread);
             LockGuard lockGuard(appThreadLock());
-            getAppThreadList().push_back(javaThread);
-            ++Threads::getAppThreadCount();
+            getJavaThreadList().push_back(javaThread);
+            ++Threads::getRunningJavaThreadCount();
         }
 
-        static inline int getAppThreadCountLocked() {
+        static inline int getRunningJavaThreadCountLocked() {
             LockGuard lockGuard(appThreadLock());
-            int threads = Threads::getAppThreadCount();
+            int threads = Threads::getRunningJavaThreadCount();
             return threads;
         }
 
-        static inline void incAppThreadCountLocked() {
+        static inline void notifyJavaThreadDeadLocked(JavaThread *javaThread) {
             LockGuard lockGuard(appThreadLock());
-            ++Threads::getAppThreadCount();
-        }
-
-        static inline void decAppThreadCountLocked() {
-            LockGuard lockGuard(appThreadLock());
-            ++Threads::getAppThreadCount();
+            ++Threads::getRunningJavaThreadCount();
         }
     };
 }

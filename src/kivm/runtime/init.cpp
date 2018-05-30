@@ -67,8 +67,10 @@ namespace kivm {
 
         // Then, let's wait for all app threads to finish
         for (;;) {
-            int threads = Threads::getAppThreadCountLocked();
+            int threads = Threads::getRunningJavaThreadCountLocked();
             assert(threads >= 0);
+
+            D("scheduler: remaining app thread count: %d", threads);
 
             if (threads == 0) {
                 break;
@@ -76,10 +78,6 @@ namespace kivm {
 
             sched_yield();
         }
-    }
-
-    bool JavaMainThread::shouldRecordInThreadTable() {
-        return false;
     }
 
     void Threads::initializeJVM(JavaMainThread *thread) {
@@ -103,7 +101,9 @@ namespace kivm {
         // JavaMainThread is created with javaThreadObject == nullptr
         // Now we have created a thread for it.
         thread->setJavaThreadObject(init_thread);
-        Threads::add(thread);
+
+        // do not addJavaThread again
+        // Threads::addJavaThread(thread);
 
         // Create and construct the system thread group.
         instanceOop init_tg = tg_class->newInstance();

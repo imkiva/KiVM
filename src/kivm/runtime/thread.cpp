@@ -11,19 +11,13 @@
 #include <algorithm>
 
 namespace kivm {
-    Thread::Thread(Method *method, const std::list<oop> &args)
-        : _frames(RuntimeConfig::get().threadMaxStackFrames),
-          _method(method), _args(args),
-          _javaThreadObject(nullptr), _nativeThread(nullptr),
-          _pc(0), _state(ThreadState::RUNNING) {
+    Thread::Thread()
+        : _javaThreadObject(nullptr), _nativeThread(nullptr),
+          _state(ThreadState::RUNNING) {
     }
 
     void Thread::create(instanceOop javaThread) {
         this->_javaThreadObject = javaThread;
-        if (this->shouldRecordInThreadTable()) {
-            D("shouldRecordInThreadTable == true, recording.");
-            Threads::add(this);
-        }
 
         this->_nativeThread = new std::thread([this] {
             this->start();
@@ -35,15 +29,11 @@ namespace kivm {
         // Do nothing.
     }
 
-    bool Thread::shouldRecordInThreadTable() {
-        return true;
-    }
-
     long Thread::getEetop() const {
         return (long) this->_nativeThread->native_handle();
     }
 
-    int Thread::tryHandleException(instanceOop exceptionOop) {
+    int JavaThread::tryHandleException(instanceOop exceptionOop) {
         this->_exceptionOop = exceptionOop;
 
         auto currentMethod = _frames.getCurrentFrame()->getMethod();
@@ -61,7 +51,13 @@ namespace kivm {
     Thread::~Thread() = default;
 
     JavaThread::JavaThread(Method *method, const std::list<oop> &args)
-        : Thread(method, args) {
+        : _frames(RuntimeConfig::get().threadMaxStackFrames),
+          _method(method), _args(args), _pc(0) {
+    }
+
+    void JavaThread::create(instanceOop javaThread) {
+        Threads::addJavaThread(this);
+        Thread::create(javaThread);
     }
 
     void JavaThread::start() {
@@ -81,16 +77,16 @@ namespace kivm {
         this->setThreadState(ThreadState::DIED);
         Threads::threadStateChangeLock().unlock();
 
-        if (this->shouldRecordInThreadTable()) {
-            Threads::decAppThreadCountLocked();
-        }
+        // do not remove thread instance in thread list
+        // just tell thread list how many active thread are still running
+        Threads::notifyJavaThreadDeadLocked(this);
     }
 
-    Thread *Threads::currentThread() {
-        Thread *found = nullptr;
+    JavaThread *Threads::currentThread() {
+        JavaThread *found = nullptr;
         auto currentThreadID = std::this_thread::get_id();
 
-        Threads::forEachAppThread([&](Thread *thread) {
+        Threads::forEach([&](JavaThread *thread) {
             if (thread->getThreadState() != ThreadState::DIED) {
                 auto checkThreadID = thread->_nativeThread->get_id();
                 if (checkThreadID == currentThreadID) {
