@@ -70,9 +70,9 @@ namespace kivm {
             int threads = Threads::getRunningJavaThreadCountLocked();
             assert(threads >= 0);
 
-            D("scheduler: remaining app thread count: %d", threads);
 
             if (threads == 0) {
+                D("[JavaThread-Scheduler]: no remaining java thread, exiting...");
                 break;
             }
 

@@ -32,6 +32,8 @@ namespace kivm {
 
         virtual void start() = 0;
 
+        virtual void destroy();
+
     protected:
         void setJavaThreadObject(instanceOop javaThread) {
             this->_javaThreadObject = javaThread;
@@ -93,6 +95,8 @@ namespace kivm {
         JavaThread(Method *method, const std::list<oop> &args);
 
         void create(instanceOop javaThread) override;
+
+        void destroy() override;
 
         inline Frame *getCurrentFrame() {
             return _frames.getCurrentFrame();
@@ -167,8 +171,8 @@ namespace kivm {
         }
 
         static inline void addJavaThread(JavaThread *javaThread) {
-            D("Adding thread: %p", javaThread);
             LockGuard lockGuard(appThreadLock());
+            D("Adding thread: %p", javaThread);
             getJavaThreadList().push_back(javaThread);
             ++Threads::getRunningJavaThreadCount();
         }
@@ -181,7 +185,7 @@ namespace kivm {
 
         static inline void notifyJavaThreadDeadLocked(JavaThread *javaThread) {
             LockGuard lockGuard(appThreadLock());
-            ++Threads::getRunningJavaThreadCount();
+            --Threads::getRunningJavaThreadCount();
         }
     };
 }

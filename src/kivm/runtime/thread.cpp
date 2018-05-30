@@ -21,6 +21,7 @@ namespace kivm {
 
         this->_nativeThread = new std::thread([this] {
             this->start();
+            this->destroy();
         });
         this->onThreadLaunched();
     }
@@ -29,58 +30,15 @@ namespace kivm {
         // Do nothing.
     }
 
+    void Thread::destroy() {
+        // do nothing.
+    }
+
     long Thread::getEetop() const {
         return (long) this->_nativeThread->native_handle();
     }
 
-    int JavaThread::tryHandleException(instanceOop exceptionOop) {
-        this->_exceptionOop = exceptionOop;
-
-        auto currentMethod = _frames.getCurrentFrame()->getMethod();
-        int handler = currentMethod->findExceptionHandler(_pc,
-            exceptionOop->getInstanceClass());
-
-        if (handler > 0) {
-            this->_exceptionOop = nullptr;
-            return handler;
-        }
-
-        return -1;
-    }
-
     Thread::~Thread() = default;
-
-    JavaThread::JavaThread(Method *method, const std::list<oop> &args)
-        : _frames(RuntimeConfig::get().threadMaxStackFrames),
-          _method(method), _args(args), _pc(0) {
-    }
-
-    void JavaThread::create(instanceOop javaThread) {
-        Threads::addJavaThread(this);
-        Thread::create(javaThread);
-    }
-
-    void JavaThread::start() {
-        // No other threads will join this thread.
-        // So it is OK to detach()
-        this->_nativeThread->detach();
-
-        // A thread must start with an empty frame
-        assert(_frames.getSize() == 0);
-
-        // Only one argument(this) in java.lang.Thread#run()
-        assert(_args.size() == 1);
-
-        InvocationContext::invokeWithArgs(this, _method, _args);
-
-        Threads::threadStateChangeLock().lock();
-        this->setThreadState(ThreadState::DIED);
-        Threads::threadStateChangeLock().unlock();
-
-        // do not remove thread instance in thread list
-        // just tell thread list how many active thread are still running
-        Threads::notifyJavaThreadDeadLocked(this);
-    }
 
     JavaThread *Threads::currentThread() {
         JavaThread *found = nullptr;
