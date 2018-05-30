@@ -148,7 +148,7 @@ namespace kivm {
             {init_thread, main_tg, java::lang::String::intern(L"main")});
 
         // TODO: java.nio.charset.Charset.forName() cannot find any charsets
-        hackJavaClasses(cl, thread);
+        Threads::hackJavaClasses(cl, thread);
 
         // Initialize system classes.
         auto init_system_classes = system_class->getStaticMethod(L"initializeSystemClass", L"()V");
