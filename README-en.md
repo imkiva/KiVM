@@ -24,6 +24,12 @@ Kiva's Java Virtual Machine.
     3. Type `cmake . && make` in your terminal app.
     4. Enjoy it!
 
+### Run
+```bash
+$ export CLASSPATH=/path/to/rt.jar:/path/to/charsets.jar:...
+$ ./java <main-class-name> [args...]
+```
+
 ### Credit
 * Inspired by [wind_jvm](https://github.com/wind2412/wind_jvm)
 * Modified version of [libzippp](https://github.com/ctabin/libzippp)

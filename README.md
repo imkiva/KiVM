@@ -26,6 +26,12 @@ Kiva's Java Virtual Machine.
     3. 在终端中输入 `cmake . && make`
     4. 等待编译完成
 
+### 运行
+```bash
+$ export CLASSPATH=/path/to/rt.jar:/path/to/charsets.jar:...
+$ ./java <main-class-name> [args...]
+```
+
 ### 鸣谢
 * 被 [wind_jvm](https://github.com/wind2412/wind_jvm) 项目启发
 * 使用了修改版本的 [libzippp](https://github.com/ctabin/libzippp)
