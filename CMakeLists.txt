@@ -234,7 +234,9 @@ set(SOURCE_FILES
         src/kivm/native/java_lang_reflect_Method.cpp
         src/kivm/native/sun_nio_cs_StreamEncoder.cpp
         src/kivm/native/java_util_concurrent_atomic_AtomicLong.cpp
-        src/kivm/native/java_io_UnixFileSystem.cpp src/kivm/native/sun_misc_Signal.cpp src/kivm/runtime/javaThread.cpp)
+        src/kivm/native/java_io_UnixFileSystem.cpp
+        src/kivm/native/sun_misc_Signal.cpp
+        src/kivm/runtime/javaThread.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})
