@@ -98,6 +98,8 @@ namespace kivm {
 
         void destroy() override;
 
+        void throwException(InstanceKlass *exceptionClass, const String &message);
+
         inline Frame *getCurrentFrame() {
             return _frames.getCurrentFrame();
         }

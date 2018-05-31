@@ -61,4 +61,13 @@ namespace kivm {
         // just tell thread list how many active thread are still running
         Threads::notifyJavaThreadDeadLocked(this);
     }
+
+    void JavaThread::throwException(InstanceKlass *exceptionClass, const String &message) {
+        auto ctor = exceptionClass->getThisClassMethod(L"<init>", L"(Ljava/lang/String;)V");
+        auto exceptionOop = exceptionClass->newInstance();
+        InvocationContext::invokeWithArgs(this, ctor,
+            {exceptionOop, java::lang::String::from(message)},
+            true);
+        this->_exceptionOop = exceptionOop;
+    }
 }
