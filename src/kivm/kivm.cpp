@@ -8,6 +8,7 @@
 #include <kivm/runtime/thread.h>
 #include <kivm/classpath/classPathManager.h>
 #include <random>
+#include <kivm/runtime/integerCache.h>
 
 #if defined(KIVM_PLATFORM_UNIX)
 #   define PATH_SEPARATOR_CHAR L"/"
@@ -47,6 +48,9 @@ namespace kivm {
 
         // initialize classpath
         ClassPathManager::initialize();
+
+        // caches
+        IntegerCache::initialize();
 
         auto invokeInterface = new JNIInvokeInterface_;
         invokeInterface->AttachCurrentThread = JNI_ENTRY_NAME(AttachCurrentThread);

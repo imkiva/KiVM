@@ -13,6 +13,7 @@
 #include <kivm/bytecode/invocationContext.h>
 #include <kivm/native/java_lang_reflect_Constructor.h>
 #include <kivm/native/java_lang_reflect_Method.h>
+#include <kivm/runtime/integerCache.h>
 
 namespace kivm {
     static inline InstanceKlass *use(ClassLoader *cl, JavaMainThread *thread, const String &name) {

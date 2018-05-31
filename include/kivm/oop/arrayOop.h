@@ -13,7 +13,7 @@ namespace kivm {
         // copyArrayTo() needs to use _elements
         friend class TypeArrayKlass;
 
-    private:
+    protected:
         std::vector<oop> _elements;
 
     private:

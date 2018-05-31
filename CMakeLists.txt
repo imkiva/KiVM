@@ -236,7 +236,7 @@ set(SOURCE_FILES
         src/kivm/native/java_util_concurrent_atomic_AtomicLong.cpp
         src/kivm/native/java_io_UnixFileSystem.cpp
         src/kivm/native/sun_misc_Signal.cpp
-        src/kivm/runtime/javaThread.cpp)
+        src/kivm/runtime/javaThread.cpp include/kivm/runtime/integerCache.h src/kivm/runtime/integerCache.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})
