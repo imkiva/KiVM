@@ -55,8 +55,11 @@ namespace kivm {
     }
 
     void TypeArrayKlass::linkClass() {
-        // Type array classes are already
-        // mirrored in java::lang::Class::initialize()
+        // One-dimension type array classes are already mirrored
+        // in java::lang::Class::initialize()
+        if (getDimension() > 1) {
+            java::lang::Class::createMirror(this, getJavaLoader());
+        }
         ArrayKlass::linkClass();
     }
 
