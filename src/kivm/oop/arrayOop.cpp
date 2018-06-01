@@ -40,6 +40,7 @@ namespace kivm {
             case ValueType::CHAR:
             case ValueType::BYTE:
             case ValueType::SHORT:
+            case ValueType::BOOLEAN:
                 for (int i = 0; i < getLength(); ++i) {
                     this->_elements[i] = new intOopDesc(0);
                 }
