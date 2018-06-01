@@ -8,7 +8,7 @@ interface PersonContainer {
 	Person p = new Person();
 }
 
-class Test1 extends Person implements PersonContainer {
+class StaticFieldTest1 extends Person implements PersonContainer {
 
 	public void print() {
 		i = 4;
@@ -17,7 +17,7 @@ class Test1 extends Person implements PersonContainer {
 	}
 
 	public static void main(String[] args) {
-		Test1 u = new Test1();
+		StaticFieldTest1 u = new StaticFieldTest1();
 		u.i = 3;
 		u.print();
 		Person.i = 10;
