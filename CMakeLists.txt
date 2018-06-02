@@ -101,6 +101,13 @@ else ()
     message(STATUS "libzip not found: jar class loading disabled")
 endif ()
 
+
+#### threaded interpretation
+try_run(IS_THREADED COMPILE_RESULT ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/cmake/check-threaded.cpp)
+if (IS_THREADED)
+    set (KIVM_THREADED 1)
+endif ()
+
 #### post configuration
 add_definitions("-DHAVE_CONFIG_H")
 configure_file(${CMAKE_SOURCE_DIR}/cmake/cmake-config.h.in ${CMAKE_BINARY_DIR}/compileTimeConfig.h)

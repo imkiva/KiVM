@@ -5,6 +5,7 @@
 #cmakedefine01 HAVE_ZIP_FLAGS_T
 #cmakedefine01 HAVE_ZIP_FL_ENC_GUESS
 #cmakedefine01 HAVE_ZIP_H
+#cmakedefine01 KIVM_THREADED
 #cmakedefine01 KIVM_ARCH_x86
 #cmakedefine01 KIVM_ARCH_x86_64
 #cmakedefine01 KIVM_ARCH_arm
