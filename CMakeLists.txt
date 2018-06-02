@@ -119,7 +119,8 @@ include_directories(include)
 set(SOURCE_FILES
         include/kivm/classfile/classFile.h
         include/kivm/kivm.h
-        include/kivm/bytecode/interpreter.h
+        include/kivm/bytecode/bytecodeInterpreter.h
+        include/kivm/bytecode/threadedInterpreter.h
         include/kivm/oop/oop.h
         include/kivm/oop/klass.h
         include/kivm/oop/instanceKlass.h
@@ -174,6 +175,7 @@ set(SOURCE_FILES
         include/shared/atomic.h src/kivm/native/java_lang_ClassLoader.cpp
         include/kivm/native/java_lang_reflect_Constructor.h
         include/kivm/native/java_lang_reflect_Method.h
+        include/kivm/runtime/integerCache.h
         src/shared/filesystem.cpp
         src/shared/string.cpp
         src/kivm/oop/oopBase.cpp
@@ -187,7 +189,8 @@ set(SOURCE_FILES
         src/kivm/classpath/classLoader.cpp
         src/kivm/oop/instanceKlass.cpp
         src/kivm/oop/method.cpp
-        src/kivm/bytecode/interpreter.cpp
+        src/kivm/bytecode/bytecodeInterpreter.cpp
+        src/kivm/bytecode/threadedInterpreter.cpp
         src/kivm/oop/field.cpp
         src/kivm/classpath/baseClassLoader.cpp
         src/kivm/oop/mirrorKlass.cpp
@@ -243,7 +246,8 @@ set(SOURCE_FILES
         src/kivm/native/java_util_concurrent_atomic_AtomicLong.cpp
         src/kivm/native/java_io_UnixFileSystem.cpp
         src/kivm/native/sun_misc_Signal.cpp
-        src/kivm/runtime/javaThread.cpp include/kivm/runtime/integerCache.h src/kivm/runtime/integerCache.cpp)
+        src/kivm/runtime/javaThread.cpp
+        src/kivm/runtime/integerCache.cpp include/kivm/bytecode/interpreter.h src/kivm/bytecode/sharedInterpreter.h)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})

@@ -133,7 +133,7 @@ namespace kivm {
 
         _thread->_frames.push(&frame);
         _thread->_pc = 0;
-        oop result = ByteCodeInterpreter::interp(_thread);
+        oop result = DefaultInterpreter::interp(_thread);
         _thread->_frames.pop();
         _thread->_pc = frame.getReturnPc();
 

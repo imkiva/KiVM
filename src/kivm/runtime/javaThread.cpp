@@ -5,7 +5,7 @@
 #include <kivm/oop/method.h>
 #include <kivm/runtime/thread.h>
 #include <kivm/runtime/runtimeConfig.h>
-#include <kivm/bytecode/interpreter.h>
+#include <kivm/bytecode/bytecodeInterpreter.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/bytecode/invocationContext.h>
 

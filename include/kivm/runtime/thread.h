@@ -69,6 +69,8 @@ namespace kivm {
 
         friend class ByteCodeInterpreter;
 
+        friend class ThreadedInterpreter;
+
         friend class InvocationContext;
 
         friend class KiVM;

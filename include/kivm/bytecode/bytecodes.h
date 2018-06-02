@@ -208,3 +208,4 @@
 #define OPC_BREAKPOINT                  202
 #define OPC_IMPDEP1                     254
 #define OPC_IMPDEP2                     255
+#define OPC_NUM_OPCODES                 256

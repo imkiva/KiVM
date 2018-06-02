@@ -1,22 +1,25 @@
 //
-// Created by kiva on 2018/2/25.
+// Created by kiva on 2018/6/3.
 //
 #pragma once
 
-#include <kivm/kivm.h>
-#include <kivm/oop/oop.h>
-#include <kivm/runtime/thread.h>
+#include <compileTimeConfig.h>
+
+#if KIVM_THREADED
+
+#include <kivm/bytecode/threadedInterpreter.h>
 
 namespace kivm {
-    class ByteCodeInterpreter {
-    public:
-        /**
-         * Run a thread method
-         *
-         * @param thread Java Thread that contains method
-         * @return method return value(nullptr if void) o
-         *         exception object(if thrown and not handled)
-         */
-        static oop interp(JavaThread *thread);
-    };
+    using DefaultInterpreter = ThreadedInterpreter;
 }
+
+#else
+
+#include <kivm/bytecode/bytecodeInterpreter.h>
+
+namespace kivm {
+    using DefaultInterpreter = ByteCodeInterpreter;
+}
+
+
+#endif
