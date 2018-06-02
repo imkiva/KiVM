@@ -11,6 +11,8 @@
 #include <kivm/bytecode/interpreter.h>
 #include <kivm/native/classNames.h>
 #include <algorithm>
+#include <kivm/runtime/runtimeConfig.h>
+#include <kivm/bytecode/bytecodeInterpreter.h>
 
 namespace kivm {
     InvocationContext::InvocationContext(JavaThread *thread, Method *method, Stack *stack)

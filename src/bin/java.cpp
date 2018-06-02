@@ -2,16 +2,20 @@
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/runtime/thread.h>
 #include <kivm/classpath/classPathManager.h>
+#include <kivm/runtime/runtimeConfig.h>
 
 int main(int argc, const char **argv) {
     using namespace kivm;
 
     if (argc == 1) {
-        fprintf(stderr, "Usage: java <class-name> [args]\n");
+        fprintf(stderr, "Usage: java [options] <class-name> [args]\n");
         return 1;
     }
 
-    String mainClassName = strings::replaceAll(strings::fromStdString(argv[1]),
+    // skip argv[0]
+    ++argv;
+
+    String mainClassName = strings::replaceAll(strings::fromStdString(argv[0]),
         Global::DOT, Global::SLASH);
     D("java: main class name: %s\n", strings::toStdString(mainClassName).c_str());
 
@@ -22,8 +26,8 @@ int main(int argc, const char **argv) {
     }
 
     std::vector<String> arguments;
-    // skip argv[0] and main class name
-    argv += 2;
+    // skip main class name
+    ++argv;
     while (*argv) {
         arguments.push_back(strings::fromStdString(*argv++));
     }
