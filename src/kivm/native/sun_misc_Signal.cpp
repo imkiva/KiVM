@@ -74,7 +74,9 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
 #ifdef SIGSTKFLT
         {L"STKFLT",     SIGSTKFLT},      /* Stack fault.  */
 #endif
+#ifdef SIGCLD
         {L"CLD", SIGCLD},         /* Same as SIGCHLD (System V).  */
+#endif
         {L"CHLD", SIGCHLD},        /* Child status has changed (POSIX).  */
         {L"CONT", SIGCONT},        /* Continue (POSIX).  */
         {L"STOP", SIGSTOP},        /* Stop, unblockable (POSIX).  */

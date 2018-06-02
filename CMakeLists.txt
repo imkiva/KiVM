@@ -102,6 +102,10 @@ else ()
 endif ()
 
 
+#### signal
+check_c_source_compiles("#include <signal.h>
+        int main(int argc, char *argv[]) { zip_flags_t flag = 0; }" HAVE_ZIP_FLAGS_T)
+
 #### threaded interpretation
 try_run(IS_THREADED COMPILE_RESULT ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/cmake/check-threaded.cpp)
 if (IS_THREADED)
