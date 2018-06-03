@@ -103,6 +103,8 @@ namespace kivm {
     };
 
     class Threads {
+        friend class GCThread;
+
     private:
         static int &getRunningJavaThreadCount() {
             static int appThreadCount;

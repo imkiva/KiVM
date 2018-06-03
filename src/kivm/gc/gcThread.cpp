@@ -15,8 +15,8 @@ namespace kivm {
     }
 
     bool GCThread::isAllThreadInSafePoint() {
-        LockGuard lockGuard(Threads::threadStateChangeLock());
-        int total = Threads::getRunningJavaThreadCountLocked();
+        LockGuard lockGuard(Threads::appThreadLock());
+        int total = Threads::getRunningJavaThreadCount();
         int inSafepoint = 0;
 
         Threads::forEach([&](JavaThread *thread) {
