@@ -32,6 +32,8 @@ namespace kivm {
     }
 
     void JavaMainThread::run() {
+        setThreadName(L"JavaMainThread");
+
         // Initialize Java Virtual Machine
         Threads::initializeJVM(this);
 

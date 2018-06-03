@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include <kivm/kivm.h>
 #include <kivm/runtime/threadState.h>
 #include <thread>
 
@@ -30,6 +31,8 @@ namespace kivm {
         virtual void start();
 
         long getNativeHandler() const;
+
+        void setThreadName(const String &name);
 
         inline ThreadState getThreadState() const {
             return _state;

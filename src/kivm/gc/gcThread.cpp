@@ -6,20 +6,34 @@
 #include <sched.h>
 
 namespace kivm {
+    GCThread *GCThread::sGCThreadInstance = nullptr;
+
+    void GCThread::initialize() {
+        GCThread::sGCThreadInstance = new GCThread;
+    }
 
     void GCThread::run() {
+        setThreadName(L"GCThread");
+
         while (getThreadState() != ThreadState::DIED) {
-            waitForSafePoint();
-            doGarbageCollection();
+            // Wait until all threads are in safepoint
+            if (isAllThreadInSafePoint()) {
+                D("GCThread: triggering garbage collection");
+                doGarbageCollection();
+            }
+
+            sched_yield();
         }
+
+        D("GCThread: VM exited, stopping GC thread");
     }
 
     bool GCThread::isAllThreadInSafePoint() {
-        LockGuard lockGuard(Threads::appThreadLock());
-        int total = Threads::getRunningJavaThreadCount();
+        int total = 0;
         int inSafepoint = 0;
 
         Threads::forEach([&](JavaThread *thread) {
+            ++total;
             if (thread->getThreadState() != ThreadState::DIED
                 && thread->isInSafepoint()) {
                 ++inSafepoint;
@@ -30,18 +44,7 @@ namespace kivm {
         return inSafepoint == total;
     }
 
-    void GCThread::waitForSafePoint() {
-        for (;;) {
-            // Wait until all threads are in safepoint
-            if (isAllThreadInSafePoint()) {
-                break;
-            }
-
-            sched_yield();
-        }
-    }
-
     void GCThread::doGarbageCollection() {
-
+        D("TODO");
     }
 }

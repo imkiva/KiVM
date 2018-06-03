@@ -4,11 +4,12 @@
 #include <kivm/kivm.h>
 #include <kivm/jni/jniJavaVM.h>
 #include <kivm/jni/jniEnv.h>
-#include <kivm/memory/universe.h>
 #include <kivm/runtime/abstractThread.h>
-#include <kivm/classpath/classPathManager.h>
 #include <kivm/runtime/integerCache.h>
+#include <kivm/memory/universe.h>
+#include <kivm/classpath/classPathManager.h>
 #include <kivm/bytecode/interpreter.h>
+#include <kivm/gc/gcThread.h>
 #include <random>
 
 #if defined(KIVM_PLATFORM_UNIX)
@@ -47,6 +48,10 @@ namespace kivm {
         // initialize memory
         Universe::initialize();
 
+        // GC
+        GCThread::initialize();
+        GCThread::get()->start();
+
         // initialize classpath
         ClassPathManager::initialize();
 
@@ -81,6 +86,7 @@ namespace kivm {
             return JNI_ERR;
         }
 
+        GCThread::get()->setThreadState(ThreadState::DIED);
         ClassPathManager::get()->destroy();
         Universe::destroy();
 
