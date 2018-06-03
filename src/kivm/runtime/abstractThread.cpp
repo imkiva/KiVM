@@ -31,7 +31,7 @@ namespace kivm {
         // do nothing.
     }
 
-    long AbstractThread::getEetop() const {
+    long AbstractThread::getNativeHandler() const {
         return (long) this->_nativeThread->native_handle();
     }
 

@@ -25,11 +25,11 @@ namespace kivm {
     public:
         AbstractThread();
 
-        virtual void start();
-
         virtual ~AbstractThread();
 
-        long getEetop() const;
+        virtual void start();
+
+        long getNativeHandler() const;
 
         inline ThreadState getThreadState() const {
             return _state;

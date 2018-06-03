@@ -95,7 +95,7 @@ namespace kivm {
         instanceOop init_thread = thread_class->newInstance();
         // eetop is a pointer to the underlying OS-level native thread instance of the JVM.
         init_thread->setFieldValue(J_THREAD, L"eetop", L"J",
-            new longOopDesc(thread->getEetop()));
+            new longOopDesc(thread->getNativeHandler()));
         init_thread->setFieldValue(J_THREAD, L"priority", L"I",
             new intOopDesc(java::lang::ThreadPriority::NORMAL_PRIORITY));
 
