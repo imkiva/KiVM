@@ -29,6 +29,7 @@ namespace kivm {
         FrameList _frames;
         std::list<oop> _args;
         u4 _pc;
+        bool _inSafepoint;
 
         instanceOop _javaThreadObject;
         instanceOop _exceptionOop;
@@ -56,6 +57,10 @@ namespace kivm {
         void onDestroy() override;
 
         void throwException(InstanceKlass *exceptionClass, const String &message);
+
+        inline bool isInSafepoint() const {
+            return _inSafepoint;
+        }
 
         inline instanceOop getJavaThreadObject() const {
             return _javaThreadObject;

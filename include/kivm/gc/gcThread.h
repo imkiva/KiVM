@@ -6,5 +6,15 @@
 #include <kivm/runtime/vmThread.h>
 
 namespace kivm {
-    class GCThread : public VMThread {};
+    class GCThread : public VMThread {
+    private:
+        void waitForSafePoint();
+
+        bool isAllThreadInSafePoint();
+
+        void doGarbageCollection();
+
+    protected:
+        void run() override;
+    };
 }

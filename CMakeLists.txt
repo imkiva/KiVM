@@ -246,7 +246,7 @@ set(SOURCE_FILES
         src/kivm/native/java_io_UnixFileSystem.cpp
         src/kivm/native/sun_misc_Signal.cpp
         src/kivm/runtime/javaThread.cpp
-        src/kivm/runtime/integerCache.cpp include/kivm/bytecode/interpreter.h src/kivm/bytecode/sharedInterpreter.h include/kivm/gc/gcThread.h include/kivm/runtime/vmThread.h include/kivm/runtime/threadState.h include/kivm/runtime/javaThread.h)
+        src/kivm/runtime/integerCache.cpp include/kivm/bytecode/interpreter.h src/kivm/bytecode/sharedInterpreter.h include/kivm/gc/gcThread.h include/kivm/runtime/vmThread.h include/kivm/runtime/threadState.h include/kivm/runtime/javaThread.h src/kivm/gc/gcThread.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})
