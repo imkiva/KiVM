@@ -3,6 +3,7 @@
 //
 #include <kivm/gc/gcThread.h>
 #include <kivm/runtime/javaThread.h>
+#include <sched.h>
 
 namespace kivm {
 
