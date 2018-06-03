@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <kivm/runtime/thread.h>
+#include <kivm/runtime/javaThread.h>
 #include <list>
 
 namespace kivm {

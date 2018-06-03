@@ -4,7 +4,7 @@
 #pragma once
 
 #include <kivm/oop/instanceKlass.h>
-#include <kivm/runtime/thread.h>
+#include <kivm/runtime/javaThread.h>
 #include <kivm/runtime/stack.h>
 #include <kivm/runtime/constantPool.h>
 #include <deque>

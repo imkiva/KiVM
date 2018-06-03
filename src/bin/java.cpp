@@ -1,6 +1,6 @@
 #include <kivm/classpath/classLoader.h>
 #include <kivm/oop/instanceKlass.h>
-#include <kivm/runtime/thread.h>
+#include <kivm/runtime/javaThread.h>
 #include <kivm/classpath/classPathManager.h>
 #include <kivm/runtime/runtimeConfig.h>
 
@@ -33,7 +33,7 @@ int main(int argc, const char **argv) {
     }
 
     JavaMainThread javaMainThread(mainClassName, arguments);
-    javaMainThread.create(nullptr);
+    javaMainThread.start(nullptr);
 
     javaVM->DestroyJavaVM();
     return 0;

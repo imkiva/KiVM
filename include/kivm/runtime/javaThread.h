@@ -1,70 +1,18 @@
 //
-// Created by kiva on 2018/3/23.
+// Created by kiva on 2018/6/4.
 //
 #pragma once
 
+#include <kivm/runtime/abstractThread.h>
 #include <kivm/oop/instanceOop.h>
 #include <kivm/runtime/stack.h>
 #include <kivm/runtime/frame.h>
 #include <list>
-#include <thread>
 #include <functional>
 
 namespace kivm {
-    enum ThreadState {
-        RUNNING, BLOCKED, DIED
-    };
-
-    class Thread {
-        friend class Threads;
-
-        friend class ByteCodeInterpreter;
-
-        friend class InvocationContext;
-
-        friend class KiVM;
-
-    protected:
-        instanceOop _javaThreadObject;
-        std::thread *_nativeThread;
-
-        ThreadState _state;
-
-        virtual void start() = 0;
-
-        virtual void destroy();
-
-    protected:
-        void setJavaThreadObject(instanceOop javaThread) {
-            this->_javaThreadObject = javaThread;
-        }
-
-    public:
-        Thread();
-
-        virtual ~Thread();
-
-        virtual void create(instanceOop javaThread);
-
-        virtual void onThreadLaunched();
-
-        long getEetop() const;
-
-        inline instanceOop getJavaThreadObject() const {
-            return _javaThreadObject;
-        }
-
-        inline ThreadState getThreadState() const {
-            return _state;
-        }
-
-        inline void setThreadState(ThreadState threadState) {
-            Thread::_state = threadState;
-        }
-    };
-
     // The Java app thread
-    class JavaThread : public Thread {
+    class JavaThread : public AbstractThread {
         friend class Threads;
 
         friend class ByteCodeInterpreter;
@@ -82,6 +30,7 @@ namespace kivm {
         std::list<oop> _args;
         u4 _pc;
 
+        instanceOop _javaThreadObject;
         instanceOop _exceptionOop;
 
         // note: this is not the current method
@@ -89,18 +38,28 @@ namespace kivm {
         Method *_method;
 
     protected:
-        void start() override;
+        void run() override;
 
         int tryHandleException(instanceOop exceptionOop);
+
+        void setJavaThreadObject(instanceOop javaThread) {
+            this->_javaThreadObject = javaThread;
+        }
 
     public:
         JavaThread(Method *method, const std::list<oop> &args);
 
-        void create(instanceOop javaThread) override;
+        void start(instanceOop javaThread);
 
-        void destroy() override;
+        void start() override;
+
+        void onDestroy() override;
 
         void throwException(InstanceKlass *exceptionClass, const String &message);
+
+        inline instanceOop getJavaThreadObject() const {
+            return _javaThreadObject;
+        }
 
         inline Frame *getCurrentFrame() {
             return _frames.getCurrentFrame();
@@ -129,7 +88,7 @@ namespace kivm {
         JavaMainThread(const String &mainClassName, const std::vector<String> &arguments);
 
     protected:
-        void start() override;
+        void run() override;
 
         void onThreadLaunched() override;
     };

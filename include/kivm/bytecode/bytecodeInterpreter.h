@@ -6,7 +6,7 @@
 #include <compileTimeConfig.h>
 #include <kivm/kivm.h>
 #include <kivm/oop/oop.h>
-#include <kivm/runtime/thread.h>
+#include <kivm/runtime/javaThread.h>
 
 namespace kivm {
     class ByteCodeInterpreter {

@@ -3,14 +3,15 @@
 //
 
 #include <kivm/oop/method.h>
-#include <kivm/runtime/thread.h>
+#include <kivm/runtime/javaThread.h>
 #include <kivm/runtime/runtimeConfig.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/bytecode/invocationContext.h>
 
 namespace kivm {
     JavaThread::JavaThread(Method *method, const std::list<oop> &args)
-        : _frames(RuntimeConfig::get().threadMaxStackFrames),
+        : _javaThreadObject(nullptr),
+          _frames(RuntimeConfig::get().threadMaxStackFrames),
           _method(method), _args(args), _pc(0) {
     }
 
@@ -29,12 +30,17 @@ namespace kivm {
         return -1;
     }
 
-    void JavaThread::create(instanceOop javaThread) {
+    void JavaThread::start(instanceOop javaThread) {
+        this->_javaThreadObject = javaThread;
         Threads::addJavaThread(this);
-        Thread::create(javaThread);
+        AbstractThread::start();
     }
 
     void JavaThread::start() {
+        PANIC("java thread object required");
+    }
+
+    void JavaThread::run() {
         // No other threads will join this thread.
         // So it is OK to detach()
         this->_nativeThread->detach();
@@ -48,8 +54,8 @@ namespace kivm {
         InvocationContext::invokeWithArgs(this, _method, _args);
     }
 
-    void JavaThread::destroy() {
-        Thread::destroy();
+    void JavaThread::onDestroy() {
+        AbstractThread::onDestroy();
 
         // update java thread status
         Threads::threadStateChangeLock().lock();
@@ -68,5 +74,22 @@ namespace kivm {
             {exceptionOop, java::lang::String::from(message)},
             true);
         this->_exceptionOop = exceptionOop;
+    }
+
+    JavaThread *Threads::currentThread() {
+        JavaThread *found = nullptr;
+        auto currentThreadID = std::this_thread::get_id();
+
+        Threads::forEach([&](JavaThread *thread) {
+            if (thread->getThreadState() != ThreadState::DIED) {
+                auto checkThreadID = thread->_nativeThread->get_id();
+                if (checkThreadID == currentThreadID) {
+                    found = thread;
+                    return true;
+                }
+            }
+            return false;
+        });
+        return found;
     }
 }

@@ -1,8 +1,10 @@
 //
 // Created by kiva on 2018/3/28.
 //
-#include <kivm/runtime/thread.h>
+#include <kivm/runtime/javaThread.h>
+#include <kivm/runtime/integerCache.h>
 #include <kivm/bytecode/execution.h>
+#include <kivm/bytecode/invocationContext.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/arrayOop.h>
@@ -10,10 +12,8 @@
 #include <kivm/native/java_lang_Class.h>
 #include <kivm/native/java_lang_Thread.h>
 #include <kivm/native/java_lang_String.h>
-#include <kivm/bytecode/invocationContext.h>
 #include <kivm/native/java_lang_reflect_Constructor.h>
 #include <kivm/native/java_lang_reflect_Method.h>
-#include <kivm/runtime/integerCache.h>
 
 namespace kivm {
     static inline InstanceKlass *use(ClassLoader *cl, JavaMainThread *thread, const String &name) {
@@ -31,7 +31,7 @@ namespace kivm {
           _mainClassName(mainClassName), _arguments(arguments) {
     }
 
-    void JavaMainThread::start() {
+    void JavaMainThread::run() {
         // Initialize Java Virtual Machine
         Threads::initializeJVM(this);
 

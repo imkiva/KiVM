@@ -145,7 +145,7 @@ set(SOURCE_FILES
         include/kivm/runtime/stack.h
         include/kivm/runtime/frame.h
         include/kivm/oop/reflection.h
-        include/kivm/runtime/thread.h
+        include/kivm/runtime/abstractThread.h
         include/kivm/oop/helper.h
         include/kivm/runtime/runtimeConfig.h
         include/kivm/bytecode/bytecodes.h
@@ -200,7 +200,7 @@ set(SOURCE_FILES
         src/kivm/oop/arrayKlass.cpp
         src/kivm/runtime/stack.cpp
         src/kivm/runtime/frame.cpp
-        src/kivm/runtime/thread.cpp
+        src/kivm/runtime/abstractThread.cpp
         src/kivm/runtime/runtimeConfig.cpp
         src/kivm/bytecode/execution.cpp
         src/kivm/native/java_lang_Class.cpp
@@ -246,7 +246,7 @@ set(SOURCE_FILES
         src/kivm/native/java_io_UnixFileSystem.cpp
         src/kivm/native/sun_misc_Signal.cpp
         src/kivm/runtime/javaThread.cpp
-        src/kivm/runtime/integerCache.cpp include/kivm/bytecode/interpreter.h src/kivm/bytecode/sharedInterpreter.h)
+        src/kivm/runtime/integerCache.cpp include/kivm/bytecode/interpreter.h src/kivm/bytecode/sharedInterpreter.h include/kivm/gc/gcThread.h include/kivm/runtime/vmThread.h include/kivm/runtime/threadState.h src/kivm/runtime/vmThread.cpp include/kivm/runtime/javaThread.h)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})

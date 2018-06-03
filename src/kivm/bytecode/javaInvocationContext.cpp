@@ -3,7 +3,7 @@
 //
 #include <kivm/bytecode/invocationContext.h>
 #include <kivm/bytecode/execution.h>
-#include <kivm/runtime/thread.h>
+#include <kivm/runtime/abstractThread.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
 

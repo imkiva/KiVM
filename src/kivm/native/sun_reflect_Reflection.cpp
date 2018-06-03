@@ -3,7 +3,7 @@
 //
 
 #include <kivm/kivm.h>
-#include <kivm/runtime/thread.h>
+#include <kivm/runtime/abstractThread.h>
 #include <kivm/native/classNames.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/oop/mirrorOop.h>

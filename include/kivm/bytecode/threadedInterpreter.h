@@ -9,7 +9,7 @@
 
 #include <kivm/kivm.h>
 #include <kivm/oop/oop.h>
-#include <kivm/runtime/thread.h>
+#include <kivm/runtime/javaThread.h>
 #include <kivm/bytecode/bytecodes.h>
 #include <kivm/bytecode/codeBlob.h>
 

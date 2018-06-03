@@ -5,7 +5,7 @@
 #include <kivm/jni/jniJavaVM.h>
 #include <kivm/jni/jniEnv.h>
 #include <kivm/memory/universe.h>
-#include <kivm/runtime/thread.h>
+#include <kivm/runtime/abstractThread.h>
 #include <kivm/classpath/classPathManager.h>
 #include <kivm/runtime/integerCache.h>
 #include <kivm/bytecode/interpreter.h>
