@@ -84,13 +84,17 @@ namespace kivm {
         String _mainClassName;
         std::vector<String> _arguments;
 
-    public:
-        JavaMainThread(const String &mainClassName, const std::vector<String> &arguments);
-
     protected:
         void run() override;
 
         void onThreadLaunched() override;
+
+    public:
+        JavaMainThread(const String &mainClassName, const std::vector<String> &arguments);
+
+        inline void start() override {
+            JavaThread::start(nullptr);
+        }
     };
 
     class Threads {

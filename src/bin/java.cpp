@@ -33,7 +33,7 @@ int main(int argc, const char **argv) {
     }
 
     JavaMainThread javaMainThread(mainClassName, arguments);
-    javaMainThread.start(nullptr);
+    javaMainThread.start();
 
     javaVM->DestroyJavaVM();
     return 0;
