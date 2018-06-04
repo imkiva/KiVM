@@ -27,7 +27,7 @@ namespace kivm {
 
         void copyThread(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, JavaThread *thread);
 
-        void copySlotArray(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, SlotArray *slotArray);
+        void copySlotArray(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, SlotArray *slotArray, int size);
 
     public:
         CopyingHeap();

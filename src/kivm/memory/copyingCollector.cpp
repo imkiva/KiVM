@@ -148,15 +148,15 @@ namespace kivm {
 
         auto currentFrame = thread->_frames._current;
         while (currentFrame != nullptr) {
-            copySlotArray(newRegion, map, &currentFrame->_locals._array);
-            copySlotArray(newRegion, map, &currentFrame->_stack._array);
+            copySlotArray(newRegion, map, &currentFrame->_locals._array, currentFrame->_locals._array._size);
+            copySlotArray(newRegion, map, &currentFrame->_stack._array, currentFrame->_stack._sp);
             currentFrame = currentFrame->getPrevious();
         }
     }
 
     void CopyingHeap::copySlotArray(HeapRegion *newRegion, std::unordered_map<oop, oop> &map,
-                                    SlotArray *slotArray) {
-        for (int i = 0; i < slotArray->_size; ++i) {
+                                    SlotArray *slotArray, int size) {
+        for (int i = 0; i < size; ++i) {
             Slot *slot = slotArray->_elements + i;
             if (slot->isObject) {
                 auto object = Resolver::javaOop(slot->ref);
