@@ -71,9 +71,9 @@ namespace kivm {
 
         inline void notify() { _monitor.notify(); }
 
-        inline void notifyAll() { _monitor.notify_all(); }
+        inline void notifyAll() { _monitor.notifyAll(); }
 
-        inline void forceUnlockWhenExceptionOccurred() { _monitor.force_unlock_when_athrow(); }
+        inline void forceUnlockWhenExceptionOccurred() { _monitor.forceUnlock(); }
     };
 
     typedef markOopDesc *markOop;

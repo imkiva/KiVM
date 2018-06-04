@@ -5,6 +5,7 @@
 
 #include <kivm/kivm.h>
 #include <kivm/runtime/vmThread.h>
+#include <shared/monitor.h>
 
 namespace kivm {
     class GCThread : public VMThread {
@@ -22,11 +23,17 @@ namespace kivm {
         static void initialize();
 
     private:
+        Monitor _triggerMonitor;
+
+    private:
         bool isAllThreadInSafePoint();
 
         void doGarbageCollection();
 
     protected:
         void run() override;
+
+    public:
+        void required();
     };
 }

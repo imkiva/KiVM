@@ -51,7 +51,7 @@ namespace kivm {
             _cond.notify_one();
         }
 
-        void notify_all() {
+        void notifyAll() {
             _cond.notify_all();
         }
 
@@ -59,7 +59,7 @@ namespace kivm {
             _lock.unlock();
         }
 
-        void force_unlock_when_athrow() {
+        void forceUnlock() {
             _lock.try_lock();
             _lock.unlock();
         }

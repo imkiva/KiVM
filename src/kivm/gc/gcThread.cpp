@@ -16,6 +16,9 @@ namespace kivm {
         setThreadName(L"GCThread");
 
         while (getThreadState() != ThreadState::DIED) {
+            // Wait until GC is required
+            _triggerMonitor.wait();
+
             // Wait until all threads are in safepoint
             if (isAllThreadInSafePoint()) {
                 D("GCThread: triggering garbage collection");
@@ -46,5 +49,9 @@ namespace kivm {
 
     void GCThread::doGarbageCollection() {
         D("TODO");
+    }
+
+    void GCThread::required() {
+        _triggerMonitor.notify();
     }
 }
