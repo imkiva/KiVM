@@ -58,6 +58,10 @@ namespace kivm {
 
         void throwException(InstanceKlass *exceptionClass, const String &message);
 
+        void enterSafepoint();
+
+        void enterSafepointIfNeeded();
+
         inline bool isInSafepoint() const {
             return _inSafepoint;
         }
@@ -160,6 +164,11 @@ namespace kivm {
         static inline void notifyJavaThreadDeadLocked(JavaThread *javaThread) {
             LockGuard lockGuard(appThreadLock());
             --Threads::getRunningJavaThreadCount();
+        }
+
+        static inline void setThreadStateLocked(JavaThread *javaThread, ThreadState newState) {
+            LockGuard  lockGuard(Threads::threadStateChangeLock());
+            javaThread->setThreadState(newState);
         }
     };
 }

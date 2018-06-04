@@ -2,7 +2,7 @@
 // Created by kiva on 2018/4/20.
 //
 #include <kivm/memory/universe.h>
-#include <kivm/memory/markSweep.h>
+#include <kivm/memory/copying.h>
 #include <sys/mman.h>
 #include <cstring>
 #include <cerrno>
@@ -15,7 +15,7 @@ namespace kivm {
     };
 
     void Universe::initialize() {
-        Universe::sCollectedHeapInstance = new MarkSweepHeap;
+        Universe::sCollectedHeapInstance = new CopyingHeap;
         Universe::sCollectedHeapInstance->initializeAll();
     }
 

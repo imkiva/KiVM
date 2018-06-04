@@ -8,6 +8,12 @@
 #include <shared/monitor.h>
 
 namespace kivm {
+    enum GCState {
+        RUNNING,
+        ENJOYING_HOLIDAY,
+        WAITING_FOR_SAFEPOINT,
+    };
+
     class GCThread : public VMThread {
     private:
         static GCThread *sGCThreadInstance;
@@ -23,7 +29,9 @@ namespace kivm {
         static void initialize();
 
     private:
+        GCState _gcState;
         Monitor _triggerMonitor;
+        Monitor _gcWaitMonitor;
 
     private:
         bool isAllThreadInSafePoint();
@@ -35,5 +43,11 @@ namespace kivm {
 
     public:
         void required();
+
+        void wait();
+
+        inline GCState getState() const {
+            return _gcState;
+        }
     };
 }

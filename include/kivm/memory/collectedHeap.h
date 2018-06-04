@@ -21,5 +21,7 @@ namespace kivm {
         virtual size_t getHeapSize() = 0;
 
         virtual bool isHeapObject(void *addr) = 0;
+
+        virtual void doGarbageCollection() = 0;
     };
 }

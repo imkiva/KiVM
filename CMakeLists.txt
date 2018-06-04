@@ -164,7 +164,7 @@ set(SOURCE_FILES
         include/kivm/jni/jniJavaVM.h
         include/kivm/jni/jniEnv.h
         include/kivm/memory/collectedHeap.h
-        include/kivm/memory/markSweep.h
+        include/kivm/memory/copying.h
         include/kivm/memory/universe.h
         include/kivm/memory/heapRegion.h
         include/shared/zip/libzippp.h
@@ -219,7 +219,7 @@ set(SOURCE_FILES
         src/kivm/jni/jniEnv.cpp
         src/kivm/bytecode/executionInvoke.cpp
         src/kivm/bytecode/javaInvocationContext.cpp
-        src/kivm/memory/markSweep.cpp
+        src/kivm/memory/copying.cpp
         src/kivm/memory/universe.cpp
         src/kivm/native/java_lang_System.cpp
         src/shared/zip/libzippp.cpp

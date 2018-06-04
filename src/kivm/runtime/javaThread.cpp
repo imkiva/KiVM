@@ -7,6 +7,7 @@
 #include <kivm/runtime/runtimeConfig.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/bytecode/invocationContext.h>
+#include <kivm/gc/gcThread.h>
 
 namespace kivm {
     JavaThread::JavaThread(Method *method, const std::list<oop> &args)
@@ -59,9 +60,7 @@ namespace kivm {
         AbstractThread::onDestroy();
 
         // update java thread status
-        Threads::threadStateChangeLock().lock();
-        this->setThreadState(ThreadState::DIED);
-        Threads::threadStateChangeLock().unlock();
+        Threads::setThreadStateLocked(this, ThreadState::DIED);
 
         // do not remove thread instance in thread list
         // just tell thread list how many active thread are still running
@@ -75,6 +74,19 @@ namespace kivm {
             {exceptionOop, java::lang::String::from(message)},
             true);
         this->_exceptionOop = exceptionOop;
+    }
+
+    void JavaThread::enterSafepoint() {
+        ThreadState originalState = getThreadState();
+        Threads::setThreadStateLocked(this, ThreadState::BLOCKED);
+        GCThread::get()->wait();
+        Threads::setThreadStateLocked(this, originalState);
+    }
+
+    void JavaThread::enterSafepointIfNeeded() {
+        if (GCThread::get()->getState() == GCState::WAITING_FOR_SAFEPOINT) {
+            enterSafepoint();
+        }
     }
 
     JavaThread *Threads::currentThread() {

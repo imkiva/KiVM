@@ -7,24 +7,27 @@
 #include <kivm/memory/heapRegion.h>
 
 namespace kivm {
-    class MarkSweepHeap : public CollectedHeap {
+    class CopyingHeap : public CollectedHeap {
     private:
         jbyte *_memoryStart;
         size_t _totalSize;
-        HeapRegion *_firstRegion;
-        int _currentRegion;
+        HeapRegion *_regions;
+        HeapRegion *_currentRegion;
+        HeapRegion *_nextRegion;
 
     private:
         void initializeRegions();
 
     public:
-        MarkSweepHeap();
+        CopyingHeap();
 
-        ~MarkSweepHeap() override;
+        ~CopyingHeap() override;
 
         void *allocate(size_t size) override;
 
         void initializeAll() override;
+
+        void doGarbageCollection() override;
 
         inline void *getHeapStart() override {
             return _memoryStart;
@@ -39,7 +42,7 @@ namespace kivm {
         }
 
         inline bool isHeapObject(void *addr) override {
-            return addr >= _memoryStart && addr < _memoryStart + _totalSize;
+            return addr >= getHeapStart() && addr < getHeapEnd();
         }
     };
 }

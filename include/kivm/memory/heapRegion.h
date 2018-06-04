@@ -5,10 +5,6 @@
 
 #include <kivm/kivm.h>
 
-#define MIN_REGION_SIZE SIZE_MB(1)
-#define MAX_REGION_SIZE SIZE_MB(32)
-#define TARGET_REGION_COUNT 2048
-
 namespace kivm {
     struct HeapRegion {
         size_t _regionSize;

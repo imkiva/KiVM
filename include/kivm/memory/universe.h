@@ -6,6 +6,8 @@
 
 namespace kivm {
     class Universe {
+        friend class GCThread;
+
     private:
         static CollectedHeap *sCollectedHeapInstance;
 
