@@ -20,14 +20,14 @@ namespace kivm {
         while (getThreadState() != ThreadState::DIED) {
             // Wait until GC is required
             if (getState() == GCState::ENJOYING_HOLIDAY) {
-                D("[GCThread]: Waiting to be woken up");
+                D("[GCThread]: waiting to be woken up");
                 _triggerMonitor.enter();
                 _triggerMonitor.wait();
                 _triggerMonitor.leave();
 
                 auto state = getState();
                 if (state == GCState::WAITING_FOR_SAFEPOINT) {
-                    D("[GCThread]: GC triggered, waiting for all threads to enter safepoint");
+                    D("[GCThread]: stopping the world");
 
                 } else if (state == GCState::GC_STOPPED) {
                     D("GCThread: VM exited, stopping GC thread");
@@ -69,15 +69,16 @@ namespace kivm {
 
         // notify all threads that GC is finished
         _gcWaitMonitor.notifyAll();
-        _gcWaitMonitor.leave();
     }
 
-    void GCThread::required() {
+    Monitor *GCThread::required() {
         if (_gcState != GCState::WAITING_FOR_SAFEPOINT) {
             _gcState = GCState::WAITING_FOR_SAFEPOINT;
             _gcWaitMonitor.enter();
             _triggerMonitor.notify();
+            return &_gcWaitMonitor;
         }
+        return nullptr;
     }
 
     void GCThread::stop() {

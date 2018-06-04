@@ -65,6 +65,8 @@ namespace kivm {
             strings::toStdString(currentMethod->getName()).c_str(),
             strings::toStdString(currentMethod->getDescriptor()).c_str());
 
+        thread->enterSafepointIfNeeded();
+
         return threaded(thread, ThreadedInterpreter::_jumpTable,
             currentFrame, currentMethod, currentClass,
             codeBlob, pc, stack, locals);

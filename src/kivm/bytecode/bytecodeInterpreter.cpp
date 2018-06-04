@@ -53,6 +53,8 @@ namespace kivm {
         Stack &stack = currentFrame->getStack();
         Locals &locals = currentFrame->getLocals();
 
+        thread->enterSafepointIfNeeded();
+
         BEGIN(codeBlob, pc)
 
                 OPCODE(NOP)

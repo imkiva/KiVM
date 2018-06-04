@@ -79,7 +79,9 @@ namespace kivm {
     void JavaThread::enterSafepoint() {
         ThreadState originalState = getThreadState();
         Threads::setThreadStateLocked(this, ThreadState::BLOCKED);
+        _inSafepoint = true;
         GCThread::get()->wait();
+        _inSafepoint = false;
         Threads::setThreadStateLocked(this, originalState);
     }
 

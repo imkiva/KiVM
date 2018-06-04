@@ -43,7 +43,7 @@ namespace kivm {
         void run() override;
 
     public:
-        void required();
+        Monitor *required();
 
         void wait();
 
