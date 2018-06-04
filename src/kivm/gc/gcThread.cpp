@@ -20,20 +20,30 @@ namespace kivm {
         while (getThreadState() != ThreadState::DIED) {
             // Wait until GC is required
             if (getState() == GCState::ENJOYING_HOLIDAY) {
+                D("[GCThread]: Waiting to be woken up");
                 _triggerMonitor.enter();
                 _triggerMonitor.wait();
                 _triggerMonitor.leave();
+
+                auto state = getState();
+                if (state == GCState::WAITING_FOR_SAFEPOINT) {
+                    D("[GCThread]: GC triggered, waiting for all threads to enter safepoint");
+
+                } else if (state == GCState::GC_STOPPED) {
+                    D("GCThread: VM exited, stopping GC thread");
+                    break;
+                }
             }
 
             // Wait until all threads are in safepoint
             if (isAllThreadInSafePoint()) {
+                D("[GCThread]: collecting");
                 doGarbageCollection();
+                continue;
             }
 
             sched_yield();
         }
-
-        D("GCThread: VM exited, stopping GC thread");
     }
 
     bool GCThread::isAllThreadInSafePoint() {
@@ -67,6 +77,21 @@ namespace kivm {
             _gcState = GCState::WAITING_FOR_SAFEPOINT;
             _gcWaitMonitor.enter();
             _triggerMonitor.notify();
+        }
+    }
+
+    void GCThread::stop() {
+        if (_gcState == GCState::ENJOYING_HOLIDAY) {
+            _gcState = GCState::GC_STOPPED;
+            setThreadState(ThreadState::DIED);
+            _triggerMonitor.notify();
+            return;
+        }
+
+        if (_gcState == GCState::GC_RUNNING
+            || _gcState == GCState::WAITING_FOR_SAFEPOINT) {
+            setThreadState(ThreadState::DIED);
+            this->_nativeThread->join();
         }
     }
 

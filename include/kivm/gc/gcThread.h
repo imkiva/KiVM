@@ -9,6 +9,7 @@
 
 namespace kivm {
     enum GCState {
+        GC_STOPPED,
         GC_RUNNING,
         ENJOYING_HOLIDAY,
         WAITING_FOR_SAFEPOINT,
@@ -45,6 +46,8 @@ namespace kivm {
         void required();
 
         void wait();
+
+        void stop();
 
         inline GCState getState() const {
             return _gcState;

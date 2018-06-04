@@ -86,7 +86,7 @@ namespace kivm {
             return JNI_ERR;
         }
 
-        GCThread::get()->setThreadState(ThreadState::DIED);
+        GCThread::get()->stop();
         ClassPathManager::get()->destroy();
         Universe::destroy();
 
