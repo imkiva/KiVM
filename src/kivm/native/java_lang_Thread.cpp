@@ -9,6 +9,7 @@
 #include <kivm/oop/primitiveOop.h>
 
 #include <pthread.h>
+#include <signal.h>
 
 using namespace kivm;
 
