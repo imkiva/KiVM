@@ -13,6 +13,8 @@
 namespace kivm {
     // The Java app thread
     class JavaThread : public AbstractThread {
+        friend class KiVM;
+
         friend class Threads;
 
         friend class ByteCodeInterpreter;
@@ -21,9 +23,9 @@ namespace kivm {
 
         friend class InvocationContext;
 
-        friend class KiVM;
-
         friend class InvocationContext;
+
+        friend class CopyingHeap;
 
     protected:
         FrameList _frames;

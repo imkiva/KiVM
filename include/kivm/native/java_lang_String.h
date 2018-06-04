@@ -8,9 +8,13 @@
 #include <unordered_map>
 
 namespace kivm {
+    class CopyingHeap;
+
     namespace java {
         namespace lang {
             class InternStringPool {
+                friend class kivm::CopyingHeap;
+
             private:
                 // hash -> string
                 std::unordered_map<int, instanceOop> _pool;

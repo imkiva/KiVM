@@ -7,6 +7,7 @@
 
 namespace kivm {
     struct Slot {
+        bool isObject;
         union {
             jint i32;
             jobject ref;

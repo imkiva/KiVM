@@ -11,11 +11,19 @@ namespace kivm {
         jbyte *_regionStart;
         jbyte *_current;
 
-        inline jbyte *getRegionEnd() {
+        inline size_t getUsed() const {
+            return _current - _regionStart;
+        }
+
+        inline size_t getTotal() const {
+            return _regionSize;
+        }
+
+        inline jbyte *getRegionEnd() const {
             return _regionStart + _regionSize;
         }
 
-        inline bool shouldAllocate(size_t size) {
+        inline bool shouldAllocate(size_t size) const {
             return (_current + size) < getRegionEnd();
         }
 
@@ -24,6 +32,10 @@ namespace kivm {
             jbyte *m = _current;
             _current += size;
             return m;
+        }
+
+        inline void reset() {
+            this->_current = this->_regionStart;
         }
     };
 }

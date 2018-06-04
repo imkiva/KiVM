@@ -76,20 +76,36 @@ namespace kivm {
     class intOopDesc : public primitiveOopDesc<jint> {
     public:
         explicit intOopDesc(jint value);
+
+        inline intOop copy() override {
+            return new intOopDesc(getValue());
+        }
     };
 
     class longOopDesc : public primitiveOopDesc<jlong> {
     public:
         explicit longOopDesc(jlong value);
+
+        inline longOop copy() override {
+            return new longOopDesc(getValue());
+        }
     };
 
     class floatOopDesc : public primitiveOopDesc<jfloat> {
     public:
         explicit floatOopDesc(jfloat value);
+
+        inline floatOop copy() override {
+            return new floatOopDesc(getValue());
+        }
     };
 
     class doubleOopDesc : public primitiveOopDesc<jdouble> {
     public:
         explicit doubleOopDesc(jdouble value);
+
+        inline doubleOop copy() override {
+            return new doubleOopDesc(getValue());
+        }
     };
 }

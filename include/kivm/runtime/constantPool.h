@@ -29,11 +29,12 @@ namespace kivm {
 
         template<typename T, typename Creator, int CONSTANT_TAG>
         class Pool {
-        private:
-            cp_info **_raw_pool = nullptr;
-
+        public:
             // constant-pool-index -> constant
             std::unordered_map<int, T> _pool;
+
+        private:
+            cp_info **_raw_pool = nullptr;
 
             Creator _creator;
 
@@ -104,6 +105,8 @@ namespace kivm {
     }
 
     class RuntimeConstantPool {
+        friend class CopyingHeap;
+
     private:
         ClassLoader *_classLoader;
         cp_info **_rawPool;

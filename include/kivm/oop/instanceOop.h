@@ -10,6 +10,7 @@
 namespace kivm {
     class instanceOopDesc : public oopDesc {
         friend class InstanceKlass;
+        friend class CopyingHeap;
 
         std::vector<oop> _instanceFieldValues;
 
@@ -28,7 +29,7 @@ namespace kivm {
             return (InstanceKlass *) getClass();
         }
 
-        inline instanceOop shallowCopy() {
+        inline instanceOop copy() override {
             return new instanceOopDesc(this);
         }
 

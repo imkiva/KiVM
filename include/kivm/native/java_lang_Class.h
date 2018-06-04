@@ -10,9 +10,13 @@
 #include <kivm/oop/klass.h>
 
 namespace kivm {
+    class CopyingHeap;
+
     namespace java {
         namespace lang {
             class Class {
+                friend class kivm::CopyingHeap;
+
             private:
                 enum ClassMirrorState {
                     FIXED, NOT_FIXED

@@ -54,6 +54,7 @@ namespace kivm {
         // try again
         D("CopyingHeap: retry");
         if (_currentRegion->shouldAllocate(size)) {
+            D("CopyingHeap: successfully allocated after GC");
             return _currentRegion->allocate(size);
         }
 

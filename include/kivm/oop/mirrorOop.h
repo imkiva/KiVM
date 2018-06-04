@@ -8,6 +8,8 @@
 
 namespace kivm {
     class mirrorOopDesc : public instanceOopDesc {
+        friend class CopyingHeap;
+
     private:
         Klass *_mirrorTarget;
         ValueType _mirroringPrimitiveType;

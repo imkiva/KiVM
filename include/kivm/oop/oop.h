@@ -43,18 +43,16 @@ namespace kivm {
         jint _hash;
 
     public:
-        markOopDesc(oopType type, oop _oop);
+        explicit markOopDesc(oopType type);
 
         oopType getOopType() const { return _type; }
 
         void monitorEnter() {
             _monitor.enter();
-            D("MonitorEntered");
         }
 
         void monitorExit() {
             _monitor.leave();
-            D("MonitorExited");
         }
 
         inline void setHash(jint hash) {
@@ -91,5 +89,7 @@ namespace kivm {
         markOop getMarkOop() const { return _mark; }
 
         Klass *getClass() const { return _klass; }
+
+        virtual oop copy() = 0;
     };
 }

@@ -3,8 +3,11 @@
 //
 #pragma once
 
+#include <kivm/oop/klass.h>
 #include <kivm/memory/collectedHeap.h>
 #include <kivm/memory/heapRegion.h>
+#include <unordered_map>
+#include <kivm/runtime/stack.h>
 
 namespace kivm {
     class CopyingHeap : public CollectedHeap {
@@ -17,6 +20,14 @@ namespace kivm {
 
     private:
         void initializeRegions();
+
+        void copyObject(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, oop &target);
+
+        void copyClass(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, Klass *klass);
+
+        void copyThread(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, JavaThread *thread);
+
+        void copySlotArray(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, SlotArray *slotArray);
 
     public:
         CopyingHeap();

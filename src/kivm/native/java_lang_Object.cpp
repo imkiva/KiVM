@@ -34,7 +34,7 @@ JAVA_NATIVE jobject Java_java_lang_Object_clone(JNIEnv *env, jobject javaObject)
     if (thisObject->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
         auto instance = (instanceOop) thisObject;
         if (instance->getInstanceClass()->checkInterface(java_lang_Cloneable)) {
-            return ((instanceOop) thisObject)->shallowCopy();
+            return ((instanceOop) thisObject)->copy();
         }
         PANIC("Clone operation requires class to implement java.lang.Cloneable");
     }
@@ -42,7 +42,7 @@ JAVA_NATIVE jobject Java_java_lang_Object_clone(JNIEnv *env, jobject javaObject)
     if (thisObject->getClass()->getClassType() == ClassType::TYPE_ARRAY_CLASS
         || thisObject->getClass()->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
         auto array = (arrayOop) thisObject;
-        return array->shallowCopy();
+        return array->copy();
     }
 
     PANIC("Unknown class type");

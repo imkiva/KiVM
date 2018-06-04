@@ -13,6 +13,8 @@ namespace kivm {
         // copyArrayTo() needs to use _elements
         friend class TypeArrayKlass;
 
+        friend class CopyingHeap;
+
     protected:
         std::vector<oop> _elements;
 
@@ -27,7 +29,7 @@ namespace kivm {
     public:
         explicit arrayOopDesc(ArrayKlass *arrayClass, oopType type, int length);
 
-        inline arrayOop shallowCopy() {
+        inline arrayOop copy() override {
             return new arrayOopDesc(this);
         }
 

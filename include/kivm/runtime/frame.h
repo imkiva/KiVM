@@ -12,6 +12,8 @@ namespace kivm {
     class Frame {
         friend class FrameList;
 
+        friend class CopyingHeap;
+
     private:
         Frame *_previous;
         Method *_method;
@@ -63,6 +65,8 @@ namespace kivm {
     };
 
     struct FrameList {
+        friend class CopyingHeap;
+
     private:
         int _max_frames;
         int _size;

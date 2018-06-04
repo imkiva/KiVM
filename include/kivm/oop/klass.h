@@ -26,6 +26,8 @@ namespace kivm {
     };
 
     class Klass {
+        friend class CopyingHeap;
+
     private:
         ClassState _state;
         u2 _accessFlag;

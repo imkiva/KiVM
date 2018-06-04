@@ -21,5 +21,9 @@ namespace kivm {
         Klass *find(const String &name);
 
         void put(const String &name, Klass *klass);
+
+        inline const std::unordered_map<String, Klass *> &getLoadedClasses() const {
+            return _classes;
+        };
     };
 }

@@ -8,6 +8,8 @@
 
 namespace kivm {
     class ArrayKlass : public Klass {
+        friend class CopyingHeap;
+
     private:
         ClassLoader *_classLoader;
         mirrorOop _javaLoader;

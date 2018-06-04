@@ -14,7 +14,7 @@
 namespace kivm {
     InstanceKlass::InstanceKlass(ClassFile *classFile, ClassLoader *classLoader,
                                  mirrorOop javaLoader, ClassType classType)
-        : _runtimePool(this),
+        : _runtimePool(new RuntimeConstantPool(this)),
           _javaLoader(javaLoader),
           _classFile(classFile),
           _classLoader(classLoader),

@@ -9,6 +9,8 @@
 
 namespace kivm {
     class SlotArray {
+        friend class CopyingHeap;
+
     protected:
         Slot *_elements;
         int _size;
@@ -18,6 +20,7 @@ namespace kivm {
 
         inline void setInt(int position, jint i) {
             _elements[position].i32 = i;
+            _elements[position].isObject = false;
         }
 
         inline jint getInt(int position) {
@@ -94,6 +97,7 @@ namespace kivm {
 
         inline void setReference(int position, jobject l) {
             _elements[position].ref = l;
+            _elements[position].isObject = true;
         }
 
         inline jobject getReference(int position) {
@@ -105,6 +109,8 @@ namespace kivm {
     };
 
     class Stack {
+        friend class CopyingHeap;
+
     private:
         SlotArray _array;
         int _sp;
@@ -127,7 +133,6 @@ namespace kivm {
 
         inline void pushLong(jlong v) {
             _array.setLong(_sp, v);
-            D("stack: pushing jlong: %lld -> stack(%lld)", v, _array.getLong(_sp));
             _sp += 2;
         }
 
@@ -157,6 +162,8 @@ namespace kivm {
     };
 
     class Locals {
+        friend class CopyingHeap;
+
     private:
         SlotArray _array;
 
@@ -175,7 +182,6 @@ namespace kivm {
 
         inline void setLong(int position, jlong j) {
             _array.setLong(position, j);
-            D("local: pushing jlong: %lld -> local(%lld)", j, _array.getLong(position));
         }
 
         inline jlong getLong(int position) {

@@ -25,6 +25,8 @@ namespace kivm {
     class InstanceKlass : public Klass {
         friend class instanceOopDesc;
 
+        friend class CopyingHeap;
+
     private:
         ClassLoader *_classLoader;
         mirrorOop _javaLoader;
@@ -37,7 +39,7 @@ namespace kivm {
         EnclosingMethod_attribute *_enclosingMethodAttr;
         BootstrapMethods_attribute *_bootstrapMethodAttr;
 
-        RuntimeConstantPool _runtimePool;
+        RuntimeConstantPool *_runtimePool;
 
         int _nStaticFields;
 
@@ -110,7 +112,7 @@ namespace kivm {
         }
 
         inline RuntimeConstantPool *getRuntimeConstantPool() {
-            return &this->_runtimePool;
+            return _runtimePool;
         }
 
         inline const std::unordered_map<String, MethodID *> &getVtable() const {
@@ -129,11 +131,11 @@ namespace kivm {
             return _instanceFields;
         }
 
-        inline const std::unordered_map<String, MethodID*> &getDeclaredMethods() {
+        inline const std::unordered_map<String, MethodID *> &getDeclaredMethods() {
             return _allMethods;
         }
 
-        Method* getDeclaredMethodByOffset(int offset);
+        Method *getDeclaredMethodByOffset(int offset);
 
         /**
          * Search field in this class.
