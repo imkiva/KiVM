@@ -9,7 +9,7 @@
 
 namespace kivm {
     enum GCState {
-        RUNNING,
+        GC_RUNNING,
         ENJOYING_HOLIDAY,
         WAITING_FOR_SAFEPOINT,
     };

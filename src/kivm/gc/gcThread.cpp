@@ -20,7 +20,9 @@ namespace kivm {
         while (getThreadState() != ThreadState::DIED) {
             // Wait until GC is required
             if (getState() == GCState::ENJOYING_HOLIDAY) {
+                _triggerMonitor.enter();
                 _triggerMonitor.wait();
+                _triggerMonitor.leave();
             }
 
             // Wait until all threads are in safepoint
@@ -35,7 +37,6 @@ namespace kivm {
     }
 
     bool GCThread::isAllThreadInSafePoint() {
-        _gcState = GCState::WAITING_FOR_SAFEPOINT;
         int total = 0;
         int inSafepoint = 0;
 
@@ -52,16 +53,21 @@ namespace kivm {
     }
 
     void GCThread::doGarbageCollection() {
-        _gcState = GCState::RUNNING;
+        _gcState = GCState::GC_RUNNING;
         Universe::sCollectedHeapInstance->doGarbageCollection();
         _gcState = GCState::ENJOYING_HOLIDAY;
 
         // notify all threads that GC is finished
         _gcWaitMonitor.notifyAll();
+        _gcWaitMonitor.leave();
     }
 
     void GCThread::required() {
-        _triggerMonitor.notify();
+        if (_gcState != GCState::WAITING_FOR_SAFEPOINT) {
+            _gcState = GCState::WAITING_FOR_SAFEPOINT;
+            _gcWaitMonitor.enter();
+            _triggerMonitor.notify();
+        }
     }
 
     void GCThread::wait() {
