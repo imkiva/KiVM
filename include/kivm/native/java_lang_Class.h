@@ -18,6 +18,8 @@ namespace kivm {
                 friend class kivm::CopyingHeap;
 
             private:
+                static std::unordered_map<kivm::String, mirrorOop> _primitiveTypeMirrors;
+
                 enum ClassMirrorState {
                     FIXED, NOT_FIXED
                 };

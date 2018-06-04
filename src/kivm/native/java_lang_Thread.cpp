@@ -6,6 +6,7 @@
 #include <kivm/kivm.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/native/classNames.h>
+#include <kivm/oop/primitiveOop.h>
 
 using namespace kivm;
 
@@ -25,4 +26,35 @@ JAVA_NATIVE jobject Java_java_lang_Thread_currentThread(JNIEnv *env, jclass java
 JAVA_NATIVE void Java_java_lang_Thread_setPriority0(JNIEnv *env, jobject threadObject, jint priority) {
     auto instanceOop = Resolver::instance(threadObject);
     // TODO: set native thread's priority
+}
+
+JAVA_NATIVE jboolean Java_java_lang_Thread_isAlive(JNIEnv *env, jobject threadObject) {
+    auto threadOop = Resolver::instance(threadObject);
+    longOop eetopOop = nullptr;
+    if (!threadOop->getFieldValue(J_THREAD, L"eetop", L"J", (oop *) &eetopOop)) {
+        SHOULD_NOT_REACH_HERE();
+    }
+
+    if (eetopOop == nullptr) {
+        return JNI_FALSE;
+    }
+
+    long eetop = eetopOop->getValue();
+    int ret = pthread_kill((pthread_t) eetop, 0);
+    if (ret == 0) {
+        return JNI_TRUE;
+    } else if (ret == ESRCH) {
+        return JNI_FALSE;
+    } else {
+        SHOULD_NOT_REACH_HERE();
+    }
+}
+
+JAVA_NATIVE void Java_java_lang_Thread_start0(JNIEnv *env, jobject threadObject) {
+    auto threadOop = Resolver::instance(threadObject);
+    if (threadOop->getClass()->getName() == L"java/lang/ref/Reference$ReferenceHandler") {
+        return;
+    }
+
+    PANIC("Thread.start0()");
 }

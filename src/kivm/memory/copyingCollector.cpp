@@ -181,7 +181,7 @@ namespace kivm {
         std::unordered_map<oop, oop> map;
 
         // Copy primitive types' java mirrors
-        for (auto &item :java::lang::Class::getPrimitiveTypeMirrors()) {
+        for (auto &item :java::lang::Class::_primitiveTypeMirrors) {
             oop mirror = item.second;
             copyObject(next, map, mirror);
             item.second = (mirrorOop) mirror;
