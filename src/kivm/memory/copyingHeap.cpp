@@ -2,7 +2,7 @@
 // Created by kiva on 2018/4/20.
 //
 
-#include <kivm/memory/copying.h>
+#include <kivm/memory/copyingHeap.h>
 #include <kivm/memory/universe.h>
 #include <kivm/runtime/runtimeConfig.h>
 #include <cmath>
@@ -89,21 +89,5 @@ namespace kivm {
             hr->_current = delivering;
             delivering += regionSize;
         }
-    }
-
-    void CopyingHeap::doGarbageCollection() {
-        // GC-Roots include:
-        // 0. InstanceKlass::_staticFieldValues
-        // 1. InstanceKlass::_javaMirror
-        // 2. InstanceKlass::_javaLoader
-        // 3. InstanceKlass::_runtimePool's Strings
-        // 4. instanceOopDesc::_instanceFieldValues
-        // 5. arrayOopDesc::_elements
-        // 6. JavaThread::_javaThreadObject
-        // 7. JavaThread::_exceptionOop
-        // 8. JavaThread::_frames[0 ~ the last frame]::_locals
-        // 9. JavaThread::_frames[0 ~ the last frame]::_stack
-
-        PANIC("TODO: CopyingHeap::doGarbageCollection()");
     }
 }

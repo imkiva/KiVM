@@ -2,7 +2,7 @@
 // Created by kiva on 2018/4/20.
 //
 #include <kivm/memory/universe.h>
-#include <kivm/memory/copying.h>
+#include <kivm/memory/copyingHeap.h>
 #include <sys/mman.h>
 #include <cstring>
 #include <cerrno>

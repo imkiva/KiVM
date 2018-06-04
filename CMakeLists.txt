@@ -164,17 +164,24 @@ set(SOURCE_FILES
         include/kivm/jni/jniJavaVM.h
         include/kivm/jni/jniEnv.h
         include/kivm/memory/collectedHeap.h
-        include/kivm/memory/copying.h
+        include/kivm/memory/copyingHeap.h
         include/kivm/memory/universe.h
         include/kivm/memory/heapRegion.h
         include/shared/zip/libzippp.h
         include/kivm/classpath/classPathManager.h
         include/shared/filesystem.h
         include/shared/zip.h
-        include/shared/atomic.h src/kivm/native/java_lang_ClassLoader.cpp
+        include/shared/atomic.h
         include/kivm/native/java_lang_reflect_Constructor.h
         include/kivm/native/java_lang_reflect_Method.h
         include/kivm/runtime/integerCache.h
+        include/kivm/runtime/vmThread.h
+        include/kivm/runtime/threadState.h
+        include/kivm/runtime/javaThread.h
+        include/kivm/classfile/annotation.h
+        include/kivm/bytecode/interpreter.h
+        include/kivm/gc/gcThread.h
+        src/kivm/native/java_lang_ClassLoader.cpp
         src/shared/filesystem.cpp
         src/shared/string.cpp
         src/kivm/oop/oopBase.cpp
@@ -219,7 +226,7 @@ set(SOURCE_FILES
         src/kivm/jni/jniEnv.cpp
         src/kivm/bytecode/executionInvoke.cpp
         src/kivm/bytecode/javaInvocationContext.cpp
-        src/kivm/memory/copying.cpp
+        src/kivm/memory/copyingHeap.cpp
         src/kivm/memory/universe.cpp
         src/kivm/native/java_lang_System.cpp
         src/shared/zip/libzippp.cpp
@@ -236,7 +243,7 @@ set(SOURCE_FILES
         src/kivm/native/sun_reflect_Reflection.cpp
         src/kivm/native/java_security_AccessController.cpp
         src/kivm/native/java_lang_Throwable.cpp
-        src/kivm/oop/reflection.cpp include/kivm/classfile/annotation.h
+        src/kivm/oop/reflection.cpp
         src/kivm/classfile/annotation.cpp
         src/kivm/native/sun_reflect_NativeConstructorAccessorImpl.cpp
         src/kivm/native/java_lang_reflect_Constructor.cpp
@@ -246,7 +253,10 @@ set(SOURCE_FILES
         src/kivm/native/java_io_UnixFileSystem.cpp
         src/kivm/native/sun_misc_Signal.cpp
         src/kivm/runtime/javaThread.cpp
-        src/kivm/runtime/integerCache.cpp include/kivm/bytecode/interpreter.h src/kivm/bytecode/sharedInterpreter.h include/kivm/gc/gcThread.h include/kivm/runtime/vmThread.h include/kivm/runtime/threadState.h include/kivm/runtime/javaThread.h src/kivm/gc/gcThread.cpp)
+        src/kivm/runtime/integerCache.cpp
+        src/kivm/bytecode/sharedInterpreter.h
+        src/kivm/gc/gcThread.cpp
+        src/kivm/memory/copyingCollector.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})
