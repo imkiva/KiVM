@@ -94,7 +94,7 @@ namespace kivm {
     void CopyingHeap::doGarbageCollection() {
         // GC-Roots include:
         // 0. InstanceKlass::_staticFieldValues
-        // 1. InstanceKlass::_javaMirror (no primitive types' mirrors)
+        // 1. InstanceKlass::_javaMirror
         // 2. InstanceKlass::_javaLoader
         // 3. InstanceKlass::_runtimePool's Strings
         // 4. instanceOopDesc::_instanceFieldValues
