@@ -8,12 +8,13 @@
 
 namespace kivm {
     RuntimeConstantPool::RuntimeConstantPool(InstanceKlass *instanceKlass)
-        : _classLoader(instanceKlass->getClassLoader()) {
+        : _classLoader(instanceKlass->getClassLoader()),
+          _pool(nullptr), _rawPool(nullptr), _entryCount(0) {
     }
 
     namespace pools {
         namespace impl {
-            typedef FieldID* (InstanceKlass::*FieldInfoGetterType)(const String &,
+            typedef FieldID *(InstanceKlass::*FieldInfoGetterType)(const String &,
                                                                    const String &,
                                                                    const String &) const;
 
@@ -26,14 +27,14 @@ namespace kivm {
                     const auto &nameAndType = rt->getNameAndType(fieldRef->name_and_type_index);
 
                     FieldInfoGetterType fieldInfoGetter = isStatic
-                                                ? &InstanceKlass::getStaticFieldInfo
-                                                : &InstanceKlass::getInstanceFieldInfo;
+                                                          ? &InstanceKlass::getStaticFieldInfo
+                                                          : &InstanceKlass::getInstanceFieldInfo;
 
                     auto currentClass = instanceKlass;
                     while (currentClass != nullptr) {
                         auto found = (currentClass->*fieldInfoGetter)(currentClass->getName(),
-                            nameAndType.first,
-                            nameAndType.second);
+                            *nameAndType->first,
+                            *nameAndType->second);
                         if (found != nullptr) {
                             return found;
                         }
@@ -61,13 +62,13 @@ namespace kivm {
         ClassPoolEntey ClassCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
             auto classInfo = (CONSTANT_Class_info *) pool[index];
             return BootstrapClassLoader::get()->loadClass(
-                rt->getUtf8(classInfo->name_index));
+                *rt->getUtf8(classInfo->name_index));
         }
 
         StringPoolEntry StringCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
             auto classInfo = (CONSTANT_String_info *) pool[index];
             return java::lang::String::intern(
-                rt->getUtf8(classInfo->string_index));
+                *rt->getUtf8(classInfo->string_index));
         }
 
         MethodPoolEntry MethodCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
@@ -96,23 +97,23 @@ namespace kivm {
 
                 if (tag == CONSTANT_Methodref) {
                     // invokespecial and invokestatic
-                    auto found = instanceKlass->getThisClassMethod(nameAndType.first, nameAndType.second);
+                    auto found = instanceKlass->getThisClassMethod(*nameAndType->first, *nameAndType->second);
                     if (found == nullptr) {
                         // invokevirtual
-                        found = instanceKlass->getVirtualMethod(nameAndType.first, nameAndType.second);
+                        found = instanceKlass->getVirtualMethod(*nameAndType->first, *nameAndType->second);
                     }
                     return found;
 
                 } else {
                     // invokeinterface
                     // interface methods are virtual methods
-                    return instanceKlass->getVirtualMethod(nameAndType.first, nameAndType.second);
+                    return instanceKlass->getVirtualMethod(*nameAndType->first, *nameAndType->second);
                 }
 
             } else if (klass->getClassType() == ClassType::OBJECT_ARRAY_CLASS
                        || klass->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
                 auto arrayKlass = (ArrayKlass *) klass;
-                return arrayKlass->getSuperClass()->getThisClassMethod(nameAndType.first, nameAndType.second);
+                return arrayKlass->getSuperClass()->getThisClassMethod(*nameAndType->first, *nameAndType->second);
             }
 
             return nullptr;
@@ -121,8 +122,9 @@ namespace kivm {
         NameAndTypePoolEntry
         NameAndTypeCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
             auto nameAndType = (CONSTANT_NameAndType_info *) pool[index];
-            return std::make_pair(rt->getUtf8(nameAndType->name_index),
-                rt->getUtf8(nameAndType->descriptor_index));
+            auto name = rt->getUtf8(nameAndType->name_index);
+            auto desc = rt->getUtf8(nameAndType->descriptor_index);
+            return new std::pair<Utf8PoolEntry, Utf8PoolEntry>(name, desc);
         }
     }
 }

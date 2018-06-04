@@ -109,10 +109,12 @@ namespace kivm {
 
                 // runtime constant pool strings
                 auto rt = instanceClass->getRuntimeConstantPool();
-                for (auto &item : rt->_stringPool._pool) {
-                    oop stringOop = item.second;
-                    copyObject(newRegion, map, stringOop);
-                    item.second = (instanceOop) stringOop;
+                for (int i = 0; i < rt->_entryCount; ++i) {
+                    if (rt->_rawPool[i]->tag == CONSTANT_String) {
+                        oop stringOop = Resolver::instance(rt->_pool[i]);
+                        copyObject(newRegion, map, stringOop);
+                        rt->_pool[i] = stringOop;
+                    }
                 }
                 break;
             }

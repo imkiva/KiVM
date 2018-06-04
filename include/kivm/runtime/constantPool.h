@@ -11,6 +11,7 @@
 #include <kivm/oop/method.h>
 #include <kivm/oop/field.h>
 #include <unordered_map>
+#include <kivm/memory/universe.h>
 
 namespace kivm {
     class Klass;
@@ -24,44 +25,53 @@ namespace kivm {
         using StringPoolEntry = instanceOop;
         using MethodPoolEntry = Method *;
         using FieldPoolEntry = FieldID *;
-        using Utf8PoolEntry = String;
-        using NameAndTypePoolEntry = std::pair<Utf8PoolEntry, Utf8PoolEntry>;
+        using Utf8PoolEntry = String *;
+        using NameAndTypePoolEntry = std::pair<Utf8PoolEntry, Utf8PoolEntry> *;
 
         template<typename T, typename Creator, int CONSTANT_TAG>
         class Pool {
         public:
             // constant-pool-index -> constant
-            std::unordered_map<int, T> _pool;
+//            std::unordered_map<int, T> _pool;
 
         private:
             cp_info **_raw_pool = nullptr;
+            void **_pool = nullptr;
 
             Creator _creator;
 
         public:
-            inline void setRawPool(cp_info **pool) {
-                this->_raw_pool = pool;
+            inline void setRawPool(cp_info **rawPool, void **pool) {
+                this->_raw_pool = rawPool;
+                this->_pool = pool;
             }
 
             inline T findOrNew(RuntimeConstantPool *rt, int index) {
                 if (_raw_pool[index]->tag != CONSTANT_TAG) {
                     PANIC("Accessing an incompatible constant entry");
                 }
-                const auto &iter = _pool.find(index);
-                if (iter != _pool.end()) {
-                    return iter->second;
+                void *value = _pool[index];
+                if (value != nullptr) {
+                    return (T) value;
                 }
                 T created = _creator(rt, _raw_pool, index);
-                _pool.insert(std::make_pair(index, created));
+                _pool[index] = created;
                 return created;
             }
         };
 
         template<typename PrimitiveType, typename EntryType>
         struct PrimitiveConstantCreator {
-            inline PrimitiveType operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+            inline PrimitiveType *operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
                 auto primitiveInfo = (EntryType *) pool[index];
-                return (PrimitiveType) primitiveInfo->getConstant();
+                return new PrimitiveType(primitiveInfo->getConstant());
+            }
+        };
+
+        struct Utf8ConstantCreator {
+            inline String *operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+                auto primitiveInfo = (CONSTANT_Utf8_info *) pool[index];
+                return new String(primitiveInfo->getConstant());
             }
         };
 
@@ -89,11 +99,11 @@ namespace kivm {
             NameAndTypePoolEntry operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
-        using IntegerPool = Pool<jint, PrimitiveConstantCreator<jint, CONSTANT_Integer_info>, CONSTANT_Integer>;
-        using FloatPool = Pool<jfloat, PrimitiveConstantCreator<jfloat, CONSTANT_Float_info>, CONSTANT_Float>;
-        using LongPool = Pool<jlong, PrimitiveConstantCreator<jlong, CONSTANT_Long_info>, CONSTANT_Long>;
-        using DoublePool = Pool<jdouble, PrimitiveConstantCreator<jdouble, CONSTANT_Double_info>, CONSTANT_Double>;
-        using Utf8Pool = Pool<Utf8PoolEntry, PrimitiveConstantCreator<Utf8PoolEntry, CONSTANT_Utf8_info>, CONSTANT_Utf8>;
+        using IntegerPool = Pool<jint *, PrimitiveConstantCreator<jint, CONSTANT_Integer_info>, CONSTANT_Integer>;
+        using FloatPool = Pool<jfloat *, PrimitiveConstantCreator<jfloat, CONSTANT_Float_info>, CONSTANT_Float>;
+        using LongPool = Pool<jlong *, PrimitiveConstantCreator<jlong, CONSTANT_Long_info>, CONSTANT_Long>;
+        using DoublePool = Pool<jdouble *, PrimitiveConstantCreator<jdouble, CONSTANT_Double_info>, CONSTANT_Double>;
+        using Utf8Pool = Pool<Utf8PoolEntry, Utf8ConstantCreator, CONSTANT_Utf8>;
         using NameAndTypePool = Pool<NameAndTypePoolEntry, NameAndTypeCreator, CONSTANT_NameAndType>;
 
         using ClassPool = Pool<ClassPoolEntey, ClassCreator, CONSTANT_Class>;
@@ -110,6 +120,9 @@ namespace kivm {
     private:
         ClassLoader *_classLoader;
         cp_info **_rawPool;
+        void **_pool;
+        int _entryCount;
+
         pools::ClassPool _classPool;
         pools::StringPool _stringPool;
         pools::MethodPool _methodPool;
@@ -126,20 +139,22 @@ namespace kivm {
     public:
         explicit RuntimeConstantPool(InstanceKlass *instanceKlass);
 
-        inline void attachConstantPool(cp_info **pool) {
-            this->_rawPool = pool;
-            _classPool.setRawPool(pool);
-            _stringPool.setRawPool(pool);
-            _methodPool.setRawPool(pool);
-            _staticFieldPool.setRawPool(pool);
-            _instanceFieldPool.setRawPool(pool);
-            _interfaceMethodPool.setRawPool(pool);
-            _intPool.setRawPool(pool);
-            _floatPool.setRawPool(pool);
-            _longPool.setRawPool(pool);
-            _doublePool.setRawPool(pool);
-            _utf8Pool.setRawPool(pool);
-            _nameAndTypePool.setRawPool(pool);
+        inline void attachConstantPool(cp_info **rawPool, int count) {
+            this->_entryCount = count;
+            this->_rawPool = rawPool;
+            this->_pool = (void **) Universe::allocCObject(sizeof(void *) * count);
+            _classPool.setRawPool(rawPool, _pool);
+            _stringPool.setRawPool(rawPool, _pool);
+            _methodPool.setRawPool(rawPool, _pool);
+            _staticFieldPool.setRawPool(rawPool, _pool);
+            _instanceFieldPool.setRawPool(rawPool, _pool);
+            _interfaceMethodPool.setRawPool(rawPool, _pool);
+            _intPool.setRawPool(rawPool, _pool);
+            _floatPool.setRawPool(rawPool, _pool);
+            _longPool.setRawPool(rawPool, _pool);
+            _doublePool.setRawPool(rawPool, _pool);
+            _utf8Pool.setRawPool(rawPool, _pool);
+            _nameAndTypePool.setRawPool(rawPool, _pool);
         }
 
         inline cp_info **getRawPool() {
@@ -192,22 +207,22 @@ namespace kivm {
 
         inline jint getInt(int index) {
             assert(this->_rawPool != nullptr);
-            return _intPool.findOrNew(this, index);
+            return *_intPool.findOrNew(this, index);
         }
 
         inline jlong getLong(int index) {
             assert(this->_rawPool != nullptr);
-            return _longPool.findOrNew(this, index);
+            return *_longPool.findOrNew(this, index);
         }
 
         inline jfloat getFloat(int index) {
             assert(this->_rawPool != nullptr);
-            return _floatPool.findOrNew(this, index);
+            return *_floatPool.findOrNew(this, index);
         }
 
         inline jdouble getDouble(int index) {
             assert(this->_rawPool != nullptr);
-            return _doublePool.findOrNew(this, index);
+            return *_doublePool.findOrNew(this, index);
         }
     };
 }

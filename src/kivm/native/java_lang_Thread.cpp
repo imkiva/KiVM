@@ -8,6 +8,8 @@
 #include <kivm/native/classNames.h>
 #include <kivm/oop/primitiveOop.h>
 
+#include <pthread.h>
+
 using namespace kivm;
 
 JAVA_NATIVE void Java_java_lang_Thread_registerNatives(JNIEnv *env, jclass java_lang_Thread) {

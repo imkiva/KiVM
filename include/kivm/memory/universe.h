@@ -1,6 +1,8 @@
 //
 // Created by kiva on 2018/4/20.
 //
+#pragma once
+
 #include <kivm/kivm.h>
 #include <kivm/memory/collectedHeap.h>
 

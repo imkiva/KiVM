@@ -200,7 +200,7 @@ namespace kivm {
     }
 
     void InstanceKlass::linkConstantPool(cp_info **pool) {
-        getRuntimeConstantPool()->attachConstantPool(pool);
+        getRuntimeConstantPool()->attachConstantPool(pool, _classFile->constant_pool_count);
     }
 
     void InstanceKlass::linkAttributes(cp_info **pool) {
