@@ -30,10 +30,6 @@ namespace kivm {
 
         template<typename T, typename Creator, int CONSTANT_TAG>
         class Pool {
-        public:
-            // constant-pool-index -> constant
-//            std::unordered_map<int, T> _pool;
-
         private:
             cp_info **_raw_pool = nullptr;
             void **_pool = nullptr;
@@ -120,6 +116,7 @@ namespace kivm {
     private:
         ClassLoader *_classLoader;
         cp_info **_rawPool;
+        // constant-pool-index -> constant
         void **_pool;
         int _entryCount;
 
