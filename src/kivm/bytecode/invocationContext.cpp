@@ -51,9 +51,6 @@ namespace kivm {
     }
 
     oop InvocationContext::callInterpreter() {
-        D("### InvocationContext::callInterpreter(), maxLocals: %d, maxStack: %d",
-            _method->getMaxLocals(), _method->getMaxStack());
-
         Frame frame(_method->getMaxLocals(), _method->getMaxStack());
         Locals &locals = frame.getLocals();
 

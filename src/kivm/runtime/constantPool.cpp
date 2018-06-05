@@ -95,6 +95,7 @@ namespace kivm {
             if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
                 auto instanceKlass = (InstanceKlass *) klass;
 
+                // TODO: find static methods which are in super classes
                 if (tag == CONSTANT_Methodref) {
                     // invokespecial and invokestatic
                     auto found = instanceKlass->getThisClassMethod(*nameAndType->first, *nameAndType->second);

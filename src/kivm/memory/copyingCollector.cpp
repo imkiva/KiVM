@@ -113,6 +113,9 @@ namespace kivm {
                     if (rt->_rawPool[i] != nullptr
                         && rt->getConstantTag(i) == CONSTANT_String) {
                         oop stringOop = Resolver::instance(rt->_pool[i]);
+                        if (stringOop == nullptr) {
+                            continue;
+                        }
                         oop old = stringOop;
                         copyObject(newRegion, map, stringOop);
                         D("[GCThread]: runtime string: #%d from %p to %p", i, old, stringOop);
