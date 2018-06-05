@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <kivm/classfile/classFileParser.h>
 #include <cassert>
+#include <kivm/memory/universe.h>
 
 namespace kivm {
     ClassFile *ClassFileParser::alloc() {
@@ -93,7 +94,7 @@ namespace kivm {
     void ClassFileParser::parseConstantPool(ClassFile *classFile) {
         u2 count = classFile->constant_pool_count = _classFileStream.get2();
 
-        classFile->constant_pool = new cp_info *[count];
+        classFile->constant_pool = (cp_info **) Universe::allocCObject(sizeof(cp_info *) * count);
         cp_info **pool = classFile->constant_pool;
 
         // The constant_pool table is indexed
@@ -179,6 +180,6 @@ namespace kivm {
     void ClassFileParser::parseAttributes(ClassFile *classFile) {
         classFile->attributes_count = _classFileStream.get2();
         AttributeParser::readAttributes(&classFile->attributes, classFile->attributes_count,
-                                        _classFileStream, classFile->constant_pool);
+            _classFileStream, classFile->constant_pool);
     }
 }
