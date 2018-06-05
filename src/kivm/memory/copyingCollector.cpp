@@ -118,7 +118,6 @@ namespace kivm {
                         }
                         oop old = stringOop;
                         copyObject(newRegion, map, stringOop);
-                        D("[GCThread]: runtime string: #%d from %p to %p", i, old, stringOop);
                         rt->_pool[i] = stringOop;
                     }
                 }
@@ -218,9 +217,11 @@ namespace kivm {
 
         // Done, free all unreachable objects
         current->reset();
+//        memset(current->_regionStart, '\0', current->_regionSize);
         this->_nextRegion = current;
 
         size_t afterUsed = next->getUsed();
-        D("[GCDetails]: (%zd -> %zd, total %zd)", beforeUsed, afterUsed, total);
+        D("[GCDetails]: (%zd -> %zd, total %zd, oops: %zd)",
+            beforeUsed, afterUsed, total, map.size());
     }
 }

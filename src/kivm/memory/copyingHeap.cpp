@@ -39,7 +39,7 @@ namespace kivm {
             PANIC("OutOfMemoryError: heap (not in JavaThread)");
         }
 
-        D("CopyingHeap: out of memory, will retry after GC");
+        D("CopyingHeap: out of memory, will retry after GC, required size: %zd", size);
         auto triggeredMonitor = GCThread::get()->required();
 
         // this will block current thread until GC is finished
@@ -54,7 +54,7 @@ namespace kivm {
         // try again
         D("CopyingHeap: retry");
         if (_currentRegion->shouldAllocate(size)) {
-            D("CopyingHeap: successfully allocated after GC");
+            D("CopyingHeap: successfully allocated %zd bytes after GC", size);
             return _currentRegion->allocate(size);
         }
 
