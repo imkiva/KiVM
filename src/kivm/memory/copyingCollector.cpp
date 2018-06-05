@@ -32,6 +32,8 @@ namespace kivm {
             return;
         }
 
+//        D("[GCThread] copying %p", target);
+
         // Object has been already copied to new region
         auto iter = map.find(target);
         if (iter != map.end()) {
@@ -116,7 +118,6 @@ namespace kivm {
                         if (stringOop == nullptr) {
                             continue;
                         }
-                        oop old = stringOop;
                         copyObject(newRegion, map, stringOop);
                         rt->_pool[i] = stringOop;
                     }
@@ -141,21 +142,26 @@ namespace kivm {
 
     void CopyingHeap::copyThread(HeapRegion *newRegion, std::unordered_map<oop, oop> &map,
                                  JavaThread *thread) {
+        D("[GCThread]: copying exception oop");
         oop exceptionOop = thread->_exceptionOop;
         copyObject(newRegion, map, exceptionOop);
         thread->_exceptionOop = (instanceOop) exceptionOop;
 
+        D("[GCThread]: copying thread oop");
         oop javaThreadOop = thread->_javaThreadObject;
         copyObject(newRegion, map, javaThreadOop);
         thread->_javaThreadObject = (instanceOop) javaThreadOop;
 
+        D("[GCThread]: copying thread arguments");
         for (auto &item : thread->_args) {
             copyObject(newRegion, map, item);
         }
 
         auto currentFrame = thread->_frames._current;
         while (currentFrame != nullptr) {
+            D("[GCThread]: copying frame %p: locals", currentFrame);
             copySlotArray(newRegion, map, &currentFrame->_locals._array, currentFrame->_locals._array._size);
+            D("[GCThread]: copying frame %p: stacks", currentFrame);
             copySlotArray(newRegion, map, &currentFrame->_stack._array, currentFrame->_stack._sp);
             currentFrame = currentFrame->getPrevious();
         }
@@ -187,14 +193,14 @@ namespace kivm {
         // the old->new oop map
         std::unordered_map<oop, oop> map;
 
-        // Copy primitive types' java mirrors
+        D("[GCThread]: copying primitive types's java mirrors");
         for (auto &item :java::lang::Class::_primitiveTypeMirrors) {
             oop mirror = item.second;
             copyObject(next, map, mirror);
             item.second = (mirrorOop) mirror;
         }
 
-        // Copying intern string pool
+        D("[GCThread]: copying intern string pool");
         auto internStringPool = java::lang::InternStringPool::getGlobal();
         for (auto &item : internStringPool->_pool) {
             oop stringOop = item.second;
@@ -202,14 +208,14 @@ namespace kivm {
             item.second = (instanceOop) stringOop;
         }
 
-        // Copy loaded classes
+        D("[GCThread]: copying loaded classes");
         auto sd = SystemDictionary::get();
         for (const auto &loadedClass : sd->getLoadedClasses()) {
             auto klass = loadedClass.second;
             copyClass(next, map, klass);
         }
 
-        // Copy threads, locals and stacks
+        D("[GCThread]: copying threads, locals and stacks");
         Threads::forEach([&](JavaThread *thread) {
             copyThread(next, map, thread);
             return false;
@@ -217,7 +223,7 @@ namespace kivm {
 
         // Done, free all unreachable objects
         current->reset();
-//        memset(current->_regionStart, '\0', current->_regionSize);
+        memset(current->_regionStart, '\0', current->_regionSize);
         this->_nextRegion = current;
 
         size_t afterUsed = next->getUsed();
