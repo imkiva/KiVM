@@ -7,6 +7,7 @@
 #include <kivm/memory/universe.h>
 
 namespace kivm {
+    static Lock sGCTriggerLock;
     GCThread *GCThread::sGCThreadInstance = nullptr;
 
     void GCThread::initialize() {
@@ -72,6 +73,7 @@ namespace kivm {
     }
 
     Monitor *GCThread::required() {
+        LockGuard lockGuard(sGCTriggerLock);
         if (_gcState != GCState::WAITING_FOR_SAFEPOINT) {
             _gcState = GCState::WAITING_FOR_SAFEPOINT;
             _gcWaitMonitor.enter();

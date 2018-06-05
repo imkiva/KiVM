@@ -178,7 +178,7 @@ namespace kivm {
         HeapRegion *current = this->_currentRegion;
         HeapRegion *next = this->_nextRegion;
 
-        size_t total = current->getTotal();
+        size_t total = current->getSize();
         size_t beforeUsed = current->getUsed();
 
         // CopyingHeap::copy() need to use oopDesc::copy()

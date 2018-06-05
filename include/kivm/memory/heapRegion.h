@@ -15,12 +15,12 @@ namespace kivm {
             return _current - _regionStart;
         }
 
-        inline size_t getTotal() const {
+        inline size_t getSize() const {
             return _regionSize;
         }
 
         inline jbyte *getRegionEnd() const {
-            return _regionStart + _regionSize;
+            return _regionStart + getSize();
         }
 
         inline bool shouldAllocate(size_t size) const {
