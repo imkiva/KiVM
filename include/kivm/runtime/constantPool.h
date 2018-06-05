@@ -10,7 +10,7 @@
 #include <kivm/classpath/classLoader.h>
 #include <kivm/oop/method.h>
 #include <kivm/oop/field.h>
-#include <vector>
+#include <kivm/memory/universe.h>
 
 namespace kivm {
     class Klass;
@@ -31,12 +31,12 @@ namespace kivm {
         class Pool {
         private:
             cp_info **_raw_pool = nullptr;
-            std::vector<void *> *_pool = nullptr;
+            void **_pool = nullptr;
 
             Creator _creator;
 
         public:
-            inline void setRawPool(cp_info **rawPool, std::vector<void *> *pool) {
+            inline void setRawPool(cp_info **rawPool, void **pool) {
                 this->_raw_pool = rawPool;
                 this->_pool = pool;
             }
@@ -45,12 +45,12 @@ namespace kivm {
                 if (_raw_pool[index]->tag != CONSTANT_TAG) {
                     PANIC("Accessing an incompatible constant entry");
                 }
-                void *value = (*_pool)[index];
+                void *value = _pool[index];
                 if (value != nullptr) {
                     return (T) value;
                 }
                 T created = _creator(rt, _raw_pool, index);
-                (*_pool)[index] = created;
+                _pool[index] = created;
                 return created;
             }
         };
@@ -116,7 +116,7 @@ namespace kivm {
         ClassLoader *_classLoader;
         cp_info **_rawPool;
         // constant-pool-index -> constant
-        std::vector<void *> _pool;
+        void **_pool;
         int _entryCount;
 
         pools::ClassPool _classPool;
@@ -138,19 +138,19 @@ namespace kivm {
         inline void attachConstantPool(cp_info **rawPool, int count) {
             this->_entryCount = count;
             this->_rawPool = rawPool;
-            this->_pool.resize((size_t) count + 1);
-            _classPool.setRawPool(rawPool, &_pool);
-            _stringPool.setRawPool(rawPool, &_pool);
-            _methodPool.setRawPool(rawPool, &_pool);
-            _staticFieldPool.setRawPool(rawPool, &_pool);
-            _instanceFieldPool.setRawPool(rawPool, &_pool);
-            _interfaceMethodPool.setRawPool(rawPool, &_pool);
-            _intPool.setRawPool(rawPool, &_pool);
-            _floatPool.setRawPool(rawPool, &_pool);
-            _longPool.setRawPool(rawPool, &_pool);
-            _doublePool.setRawPool(rawPool, &_pool);
-            _utf8Pool.setRawPool(rawPool, &_pool);
-            _nameAndTypePool.setRawPool(rawPool, &_pool);
+            this->_pool = (void **) Universe::allocCObject(sizeof(void *) * count);
+            _classPool.setRawPool(rawPool, _pool);
+            _stringPool.setRawPool(rawPool, _pool);
+            _methodPool.setRawPool(rawPool, _pool);
+            _staticFieldPool.setRawPool(rawPool, _pool);
+            _instanceFieldPool.setRawPool(rawPool, _pool);
+            _interfaceMethodPool.setRawPool(rawPool, _pool);
+            _intPool.setRawPool(rawPool, _pool);
+            _floatPool.setRawPool(rawPool, _pool);
+            _longPool.setRawPool(rawPool, _pool);
+            _doublePool.setRawPool(rawPool, _pool);
+            _utf8Pool.setRawPool(rawPool, _pool);
+            _nameAndTypePool.setRawPool(rawPool, _pool);
         }
 
         inline cp_info **getRawPool() {

@@ -115,10 +115,6 @@ namespace kivm {
             return _runtimePool;
         }
 
-        inline const std::unordered_map<String, MethodID *> &getVtable() const {
-            return _vtable;
-        }
-
         void linkClass() override;
 
         void initClass() override;
