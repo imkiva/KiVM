@@ -1015,7 +1015,7 @@ namespace kivm {
         }
         OPCODE(LSHL)
         {
-            auto v2 = stack.popLong();
+            auto v2 = stack.popInt();
             auto v1 = stack.popLong();
             auto s = v2 & 0x3F;
             stack.pushLong(v1 << s);
@@ -1031,7 +1031,7 @@ namespace kivm {
         }
         OPCODE(LSHR)
         {
-            auto v2 = stack.popLong();
+            auto v2 = stack.popInt();
             auto v1 = stack.popLong();
             auto s = v2 & 0x3F;
             stack.pushLong(v1 >> s);
@@ -1051,7 +1051,7 @@ namespace kivm {
         }
         OPCODE(LUSHR)
         {
-            auto v2 = stack.popLong();
+            auto v2 = stack.popInt();
             auto v1 = stack.popLong();
             auto s = v2 & 0x3F;
             if (v1 >= 0) {

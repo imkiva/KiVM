@@ -19,11 +19,13 @@ namespace kivm {
         explicit SlotArray(int size);
 
         inline void setInt(int position, jint i) {
+            assert(position >= 0 && position < _size);
             _elements[position].i32 = i;
             _elements[position].isObject = false;
         }
 
         inline jint getInt(int position) {
+            assert(position >= 0 && position < _size);
             return _elements[position].i32;
         }
 
@@ -96,11 +98,13 @@ namespace kivm {
         }
 
         inline void setReference(int position, jobject l) {
+            assert(position >= 0 && position < _size);
             _elements[position].ref = l;
             _elements[position].isObject = true;
         }
 
         inline jobject getReference(int position) {
+            assert(position >= 0 && position < _size);
             return _elements[position].ref;
         }
 
