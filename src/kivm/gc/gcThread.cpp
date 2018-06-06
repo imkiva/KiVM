@@ -68,16 +68,26 @@ namespace kivm {
         Universe::sCollectedHeapInstance->doGarbageCollection();
         _gcState = GCState::ENJOYING_HOLIDAY;
 
-        // notify all threads that GC is finished
+        // wake up all threads to continue their jobs
         _gcWaitMonitor.notifyAll();
     }
 
     Monitor *GCThread::required() {
         LockGuard lockGuard(sGCTriggerLock);
         if (_gcState != GCState::WAITING_FOR_SAFEPOINT) {
+            // it is much safer to change status before triggering gc
             _gcState = GCState::WAITING_FOR_SAFEPOINT;
+
+            // enter monitor so that other threads can do wait on it
+            // and when gc finishes, just notify this monitor to wake
+            // up all waiting threads to continue their jobs
             _gcWaitMonitor.enter();
+
+            // notify our gc thread to work
             _triggerMonitor.notify();
+
+            // if one triggered gc successfully
+            // it should be responsible for this lock
             return &_gcWaitMonitor;
         }
         return nullptr;

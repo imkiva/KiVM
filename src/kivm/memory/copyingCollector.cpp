@@ -28,11 +28,10 @@
 namespace kivm {
     void CopyingHeap::copyObject(HeapRegion *newRegion, std::unordered_map<oop, oop> &map,
                                  oop &target) {
+        // there is no need to copy null objects
         if (target == nullptr) {
             return;
         }
-
-//        D("[GCThread] copying %p", target);
 
         // Object has been already copied to new region
         auto iter = map.find(target);
@@ -173,8 +172,10 @@ namespace kivm {
             Slot *slot = slotArray->_elements + i;
             if (slot->isObject) {
                 auto object = Resolver::javaOop(slot->ref);
-                copyObject(newRegion, map, object);
-                slot->ref = object;
+                if (object != nullptr) {
+                    copyObject(newRegion, map, object);
+                    slot->ref = object;
+                }
             }
         }
     }
@@ -186,8 +187,11 @@ namespace kivm {
         size_t total = current->getSize();
         size_t beforeUsed = current->getUsed();
 
-        // CopyingHeap::copy() need to use oopDesc::copy()
-        // which may cause allocation
+        // TODO: use a more elegant way to allocate new objects during gc
+        // CopyingHeap::copy() need to use oopDesc::copy() which may cause allocation,
+        // and there is no need to lock, because we have already stopped the world.
+        // In further implementations, it is important to deprecate this ugly workaround
+        // if we are implementing an concurrent garbage collector.
         this->_currentRegion = next;
 
         // the old->new oop map
@@ -222,12 +226,13 @@ namespace kivm {
         });
 
         // Done, free all unreachable objects
+        // and make preparations for the next routine of gc
         current->reset();
         memset(current->_regionStart, '\0', current->_regionSize);
         this->_nextRegion = current;
 
         size_t afterUsed = next->getUsed();
-        D("[GCDetails]: (%zd -> %zd, total %zd, oops: %zd)",
+        D("[GCDetails]: [%zd -> %zd(%zd), oops: %zd]",
             beforeUsed, afterUsed, total, map.size());
     }
 }
