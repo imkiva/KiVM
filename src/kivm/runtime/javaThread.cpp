@@ -12,6 +12,7 @@
 namespace kivm {
     JavaThread::JavaThread(Method *method, const std::list<oop> &args)
         : _javaThreadObject(nullptr),
+          _exceptionOop(nullptr),
           _frames(RuntimeConfig::get().threadMaxStackFrames),
           _method(method), _args(args), _pc(0),
           _inSafepoint(false) {
