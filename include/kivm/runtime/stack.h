@@ -124,11 +124,17 @@ namespace kivm {
 
         ~Stack() = default;
 
-        inline void pushInt(jint v) { _array.setInt(_sp++, v); }
+        inline void pushInt(jint v) {
+            _array.setInt(_sp++, v);
+        }
 
-        inline void pushFloat(jfloat v) { _array.setFloat(_sp++, v); }
+        inline void pushFloat(jfloat v) {
+            _array.setFloat(_sp++, v);
+        }
 
-        inline void pushReference(jobject v) { _array.setReference(_sp++, v); }
+        inline void pushReference(jobject v) {
+            _array.setReference(_sp++, v);
+        }
 
         inline void pushDouble(jdouble v) {
             _array.setDouble(_sp, v);
@@ -140,11 +146,17 @@ namespace kivm {
             _sp += 2;
         }
 
-        inline jint popInt() { return _array.getInt(--_sp); }
+        inline jint popInt() {
+            return _array.getInt(--_sp);
+        }
 
-        inline jfloat popFloat() { return _array.getFloat(--_sp); }
+        inline jfloat popFloat() {
+            return _array.getFloat(--_sp);
+        }
 
-        inline jobject popReference() { return _array.getReference(--_sp); }
+        inline jobject popReference() {
+            return _array.getReference(--_sp);
+        }
 
         inline jdouble popDouble() {
             _sp -= 2;

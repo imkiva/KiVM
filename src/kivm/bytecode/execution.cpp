@@ -43,7 +43,6 @@ namespace kivm {
     }
 
     void Execution::loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
-        D("constant index: %d, tag: %d", constantIndex, rt->getConstantTag(constantIndex));
         switch (rt->getConstantTag(constantIndex)) {
             case CONSTANT_Integer: {
                 stack.pushInt(rt->getInt(constantIndex));

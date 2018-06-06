@@ -27,14 +27,14 @@
 #define OPCODE_LABEL(opcode) \
     label_OPC_##opcode
 
-//#ifdef KIVM_INTERPRETER_DEBUG
-//#define OPCODE(opcode) \
-//    label_OPC_##opcode: \
-//        D("interpreter: pc: %d, opcode: %d, name: %s", pc - 1, codeBlob[pc - 1], #opcode);
-//#else
+#ifdef KIVM_INTERPRETER_DEBUG
+#define OPCODE(opcode) \
+    label_OPC_##opcode: \
+        D("interpreter: pc: %d, opcode: %d, name: %s", pc - 1, codeBlob[pc - 1], #opcode);
+#else
 #define OPCODE(opcode) \
     OPCODE_LABEL(opcode):
-//#endif
+#endif
 
 namespace kivm {
     void *ThreadedInterpreter::_jumpTable[OPC_NUM_OPCODES] = {nullptr};
@@ -1397,7 +1397,7 @@ namespace kivm {
         }
         OPCODE(TABLESWITCH)
         {
-            int bc = pc;
+            int bc = pc - 1;
             int originBc = bc;
             if (bc % 4 != 0) {
                 bc += (4 - bc % 4);
@@ -1439,15 +1439,15 @@ namespace kivm {
             if (topValue > (int) (jumpTable.size() - 1 + lowByte)
                 || topValue < lowByte) {
                 // jump to default
-                GOTO_ABSOLUTE_WITH_OCCUPIED(static_cast<u4>(jumpTable.back()), -1);
+                GOTO_ABSOLUTE_WITH_OCCUPIED(static_cast<u4>(jumpTable.back()), 1);
             } else {
-                GOTO_ABSOLUTE_WITH_OCCUPIED(static_cast<u4>(jumpTable[topValue - lowByte]), -1);
+                GOTO_ABSOLUTE_WITH_OCCUPIED(static_cast<u4>(jumpTable[topValue - lowByte]), 1);
             }
         }
         NEXT();
         OPCODE(LOOKUPSWITCH)
         {
-            int bc = pc;
+            int bc = pc - 1;
             int originBc = bc;
             if (bc % 4 != 0) {
                 bc += (4 - bc % 4);
@@ -1485,9 +1485,9 @@ namespace kivm {
             int topValue = stack.popInt();
             auto iter = jumpTable.find(topValue);
             if (iter == jumpTable.end()) {
-                GOTO_ABSOLUTE_WITH_OCCUPIED(defaultByte + originBc, -2);
+                GOTO_ABSOLUTE_WITH_OCCUPIED(defaultByte + originBc, 1);
             } else {
-                GOTO_ABSOLUTE_WITH_OCCUPIED(iter->second, -2);
+                GOTO_ABSOLUTE_WITH_OCCUPIED(iter->second, 1);
             }
         }
         NEXT();
