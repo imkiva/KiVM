@@ -2,7 +2,6 @@
 // Created by kiva on 2018/3/28.
 //
 #include <kivm/runtime/javaThread.h>
-#include <kivm/runtime/integerCache.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/bytecode/invocationContext.h>
 #include <kivm/oop/primitiveOop.h>

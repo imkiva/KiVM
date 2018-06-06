@@ -174,7 +174,6 @@ set(SOURCE_FILES
         include/shared/atomic.h
         include/kivm/native/java_lang_reflect_Constructor.h
         include/kivm/native/java_lang_reflect_Method.h
-        include/kivm/runtime/integerCache.h
         include/kivm/runtime/vmThread.h
         include/kivm/runtime/threadState.h
         include/kivm/runtime/javaThread.h
@@ -253,7 +252,6 @@ set(SOURCE_FILES
         src/kivm/native/java_io_UnixFileSystem.cpp
         src/kivm/native/sun_misc_Signal.cpp
         src/kivm/runtime/javaThread.cpp
-        src/kivm/runtime/integerCache.cpp
         src/kivm/bytecode/sharedInterpreter.h
         src/kivm/gc/gcThread.cpp
         src/kivm/memory/copyingCollector.cpp)

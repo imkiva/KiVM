@@ -5,7 +5,6 @@
 #include <kivm/jni/jniJavaVM.h>
 #include <kivm/jni/jniEnv.h>
 #include <kivm/runtime/abstractThread.h>
-#include <kivm/runtime/integerCache.h>
 #include <kivm/memory/universe.h>
 #include <kivm/classpath/classPathManager.h>
 #include <kivm/bytecode/interpreter.h>
@@ -54,9 +53,6 @@ namespace kivm {
 
         // initialize classpath
         ClassPathManager::initialize();
-
-        // caches
-        IntegerCache::initialize();
 
         // interpreters
         DefaultInterpreter::initialize();
