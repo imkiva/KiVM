@@ -1,6 +1,23 @@
-//
-// Created by kiva on 2018/3/1.
-//
+/*
+ * Covariant Script KiVM Extension
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2018 Kiva
+ * Email: libkernelpanic@gmail.com
+ * Github: https://github.com/imkiva
+ */
 
 #pragma once
 #include <covscript/cni.hpp>
@@ -47,9 +64,7 @@
     } \
     namespace __CS_EXTENSION_NS_NAME(NAME) {
 
-#define CS_OBJECT(EXT, NAME) \
-    struct NAME; \
-    CS_DECLARE_AS_OBJECT(EXT, NAME) \
+#define CS_OBJECT(NAME) \
     struct NAME
 
 #define CNI_NORMAL(R, NAME, ...) __CNI_EXPAND(__CNI_NORMAL, R, NAME, ##__VA_ARGS__)
