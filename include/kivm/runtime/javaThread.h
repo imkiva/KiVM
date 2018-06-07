@@ -27,6 +27,8 @@ namespace kivm {
 
         friend class CopyingHeap;
 
+        friend class FrameWalker;
+
     protected:
         FrameList _frames;
         std::list<oop> _args;

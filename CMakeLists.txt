@@ -254,7 +254,8 @@ set(SOURCE_FILES
         src/kivm/runtime/javaThread.cpp
         src/kivm/bytecode/sharedInterpreter.h
         src/kivm/gc/gcThread.cpp
-        src/kivm/memory/copyingCollector.cpp)
+        src/kivm/memory/copyingCollector.cpp
+        include/kivm/runtime/frameWalker.h)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})
