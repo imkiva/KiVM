@@ -39,7 +39,7 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
                 Global::SLASH, Global::DOT)),
             java::lang::String::from(method->getName()),
             java::lang::String::from(method->getClass()->getSourceFile()),
-            new intOopDesc(0)
+            new intOopDesc(-2)
         });
         stackTraceArray->setElementAt(position, element);
 
