@@ -66,6 +66,10 @@ namespace kivm {
 
         void enterSafepointIfNeeded();
 
+        inline u4 getPc() const {
+            return _pc;
+        }
+
         inline bool isInSafepoint() const {
             return _inSafepoint;
         }
@@ -171,7 +175,7 @@ namespace kivm {
         }
 
         static inline void setThreadStateLocked(JavaThread *javaThread, ThreadState newState) {
-            LockGuard  lockGuard(Threads::threadStateChangeLock());
+            LockGuard lockGuard(Threads::threadStateChangeLock());
             javaThread->setThreadState(newState);
         }
     };

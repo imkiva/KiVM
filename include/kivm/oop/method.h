@@ -148,6 +148,10 @@ namespace kivm {
     public:
         int findExceptionHandler(u4 currentPc, InstanceKlass *exceptionClass);
 
+        int getLineNumber(u4 pc);
+
+        bool checkAnnotation(const String &annotationName);
+
         /*
          * Public getters and setters
          */
@@ -175,8 +179,6 @@ namespace kivm {
         const CodeBlob &getCodeBlob() const {
             return _codeBlob;
         }
-
-        bool checkAnnotation(const String &annotationName);
 
         bool isLinked() const {
             return _linked;

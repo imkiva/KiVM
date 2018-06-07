@@ -20,6 +20,7 @@ namespace kivm {
 
         bool _nativeFrame;
         u4 _returnPc;
+        u4 _currentPc;
 
         Locals _locals;
         Stack _stack;
@@ -51,16 +52,24 @@ namespace kivm {
             return this->_returnPc;
         }
 
-        void setMethod(Method *_method) {
-            this->_method = _method;
+        u4 getCurrentPc() const {
+            return this->_currentPc;
         }
 
-        void setNativeFrame(bool _native_frame) {
-            this->_nativeFrame = _native_frame;
+        void setMethod(Method *method) {
+            this->_method = method;
         }
 
-        void setReturnPc(u4 _return_pc) {
-            this->_returnPc = _return_pc;
+        void setNativeFrame(bool isNativeFrame) {
+            this->_nativeFrame = isNativeFrame;
+        }
+
+        void setReturnPc(u4 returnPc) {
+            this->_returnPc = returnPc;
+        }
+
+        void setCurrentPc(u4 currentPc) {
+            this->_currentPc = currentPc;
         }
     };
 

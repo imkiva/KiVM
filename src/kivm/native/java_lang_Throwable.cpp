@@ -32,6 +32,14 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
     int position = 0;
     for (auto iter = walker.begin(); *iter; ++iter, ++position) {
         auto method = iter->getMethod();
+        auto pc = iter->getReturnPc();
+
+        // native method
+        int lineNumber = -2;
+        if (!method->isNative()) {
+            lineNumber = method->getLineNumber(pc);
+        }
+
         auto element = ELEMENT_CLASS->newInstance();
         InvocationContext::invokeWithArgs(thread, ELEMENT_CTOR, {
             element,
@@ -39,7 +47,7 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
                 Global::SLASH, Global::DOT)),
             java::lang::String::from(method->getName()),
             java::lang::String::from(method->getClass()->getSourceFile()),
-            new intOopDesc(-2)
+            new intOopDesc(lineNumber)
         });
         stackTraceArray->setElementAt(position, element);
 

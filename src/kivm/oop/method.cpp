@@ -476,4 +476,13 @@ namespace kivm {
             getDescriptor());
         return _argumentClassTypes;
     }
+
+    int Method::getLineNumber(u4 pc) {
+        u2 shortenPc = (u2) pc;
+        if (this->isPcCorrect(shortenPc)) {
+            auto iter = this->_lineNumberTable.find(shortenPc);
+            return iter == _lineNumberTable.end() ? -1 : iter->second;
+        }
+        return 0;
+    }
 }
