@@ -14,6 +14,8 @@ namespace kivm {
     public:
         static NativeMethodPool *get();
 
+        void set(Method *method, void *nativePointer);
+
         void *resolve(Method *method);
     };
 }

@@ -43,4 +43,13 @@ namespace kivm {
         static NativeMethodPool pool;
         return &pool;
     }
+
+    void NativeMethodPool::set(Method *method, void *nativePointer) {
+        if (!method->isNative()) {
+            return;
+        }
+
+        LockGuard lg(nativeMethodPoolLock());
+        _nativeMethods[method] = nativePointer;
+    }
 }
