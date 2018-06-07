@@ -364,6 +364,10 @@ namespace kivm {
     void KiVM::uncaughtException(JavaThread *exceptionThread) {
         static bool FIRST_TIME_DISPATCH = true;
         auto ex = exceptionThread->_exceptionOop;
+
+        // clear exception object because we have handled it
+        exceptionThread->_exceptionOop = nullptr;
+
         auto *thread = Threads::currentThread();
         auto javaThreadOop = thread->getJavaThreadObject();
 
