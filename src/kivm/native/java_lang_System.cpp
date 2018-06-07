@@ -121,6 +121,12 @@ JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass jav
     return java::lang::String::intern(mappedName);
 }
 
+JAVA_NATIVE jint Java_java_lang_Object_hashCode(JNIEnv *env, jobject javaObject);
+
+JAVA_NATIVE jint Java_java_lang_System_identityHashCode(JNIEnv *env, jclass java_lang_System, jobject javaObject) {
+    return Java_java_lang_Object_hashCode(env, javaObject);
+}
+
 // TODO: support System.load() and System.loadLibrary()
 JAVA_NATIVE void Java_java_lang_System_loadLibrary(JNIEnv *, jclass, jstring) {}
 
