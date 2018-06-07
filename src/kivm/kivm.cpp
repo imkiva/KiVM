@@ -10,6 +10,7 @@
 #include <kivm/bytecode/interpreter.h>
 #include <kivm/gc/gcThread.h>
 #include <random>
+#include <kivm/bytecode/invocationContext.h>
 
 #if defined(KIVM_PLATFORM_UNIX)
 #   define PATH_SEPARATOR_CHAR L"/"
@@ -361,28 +362,54 @@ namespace kivm {
     }
 
     void KiVM::uncaughtException(JavaThread *exceptionThread) {
+        static bool FIRST_TIME_DISPATCH = true;
         auto ex = exceptionThread->_exceptionOop;
+        auto *thread = Threads::currentThread();
+        auto javaThreadOop = thread->getJavaThreadObject();
+
+        if (javaThreadOop == nullptr) {
+            KiVM::uncaughtExceptionJVMInternal(ex);
+            return;
+        }
+
+        auto threadClass = javaThreadOop->getInstanceClass();
+        auto dispatcher = threadClass->getThisClassMethod(L"dispatchUncaughtException",
+            L"(Ljava/lang/Throwable;)V");
+        if (dispatcher == nullptr) {
+            KiVM::uncaughtExceptionJVMInternal(ex);
+            return;
+        }
+
+        if (FIRST_TIME_DISPATCH) {
+            FIRST_TIME_DISPATCH = false;
+            InvocationContext::invokeWithArgs(thread, dispatcher, {javaThreadOop, ex});
+        } else {
+            KiVM::uncaughtExceptionJVMInternal(ex);
+        }
+    }
+
+    void KiVM::uncaughtExceptionJVMInternal(instanceOop exceptionOop) {
         oop messageOop = nullptr;
 
-        if (ex->getFieldValue(L"java/lang/Throwable", L"detailMessage", L"Ljava/lang/String;", &messageOop)) {
+        if (exceptionOop->getFieldValue(L"java/lang/Throwable", L"detailMessage", L"Ljava/lang/String;", &messageOop)) {
             if (messageOop == nullptr) {
-                PANIC("UncaughtException: %s",
-                    strings::toStdString(ex->getInstanceClass()->getName()).c_str());
+                PANIC("(JVM) UncaughtException: %s",
+                    strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str());
 
             } else if (messageOop->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
                 auto instance = (instanceOop) messageOop;
-                PANIC("UncaughtException: %s: %s",
-                    strings::toStdString(ex->getInstanceClass()->getName()).c_str(),
+                PANIC("(JVM) UncaughtException: %s: %s",
+                    strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str(),
                     strings::toStdString(java::lang::String::toNativeString(instance)).c_str());
 
             } else {
-                PANIC("UncaughtException: %s (failed to convert message oop)",
-                    strings::toStdString(ex->getInstanceClass()->getName()).c_str());
+                PANIC("(JVM) UncaughtException: %s (failed to convert message oop)",
+                    strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str());
             }
 
         } else {
-            PANIC("UncaughtException: %s (failed to obtain message)",
-                strings::toStdString(ex->getInstanceClass()->getName()).c_str());
+            PANIC("(JVM) UncaughtException: %s (failed to obtain message)",
+                strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str());
         }
     }
 }

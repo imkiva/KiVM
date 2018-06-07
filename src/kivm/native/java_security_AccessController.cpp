@@ -27,7 +27,7 @@ JAVA_NATIVE jobject Java_java_security_AccessController_doPrivileged(JNIEnv *env
         return nullptr;
     }
 
-    auto currentThread = (JavaThread *) Threads::currentThread();
+    auto currentThread = Threads::currentThread();
     if (currentThread == nullptr) {
         PANIC("currentThread cannot be null");
     }

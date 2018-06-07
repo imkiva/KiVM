@@ -51,7 +51,7 @@ Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobje
     auto put = ((InstanceKlass *) propOop->getInstanceClass())->getVirtualMethod(
         L"put", L"(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
 
-    auto thread = (JavaThread *) Threads::currentThread();
+    auto thread = Threads::currentThread();
 
     if (thread == nullptr) {
         PANIC("thread cannot be null");

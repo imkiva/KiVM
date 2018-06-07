@@ -17,7 +17,7 @@ JAVA_NATIVE jobject Java_sun_nio_cs_StreamEncoder_forOutputStreamWriter(JNIEnv *
                                                                         jobject javaOutputStream,
                                                                         jobject javaObject,
                                                                         jstring javaCharsetName) {
-    auto thread = (JavaThread *) Threads::currentThread();
+    auto thread = Threads::currentThread();
 
     auto encoder = (InstanceKlass *) BootstrapClassLoader::get()
         ->loadClass(L"sun/nio/cs/StreamEncoder");

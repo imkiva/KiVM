@@ -70,6 +70,8 @@ namespace kivm {
     private:
         static void fillInterfaceFunctions(JNINativeInterface_ *nativeInterface);
 
+        static void uncaughtExceptionJVMInternal(instanceOop exceptionOop);
+
     public:
         static inline JavaVM *getJavaVMQuick() {
             return sJavaVMInstance;

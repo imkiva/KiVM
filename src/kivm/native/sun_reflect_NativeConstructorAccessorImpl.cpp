@@ -16,7 +16,7 @@ using namespace kivm;
 JAVA_NATIVE jobject Java_sun_reflect_NativeConstructorAccessorImpl_newInstance0(JNIEnv *env, jclass cls,
                                                                                 jobject javaConstructor,
                                                                                 jobjectArray javaArguments) {
-    auto thread = (JavaThread *) Threads::currentThread();
+    auto thread = Threads::currentThread();
 
     auto ctorOop = Resolver::instance(javaConstructor);
     auto targetClass = getClassFromConstructor(ctorOop);

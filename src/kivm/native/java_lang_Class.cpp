@@ -416,7 +416,7 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
     }
 
     if (initialize) {
-        auto thread = (JavaThread *) Threads::currentThread();
+        auto thread = Threads::currentThread();
         if (thread == nullptr) {
             PANIC("thread cannot be null");
         }

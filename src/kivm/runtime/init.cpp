@@ -89,80 +89,80 @@ namespace kivm {
         Threads::initializeVMStructs(cl, thread);
 
         use(cl, thread, J_STRING);
-        auto thread_class = use(cl, thread, J_THREAD);
-        auto tg_class = use(cl, thread, J_THREAD_GROUP);
+        auto threadClass = use(cl, thread, J_THREAD);
+        auto threadGroupClass = use(cl, thread, J_THREAD_GROUP);
 
         // Create the init thread
-        instanceOop init_thread = thread_class->newInstance();
+        instanceOop initThreadOop = threadClass->newInstance();
         // eetop is a pointer to the underlying OS-level native thread instance of the JVM.
-        init_thread->setFieldValue(J_THREAD, L"eetop", L"J",
+        initThreadOop->setFieldValue(J_THREAD, L"eetop", L"J",
             new longOopDesc(thread->getNativeHandler()));
-        init_thread->setFieldValue(J_THREAD, L"priority", L"I",
+        initThreadOop->setFieldValue(J_THREAD, L"priority", L"I",
             new intOopDesc(java::lang::ThreadPriority::NORMAL_PRIORITY));
 
         // JavaMainThread is created with javaThreadObject == nullptr
         // Now we have created a thread for it.
-        thread->setJavaThreadObject(init_thread);
+        thread->setJavaThreadObject(initThreadOop);
 
         // do not addJavaThread again
         // Threads::addJavaThread(thread);
 
         // Create and construct the system thread group.
-        instanceOop init_tg = tg_class->newInstance();
-        auto tgDefaultCtor = tg_class->getThisClassMethod(L"<init>", L"()V");
-        InvocationContext::invokeWithArgs(thread, tgDefaultCtor, {init_tg});
+        instanceOop systemThreadGroup = threadGroupClass->newInstance();
+        auto tgDefaultCtor = threadGroupClass->getThisClassMethod(L"<init>", L"()V");
+        InvocationContext::invokeWithArgs(thread, tgDefaultCtor, {systemThreadGroup});
 
         // Create the main thread group
-        instanceOop main_tg = tg_class->newInstance();
-        init_thread->setFieldValue(J_THREAD, L"group", L"Ljava/lang/ThreadGroup;", main_tg);
+        instanceOop mainThreadGroup = threadGroupClass->newInstance();
+        initThreadOop->setFieldValue(J_THREAD, L"group", L"Ljava/lang/ThreadGroup;", mainThreadGroup);
 
         // Load system classes.
-        auto system_class = (InstanceKlass *) cl->loadClass(L"java/lang/System");
-        system_class->setClassState(ClassState::BEING_INITIALIZED);
+        auto systemClass = (InstanceKlass *) cl->loadClass(L"java/lang/System");
+        systemClass->setClassState(ClassState::BEING_INITIALIZED);
         use(cl, thread, J_INPUT_STREAM);
         use(cl, thread, J_PRINT_STREAM);
         use(cl, thread, J_SECURITY_MANAGER);
 
         // Construct the main thread group
         // use getThisClassMethod() to get a private method
-        auto tg_ctor = tg_class->getThisClassMethod(L"<init>",
+        auto threadGroupCtor = threadGroupClass->getThisClassMethod(L"<init>",
             L"(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
         {
             std::list<oop> args;
-            args.push_back(main_tg);
+            args.push_back(mainThreadGroup);
             // we need to push `nullptr` into list
             // so do not use something like {nullptr, ...}
             args.push_back(nullptr);
-            args.push_back(init_tg);
+            args.push_back(systemThreadGroup);
             args.push_back(java::lang::String::intern(L"main"));
-            InvocationContext::invokeWithArgs(thread, tg_ctor, args);
+            InvocationContext::invokeWithArgs(thread, threadGroupCtor, args);
         }
 
 
         // disable sun.security.util.Debug for the following operations
-        auto sunDebug_class = cl->loadClass(L"sun/security/util/Debug");
-        sunDebug_class->setClassState(ClassState::BEING_INITIALIZED);
+        auto sunDebugClass = cl->loadClass(L"sun/security/util/Debug");
+        sunDebugClass->setClassState(ClassState::BEING_INITIALIZED);
 
         // Construct the init thread by attaching the main thread group to it.
-        auto thread_ctor = thread_class->getThisClassMethod(L"<init>",
+        auto threadCtor = threadClass->getThisClassMethod(L"<init>",
             L"(Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
-        InvocationContext::invokeWithArgs(thread, thread_ctor,
-            {init_thread, main_tg, java::lang::String::intern(L"main")});
+        InvocationContext::invokeWithArgs(thread, threadCtor,
+            {initThreadOop, mainThreadGroup, java::lang::String::intern(L"main")});
 
         // TODO: java.nio.charset.Charset.forName() cannot find any charsets
         Threads::hackJavaClasses(cl, thread);
 
         // Initialize system classes.
-        auto init_system_classes = system_class->getStaticMethod(L"initializeSystemClass", L"()V");
-        InvocationContext::invokeWithArgs(thread, init_system_classes, {});
+        auto initSystemClassesMethod = systemClass->getStaticMethod(L"initializeSystemClass", L"()V");
+        InvocationContext::invokeWithArgs(thread, initSystemClassesMethod, {});
 
         // re-enable sun.security.util.Debug
-        sunDebug_class->setClassState(ClassState::FULLY_INITIALIZED);
+        sunDebugClass->setClassState(ClassState::FULLY_INITIALIZED);
     }
 
     void Threads::initializeVMStructs(BootstrapClassLoader *cl, JavaMainThread *thread) {
         java::lang::Class::initialize();
-        auto java_lang_Class = use(cl, thread, J_CLASS);
+        auto classClass = use(cl, thread, J_CLASS);
         java::lang::Class::mirrorCoreAndDelayedClasses();
         java::lang::Class::mirrorDelayedArrayClasses();
         Global::java_lang_Object = use(cl, thread, J_OBJECT);
@@ -171,7 +171,7 @@ namespace kivm {
         java::lang::reflect::Constructor::initialize();
         java::lang::reflect::Method::initialize();
 
-        java_lang_Class->setStaticFieldValue(J_CLASS, L"useCaches", L"Z", new intOopDesc(false));
+        classClass->setStaticFieldValue(J_CLASS, L"useCaches", L"Z", new intOopDesc(false));
     }
 
     void Threads::hackJavaClasses(BootstrapClassLoader *cl, JavaMainThread *thread) {
