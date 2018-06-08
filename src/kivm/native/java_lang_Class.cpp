@@ -201,8 +201,10 @@ JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass j
                                                            jstring className) {
     auto stringInstance = Resolver::instance(className);
     if (stringInstance == nullptr) {
-        // TODO: throw java.lang.NullPointerException
-        PANIC("java.lang.NullPointerException");
+        auto thread = Threads::currentThread();
+        assert(thread != nullptr);
+        thread->throwException(Global::java_lang_NullPointerException);
+        return nullptr;
     }
 
     const String &signature = java::lang::String::toNativeString(stringInstance);

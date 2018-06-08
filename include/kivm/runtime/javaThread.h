@@ -60,6 +60,8 @@ namespace kivm {
 
         void onDestroy() override;
 
+        void throwException(InstanceKlass *exceptionClass);
+
         void throwException(InstanceKlass *exceptionClass, const String &message);
 
         void enterSafepoint();

@@ -57,6 +57,7 @@ namespace kivm {
         static InstanceKlass *java_lang_NullPointerException;
         static InstanceKlass *java_lang_ArrayIndexOutOfBoundsException;
         static InstanceKlass *java_lang_ClassNotFoundException;
+        static InstanceKlass *java_io_IOException;
 
         static O("java/nio/charset/Charset") DEFAULT_UTF8_CHARSET;
     };

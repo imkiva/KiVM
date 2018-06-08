@@ -33,6 +33,7 @@ namespace kivm {
     InstanceKlass *Global::java_lang_NullPointerException = nullptr;
     InstanceKlass *Global::java_lang_ArrayIndexOutOfBoundsException = nullptr;
     InstanceKlass *Global::java_lang_ClassNotFoundException = nullptr;
+    InstanceKlass *Global::java_io_IOException = nullptr;
 
     O("java/nio/charset/Charset") Global::DEFAULT_UTF8_CHARSET = nullptr;
 

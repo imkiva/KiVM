@@ -32,7 +32,11 @@ JAVA_NATIVE void Java_java_io_FileOutputStream_writeBytes(JNIEnv *env, jobject j
     }
 
     if (byteArray->getLength() <= off && byteArray->getLength() < (off + len)) {
-        PANIC("java.lang.ArrayIndexOutOfBoundsException");
+        auto thread = Threads::currentThread();
+        assert(thread != nullptr);
+        // TODO: verbose exception message
+        thread->throwException(Global::java_lang_ArrayIndexOutOfBoundsException);
+        return;
     }
 
     auto streamOop = Resolver::instance(javaOutputStream);
@@ -52,7 +56,11 @@ JAVA_NATIVE void Java_java_io_FileOutputStream_writeBytes(JNIEnv *env, jobject j
         buf[j] = (char) ((intOop) byteArray->getElementAt(i))->getValue();
     }
     if (write(fd, buf, (size_t) len) == -1) {
-        PANIC("java.lang.IOException");
+        auto thread = Threads::currentThread();
+        assert(thread != nullptr);
+        // TODO: verbose exception message
+        thread->throwException(Global::java_io_IOException);
+        return;
     }
     Universe::deallocCObject(buf);
 }

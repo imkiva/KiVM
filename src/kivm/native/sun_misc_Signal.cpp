@@ -100,7 +100,10 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
 
     auto signalNameOop = Resolver::instance(javaSignalName);
     if (signalNameOop == nullptr) {
-        PANIC("java.lang.NullPointerException");
+        auto thread = Threads::currentThread();
+        assert(thread != nullptr);
+        thread->throwException(Global::java_lang_NullPointerException);
+        return 0;
     }
 
     const auto &signalName = java::lang::String::toNativeString(signalNameOop);

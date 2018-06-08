@@ -14,7 +14,9 @@ JAVA_NATIVE jobject Java_java_security_AccessController_doPrivileged(JNIEnv *env
                                                                      jobject javaPrivilegedExceptionAction) {
     auto actionOop = Resolver::instance(javaPrivilegedExceptionAction);
     if (actionOop == nullptr) {
-        PANIC("java.lang.NullPointerException");
+        auto thread = Threads::currentThread();
+        assert(thread != nullptr);
+        thread->throwException(Global::java_lang_NullPointerException);
         return nullptr;
     }
 

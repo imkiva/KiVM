@@ -77,7 +77,10 @@ JAVA_NATIVE void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_S
     auto destOop = Resolver::array(javaDest);
 
     if (srcOop == nullptr || destOop == nullptr) {
-        PANIC("java.lang.NullPointerException");
+        auto thread = Threads::currentThread();
+        assert(thread != nullptr);
+        thread->throwException(Global::java_lang_NullPointerException);
+        return;
     }
 
     auto arrayClass = (ArrayKlass *) srcOop->getClass();
@@ -105,7 +108,10 @@ JAVA_NATIVE void Java_java_lang_System_setErr0(JNIEnv *env, jclass java_lang_Sys
 JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass java_lang_System, jstring javaLibName) {
     auto stringOop = Resolver::instance(javaLibName);
     if (stringOop == nullptr) {
-        PANIC("java.lang.NullPointerException");
+        auto thread = Threads::currentThread();
+        assert(thread != nullptr);
+        thread->throwException(Global::java_lang_NullPointerException);
+        return nullptr;
     }
 
     auto libraryName = java::lang::String::toNativeString(stringOop);

@@ -68,6 +68,15 @@ namespace kivm {
         Threads::notifyJavaThreadDeadLocked(this);
     }
 
+    void JavaThread::throwException(InstanceKlass *exceptionClass) {
+        auto ctor = exceptionClass->getThisClassMethod(L"<init>", L"()V");
+        auto exceptionOop = exceptionClass->newInstance();
+        InvocationContext::invokeWithArgs(this, ctor,
+            {exceptionOop},
+            true);
+        this->_exceptionOop = exceptionOop;
+    }
+
     void JavaThread::throwException(InstanceKlass *exceptionClass, const String &message) {
         auto ctor = exceptionClass->getThisClassMethod(L"<init>", L"(Ljava/lang/String;)V");
         auto exceptionOop = exceptionClass->newInstance();
