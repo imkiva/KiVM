@@ -15,12 +15,16 @@
 
 #define FILL_ARG(popFunc, field) FILL_ARG_VALUE(_stack->popFunc(), field)
 
-#define CALL(type, pushFunc) \
+#define CALL_FACTORY(type, pushFunc, exp) \
         type r; \
         ffi_call(&cif, (void (*)()) nativeMethod, (void *) &r, argsPointer); \
         if (!_thread->isExceptionOccurred() && !stackIsAllocated) { \
             _stack->pushFunc(r); \
+            resultOop = exp; \
         }
+
+#define CALL(type, pushFunc, resultOopType) \
+        CALL_FACTORY(type, pushFunc, new resultOopType(r))
 
 namespace kivm {
     static ffi_type *valueTypeToFFIType(ValueType valueType) {
@@ -286,49 +290,40 @@ namespace kivm {
                 break;
             }
             case ValueType::BOOLEAN: {
-                CALL(jint, pushInt);
-                resultOop = new intOopDesc(r);
+                CALL(jint, pushInt, intOopDesc);
                 break;
             }
             case ValueType::BYTE: {
-                CALL(jint, pushInt);
-                resultOop = new intOopDesc(r);
+                CALL(jint, pushInt, intOopDesc);
                 break;
             }
             case ValueType::CHAR: {
-                CALL(jint, pushInt);
-                resultOop = new intOopDesc(r);
+                CALL(jint, pushInt, intOopDesc);
                 break;
             }
             case ValueType::SHORT: {
-                CALL(jint, pushInt);
-                resultOop = new intOopDesc(r);
+                CALL(jint, pushInt, intOopDesc);
                 break;
             }
             case ValueType::INT: {
-                CALL(jint, pushInt);
-                resultOop = new intOopDesc(r);
+                CALL(jint, pushInt, intOopDesc);
                 break;
             }
             case ValueType::FLOAT: {
-                CALL(jfloat, pushFloat);
-                resultOop = new floatOopDesc(r);
+                CALL(jfloat, pushFloat, floatOopDesc);
                 break;
             }
             case ValueType::LONG: {
-                CALL(jlong, pushLong);
-                resultOop = new longOopDesc(r);
+                CALL(jlong, pushLong, longOopDesc);
                 break;
             }
             case ValueType::DOUBLE: {
-                CALL(jdouble, pushDouble);
-                resultOop = new doubleOopDesc(r);
+                CALL(jdouble, pushDouble, doubleOopDesc);
                 break;
             }
             case ValueType::OBJECT:
             case ValueType::ARRAY: {
-                CALL(jobject, pushReference);
-                resultOop = Resolver::javaOop(r);
+                CALL_FACTORY(jobject, pushReference, Resolver::javaOop(r));
                 break;
             }
 

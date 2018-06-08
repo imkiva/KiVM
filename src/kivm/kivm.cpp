@@ -30,7 +30,10 @@ namespace kivm {
     InstanceKlass *Global::java_lang_Object = nullptr;
     InstanceKlass *Global::java_lang_Cloneable = nullptr;
     InstanceKlass *Global::java_lang_Serializable = nullptr;
-    int Global::runtimeRandom = 0;
+    InstanceKlass *Global::java_lang_NullPointerException = nullptr;
+    InstanceKlass *Global::java_lang_ArrayIndexOutOfBoundsException = nullptr;
+    InstanceKlass *Global::java_lang_ClassNotFoundException = nullptr;
+
     O("java/nio/charset/Charset") Global::DEFAULT_UTF8_CHARSET = nullptr;
 
     JavaVM *KiVM::sJavaVMInstance = nullptr;
@@ -43,7 +46,7 @@ namespace kivm {
 
         std::default_random_engine dre((unsigned int) time(nullptr));
         std::uniform_int_distribution<int> distribution(0xABC, INT32_MAX);
-        Global::runtimeRandom = distribution(dre);
+        distribution(dre);
 
         // initialize memory
         Universe::initialize();

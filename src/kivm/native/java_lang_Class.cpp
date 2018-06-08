@@ -396,6 +396,9 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
                                                  jboolean initialize,
                                                  jobject javaClassLoader,
                                                  jobject javaCallerClass_mirror) {
+    auto thread = Threads::currentThread();
+    assert(thread != nullptr);
+
     if (javaClassLoader != nullptr) {
         // TODO: support app class loader
         PANIC("More work to do");
@@ -403,23 +406,23 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
 
     auto nameOop = Resolver::instance(javaName);
     if (nameOop == nullptr) {
-        PANIC("java.lang.NullPointerException");
+        thread->throwException(Global::java_lang_NullPointerException,
+            L"name cannot be null");
+        return nullptr;
     }
 
-    const String &fixedName = strings::replaceAll(java::lang::String::toNativeString(nameOop),
-        Global::DOT, Global::SLASH);
+    const String &className = java::lang::String::toNativeString(nameOop);
+    const String &fixedName = strings::replaceAll(className, Global::DOT, Global::SLASH);
+
     D("Class.forName0(): %s", strings::toStdString(fixedName).c_str());
 
     auto klass = BootstrapClassLoader::get()->loadClass(fixedName);
     if (klass == nullptr || klass->getClassType() != ClassType::INSTANCE_CLASS) {
-        PANIC("java.lang.ClassNotFoundException: %s", strings::toStdString(fixedName).c_str());
+        thread->throwException(Global::java_lang_ClassNotFoundException, className);
+        return nullptr;
     }
 
     if (initialize) {
-        auto thread = Threads::currentThread();
-        if (thread == nullptr) {
-            PANIC("thread cannot be null");
-        }
         Execution::initializeClass(thread, (InstanceKlass *) klass);
     }
 

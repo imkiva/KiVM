@@ -54,10 +54,11 @@ namespace kivm {
         static InstanceKlass *java_lang_Object;
         static InstanceKlass *java_lang_Cloneable;
         static InstanceKlass *java_lang_Serializable;
+        static InstanceKlass *java_lang_NullPointerException;
+        static InstanceKlass *java_lang_ArrayIndexOutOfBoundsException;
+        static InstanceKlass *java_lang_ClassNotFoundException;
 
         static O("java/nio/charset/Charset") DEFAULT_UTF8_CHARSET;
-
-        static int runtimeRandom;
     };
 
     class JavaThread;

@@ -168,6 +168,9 @@ namespace kivm {
         Global::java_lang_Object = use(cl, thread, J_OBJECT);
         Global::java_lang_Cloneable = use(cl, thread, J_CLONEABLE);
         Global::java_lang_Serializable = use(cl, thread, J_SERIALIZABLE);
+        Global::java_lang_NullPointerException = use(cl, thread, J_NPE);
+        Global::java_lang_ArrayIndexOutOfBoundsException = use(cl, thread, J_ARRAY_INDEX_OUT_OF_BOUNDS);
+        Global::java_lang_ClassNotFoundException = use(cl, thread, J_CLASS_NOT_FOUND);
         java::lang::reflect::Constructor::initialize();
         java::lang::reflect::Method::initialize();
 
