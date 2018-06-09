@@ -5,7 +5,7 @@
 
 #include <compileTimeConfig.h>
 
-#if KIVM_THREADED
+#if defined(KIVM_THREADED) && !defined(KIVM_DEBUG)
 
 #include <kivm/bytecode/threadedInterpreter.h>
 
