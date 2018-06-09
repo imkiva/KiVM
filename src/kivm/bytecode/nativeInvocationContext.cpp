@@ -268,10 +268,10 @@ namespace kivm {
 
         // setup frame for native methods
         Frame frame(_method->getMaxLocals(), _method->getMaxStack());
-        frame.setMethod(_method);
-        frame.setReturnPc(_thread->_pc);
-        frame.setNativeFrame(_method->isNative());
-        _thread->_frames.push(&frame);
+        // something went wrong when preparing frame
+        if (!prepareFrame(&frame)) {
+            return nullptr;
+        }
 
         // prepare the call
         ffi_cif cif{};

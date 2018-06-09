@@ -33,7 +33,9 @@ namespace kivm {
 
         oop callInterpreter();
 
-        inline oop invoke(bool forceNoResolve) {
+        bool prepareFrame(Frame *frame);
+
+       inline oop invoke(bool forceNoResolve) {
             prepareEnvironment();
             bool hasThis = !_method->isStatic();
             bool resolveTwice = forceNoResolve ? false :

@@ -85,10 +85,7 @@ namespace kivm {
         explicit FrameList(int maxFrames);
 
         inline void push(Frame *frame) {
-            if (_size >= _max_frames) {
-                // TODO: throw java.lang.StackOverflowException
-                PANIC("java.lang.StackOverflowException");
-            }
+            assert(_size >= 0 && _size < _max_frames);
 
             frame->_previous = _current;
             _current = frame;
@@ -96,10 +93,7 @@ namespace kivm {
         }
 
         inline Frame *pop() {
-            if (_size == 0 || _current == nullptr) {
-                // TODO: throw java.lang.StackOverflowException
-                PANIC("java.lang.StackOverflowException: frame list empty");
-            }
+            assert(_size > 0 && _current != nullptr);
 
             Frame *current = _current;
             _current = _current->_previous;
@@ -111,15 +105,16 @@ namespace kivm {
         }
 
         inline Frame *getCurrentFrame() const {
-            if (_size == 0 || _current == nullptr) {
-                PANIC("FrameList is empty");
-            }
-
+            assert(_size > 0 && _current != nullptr);
             return _current;
         }
 
         inline int getSize() const {
             return this->_size;
+        }
+
+        inline int getMaxFrames() const {
+            return _max_frames;
         }
     };
 }

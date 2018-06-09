@@ -52,6 +52,12 @@ namespace kivm {
 
     oop InvocationContext::callInterpreter() {
         Frame frame(_method->getMaxLocals(), _method->getMaxStack());
+
+        // something went wrong when preparing frame
+        if (!prepareFrame(&frame)) {
+            return nullptr;
+        }
+
         Locals &locals = frame.getLocals();
 
         // copy args to local variable table
@@ -125,12 +131,6 @@ namespace kivm {
             ++localVariableIndex;
         });
 
-        // give them to interpreter
-        frame.setMethod(_method);
-        frame.setReturnPc(_thread->_pc);
-        frame.setNativeFrame(_method->isNative());
-
-        _thread->_frames.push(&frame);
         _thread->_pc = 0;
         oop result = DefaultInterpreter::interp(_thread);
         _thread->_frames.pop();
@@ -157,5 +157,20 @@ namespace kivm {
             }
         }
         return result;
+    }
+
+    bool InvocationContext::prepareFrame(Frame *frame) {
+        if (_thread->_frames.getSize() >= _thread->_frames.getMaxFrames()) {
+            _thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
+                ->loadClass(L"java/lang/StackOverflowException"));
+            return false;
+        }
+
+        frame->setMethod(_method);
+        frame->setReturnPc(_thread->_pc);
+        frame->setNativeFrame(_method->isNative());
+
+        _thread->_frames.push(frame);
+        return true;
     }
 }

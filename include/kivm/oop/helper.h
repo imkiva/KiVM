@@ -77,7 +77,6 @@ namespace kivm {
                     break;
                 }
                 case CONSTANT_String: {
-                    // TODO: use runtime constant pool
                     auto *info = (CONSTANT_String_info *) constant_info;
                     auto *utf8 = (CONSTANT_Utf8_info *) pool[info->string_index];
                     values[offset] = java::lang::String::intern(utf8->getConstant());
