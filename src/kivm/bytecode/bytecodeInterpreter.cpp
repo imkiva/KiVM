@@ -1313,15 +1313,17 @@ namespace kivm {
                     pc += 2;
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        // TODO: throw NullPointerException
-                        PANIC("java.lang.NullPointerException");
+                        thread->throwException(Global::java_lang_NullPointerException);
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    } else {
+                        instanceOop receiver = Resolver::instance(ref);
+                        if (receiver == nullptr) {
+                            PANIC("Not an instance oop");
+                        }
+                        Execution::getField(thread, currentClass->getRuntimeConstantPool(),
+                            receiver, stack, constantIndex);
                     }
-                    instanceOop receiver = Resolver::instance(ref);
-                    if (receiver == nullptr) {
-                        PANIC("Not an instance oop");
-                    }
-                    Execution::getField(thread, currentClass->getRuntimeConstantPool(),
-                        receiver, stack, constantIndex);
                     NEXT();
                 }
                 OPCODE(PUTFIELD)
@@ -1432,14 +1434,16 @@ namespace kivm {
                 {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        // TODO: throw NullPointerException
-                        PANIC("java.lang.NullPointerException");
+                        thread->throwException(Global::java_lang_NullPointerException);
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    } else {
+                        arrayOop array = Resolver::array(ref);
+                        if (array == nullptr) {
+                            PANIC("Attempt to use arraylength on non-array objects");
+                        }
+                        stack.pushInt(array->getLength());
                     }
-                    arrayOop array = Resolver::array(ref);
-                    if (array == nullptr) {
-                        PANIC("Attempt to use arraylength on non-array objects");
-                    }
-                    stack.pushInt(array->getLength());
                     NEXT();
                 }
                 OPCODE(ATHROW)
@@ -1447,8 +1451,9 @@ namespace kivm {
                     exceptionHandler:
                     auto exceptionOop = Resolver::instance(stack.popReference());
                     if (exceptionOop == nullptr) {
-                        // TODO: throw NullPointerException
-                        PANIC("java.lang.NullPointerException");
+                        thread->throwException(Global::java_lang_NullPointerException);
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
                     }
 
                     int handler = thread->tryHandleException(exceptionOop);
@@ -1485,28 +1490,32 @@ namespace kivm {
                 {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        // TODO: throw NullPointerException
-                        PANIC("java.lang.NullPointerException");
+                        thread->throwException(Global::java_lang_NullPointerException);
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    } else {
+                        auto object = Resolver::javaOop(ref);
+                        if (object == nullptr) {
+                            PANIC("not an object");
+                        }
+                        object->getMarkOop()->monitorEnter();
                     }
-                    auto object = Resolver::javaOop(ref);
-                    if (object == nullptr) {
-                        PANIC("not an object");
-                    }
-                    object->getMarkOop()->monitorEnter();
                     NEXT();
                 }
                 OPCODE(MONITOREXIT)
                 {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        // TODO: throw NullPointerException
-                        PANIC("java.lang.NullPointerException");
+                        thread->throwException(Global::java_lang_NullPointerException);
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    } else {
+                        auto object = Resolver::javaOop(ref);
+                        if (object == nullptr) {
+                            PANIC("not an object");
+                        }
+                        object->getMarkOop()->monitorExit();
                     }
-                    auto object = Resolver::javaOop(ref);
-                    if (object == nullptr) {
-                        PANIC("not an object");
-                    }
-                    object->getMarkOop()->monitorExit();
                     NEXT();
                 }
                 OPCODE(WIDE)
