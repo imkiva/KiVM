@@ -427,7 +427,7 @@ namespace kivm {
 
         for (int i = 0; i < codeAttr->exception_table_length; ++i) {
             auto ex = codeAttr->exception_table[i];
-            if (currentPc < ex.start_pc || currentPc >= ex.end_pc) {
+            if (currentPc < ex.start_pc || currentPc > ex.end_pc) {
                 continue;
             }
 
