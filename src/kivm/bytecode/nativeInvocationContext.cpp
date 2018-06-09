@@ -67,6 +67,15 @@ namespace kivm {
             _method->isNative() ? "true" : "false",
             descriptorMap.size());
 
+        // native methods
+        void *nativeMethod = _method->getNativePointer();
+        if (nativeMethod == nullptr) {
+            PANIC("UnsatisfiedLinkError: %s.%s%s",
+                strings::toStdString(_instanceKlass->getName()).c_str(),
+                strings::toStdString(_method->getName()).c_str(),
+                strings::toStdString(_method->getDescriptor()).c_str());
+        }
+
         bool stackIsAllocated = false;
 
         // TODO: make it elegant
@@ -136,15 +145,6 @@ namespace kivm {
                         PANIC("Unknown oop type");
                 }
             });
-        }
-
-        // native methods
-        void *nativeMethod = _method->getNativePointer();
-        if (nativeMethod == nullptr) {
-            PANIC("UnsatisfiedLinkError: %s.%s:%s",
-                strings::toStdString(_instanceKlass->getName()).c_str(),
-                strings::toStdString(_method->getName()).c_str(),
-                strings::toStdString(_method->getDescriptor()).c_str());
         }
 
         ValueType returnValueType = _method->getReturnTypeNoWrap();
@@ -262,10 +262,7 @@ namespace kivm {
         FILL_ARG_VALUE((void *) env, l);
         argsType[fillIndex] = &ffi_type_pointer;
 
-
         // OK, let's make the call.
-        prepareSynchronized(thisObject);
-
         // setup frame for native methods
         Frame frame(_method->getMaxLocals(), _method->getMaxStack());
         // something went wrong when preparing frame
@@ -283,6 +280,7 @@ namespace kivm {
         }
 
         oop resultOop = nullptr;
+        prepareSynchronized(thisObject);
 
         switch (returnValueType) {
             case ValueType::VOID: {
