@@ -449,3 +449,16 @@ JAVA_NATIVE jint Java_java_lang_Class_getModifiers(JNIEnv *env, jobject java_lan
     auto instanceClass = (InstanceKlass *) mirrorTarget;
     return instanceClass->getAccessFlag();
 }
+
+JAVA_NATIVE jboolean Java_java_lang_Class_isArray(JNIEnv *env, jobject java_lang_Class_mirror) {
+    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
+    auto mirrorTarget = classMirror->getMirrorTarget();
+
+    if (mirrorTarget == nullptr) {
+        return JNI_FALSE;
+    }
+
+    auto classType = mirrorTarget->getClassType();
+    return JBOOLEAN(classType == ClassType::TYPE_ARRAY_CLASS
+                    || classType == ClassType::OBJECT_ARRAY_CLASS);
+}
