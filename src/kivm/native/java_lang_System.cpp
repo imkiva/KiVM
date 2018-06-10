@@ -9,6 +9,7 @@
 #include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/arrayOop.h>
 #include <kivm/bytecode/invocationContext.h>
+#include <sys/time.h>
 
 using namespace kivm;
 
@@ -149,25 +150,29 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
     arrayClass->copyArrayTo(srcOop, destOop, srcPos, destPos, length);
 }
 
-JAVA_NATIVE void Java_java_lang_System_setIn0(JNIEnv *env, jclass java_lang_System, jobject javaInputStream) {
+JAVA_NATIVE void Java_java_lang_System_setIn0(JNIEnv *env, jclass java_lang_System,
+                                              jobject javaInputStream) {
     auto inputStreamOop = Resolver::instance(javaInputStream);
     auto system = Resolver::instanceClass(java_lang_System);
     system->setStaticFieldValue(J_SYSTEM, L"in", L"Ljava/io/InputStream;", inputStreamOop);
 }
 
-JAVA_NATIVE void Java_java_lang_System_setOut0(JNIEnv *env, jclass java_lang_System, jobject javaPrintStream) {
+JAVA_NATIVE void Java_java_lang_System_setOut0(JNIEnv *env, jclass java_lang_System,
+                                               jobject javaPrintStream) {
     auto printStreamOop = Resolver::instance(javaPrintStream);
     auto system = Resolver::instanceClass(java_lang_System);
     system->setStaticFieldValue(J_SYSTEM, L"out", L"Ljava/io/PrintStream;", printStreamOop);
 }
 
-JAVA_NATIVE void Java_java_lang_System_setErr0(JNIEnv *env, jclass java_lang_System, jobject javaPrintStream) {
+JAVA_NATIVE void Java_java_lang_System_setErr0(JNIEnv *env, jclass java_lang_System,
+                                               jobject javaPrintStream) {
     auto printStreamOop = Resolver::instance(javaPrintStream);
     auto system = Resolver::instanceClass(java_lang_System);
     system->setStaticFieldValue(J_SYSTEM, L"err", L"Ljava/io/PrintStream;", printStreamOop);
 }
 
-JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass java_lang_System, jstring javaLibName) {
+JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass java_lang_System,
+                                                         jstring javaLibName) {
     auto stringOop = Resolver::instance(javaLibName);
     if (stringOop == nullptr) {
         auto thread = Threads::currentThread();
@@ -184,7 +189,7 @@ JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass jav
 #elif defined(KIVM_PLATFORM_WINDOWS)
     auto mappedName = libraryName + L".dll";
 #else
-#error Unknown platform
+    SHOULD_NOT_REACH_HERE();
 #endif
     return java::lang::String::intern(mappedName);
 }
@@ -193,6 +198,26 @@ JAVA_NATIVE jint Java_java_lang_Object_hashCode(JNIEnv *env, jobject javaObject)
 
 JAVA_NATIVE jint Java_java_lang_System_identityHashCode(JNIEnv *env, jclass java_lang_System, jobject javaObject) {
     return Java_java_lang_Object_hashCode(env, javaObject);
+}
+
+JAVA_NATIVE jlong Java_java_lang_System_currentTimeMillis(JNIEnv *env, jclass java_lang_System) {
+    timeval time{};
+    if (gettimeofday(&time, nullptr) == -1) {
+        auto thread = Threads::currentThread();
+        thread->throwException(Global::java_lang_InternalError, L"gettimeofday() failed");
+        return 0;
+    }
+    return time.tv_sec * 1000 + time.tv_usec / 1000;
+}
+
+JAVA_NATIVE jlong Java_java_lang_System_nanoTime(JNIEnv *env, jclass java_lang_System) {
+    timeval time{};
+    if (gettimeofday(&time, nullptr) == -1) {
+        auto thread = Threads::currentThread();
+        thread->throwException(Global::java_lang_InternalError, L"gettimeofday() failed");
+        return 0;
+    }
+    return time.tv_sec * 1000 * 1000 * 1000 + time.tv_usec * 1000;
 }
 
 // TODO: support System.load() and System.loadLibrary()

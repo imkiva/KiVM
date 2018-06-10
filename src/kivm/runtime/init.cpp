@@ -171,6 +171,7 @@ namespace kivm {
         Global::java_lang_NullPointerException = use(cl, thread, J_NPE);
         Global::java_lang_ArrayIndexOutOfBoundsException = use(cl, thread, J_ARRAY_INDEX_OUT_OF_BOUNDS);
         Global::java_lang_ClassNotFoundException = use(cl, thread, J_CLASS_NOT_FOUND);
+        Global::java_lang_InternalError = use(cl, thread, J_INTERNAL_ERROR);
         Global::java_io_IOException = use(cl, thread, J_IOEXCEPTION);
         java::lang::reflect::Constructor::initialize();
         java::lang::reflect::Method::initialize();

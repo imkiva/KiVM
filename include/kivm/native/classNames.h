@@ -21,6 +21,7 @@
 #define J_CTOR L"java/lang/reflect/Constructor"
 #define J_ACCESSIBLE_OBJECT L"java/lang/reflect/AccessibleObject"
 
+#define J_INTERNAL_ERROR L"java/lang/InternalError"
 #define J_NPE L"java/lang/NullPointerException"
 #define J_IOEXCEPTION L"java/io/IOException"
 #define J_ARRAY_INDEX_OUT_OF_BOUNDS L"java/lang/ArrayIndexOutOfBoundsException"
