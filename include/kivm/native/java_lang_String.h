@@ -5,26 +5,13 @@
 
 #include <kivm/kivm.h>
 #include <kivm/oop/oopfwd.h>
-#include <unordered_map>
+#include <unordered_set>
 
 namespace kivm {
     class CopyingHeap;
 
     namespace java {
         namespace lang {
-            class InternStringPool {
-                friend class kivm::CopyingHeap;
-
-            private:
-                // hash -> string
-                std::unordered_map<int, instanceOop> _pool;
-
-            public:
-                static InternStringPool *getGlobal();
-
-                instanceOop findOrNew(const kivm::String &string);
-            };
-
             struct StringHash {
                 int operator()(instanceOop ptr) const noexcept;
 
@@ -33,6 +20,19 @@ namespace kivm {
 
             struct StringEqualTo {
                 bool operator()(instanceOop lhs, instanceOop rhs) const;
+            };
+
+            class InternStringPool {
+                friend class kivm::CopyingHeap;
+
+            private:
+                // hash -> string
+                std::unordered_set<instanceOop, StringHash, StringEqualTo> _pool;
+
+            public:
+                static InternStringPool *getGlobal();
+
+                instanceOop findOrNew(const kivm::String &string);
             };
 
             class String {

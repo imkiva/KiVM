@@ -20,16 +20,19 @@ namespace kivm {
             }
 
             instanceOop InternStringPool::findOrNew(const kivm::String &string) {
+                static Lock internLock;
+                LockGuard lockGuard(internLock);
+
+                instanceOop javaString = String::from(string);
                 // Find cached string oop
-                int hash = java::lang::StringHash()(string);
-                const auto &iter = _pool.find(hash);
+                const auto &iter = _pool.find(javaString);
                 if (iter != _pool.end()) {
-                    return iter->second;
+                    return *iter;
                 }
 
                 // No cache, create new.
-                instanceOop javaString = String::from(string);
-                _pool.insert(std::make_pair(hash, javaString));
+                _pool.insert(javaString);
+                printf("intern string pool size: %zd\n", _pool.size());
                 return javaString;
             }
 

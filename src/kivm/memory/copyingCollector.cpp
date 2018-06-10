@@ -206,11 +206,13 @@ namespace kivm {
 
         D("[GCThread]: copying intern string pool");
         auto internStringPool = java::lang::InternStringPool::getGlobal();
+        std::unordered_set<instanceOop, java::lang::StringHash, java::lang::StringEqualTo> internPool;
         for (auto &item : internStringPool->_pool) {
-            oop stringOop = item.second;
+            oop stringOop = item;
             copyObject(next, map, stringOop);
-            item.second = (instanceOop) stringOop;
+            internPool.insert((instanceOop) stringOop);
         }
+        internStringPool->_pool.swap(internPool);
 
         D("[GCThread]: copying loaded classes");
         auto sd = SystemDictionary::get();
