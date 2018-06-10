@@ -4,6 +4,7 @@
 
 #include <shared/osInfo.h>
 #include <dlfcn.h>
+#include <unistd.h>
 
 #if defined(KIVM_PLATFORM_APPLE)
 namespace kivm {
@@ -34,6 +35,11 @@ namespace kivm {
             }
         }
         return kivm::String();
+    }
+
+    int MacOSInformation::getCpuNumbers() {
+        static long ncpu = sysconf(_SC_NPROCESSORS_CONF);
+        return (int) ncpu;
     }
 }
 #endif

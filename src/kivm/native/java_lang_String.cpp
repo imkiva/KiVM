@@ -7,9 +7,9 @@
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/arrayOop.h>
+#include <kivm/bytecode/execution.h>
 #include <unordered_map>
 #include <sstream>
-#include <kivm/bytecode/execution.h>
 
 namespace kivm {
     namespace java {

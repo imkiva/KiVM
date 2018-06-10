@@ -260,7 +260,7 @@ set(SOURCE_FILES
         include/shared/osInfo.h
         include/shared/os/unix/osInfo.h
         include/shared/os/windows/osInfo.h
-        include/shared/os/macos/osInfo.h src/shared/os/unix/osInfo.cpp src/shared/os/macos/osInfo.cpp)
+        include/shared/os/macos/osInfo.h src/shared/os/unix/osInfo.cpp src/shared/os/macos/osInfo.cpp src/kivm/native/java_lang_Runtime.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})

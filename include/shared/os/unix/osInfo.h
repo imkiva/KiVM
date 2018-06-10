@@ -13,6 +13,8 @@ namespace kivm {
         static String getOSName();
 
         static String getOSVersion();
+
+        int getCpuNumbers();
     };
 }
 #endif

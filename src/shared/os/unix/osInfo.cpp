@@ -4,6 +4,7 @@
 
 #include <shared/osInfo.h>
 #include <sys/utsname.h>
+#include <unistd.h>
 
 #if defined(KIVM_PLATFORM_UNIX)
 namespace kivm {
@@ -17,6 +18,11 @@ namespace kivm {
         struct utsname name{};
         uname(&name);
         return strings::fromStdString(name.release);
+    }
+
+    int UnixInformation::getCpuNumbers() {
+        static long ncpu = sysconf(_SC_NPROCESSORS_CONF);
+        return (int) ncpu;
     }
 }
 #endif
