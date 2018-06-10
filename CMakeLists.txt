@@ -297,6 +297,9 @@ target_link_libraries(test_stack-and-frame kivm)
 add_executable(bench-allocation tests/bench-allocation.cpp)
 target_link_libraries(bench-allocation kivm)
 
+add_executable(bench-map tests/bench-map.cpp)
+target_link_libraries(bench-map kivm)
+
 add_executable(test-encode-decode tests/encode-decode-offset.cpp)
 target_link_libraries(test-encode-decode kivm)
 

@@ -10,6 +10,7 @@
 #if defined(KIVM_PLATFORM_UNIX)
 namespace kivm {
     class UnixInformation {
+    public:
         static String getOSName();
 
         static String getOSVersion();
