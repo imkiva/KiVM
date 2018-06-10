@@ -23,7 +23,7 @@ namespace kivm {
         if (klass->getClassState() == ClassState::LINKED) {
             klass->setClassState(ClassState::BEING_INITIALIZED);
             D("Initializing class %s",
-                strings::toStdString(klass->getName()).c_str());
+              strings::toStdString(klass->getName()).c_str());
 
             // Initialize super classes first.
             Klass *super_klass = klass->getSuperClass();
@@ -35,7 +35,7 @@ namespace kivm {
             auto *clinit = klass->getThisClassMethod(L"<clinit>", L"()V");
             if (clinit != nullptr && clinit->getClass() == klass) {
                 D("<clinit> found in %s, invoking.",
-                    strings::toStdString(klass->getName()).c_str());
+                  strings::toStdString(klass->getName()).c_str());
                 InvocationContext::invokeWithArgs(javaThread, clinit, {});
             }
             klass->setClassState(ClassState::FULLY_INITIALIZED);
@@ -98,10 +98,10 @@ namespace kivm {
 
         bool result = Execution::instanceOf(objClass, targetClass);
         D("Execution::instanceOf: %s %s %s: %s",
-            strings::toStdString(objClass->getName()).c_str(),
-            checkCast ? "checkcast" : "instanceof",
-            strings::toStdString(targetClass->getName()).c_str(),
-            result ? "true" : "false");
+          strings::toStdString(objClass->getName()).c_str(),
+          checkCast ? "checkcast" : "instanceof",
+          strings::toStdString(targetClass->getName()).c_str(),
+          result ? "true" : "false");
 
         if (result) {
             if (checkCast) {
@@ -199,11 +199,91 @@ namespace kivm {
                 auto objectArrayKlassT = (ObjectArrayKlass *) T;
                 return objectArrayKlassS->getDimension() == objectArrayKlassT->getDimension()
                        && checkInherit(objectArrayKlassS->getComponentType(),
-                    objectArrayKlassT->getComponentType());
+                                       objectArrayKlassT->getComponentType());
             }
             return false;
         }
         return false;
+    }
+
+    void Execution::loadIntArrayElement(Stack &stack) {
+        int index = stack.popInt();
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            // TODO: throw NullPointerException
+            PANIC("java.lang.NullPointerException");
+        }
+        auto array = Resolver::typeArray(ref);
+        if (array == nullptr) {
+            PANIC("not a type array");
+        }
+
+        auto element = (intOop) array->getElementAt(index);
+        stack.pushInt(element->getValue());
+    }
+
+    void Execution::loadFloatArrayElement(Stack &stack) {
+        int index = stack.popInt();
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            // TODO: throw NullPointerException
+            PANIC("java.lang.NullPointerException");
+        }
+        auto array = Resolver::typeArray(ref);
+        if (array == nullptr) {
+            PANIC("not a type array");
+        }
+
+        auto element = (floatOop) array->getElementAt(index);
+        stack.pushFloat(element->getValue());
+    }
+
+    void Execution::loadDoubleArrayElement(Stack &stack) {
+        int index = stack.popInt();
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            // TODO: throw NullPointerException
+            PANIC("java.lang.NullPointerException");
+        }
+        auto array = Resolver::typeArray(ref);
+        if (array == nullptr) {
+            PANIC("not a type array");
+        }
+
+        auto element = (doubleOop) array->getElementAt(index);
+        stack.pushDouble(element->getValue());
+    }
+
+    void Execution::loadLongArrayElement(Stack &stack) {
+        int index = stack.popInt();
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            // TODO: throw NullPointerException
+            PANIC("java.lang.NullPointerException");
+        }
+        auto array = Resolver::typeArray(ref);
+        if (array == nullptr) {
+            PANIC("not a type array");
+        }
+
+        auto element = (longOop) array->getElementAt(index);
+        stack.pushLong(element->getValue());
+    }
+
+    void Execution::loadObjectArrayElement(Stack &stack) {
+        int index = stack.popInt();
+        jobject ref = stack.popReference();
+        if (ref == nullptr) {
+            // TODO: throw NullPointerException
+            PANIC("java.lang.NullPointerException");
+        }
+
+        auto array = Resolver::objectArray(ref);
+        if (array == nullptr) {
+            PANIC("not an object array");
+        }
+
+        stack.pushReference(array->getElementAt(index));
     }
 
     void Execution::storeIntArrayElement(Stack &stack) {

@@ -12,7 +12,7 @@
 
 namespace kivm {
     oop Resolver::javaOop(jobject obj) {
-        if (obj != nullptr && Universe::isHeapObject(obj)) {
+        if (Universe::isHeapObject(obj)) {
             return (oop) obj;
         }
         return nullptr;
