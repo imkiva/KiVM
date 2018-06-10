@@ -32,7 +32,7 @@ namespace kivm {
 
                 // No cache, create new.
                 _pool.insert(javaString);
-                printf("intern string pool size: %zd\n", _pool.size());
+//                printf("intern string pool size: %zd\n", _pool.size());
                 return javaString;
             }
 
