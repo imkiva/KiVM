@@ -462,3 +462,23 @@ JAVA_NATIVE jboolean Java_java_lang_Class_isArray(JNIEnv *env, jobject java_lang
     return JBOOLEAN(classType == ClassType::TYPE_ARRAY_CLASS
                     || classType == ClassType::OBJECT_ARRAY_CLASS);
 }
+
+JAVA_NATIVE jclass Java_java_lang_Class_getComponentType(JNIEnv *env, jobject java_lang_Class_mirror) {
+    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
+    auto mirrorTarget = classMirror->getMirrorTarget();
+    if (mirrorTarget == nullptr) {
+        SHOULD_NOT_REACH_HERE();
+    }
+
+    switch (mirrorTarget->getClassType()) {
+        case ClassType::OBJECT_ARRAY_CLASS: {
+            return ((ObjectArrayKlass *) mirrorTarget)->getComponentType();
+        }
+        case ClassType::TYPE_ARRAY_CLASS: {
+            ValueType valueType = ((TypeArrayKlass *) mirrorTarget)->getComponentType();
+            return java::lang::Class::findPrimitiveTypeMirror(valueTypeToPrimitiveTypeName(valueType));
+        }
+        default:
+            SHOULD_NOT_REACH_HERE();
+    }
+}
