@@ -57,10 +57,10 @@
     } \
     if (index < 0 || index >= array->getLength()) { \
         thread->throwException(Global::java_lang_ArrayIndexOutOfBoundsException, \
-            "length is " \
-            + std::to_string(array->getLength()) \
-            + ", but index is " \
-            + std::to_string(index)); \
+            L"length is " \
+            + std::to_wstring(array->getLength()) \
+            + L", but index is " \
+            + std::to_wstring(index)); \
         stack.pushReference(thread->_exceptionOop); \
         goto exceptionHandler; \
     } \

@@ -15,11 +15,11 @@ namespace kivm {
 
                 void Constructor::initialize() {
                     CLASS = (InstanceKlass *) BootstrapClassLoader::get()
-                        ->loadClass("java/lang/reflect/Constructor");
+                        ->loadClass(L"java/lang/reflect/Constructor");
                     FIELD_CLAZZ = CLASS->getInstanceFieldInfo(J_CTOR,
-                        "clazz", "Ljava/lang/Class;");
+                        L"clazz", L"Ljava/lang/Class;");
                     FIELD_SLOT = CLASS->getInstanceFieldInfo(J_CTOR,
-                        "slot", "I");
+                        L"slot", L"I");
                 }
             }
         }

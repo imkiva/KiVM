@@ -26,21 +26,21 @@ namespace kivm {
         }
     };
 
-    inline ValueType primitiveTypeToValueType(char c) {
+    inline ValueType primitiveTypeToValueType(wchar_t c) {
         switch (c) {
-            case 'B':    // byte
-            case 'Z':    // boolean
-            case 'S':    // short
-            case 'C':    // char
-            case 'I':    // int
+            case L'B':    // byte
+            case L'Z':    // boolean
+            case L'S':    // short
+            case L'C':    // char
+            case L'I':    // int
                 return ValueType::INT;
-            case 'J':    // long
+            case L'J':    // long
                 return ValueType::LONG;
-            case 'F':    // float
+            case L'F':    // float
                 return ValueType::FLOAT;
-            case 'D':    // double
+            case L'D':    // double
                 return ValueType::DOUBLE;
-            case 'V':    // void
+            case L'V':    // void
                 return ValueType::VOID;
             default:
                 PANIC("primitive type required");
@@ -48,25 +48,25 @@ namespace kivm {
         }
     }
 
-    inline ValueType primitiveTypeToValueTypeNoWrap(char c) {
+    inline ValueType primitiveTypeToValueTypeNoWrap(wchar_t c) {
         switch (c) {
-            case 'B':    // byte
+            case L'B':    // byte
                 return ValueType::BYTE;
-            case 'Z':    // boolean
+            case L'Z':    // boolean
                 return ValueType::BOOLEAN;
-            case 'S':    // short
+            case L'S':    // short
                 return ValueType::SHORT;
-            case 'C':    // char
+            case L'C':    // char
                 return ValueType::CHAR;
-            case 'I':    // int
+            case L'I':    // int
                 return ValueType::INT;
-            case 'J':    // long
+            case L'J':    // long
                 return ValueType::LONG;
-            case 'F':    // float
+            case L'F':    // float
                 return ValueType::FLOAT;
-            case 'D':    // double
+            case L'D':    // double
                 return ValueType::DOUBLE;
-            case 'V':    // void
+            case L'V':    // void
                 return ValueType::VOID;
             default:
                 PANIC("primitive type required");
@@ -74,26 +74,26 @@ namespace kivm {
         }
     }
 
-    inline char valueTypeToPrimitiveType(ValueType v) {
+    inline wchar_t valueTypeToPrimitiveType(ValueType v) {
         switch (v) {
             case ValueType::BOOLEAN:
-                return 'Z';
+                return L'Z';
             case ValueType::BYTE:
-                return 'B';
+                return L'B';
             case ValueType::CHAR:
-                return 'C';
+                return L'C';
             case ValueType::SHORT:
-                return 'S';
+                return L'S';
             case ValueType::INT:
-                return 'I';
+                return L'I';
             case ValueType::FLOAT:
-                return 'F';
+                return L'F';
             case ValueType::LONG:
-                return 'J';
+                return L'J';
             case ValueType::DOUBLE:
-                return 'D';
+                return L'D';
             case ValueType::VOID:
-                return 'V';
+                return L'V';
             default:
                 PANIC("primitive type required");
         }
@@ -102,23 +102,23 @@ namespace kivm {
     inline String valueTypeToPrimitiveTypeDesc(ValueType v) {
         switch (v) {
             case ValueType::BOOLEAN:
-                return "Z";
+                return L"Z";
             case ValueType::BYTE:
-                return "B";
+                return L"B";
             case ValueType::CHAR:
-                return "C";
+                return L"C";
             case ValueType::SHORT:
-                return "S";
+                return L"S";
             case ValueType::INT:
-                return "I";
+                return L"I";
             case ValueType::FLOAT:
-                return "F";
+                return L"F";
             case ValueType::LONG:
-                return "J";
+                return L"J";
             case ValueType::DOUBLE:
-                return "D";
+                return L"D";
             case ValueType::VOID:
-                return "V";
+                return L"V";
             default:
                 PANIC("primitive type required");
         }
@@ -127,23 +127,23 @@ namespace kivm {
     inline String valueTypeToPrimitiveTypeName(ValueType v) {
         switch (v) {
             case ValueType::BOOLEAN:
-                return "boolean";
+                return L"boolean";
             case ValueType::BYTE:
-                return "byte";
+                return L"byte";
             case ValueType::CHAR:
-                return "char";
+                return L"char";
             case ValueType::SHORT:
-                return "short";
+                return L"short";
             case ValueType::INT:
-                return "int";
+                return L"int";
             case ValueType::FLOAT:
-                return "float";
+                return L"float";
             case ValueType::LONG:
-                return "long";
+                return L"long";
             case ValueType::DOUBLE:
-                return "double";
+                return L"double";
             case ValueType::VOID:
-                return "void";
+                return L"void";
             default:
                 PANIC("primitive type required");
         }

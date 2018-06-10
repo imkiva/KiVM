@@ -12,15 +12,15 @@
 namespace kivm {
     Klass *BaseClassLoader::loadClass(const String &className) {
         // Load array class
-        if (className[0] == '[') {
+        if (className[0] == L'[') {
             // [I
             int dimension = 0;
-            while (className[++dimension] == '[') continue;
+            while (className[++dimension] == L'[') continue;
 
             // Load 1-dimension array directly
             if (dimension == 1) {
                 // for example: [Ljava/lang/Object;
-                if (className[1] == 'L') {
+                if (className[1] == L'L') {
                     // java/lang/Object
                     const String &component = className.substr(2, className.size() - 3);
                     auto *component_class = (InstanceKlass *) loadClass(component);

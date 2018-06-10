@@ -21,20 +21,20 @@ namespace kivm {
             bool isArray = false;
 
             for (int i = 0; i < desc.size(); ++i) {
-                char ch = desc[i];
+                wchar_t ch = desc[i];
                 switch (ch) {
-                    case '[' :
+                    case L'[' :
                         isArray = true;
                         break;
 
-                    case 'B':    // byte
-                    case 'Z':    // boolean
-                    case 'S':    // short
-                    case 'C':    // char
-                    case 'I':    // int
-                    case 'J':    // long
-                    case 'F':    // float
-                    case 'D':    // double
+                    case L'B':    // byte
+                    case L'Z':    // boolean
+                    case L'S':    // short
+                    case L'C':    // char
+                    case L'I':    // int
+                    case L'J':    // long
+                    case L'F':    // float
+                    case L'D':    // double
                         if (isArray) {
                             valueTypes->push_back(ValueType::ARRAY);
                             isArray = false;
@@ -45,7 +45,7 @@ namespace kivm {
                         }
                         break;
 
-                    case 'L':
+                    case L'L':
                         while (desc[i] != ';') {
                             ++i;
                         }
@@ -57,10 +57,10 @@ namespace kivm {
                         }
                         break;
 
-                    case '(':
+                    case L'(':
                         break;
 
-                    case ')':
+                    case L')':
                         return;
 
                     default:
@@ -80,34 +80,34 @@ namespace kivm {
             bool inClassName = false;
 
             for (int i = 0; i < desc.size(); ++i) {
-                char ch = desc[i];
-                if (ch == ')') {
+                wchar_t ch = desc[i];
+                if (ch == L')') {
                     break;
                 }
 
                 switch (ch) {
-                    case '(':
-                    case '[' :
+                    case L'(':
+                    case L'[' :
                         startIndex = i;
                         break;
 
-                    case 'L':
+                    case L'L':
                         inClassName = true;
                         startIndex = i;
                         break;
 
-                    case 'B':    // byte
-                    case 'Z':    // boolean
-                    case 'S':    // short
-                    case 'C':    // char
-                    case 'I':    // int
-                    case 'J':    // long
-                    case 'F':    // float
-                    case 'D':    // double
+                    case L'B':    // byte
+                    case L'Z':    // boolean
+                    case L'S':    // short
+                    case L'C':    // char
+                    case L'I':    // int
+                    case L'J':    // long
+                    case L'F':    // float
+                    case L'D':    // double
                     {
                         const auto &part = desc.substr(startIndex, i - startIndex);
                         D("oop: parsing arg list: primitive type: %s",
-                            part.c_str());
+                            strings::toStdString(part).c_str());
                         startIndex = i;
                         break;
                     }
@@ -117,7 +117,7 @@ namespace kivm {
                             inClassName = false;
                             const auto &part = desc.substr(startIndex, i - startIndex);
                             D("oop: parsing arg list: reference type: %s",
-                                part.c_str());
+                                strings::toStdString(part).c_str());
                         }
                         break;
 
@@ -135,27 +135,27 @@ namespace kivm {
             *flag = true;
 
             const String &returnTypeDesc = desc.substr(desc.find_first_of(L')') + 1);
-            char ch = returnTypeDesc[0];
+            wchar_t ch = returnTypeDesc[0];
             switch (ch) {
-                case 'B':    // byte
-                case 'Z':    // boolean
-                case 'S':    // short
-                case 'C':    // char
-                case 'I':    // int
-                case 'J':    // long
-                case 'F':    // float
-                case 'D':    // double
-                case 'V':    // void
+                case L'B':    // byte
+                case L'Z':    // boolean
+                case L'S':    // short
+                case L'C':    // char
+                case L'I':    // int
+                case L'J':    // long
+                case L'F':    // float
+                case L'D':    // double
+                case L'V':    // void
                     *returnType = wrap
                                   ? primitiveTypeToValueType(ch)
                                   : primitiveTypeToValueTypeNoWrap(ch);
                     break;
 
-                case 'L':
+                case L'L':
                     *returnType = ValueType::OBJECT;
                     break;
 
-                case '[':
+                case L'[':
                     *returnType = ValueType::ARRAY;
                     break;
 
@@ -171,24 +171,24 @@ namespace kivm {
             }
 
             const String &returnTypeDesc = desc.substr(desc.find_first_of(L')') + 1);
-            char ch = returnTypeDesc[0];
+            wchar_t ch = returnTypeDesc[0];
             switch (ch) {
-                case 'B':    // byte
-                case 'Z':    // boolean
-                case 'S':    // short
-                case 'C':    // char
-                case 'I':    // int
-                case 'J':    // long
-                case 'F':    // float
-                case 'D':    // double
-                case 'V':    // void
+                case L'B':    // byte
+                case L'Z':    // boolean
+                case L'S':    // short
+                case L'C':    // char
+                case L'I':    // int
+                case L'J':    // long
+                case L'F':    // float
+                case L'D':    // double
+                case L'V':    // void
                 {
                     *returnType = java::lang::Class::findPrimitiveTypeMirror(returnTypeDesc);
                     break;
                 }
 
-                case 'L':
-                case '[': {
+                case L'L':
+                case L'[': {
                     auto returnClass = BootstrapClassLoader::get()->loadClass(returnTypeDesc);
                     if (returnClass == nullptr) {
                         PANIC("cannot parse return type of method");
@@ -229,8 +229,8 @@ namespace kivm {
     }
 
     String Method::makeIdentity(const Method *m) {
-        std::stringstream ss;
-        ss << m->getName() << " " << m->getDescriptor();
+        std::wstringstream ss;
+        ss << m->getName() << L" " << m->getDescriptor();
         return ss.str();
     }
 

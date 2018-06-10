@@ -24,51 +24,51 @@ static bool isArrayRangeInvalid(jint srcPos, jint destPos, jint length,
 JAVA_NATIVE jobject
 Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobject propertiesObject) {
     static spp::sparse_hash_map<String, String> PROPS{
-//        {L"java.vm.specification.name",    "Java Virtual Machine Specification"},
-        {"java.vm.specification.version", "1.8"},
-//        {"java.vm.version",               "0.1.0"},
-//        {"java.vm.name",                  "Kiva's Java VM"},
-//        {"java.vm.info",                  "interpreted mode, sharing"},
-//        {"java.specification.version",    "1.8"},
-//        {"java.version",                 "1.8.0-debug"},
-//        {"java.runtime.name",             "Java(TM) SE Runtime Environment"},
-//        {"java.runtime.version",          "1.8.0"},
-//        {"gopherProxySet",                "false"},
-        {"java.vm.vendor",                "imKiva"},
-        {"java.vendor.url",               "https://github.com/imkiva"},
-        {"path.separator",                Global::PATH_SEPARATOR},
-        {"file.encoding.pkg",             "sun.io"},
-//        {"user.country",                  "US"},
-//        {"user.language",                 "en"},
-//        {"sun.java.launcher",             "KIVM_LAUNCHER"},
-//        {"sun.os.patch.level",            "unknown"},
-        {"os.arch",             KIVM_ARCH_NAME},
-        {"os.name",                       OSInformation::getOSName()},
-        {"os.version",                    OSInformation::getOSVersion()},
-        {"sun.arch.data.model", KIVM_ARCH_DATA_MODEL},
-        {"line.separator",                "\n"},
-        {"file.separator",                Global::PATH_DELIMITER},
-        {"sun.jnu.encoding",              "utf8"},
-        {"file.encoding",                 "utf8"},
-//        {"java.specification.name",       "Java Platform API Specification"},
-//        {"java.class.version",            "52.0"},
-//        {"sun.management.compiler",       "nop"},
-//        {"sun.io.unicode.encoding",       "UnicodeBig"},
-//        {"java.home",                     "."},
-//        {"java.class.path",               "."},
+//        {L"java.vm.specification.name",    L"Java Virtual Machine Specification"},
+        {L"java.vm.specification.version", L"1.8"},
+//        {L"java.vm.version",               L"0.1.0"},
+//        {L"java.vm.name",                  L"Kiva's Java VM"},
+//        {L"java.vm.info",                  L"interpreted mode, sharing"},
+//        {L"java.specification.version",    L"1.8"},
+//        {L"java.version",                  L"1.8.0-debug"},
+//        {L"java.runtime.name",             L"Java(TM) SE Runtime Environment"},
+//        {L"java.runtime.version",          L"1.8.0"},
+//        {L"gopherProxySet",                L"false"},
+        {L"java.vm.vendor",                L"imKiva"},
+        {L"java.vendor.url",               L"https://github.com/imkiva"},
+        {L"path.separator",                Global::PATH_SEPARATOR},
+        {L"file.encoding.pkg",             L"sun.io"},
+//        {L"user.country",                  L"US"},
+//        {L"user.language",                 L"en"},
+//        {L"sun.java.launcher",             L"KIVM_LAUNCHER"},
+//        {L"sun.os.patch.level",            L"unknown"},
+        {L"os.arch",             KIVM_ARCH_NAME},
+        {L"os.name",                       OSInformation::getOSName()},
+        {L"os.version",                    OSInformation::getOSVersion()},
+        {L"sun.arch.data.model", KIVM_ARCH_DATA_MODEL},
+        {L"line.separator",                L"\n"},
+        {L"file.separator",                Global::PATH_DELIMITER},
+        {L"sun.jnu.encoding",              L"utf8"},
+        {L"file.encoding",                 L"utf8"},
+//        {L"java.specification.name",       L"Java Platform API Specification"},
+//        {L"java.class.version",            L"52.0"},
+//        {L"sun.management.compiler",       L"nop"},
+//        {L"sun.io.unicode.encoding",       L"UnicodeBig"},
+//        {L"java.home",                     L"."},
+//        {L"java.class.path",               L"."},
     };
 
     auto propOop = Resolver::instance(propertiesObject);
     auto put = ((InstanceKlass *) propOop->getInstanceClass())->getVirtualMethod(
-        "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+        L"put", L"(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
 
     auto thread = Threads::currentThread();
     assert(thread != nullptr);
 
     for (const auto &e : PROPS) {
         D("initProperties: set %s to %s",
-            e.first.c_str(),
-            e.second.c_str());
+            strings::toStdString(e.first).c_str(),
+            strings::toStdString(e.second).c_str());
         std::list<oop> args{propOop,
                             java::lang::String::intern(e.first),
                             java::lang::String::intern(e.second)};
@@ -95,7 +95,7 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
 
     if (srcOop->getClass()->getClassType() != destOop->getClass()->getClassType()) {
         thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass("java/lang/ArrayStoreException"));
+            ->loadClass(L"java/lang/ArrayStoreException"));
         return;
     }
 
@@ -106,7 +106,7 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
         auto destClass_ = (TypeArrayKlass *) destOop_->getClass();
         if (destClass_->getComponentType() != srcClass_->getComponentType()) {
             thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
-                ->loadClass("java/lang/ArrayStoreException"));
+                ->loadClass(L"java/lang/ArrayStoreException"));
             return;
         }
     } else {
@@ -128,7 +128,7 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
             if (srcComponent != Global::java_lang_Object
                 && destClass_->getComponentType() != srcClass_->getComponentType()) {
                 thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
-                    ->loadClass("java/lang/ArrayStoreException"));
+                    ->loadClass(L"java/lang/ArrayStoreException"));
                 return;
             }
         }
@@ -137,7 +137,7 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
     // Check if the ranges are valid
     if (isArrayRangeInvalid(srcPos, destPos, length, srcOop, destOop)) {
         thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass("java/lang/ArrayIndexOutOfBoundsException"));
+            ->loadClass(L"java/lang/ArrayIndexOutOfBoundsException"));
         return;
     }
 
@@ -154,21 +154,21 @@ JAVA_NATIVE void Java_java_lang_System_setIn0(JNIEnv *env, jclass java_lang_Syst
                                               jobject javaInputStream) {
     auto inputStreamOop = Resolver::instance(javaInputStream);
     auto system = Resolver::instanceClass(java_lang_System);
-    system->setStaticFieldValue(J_SYSTEM, "in", "Ljava/io/InputStream;", inputStreamOop);
+    system->setStaticFieldValue(J_SYSTEM, L"in", L"Ljava/io/InputStream;", inputStreamOop);
 }
 
 JAVA_NATIVE void Java_java_lang_System_setOut0(JNIEnv *env, jclass java_lang_System,
                                                jobject javaPrintStream) {
     auto printStreamOop = Resolver::instance(javaPrintStream);
     auto system = Resolver::instanceClass(java_lang_System);
-    system->setStaticFieldValue(J_SYSTEM, "out", "Ljava/io/PrintStream;", printStreamOop);
+    system->setStaticFieldValue(J_SYSTEM, L"out", L"Ljava/io/PrintStream;", printStreamOop);
 }
 
 JAVA_NATIVE void Java_java_lang_System_setErr0(JNIEnv *env, jclass java_lang_System,
                                                jobject javaPrintStream) {
     auto printStreamOop = Resolver::instance(javaPrintStream);
     auto system = Resolver::instanceClass(java_lang_System);
-    system->setStaticFieldValue(J_SYSTEM, "err", "Ljava/io/PrintStream;", printStreamOop);
+    system->setStaticFieldValue(J_SYSTEM, L"err", L"Ljava/io/PrintStream;", printStreamOop);
 }
 
 JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass java_lang_System,
@@ -183,11 +183,11 @@ JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass jav
 
     auto libraryName = java::lang::String::toNativeString(stringOop);
 #if defined(KIVM_PLATFORM_APPLE)
-    auto mappedName = "lib" + libraryName + ".dylib";
+    auto mappedName = L"lib" + libraryName + L".dylib";
 #elif defined(KIVM_PLATFORM_UNIX)
-    auto mappedName = "lib" + libraryName + ".so";
+    auto mappedName = L"lib" + libraryName + L".so";
 #elif defined(KIVM_PLATFORM_WINDOWS)
-    auto mappedName = libraryName + ".dll";
+    auto mappedName = libraryName + L".dll";
 #else
     SHOULD_NOT_REACH_HERE();
 #endif
@@ -204,7 +204,7 @@ JAVA_NATIVE jlong Java_java_lang_System_currentTimeMillis(JNIEnv *env, jclass ja
     timeval time{};
     if (gettimeofday(&time, nullptr) == -1) {
         auto thread = Threads::currentThread();
-        thread->throwException(Global::java_lang_InternalError, "gettimeofday() failed");
+        thread->throwException(Global::java_lang_InternalError, L"gettimeofday() failed");
         return 0;
     }
     return time.tv_sec * 1000 + time.tv_usec / 1000;
@@ -214,7 +214,7 @@ JAVA_NATIVE jlong Java_java_lang_System_nanoTime(JNIEnv *env, jclass java_lang_S
     timeval time{};
     if (gettimeofday(&time, nullptr) == -1) {
         auto thread = Threads::currentThread();
-        thread->throwException(Global::java_lang_InternalError, "gettimeofday() failed");
+        thread->throwException(Global::java_lang_InternalError, L"gettimeofday() failed");
         return 0;
     }
     return time.tv_sec * 1000 * 1000 * 1000 + time.tv_usec * 1000;

@@ -78,7 +78,7 @@ int ZipEntry::readContent(std::ofstream &ofOutput, ZipArchive::State state, libz
 }
 
 ZipArchive::ZipArchive(const kivm::String &zipPath)
-    : path(zipPath),
+    : path(kivm::strings::toStdString(zipPath)),
       zipHandle(nullptr),
       mode(NOT_OPEN) {
 }

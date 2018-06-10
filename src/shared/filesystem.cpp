@@ -13,19 +13,19 @@
 namespace kivm {
     bool FileSystem::isDirectory(const String &path) {
         struct stat s{};
-        if (stat(path.c_str(), &s) == 0) {
+        if (stat(strings::toStdString(path).c_str(), &s) == 0) {
             return S_ISDIR(s.st_mode);
         }
         return false;
     }
 
     bool FileSystem::canRead(const String &path) {
-        int r = access(path.c_str(), R_OK);
+        int r = access(strings::toStdString(path).c_str(), R_OK);
         return r == 0;
     }
 
     void *FileSystem::createFileMapping(const String &path, int *pFd, size_t *pSize) {
-        int fd = open(path.c_str(), O_RDONLY);
+        int fd = open(strings::toStdString(path).c_str(), O_RDONLY);
         if (fd < 0) {
             return nullptr;
         }
@@ -50,7 +50,7 @@ namespace kivm {
 
     size_t FileSystem::getFileSize(const String &path) {
         struct stat s{};
-        if (stat(path.c_str(), &s) == 0) {
+        if (stat(strings::toStdString(path).c_str(), &s) == 0) {
             return (size_t) s.st_size;
         }
         return 0;

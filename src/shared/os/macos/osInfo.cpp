@@ -19,7 +19,7 @@ namespace kivm {
     }
 
     String MacOSInformation::getOSName() {
-        return "Mac OS X";
+        return L"Mac OS X";
     }
 
     String MacOSInformation::getOSVersion() {
@@ -29,7 +29,7 @@ namespace kivm {
 
             if (copyOSVersion != nullptr) {
                 char *osVersion = copyOSVersion();
-                String ver(osVersion);
+                String ver = strings::fromStdString(osVersion);
                 free(osVersion);
                 return ver;
             }

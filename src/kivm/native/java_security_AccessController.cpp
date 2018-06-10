@@ -23,7 +23,7 @@ JAVA_NATIVE jobject Java_java_security_AccessController_doPrivileged(JNIEnv *env
     // there are many versions of doPrivileged().
     // but we can do the simplest one
     auto actionClass = (InstanceKlass *) actionOop->getClass();
-    auto run = actionClass->getVirtualMethod("run", "()Ljava/lang/Object;");
+    auto run = actionClass->getVirtualMethod(L"run", L"()Ljava/lang/Object;");
     if (run == nullptr) {
         PANIC("no run() method found");
         return nullptr;

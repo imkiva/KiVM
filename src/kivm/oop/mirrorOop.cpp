@@ -7,7 +7,7 @@
 namespace kivm {
 
     mirrorOopDesc::mirrorOopDesc(Klass *mirror)
-            : instanceOopDesc((InstanceKlass *) BootstrapClassLoader::get()->loadClass("java/lang/Class")),
+            : instanceOopDesc((InstanceKlass *) BootstrapClassLoader::get()->loadClass(L"java/lang/Class")),
               _mirrorTarget(mirror),
               _mirroringPrimitiveType(ValueType::OBJECT) {
     }

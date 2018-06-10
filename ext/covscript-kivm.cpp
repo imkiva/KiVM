@@ -144,7 +144,7 @@ CS_EXTENSION(kivm) // NOLINT
         using namespace kivm;
 
         auto cl = kivm::BootstrapClassLoader::get();
-        auto javaClass = cl->loadClass(strings::replaceAll(className,
+        auto javaClass = cl->loadClass(strings::replaceAll(strings::fromStdString(className),
             Global::DOT, Global::SLASH));
 
         if (javaClass == nullptr) {
@@ -158,8 +158,8 @@ CS_EXTENSION(kivm) // NOLINT
         }
 
         auto instanceClass = (InstanceKlass *) javaClass;
-        auto method = instanceClass->getThisClassMethod(name,
-            descriptor);
+        auto method = instanceClass->getThisClassMethod(strings::fromStdString(name),
+            strings::fromStdString(descriptor));
         if (method == nullptr) {
             throw cs::lang_error("java.lang.NoSuchMethodError: "
                                  + name
@@ -221,11 +221,11 @@ CS_EXTENSION(kivm) // NOLINT
         const cs::array &args) {
         using namespace kivm;
 
-        String mainClassName = strings::replaceAll(className,
+        String mainClassName = strings::replaceAll(strings::fromStdString(className),
             Global::DOT, Global::SLASH);
         std::vector<String> arguments;
         for (auto &e : args) {
-            arguments.push_back(e.const_val<cs::string>());
+            arguments.push_back(strings::fromStdString(e.const_val<cs::string>()));
         }
 
         JavaMainThread javaMainThread(mainClassName, arguments);

@@ -21,79 +21,79 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
 #if defined(__APPLE__)
     static spp::sparse_hash_map<String, int> SIGNAL_TABLE{
         /* derived from /usr/include/bits/signum.h on RH7.2 */
-        {"HUP",    SIGHUP},         /* Hangup (POSIX).  */
-        {"INT",    SIGINT},         /* Interrupt (ANSI).  */
-        {"QUIT",   SIGQUIT},        /* Quit (POSIX).  */
-        {"ILL",    SIGILL},         /* Illegal instruction (ANSI).  */
-        {"TRAP",   SIGTRAP},        /* Trace trap (POSIX).  */
-        {"ABRT",   SIGABRT},        /* Abort (ANSI).  */
-        {"EMT",    SIGEMT},         /* EMT trap  */
-        {"FPE",    SIGFPE},         /* Floating-point exception (ANSI).  */
-        {"KILL",   SIGKILL},        /* Kill, unblockable (POSIX).  */
-        {"BUS",    SIGBUS},         /* BUS error (4.2 BSD).  */
-        {"SEGV",   SIGSEGV},        /* Segmentation violation (ANSI).  */
-        {"SYS",    SIGSYS},         /* Bad system call. Only on some Bsden! */
-        {"PIPE",   SIGPIPE},        /* Broken pipe (POSIX).  */
-        {"ALRM",   SIGALRM},        /* Alarm clock (POSIX).  */
-        {"TERM",   SIGTERM},        /* Termination (ANSI).  */
-        {"URG",    SIGURG},         /* Urgent condition on socket (4.2 BSD).  */
-        {"STOP",   SIGSTOP},        /* Stop, unblockable (POSIX).  */
-        {"TSTP",   SIGTSTP},        /* Keyboard stop (POSIX).  */
-        {"CONT",   SIGCONT},        /* Continue (POSIX).  */
-        {"CHLD",   SIGCHLD},        /* Child status has changed (POSIX).  */
-        {"TTIN",   SIGTTIN},        /* Background read from tty (POSIX).  */
-        {"TTOU",   SIGTTOU},        /* Background write to tty (POSIX).  */
-        {"IO",     SIGIO},          /* I/O now possible (4.2 BSD).  */
-        {"XCPU",   SIGXCPU},        /* CPU limit exceeded (4.2 BSD).  */
-        {"XFSZ",   SIGXFSZ},        /* File size limit exceeded (4.2 BSD).  */
-        {"VTALRM", SIGVTALRM},      /* Virtual alarm clock (4.2 BSD).  */
-        {"PROF",   SIGPROF},        /* Profiling alarm clock (4.2 BSD).  */
-        {"WINCH",  SIGWINCH},       /* Window size change (4.3 BSD, Sun).  */
-        {"INFO",   SIGINFO},        /* Information request.  */
-        {"USR1",   SIGUSR1},        /* User-defined signal 1 (POSIX).  */
-        {"USR2",   SIGUSR2},        /* User-defined signal 2 (POSIX).  */
+        {L"HUP",    SIGHUP},         /* Hangup (POSIX).  */
+        {L"INT",    SIGINT},         /* Interrupt (ANSI).  */
+        {L"QUIT",   SIGQUIT},        /* Quit (POSIX).  */
+        {L"ILL",    SIGILL},         /* Illegal instruction (ANSI).  */
+        {L"TRAP",   SIGTRAP},        /* Trace trap (POSIX).  */
+        {L"ABRT",   SIGABRT},        /* Abort (ANSI).  */
+        {L"EMT",    SIGEMT},         /* EMT trap  */
+        {L"FPE",    SIGFPE},         /* Floating-point exception (ANSI).  */
+        {L"KILL",   SIGKILL},        /* Kill, unblockable (POSIX).  */
+        {L"BUS",    SIGBUS},         /* BUS error (4.2 BSD).  */
+        {L"SEGV",   SIGSEGV},        /* Segmentation violation (ANSI).  */
+        {L"SYS",    SIGSYS},         /* Bad system call. Only on some Bsden! */
+        {L"PIPE",   SIGPIPE},        /* Broken pipe (POSIX).  */
+        {L"ALRM",   SIGALRM},        /* Alarm clock (POSIX).  */
+        {L"TERM",   SIGTERM},        /* Termination (ANSI).  */
+        {L"URG",    SIGURG},         /* Urgent condition on socket (4.2 BSD).  */
+        {L"STOP",   SIGSTOP},        /* Stop, unblockable (POSIX).  */
+        {L"TSTP",   SIGTSTP},        /* Keyboard stop (POSIX).  */
+        {L"CONT",   SIGCONT},        /* Continue (POSIX).  */
+        {L"CHLD",   SIGCHLD},        /* Child status has changed (POSIX).  */
+        {L"TTIN",   SIGTTIN},        /* Background read from tty (POSIX).  */
+        {L"TTOU",   SIGTTOU},        /* Background write to tty (POSIX).  */
+        {L"IO",     SIGIO},          /* I/O now possible (4.2 BSD).  */
+        {L"XCPU",   SIGXCPU},        /* CPU limit exceeded (4.2 BSD).  */
+        {L"XFSZ",   SIGXFSZ},        /* File size limit exceeded (4.2 BSD).  */
+        {L"VTALRM", SIGVTALRM},      /* Virtual alarm clock (4.2 BSD).  */
+        {L"PROF",   SIGPROF},        /* Profiling alarm clock (4.2 BSD).  */
+        {L"WINCH",  SIGWINCH},       /* Window size change (4.3 BSD, Sun).  */
+        {L"INFO",   SIGINFO},        /* Information request.  */
+        {L"USR1",   SIGUSR1},        /* User-defined signal 1 (POSIX).  */
+        {L"USR2",   SIGUSR2},        /* User-defined signal 2 (POSIX).  */
     };
 #elif defined(__linux__)
     static spp::sparse_hash_map<String, int> SIGNAL_TABLE{
-        {"HUP", SIGHUP},         /* Hangup (POSIX).  */
-        {"INT", SIGINT},         /* Interrupt (ANSI).  */
-        {"QUIT", SIGQUIT},        /* Quit (POSIX).  */
-        {"ILL", SIGILL},         /* Illegal instruction (ANSI).  */
-        {"TRAP", SIGTRAP},        /* Trace trap (POSIX).  */
-        {"ABRT", SIGABRT},        /* Abort (ANSI).  */
-        {"IOT", SIGIOT},         /* IOT trap (4.2 BSD).  */
-        {"BUS", SIGBUS},         /* BUS error (4.2 BSD).  */
-        {"FPE", SIGFPE},         /* Floating-point exception (ANSI).  */
-        {"KILL", SIGKILL},        /* Kill, unblockable (POSIX).  */
-        {"USR1", SIGUSR1},        /* User-defined signal 1 (POSIX).  */
-        {"SEGV", SIGSEGV},        /* Segmentation violation (ANSI).  */
-        {"USR2", SIGUSR2},        /* User-defined signal 2 (POSIX).  */
-        {"PIPE", SIGPIPE},        /* Broken pipe (POSIX).  */
-        {"ALRM", SIGALRM},        /* Alarm clock (POSIX).  */
-        {"TERM", SIGTERM},        /* Termination (ANSI).  */
+        {L"HUP", SIGHUP},         /* Hangup (POSIX).  */
+        {L"INT", SIGINT},         /* Interrupt (ANSI).  */
+        {L"QUIT", SIGQUIT},        /* Quit (POSIX).  */
+        {L"ILL", SIGILL},         /* Illegal instruction (ANSI).  */
+        {L"TRAP", SIGTRAP},        /* Trace trap (POSIX).  */
+        {L"ABRT", SIGABRT},        /* Abort (ANSI).  */
+        {L"IOT", SIGIOT},         /* IOT trap (4.2 BSD).  */
+        {L"BUS", SIGBUS},         /* BUS error (4.2 BSD).  */
+        {L"FPE", SIGFPE},         /* Floating-point exception (ANSI).  */
+        {L"KILL", SIGKILL},        /* Kill, unblockable (POSIX).  */
+        {L"USR1", SIGUSR1},        /* User-defined signal 1 (POSIX).  */
+        {L"SEGV", SIGSEGV},        /* Segmentation violation (ANSI).  */
+        {L"USR2", SIGUSR2},        /* User-defined signal 2 (POSIX).  */
+        {L"PIPE", SIGPIPE},        /* Broken pipe (POSIX).  */
+        {L"ALRM", SIGALRM},        /* Alarm clock (POSIX).  */
+        {L"TERM", SIGTERM},        /* Termination (ANSI).  */
 #ifdef SIGSTKFLT
-        {"STKFLT",     SIGSTKFLT},      /* Stack fault.  */
+        {L"STKFLT",     SIGSTKFLT},      /* Stack fault.  */
 #endif
 #ifdef SIGCLD
-        {"CLD", SIGCLD},         /* Same as SIGCHLD (System V).  */
+        {L"CLD", SIGCLD},         /* Same as SIGCHLD (System V).  */
 #endif
-        {"CHLD", SIGCHLD},        /* Child status has changed (POSIX).  */
-        {"CONT", SIGCONT},        /* Continue (POSIX).  */
-        {"STOP", SIGSTOP},        /* Stop, unblockable (POSIX).  */
-        {"TSTP", SIGTSTP},        /* Keyboard stop (POSIX).  */
-        {"TTIN", SIGTTIN},        /* Background read from tty (POSIX).  */
-        {"TTOU", SIGTTOU},        /* Background write to tty (POSIX).  */
-        {"URG", SIGURG},         /* Urgent condition on socket (4.2 BSD).  */
-        {"XCPU", SIGXCPU},        /* CPU limit exceeded (4.2 BSD).  */
-        {"XFSZ", SIGXFSZ},        /* File size limit exceeded (4.2 BSD).  */
-        {"VTALRM", SIGVTALRM},      /* Virtual alarm clock (4.2 BSD).  */
-        {"PROF", SIGPROF},        /* Profiling alarm clock (4.2 BSD).  */
-        {"WINCH", SIGWINCH},       /* Window size change (4.3 BSD, Sun).  */
-        {"POLL", SIGPOLL},        /* Pollable event occurred (System V).  */
-        {"IO", SIGIO},          /* I/O now possible (4.2 BSD).  */
-        {"PWR", SIGPWR},         /* Power failure restart (System V).  */
+        {L"CHLD", SIGCHLD},        /* Child status has changed (POSIX).  */
+        {L"CONT", SIGCONT},        /* Continue (POSIX).  */
+        {L"STOP", SIGSTOP},        /* Stop, unblockable (POSIX).  */
+        {L"TSTP", SIGTSTP},        /* Keyboard stop (POSIX).  */
+        {L"TTIN", SIGTTIN},        /* Background read from tty (POSIX).  */
+        {L"TTOU", SIGTTOU},        /* Background write to tty (POSIX).  */
+        {L"URG", SIGURG},         /* Urgent condition on socket (4.2 BSD).  */
+        {L"XCPU", SIGXCPU},        /* CPU limit exceeded (4.2 BSD).  */
+        {L"XFSZ", SIGXFSZ},        /* File size limit exceeded (4.2 BSD).  */
+        {L"VTALRM", SIGVTALRM},      /* Virtual alarm clock (4.2 BSD).  */
+        {L"PROF", SIGPROF},        /* Profiling alarm clock (4.2 BSD).  */
+        {L"WINCH", SIGWINCH},       /* Window size change (4.3 BSD, Sun).  */
+        {L"POLL", SIGPOLL},        /* Pollable event occurred (System V).  */
+        {L"IO", SIGIO},          /* I/O now possible (4.2 BSD).  */
+        {L"PWR", SIGPWR},         /* Power failure restart (System V).  */
 #ifdef SIGSYS
-        {"SYS", SIGSYS},         /* Bad system call. Only on some Linuxen! */
+        {L"SYS", SIGSYS},         /* Bad system call. Only on some Linuxen! */
 #endif
     };
 #endif

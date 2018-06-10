@@ -60,9 +60,9 @@ namespace kivm {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypesNoWrap();
 
         D("nativeInvocationContext: %s.%s:%s, static: %s, native: %s, nargs: %zd",
-            _instanceKlass->getName().c_str(),
-            _method->getName().c_str(),
-            _method->getDescriptor().c_str(),
+            strings::toStdString(_instanceKlass->getName()).c_str(),
+            strings::toStdString(_method->getName()).c_str(),
+            strings::toStdString(_method->getDescriptor()).c_str(),
             hasThis ? "false" : "true",
             _method->isNative() ? "true" : "false",
             descriptorMap.size());
@@ -71,11 +71,11 @@ namespace kivm {
         void *nativeMethod = _method->getNativePointer();
         if (nativeMethod == nullptr) {
             auto klass = (InstanceKlass *) BootstrapClassLoader::get()
-                ->loadClass("java/lang/UnsatisfiedLinkError");
+                ->loadClass(L"java/lang/UnsatisfiedLinkError");
             const String &fixedName = strings::replaceAll(_instanceKlass->getName(),
                 Global::SLASH, Global::DOT);
             _thread->throwException(klass, fixedName
-                                           + "."
+                                           + L"."
                                            + _method->getName()
                                            + _method->getDescriptor());
             return nullptr;

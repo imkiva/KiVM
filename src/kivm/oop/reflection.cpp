@@ -16,22 +16,22 @@
 namespace kivm {
     instanceOop newJavaFieldObject(FieldID *fieldID) {
         static auto fieldClass = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass("java/lang/reflect/Field");
+            ->loadClass(L"java/lang/reflect/Field");
 
         static auto classField = fieldClass->getInstanceFieldInfo(J_FIELD,
-            "clazz", "Ljava/lang/Class;");
+            L"clazz", L"Ljava/lang/Class;");
         static auto typeField = fieldClass->getInstanceFieldInfo(J_FIELD,
-            "type", "Ljava/lang/Class;");
+            L"type", L"Ljava/lang/Class;");
         static auto slotField = fieldClass->getInstanceFieldInfo(J_FIELD,
-            "slot", "I");
+            L"slot", L"I");
         static auto nameField = fieldClass->getInstanceFieldInfo(J_FIELD,
-            "name", "Ljava/lang/String;");
+            L"name", L"Ljava/lang/String;");
         static auto signatureField = fieldClass->getInstanceFieldInfo(J_FIELD,
-            "signature", "Ljava/lang/String;");
+            L"signature", L"Ljava/lang/String;");
         static auto modifiersField = fieldClass->getInstanceFieldInfo(J_FIELD,
-            "modifiers", "I");
+            L"modifiers", L"I");
         static auto overrideField = fieldClass->getInstanceFieldInfo(J_ACCESSIBLE_OBJECT,
-            "override", "Z");
+            L"override", L"Z");
 
         auto fieldOop = fieldClass->newInstance();
         auto fieldInfo = fieldID->_field;
@@ -60,7 +60,7 @@ namespace kivm {
 
     static void fillMethodParameterTypes(MethodID *methodID, instanceOop methodOop, FieldID *field) {
         static auto classArrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
-            ->loadClass("[Ljava/lang/Class;");
+            ->loadClass(L"[Ljava/lang/Class;");
 
         const auto &argList = methodID->_method->getArgumentClassTypes();
         objectArrayOop parameterTypes = classArrayClass->newInstance((int) argList.size());
@@ -90,19 +90,19 @@ namespace kivm {
         static auto methodClass = java::lang::reflect::Method::CLASS;
 
         static auto nameField = methodClass->getInstanceFieldInfo(J_METHOD,
-            "name", "Ljava/lang/String;");
+            L"name", L"Ljava/lang/String;");
         static auto returnTypeField = methodClass->getInstanceFieldInfo(J_METHOD,
-            "returnType", "Ljava/lang/Class;");
+            L"returnType", L"Ljava/lang/Class;");
         static auto parameterTypesField = methodClass->getInstanceFieldInfo(J_METHOD,
-            "parameterTypes", "[Ljava/lang/Class;");
+            L"parameterTypes", L"[Ljava/lang/Class;");
         static auto exceptionTypesField = methodClass->getInstanceFieldInfo(J_METHOD,
-            "exceptionTypes", "[Ljava/lang/Class;");
+            L"exceptionTypes", L"[Ljava/lang/Class;");
         static auto modifiersField = methodClass->getInstanceFieldInfo(J_METHOD,
-            "modifiers", "I");
+            L"modifiers", L"I");
         static auto signatureField = methodClass->getInstanceFieldInfo(J_METHOD,
-            "signature", "Ljava/lang/String;");
+            L"signature", L"Ljava/lang/String;");
         static auto overrideField = methodClass->getInstanceFieldInfo(J_ACCESSIBLE_OBJECT,
-            "override", "Z");
+            L"override", L"Z");
 
         PANIC("more work to do");
         instanceOop methodOop = methodClass->newInstance();
@@ -113,15 +113,15 @@ namespace kivm {
         auto constructorClass = java::lang::reflect::Constructor::CLASS;
 
         static auto parameterTypesField = constructorClass->getInstanceFieldInfo(J_CTOR,
-            "parameterTypes", "[Ljava/lang/Class;");
+            L"parameterTypes", L"[Ljava/lang/Class;");
         static auto exceptionTypesField = constructorClass->getInstanceFieldInfo(J_CTOR,
-            "exceptionTypes", "[Ljava/lang/Class;");
+            L"exceptionTypes", L"[Ljava/lang/Class;");
         static auto modifiersField = constructorClass->getInstanceFieldInfo(J_CTOR,
-            "modifiers", "I");
+            L"modifiers", L"I");
         static auto signatureField = constructorClass->getInstanceFieldInfo(J_CTOR,
-            "signature", "Ljava/lang/String;");
+            L"signature", L"Ljava/lang/String;");
         static auto overrideField = constructorClass->getInstanceFieldInfo(J_ACCESSIBLE_OBJECT,
-            "override", "Z");
+            L"override", L"Z");
 
         instanceOop methodOop = constructorClass->newInstance();
 

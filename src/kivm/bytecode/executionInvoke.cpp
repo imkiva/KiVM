@@ -16,9 +16,9 @@ namespace kivm {
         auto methodDesc = requireConstant<CONSTANT_Utf8_info>(pool, nameAndTypeInfo->descriptor_index);
 
         PANIC("NoSuchMethodError: %s.%s:%s",
-            className->getConstant().c_str(),
-            methodName->getConstant().c_str(),
-            methodDesc->getConstant().c_str());
+            strings::toStdString(className->getConstant()).c_str(),
+            strings::toStdString(methodName->getConstant()).c_str(),
+            strings::toStdString(methodDesc->getConstant()).c_str());
     }
 
     oop Execution::invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {

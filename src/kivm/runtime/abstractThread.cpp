@@ -42,9 +42,9 @@ namespace kivm {
 
     void AbstractThread::setThreadName(const String &name) {
 #if defined(KIVM_PLATFORM_APPLE)
-        pthread_setname_np(name.c_str());
+        pthread_setname_np(strings::toStdString(name).c_str());
 #elif defined(KIVM_PLATFORM_UNIX)
-        pthread_setname_np(pthread_self(), name.c_str());
+        pthread_setname_np(pthread_self(), strings::toStdString(name).c_str());
 #elif defined(KIVM_PLATFORM_WINDOWS)
         SHOULD_NOT_REACH_HERE();
 #endif

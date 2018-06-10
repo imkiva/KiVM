@@ -19,7 +19,7 @@ namespace kivm {
         auto klass = (InstanceKlass *) cl->loadClass(name);
         if (klass == nullptr) {
             PANIC("java.lang.LinkError: class not found: %s",
-                name.c_str());
+                strings::toStdString(name).c_str());
         }
         Execution::initializeClass(thread, klass);
         return klass;
@@ -31,7 +31,7 @@ namespace kivm {
     }
 
     void JavaMainThread::run() {
-        setThreadName("JavaMainThread");
+        setThreadName(L"JavaMainThread");
 
         // Initialize Java Virtual Machine
         Threads::initializeJVM(this);
@@ -41,16 +41,16 @@ namespace kivm {
 
         auto mainClass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(_mainClassName);
         if (mainClass == nullptr) {
-            PANIC("main class not found: %s", _mainClassName.c_str());
+            PANIC("main class not found: %s", strings::toStdString(_mainClassName).c_str());
         }
 
-        auto mainMethod = mainClass->getStaticMethod("main", "([Ljava/lang/String;)V");
+        auto mainMethod = mainClass->getStaticMethod(L"main", L"([Ljava/lang/String;)V");
         if (mainMethod == nullptr) {
             PANIC("method main(String[]) not found in class %s",
-                _mainClassName.c_str());
+                strings::toStdString(_mainClassName).c_str());
         }
 
-        auto stringArrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()->loadClass("[Ljava/lang/String;");
+        auto stringArrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[Ljava/lang/String;");
         auto argumentArrayOop = stringArrayClass->newInstance((int) _arguments.size());
 
         for (int i = 0; i < argumentArrayOop->getLength(); ++i) {
@@ -95,9 +95,9 @@ namespace kivm {
         // Create the init thread
         instanceOop initThreadOop = threadClass->newInstance();
         // eetop is a pointer to the underlying OS-level native thread instance of the JVM.
-        initThreadOop->setFieldValue(J_THREAD, "eetop", "J",
+        initThreadOop->setFieldValue(J_THREAD, L"eetop", L"J",
             new longOopDesc(thread->getNativeHandler()));
-        initThreadOop->setFieldValue(J_THREAD, "priority", "I",
+        initThreadOop->setFieldValue(J_THREAD, L"priority", L"I",
             new intOopDesc(java::lang::ThreadPriority::NORMAL_PRIORITY));
 
         // JavaMainThread is created with javaThreadObject == nullptr
@@ -109,15 +109,15 @@ namespace kivm {
 
         // Create and construct the system thread group.
         instanceOop systemThreadGroup = threadGroupClass->newInstance();
-        auto tgDefaultCtor = threadGroupClass->getThisClassMethod("<init>", "()V");
+        auto tgDefaultCtor = threadGroupClass->getThisClassMethod(L"<init>", L"()V");
         InvocationContext::invokeWithArgs(thread, tgDefaultCtor, {systemThreadGroup});
 
         // Create the main thread group
         instanceOop mainThreadGroup = threadGroupClass->newInstance();
-        initThreadOop->setFieldValue(J_THREAD, "group", "Ljava/lang/ThreadGroup;", mainThreadGroup);
+        initThreadOop->setFieldValue(J_THREAD, L"group", L"Ljava/lang/ThreadGroup;", mainThreadGroup);
 
         // Load system classes.
-        auto systemClass = (InstanceKlass *) cl->loadClass("java/lang/System");
+        auto systemClass = (InstanceKlass *) cl->loadClass(L"java/lang/System");
         systemClass->setClassState(ClassState::BEING_INITIALIZED);
         use(cl, thread, J_INPUT_STREAM);
         use(cl, thread, J_PRINT_STREAM);
@@ -125,8 +125,8 @@ namespace kivm {
 
         // Construct the main thread group
         // use getThisClassMethod() to get a private method
-        auto threadGroupCtor = threadGroupClass->getThisClassMethod("<init>",
-            "(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
+        auto threadGroupCtor = threadGroupClass->getThisClassMethod(L"<init>",
+            L"(Ljava/lang/Void;Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
         {
             std::list<oop> args;
             args.push_back(mainThreadGroup);
@@ -134,26 +134,26 @@ namespace kivm {
             // so do not use something like {nullptr, ...}
             args.push_back(nullptr);
             args.push_back(systemThreadGroup);
-            args.push_back(java::lang::String::intern("main"));
+            args.push_back(java::lang::String::intern(L"main"));
             InvocationContext::invokeWithArgs(thread, threadGroupCtor, args);
         }
 
 
         // disable sun.security.util.Debug for the following operations
-        auto sunDebugClass = cl->loadClass("sun/security/util/Debug");
+        auto sunDebugClass = cl->loadClass(L"sun/security/util/Debug");
         sunDebugClass->setClassState(ClassState::BEING_INITIALIZED);
 
         // Construct the init thread by attaching the main thread group to it.
-        auto threadCtor = threadClass->getThisClassMethod("<init>",
-            "(Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
+        auto threadCtor = threadClass->getThisClassMethod(L"<init>",
+            L"(Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
         InvocationContext::invokeWithArgs(thread, threadCtor,
-            {initThreadOop, mainThreadGroup, java::lang::String::intern("main")});
+            {initThreadOop, mainThreadGroup, java::lang::String::intern(L"main")});
 
         // TODO: java.nio.charset.Charset.forName() cannot find any charsets
         Threads::hackJavaClasses(cl, thread);
 
         // Initialize system classes.
-        auto initSystemClassesMethod = systemClass->getStaticMethod("initializeSystemClass", "()V");
+        auto initSystemClassesMethod = systemClass->getStaticMethod(L"initializeSystemClass", L"()V");
         InvocationContext::invokeWithArgs(thread, initSystemClassesMethod, {});
 
         // re-enable sun.security.util.Debug
@@ -176,35 +176,35 @@ namespace kivm {
         java::lang::reflect::Constructor::initialize();
         java::lang::reflect::Method::initialize();
 
-        classClass->setStaticFieldValue(J_CLASS, "useCaches", "Z", new intOopDesc(false));
+        classClass->setStaticFieldValue(J_CLASS, L"useCaches", L"Z", new intOopDesc(false));
     }
 
     void Threads::hackJavaClasses(BootstrapClassLoader *cl, JavaMainThread *thread) {
         // hack java.nio.charset.Charset.defaultCharset
         auto charsetClass = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass("java/nio/charset/Charset");
+            ->loadClass(L"java/nio/charset/Charset");
         Execution::initializeClass(thread, charsetClass);
         auto utf8CharsetClass = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass("sun/nio/cs/UTF_8");
+            ->loadClass(L"sun/nio/cs/UTF_8");
         Execution::initializeClass(thread, utf8CharsetClass);
         Global::DEFAULT_UTF8_CHARSET = utf8CharsetClass->newInstance();
         charsetClass->setStaticFieldValue(charsetClass->getName(),
-            "defaultCharset", "Ljava/nio/charset/Charset;",
+            L"defaultCharset", L"Ljava/nio/charset/Charset;",
             Global::DEFAULT_UTF8_CHARSET);
 
         // The extremely powerful magic
         auto encoder = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass("sun/nio/cs/StreamEncoder");
-        auto method = encoder->getStaticMethod("forOutputStreamWriter",
-            "(Ljava/io/OutputStream;Ljava/lang/Object;Ljava/lang/String;)Lsun/nio/cs/StreamEncoder;");
+            ->loadClass(L"sun/nio/cs/StreamEncoder");
+        auto method = encoder->getStaticMethod(L"forOutputStreamWriter",
+            L"(Ljava/io/OutputStream;Ljava/lang/Object;Ljava/lang/String;)Lsun/nio/cs/StreamEncoder;");
         method->hackAsNative();
 
         // TODO: support System.load() and System.loadLibrary()
         auto systemClass = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass("java/lang/System");
-        auto loadMethod = systemClass->getStaticMethod("load", "(Ljava/lang/String;)V");
+            ->loadClass(L"java/lang/System");
+        auto loadMethod = systemClass->getStaticMethod(L"load", L"(Ljava/lang/String;)V");
         loadMethod->hackAsNative();
-        auto loadLibraryMethod = systemClass->getStaticMethod("loadLibrary", "(Ljava/lang/String;)V");
+        auto loadLibraryMethod = systemClass->getStaticMethod(L"loadLibrary", L"(Ljava/lang/String;)V");
         loadLibraryMethod->hackAsNative();
     }
 }

@@ -7,14 +7,14 @@
 
 namespace kivm {
     mirrorOop mirrorKlass::newMirror(Klass *target, mirrorOop loader) {
-        if (target != nullptr && target->getName() == "java/lang/Exception") {
-            BootstrapClassLoader::get()->loadClass("java/lang/Class");
+        if (target != nullptr && target->getName() == L"java/lang/Exception") {
+            BootstrapClassLoader::get()->loadClass(L"java/lang/Class");
         }
         auto mirror = new mirrorOopDesc(target);
         if (loader != nullptr) {
-            mirror->setFieldValue("java/lang/Class",
-                                  "classLoader",
-                                  "Ljava/lang/ClassLoader;",
+            mirror->setFieldValue(L"java/lang/Class",
+                                  L"classLoader",
+                                  L"Ljava/lang/ClassLoader;",
                                   loader);
         }
 

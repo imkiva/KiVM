@@ -10,15 +10,15 @@
 namespace kivm {
 
     namespace strings {
-        using String  = std::string;
+        using String  = std::wstring;
 
         String fromBytes(u1 *bytes, size_t length);
 
-//        String fromStdString(const std::string &str);
+        String fromStdString(const std::string &str);
 
         String replaceAll(const String &string, const String &oldValue, const String &newValue);
 
-//        std::string toStdString(const String &str);
+        std::string toStdString(const String &str);
 
         std::vector<String> split(const String &string, const String &delimiter);
     }

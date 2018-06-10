@@ -35,8 +35,8 @@ namespace kivm {
     }
 
     String Field::makeIdentity(InstanceKlass *belongTo, const Field *f) {
-        std::stringstream ss;
-        ss << belongTo->getName() << " " << f->getName() << " " << f->getDescriptor();
+        std::wstringstream ss;
+        ss << belongTo->getName() << L" " << f->getName() << L" " << f->getDescriptor();
         return ss.str();
     }
 
@@ -89,36 +89,36 @@ namespace kivm {
 
     void Field::postLinkValueType() {
         switch (_descriptor[0]) {
-            case 'Z':
+            case L'Z':
                 _valueType = ValueType::BOOLEAN;
                 break;
-            case 'B':
+            case L'B':
                 _valueType = ValueType::BYTE;
                 break;
-            case 'C':
+            case L'C':
                 _valueType = ValueType::CHAR;
                 break;
-            case 'S':
+            case L'S':
                 _valueType = ValueType::SHORT;
                 break;
-            case 'I':
+            case L'I':
                 _valueType = ValueType::INT;
                 break;
-            case 'F':
+            case L'F':
                 _valueType = ValueType::FLOAT;
                 break;
-            case 'J':
+            case L'J':
                 _valueType = ValueType::LONG;
                 break;
-            case 'D':
+            case L'D':
                 _valueType = ValueType::DOUBLE;
                 break;
-            case 'L': {
+            case L'L': {
                 _valueType = ValueType::OBJECT;
                 _valueClassTypeName = _descriptor.substr(1, _descriptor.size() - 2);
                 break;
             }
-            case '[': {
+            case L'[': {
                 _valueType = ValueType::ARRAY;
                 _valueClassTypeName = _descriptor;
                 break;

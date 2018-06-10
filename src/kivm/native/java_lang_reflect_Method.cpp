@@ -15,11 +15,11 @@ namespace kivm {
 
                 void Method::initialize() {
                     CLASS = (InstanceKlass *) BootstrapClassLoader::get()
-                        ->loadClass("java/lang/reflect/Method");
+                        ->loadClass(L"java/lang/reflect/Method");
                     FIELD_CLAZZ = CLASS->getInstanceFieldInfo(J_METHOD,
-                        "clazz", "Ljava/lang/Class;");
+                        L"clazz", L"Ljava/lang/Class;");
                     FIELD_SLOT = CLASS->getInstanceFieldInfo(J_METHOD,
-                        "slot", "I");
+                        L"slot", L"I");
                 }
             }
         }

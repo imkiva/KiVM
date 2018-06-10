@@ -45,7 +45,7 @@ namespace kivm {
 
     void InstanceKlass::initClass() {
         D("%s: initializing static fields",
-            getName().c_str());
+            strings::toStdString(getName()).c_str());
 
         for (auto &e : this->_staticFields) {
             auto field = e.second->_field;
@@ -62,7 +62,7 @@ namespace kivm {
             }
         }
         D("%s: class inited",
-            getName().c_str());
+            strings::toStdString(getName()).c_str());
     }
 
     void InstanceKlass::linkClass() {
@@ -87,13 +87,13 @@ namespace kivm {
 
         this->setClassState(ClassState::LINKED);
         D("%s: class linked",
-            getName().c_str());
+            strings::toStdString(getName()).c_str());
     }
 
     void InstanceKlass::linkSuperClass(cp_info **pool) {
         if (_classFile->super_class == 0) {
             // java.lang.Object
-            if (getName() != "java/lang/Object") {
+            if (getName() != L"java/lang/Object") {
                 // TODO: throw VerifyError
                 this->setClassState(ClassState::INITIALIZATION_ERROR);
                 assert(false);
@@ -164,7 +164,7 @@ namespace kivm {
         }
 
         D("%s: Extended instance field count: %d",
-            getName().c_str(),
+            strings::toStdString(getName()).c_str(),
             instanceFieldIndex);
 
         // link our fields
@@ -176,11 +176,11 @@ namespace kivm {
 
             bool isStatic = field->isStatic();
             D("%s: New %s field (final: %s): #%-d %s",
-                getName().c_str(),
+                strings::toStdString(getName()).c_str(),
                 isStatic ? "static" : "instance",
                 field->isFinal() ? "true" : "false",
                 isStatic ? staticFieldIndex : instanceFieldIndex,
-                Field::makeIdentity(this, field).c_str());
+                strings::toStdString(Field::makeIdentity(this, field)).c_str());
 
             if (isStatic) {
                 _staticFields.insert(make_pair(Field::makeIdentity(this, field),
@@ -240,10 +240,10 @@ namespace kivm {
     }
 
 #define KEY_MAKER(CLASS, NAME, DESC) \
-        ((CLASS) + " " + (NAME) + " " + (DESC))
+        ((CLASS) + L" " + (NAME) + L" " + (DESC))
 
 #define ND_KEY_MAKER(NAME, DESC) \
-        ((NAME) + " " + (DESC))
+        ((NAME) + L" " + (DESC))
 
 #define RETURN_IF(ITER, COLLECTION, KEY, SUCCESS, FAIL) \
     const auto &ITER = (COLLECTION).find(KEY); \
@@ -321,13 +321,13 @@ namespace kivm {
         }
 
         D("Set field %s::%s(%s) (slot: %d, max: %zd) to %p in %s",
-            fieldID->_field->getClass()->getName().c_str(),
-            fieldID->_field->getName().c_str(),
-            fieldID->_field->getDescriptor().c_str(),
+            strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
+            strings::toStdString(fieldID->_field->getName()).c_str(),
+            strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
             fieldID->_offset,
             this->_staticFieldValues.size(),
             value,
-            this->getName().c_str());
+            strings::toStdString(this->getName()).c_str());
         this->_staticFieldValues[fieldID->_offset] = value;
     }
 
@@ -364,9 +364,9 @@ namespace kivm {
         }
 
         D("Set field %s::%s(%s) to %p",
-            fieldID->_field->getClass()->getName().c_str(),
-            fieldID->_field->getName().c_str(),
-            fieldID->_field->getDescriptor().c_str(),
+            strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
+            strings::toStdString(fieldID->_field->getName()).c_str(),
+            strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
             value);
         receiver->_instanceFieldValues[fieldID->_offset] = value;
     }

@@ -28,7 +28,7 @@ JAVA_NATIVE jint Java_java_lang_Object_hashCode(JNIEnv *env, jobject javaObject)
 
 JAVA_NATIVE jobject Java_java_lang_Object_clone(JNIEnv *env, jobject javaObject) {
     static auto java_lang_Cloneable = (InstanceKlass *) BootstrapClassLoader::get()
-        ->loadClass("java/lang/Cloneable");
+        ->loadClass(L"java/lang/Cloneable");
     auto thisObject = Resolver::javaOop(javaObject);
 
     if (thisObject->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {

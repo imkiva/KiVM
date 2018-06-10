@@ -90,15 +90,15 @@ namespace kivm {
             return String(buffer.begin(), buffer.end());
         }
 
-//        String fromStdString(const std::string &str) {
-//            std::wstring_convert<std::codecvt_utf8<wchar_t >> convert;
-//            return convert.from_bytes(str);
-//        }
-//
-//        std::string toStdString(const String &str) {
-//            std::wstring_convert<std::codecvt_utf8<wchar_t>> convert;
-//            return convert.to_bytes(str);
-//        }
+        String fromStdString(const std::string &str) {
+            std::wstring_convert<std::codecvt_utf8<wchar_t >> convert;
+            return convert.from_bytes(str);
+        }
+
+        std::string toStdString(const String &str) {
+            std::wstring_convert<std::codecvt_utf8<wchar_t>> convert;
+            return convert.to_bytes(str);
+        }
 
         String replaceAll(const String &string, const String &oldValue, const String &newValue) {
             auto oldSize = oldValue.size();
@@ -122,7 +122,7 @@ namespace kivm {
                 int flag = 0;
                 while (i != string.size() && flag == 0) {
                     flag = 1;
-                    for (char x : delimiter) {
+                    for (wchar_t x : delimiter) {
                         if (string[i] == x) {
                             ++i;
                             flag = 0;
@@ -135,7 +135,7 @@ namespace kivm {
                 flag = 0;
                 String::size_type j = i;
                 while (j != string.size() && flag == 0) {
-                    for (char x : delimiter) {
+                    for (wchar_t x : delimiter) {
                         if (string[j] == x) {
                             flag = 1;
                             break;

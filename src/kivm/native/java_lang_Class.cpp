@@ -48,30 +48,30 @@ namespace kivm {
             void Class::initialize() {
                 D("native: Class::initialize()");
                 auto &m = getDelayedMirrors();
-                m.push("I");
-                m.push("Z");
-                m.push("B");
-                m.push("C");
-                m.push("S");
-                m.push("F");
-                m.push("J");
-                m.push("D");
-                m.push("V");
-                m.push("[I");
-                m.push("[Z");
-                m.push("[B");
-                m.push("[C");
-                m.push("[S");
-                m.push("[F");
-                m.push("[J");
-                m.push("[D");
+                m.push(L"I");
+                m.push(L"Z");
+                m.push(L"B");
+                m.push(L"C");
+                m.push(L"S");
+                m.push(L"F");
+                m.push(L"J");
+                m.push(L"D");
+                m.push(L"V");
+                m.push(L"[I");
+                m.push(L"[Z");
+                m.push(L"[B");
+                m.push(L"[C");
+                m.push(L"[S");
+                m.push(L"[F");
+                m.push(L"[J");
+                m.push(L"[D");
                 getMirrorState() = ClassMirrorState::NOT_FIXED;
             }
 
             void Class::mirrorCoreAndDelayedClasses() {
                 D("native: Class::mirrorCoreAndDelayedClasses()");
                 assert(getMirrorState() != ClassMirrorState::FIXED);
-                assert(SystemDictionary::get()->find("java/lang/Class") != nullptr);
+                assert(SystemDictionary::get()->find(L"java/lang/Class") != nullptr);
 
                 auto &M = getDelayedMirrors();
                 long size = M.size();
@@ -80,8 +80,8 @@ namespace kivm {
                     M.pop();
 
                     bool isPrimitiveArray = false;
-                    char primitiveType = name[0];
-                    if (name.size() == 2 && name[0] == '[') {
+                    wchar_t primitiveType = name[0];
+                    if (name.size() == 2 && name[0] == L'[') {
                         isPrimitiveArray = true;
                         primitiveType = name[1];
                     }
@@ -94,27 +94,27 @@ namespace kivm {
                         mirrorOop mirror = mirrorKlass::newMirror(klass, nullptr);
                         klass->setJavaMirror(mirror);
                         D("native: Class::mirrorCoreAndDelayedClasses: mirroring %s",
-                            klass->getName().c_str());
+                            strings::toStdString(klass->getName()).c_str());
 
                     } else {
-                        if (primitiveType == 'V' && isPrimitiveArray) {
+                        if (primitiveType == L'V' && isPrimitiveArray) {
                             PANIC("Cannot make mirror for void array.");
                         }
 
                         switch (primitiveType) {
-                            case 'I':
-                            case 'Z':
-                            case 'B':
-                            case 'C':
-                            case 'S':
-                            case 'F':
-                            case 'J':
-                            case 'D':
-                            case 'V': {
+                            case L'I':
+                            case L'Z':
+                            case L'B':
+                            case L'C':
+                            case L'S':
+                            case L'F':
+                            case L'J':
+                            case L'D':
+                            case L'V': {
                                 mirrorOop mirror = mirrorKlass::newMirror(nullptr, nullptr);
                                 getPrimitiveTypeMirrors().insert(std::make_pair(name, mirror));
                                 D("native: Class::mirrorCoreAndDelayedClasses: mirroring primitive type %s",
-                                    name.c_str());
+                                    strings::toStdString(name).c_str());
 
                                 if (isPrimitiveArray) {
                                     // Only arrays need them.
@@ -208,36 +208,36 @@ JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass j
     }
 
     const String &signature = java::lang::String::toNativeString(stringInstance);
-    if (signature == "byte") {
-        return java::lang::Class::findPrimitiveTypeMirror("B");
+    if (signature == L"byte") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"B");
 
-    } else if (signature == "boolean") {
-        return java::lang::Class::findPrimitiveTypeMirror("Z");
+    } else if (signature == L"boolean") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"Z");
 
-    } else if (signature == "char") {
-        return java::lang::Class::findPrimitiveTypeMirror("C");
+    } else if (signature == L"char") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"C");
 
-    } else if (signature == "short") {
-        return java::lang::Class::findPrimitiveTypeMirror("S");
+    } else if (signature == L"short") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"S");
 
-    } else if (signature == "int") {
-        return java::lang::Class::findPrimitiveTypeMirror("I");
+    } else if (signature == L"int") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"I");
 
-    } else if (signature == "float") {
-        return java::lang::Class::findPrimitiveTypeMirror("F");
+    } else if (signature == L"float") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"F");
 
-    } else if (signature == "long") {
-        return java::lang::Class::findPrimitiveTypeMirror("J");
+    } else if (signature == L"long") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"J");
 
-    } else if (signature == "double") {
-        return java::lang::Class::findPrimitiveTypeMirror("D");
+    } else if (signature == L"double") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"D");
 
-    } else if (signature == "void") {
-        return java::lang::Class::findPrimitiveTypeMirror("V");
+    } else if (signature == L"void") {
+        return java::lang::Class::findPrimitiveTypeMirror(L"V");
     }
 
     PANIC("Class.getPrimitiveClass(String): unknown primitive type: %s",
-        signature.c_str());
+        strings::toStdString(signature).c_str());
 }
 
 JAVA_NATIVE jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, jclass java_lang_Class) {
@@ -248,7 +248,7 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env,
                                                                  jobject java_lang_Class_mirror,
                                                                  jboolean publicOnly) {
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
-        ->loadClass("[Ljava/lang/reflect/Field;");
+        ->loadClass(L"[Ljava/lang/reflect/Field;");
 
     std::vector<instanceOop> fields;
     auto classMirror = Resolver::mirror(java_lang_Class_mirror);
@@ -291,7 +291,7 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredMethods0(JNIEnv *env,
                                                                   jboolean publicOnly) {
     // TODO: reflection support
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
-        ->loadClass("[Ljava/lang/reflect/Method;");
+        ->loadClass(L"[Ljava/lang/reflect/Method;");
 
     std::vector<instanceOop> methods;
     auto classMirror = Resolver::mirror(java_lang_Class_mirror);
@@ -319,7 +319,7 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *e
                                                                        jboolean publicOnly) {
     // TODO: reflection support
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
-        ->loadClass("[Ljava/lang/reflect/Constructor;");
+        ->loadClass(L"[Ljava/lang/reflect/Constructor;");
 
     std::vector<instanceOop> ctors;
     auto classMirror = Resolver::mirror(java_lang_Class_mirror);
@@ -333,7 +333,7 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *e
 
     for (const auto &e : instanceClass->getDeclaredMethods()) {
         auto methodId = e.second;
-        if (methodId->_method->getName() == "<init>") {
+        if (methodId->_method->getName() == L"<init>") {
             ctors.push_back(newJavaConstructorObject(e.second));
         }
     }
@@ -408,14 +408,15 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
 
     auto nameOop = Resolver::instance(javaName);
     if (nameOop == nullptr) {
-        thread->throwException(Global::java_lang_NullPointerException);
+        thread->throwException(Global::java_lang_NullPointerException,
+            L"name cannot be null");
         return nullptr;
     }
 
     const String &className = java::lang::String::toNativeString(nameOop);
     const String &fixedName = strings::replaceAll(className, Global::DOT, Global::SLASH);
 
-    D("Class.forName0(): %s", fixedName.c_str());
+    D("Class.forName0(): %s", strings::toStdString(fixedName).c_str());
 
     auto klass = BootstrapClassLoader::get()->loadClass(fixedName);
     if (klass == nullptr || klass->getClassType() != ClassType::INSTANCE_CLASS) {
