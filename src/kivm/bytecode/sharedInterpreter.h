@@ -46,10 +46,10 @@
 #define IF_ICMP_GOTO(occupied, op) __IF_CMP_GOTO_FACTORY(popInt, occupied, op)
 #define IF_ACMP_GOTO(occupied, op) __IF_CMP_GOTO_FACTORY(popReference, occupied, op)
 
-#define LOAD_ARRAY_ELEMENT(oopType, varName, pushFunc, exp) \
+#define LOAD_ARRAY_ELEMENT(oopType, varName, resolveFunc, pushFunc, exp) \
     int index = stack.popInt(); \
     jobject ref = stack.popReference(); \
-    auto array = Resolver::typeArray(ref); \
+    auto array = Resolver::resolveFunc(ref); \
     if (array == nullptr) { \
         thread->throwException(Global::java_lang_NullPointerException); \
         stack.pushReference(thread->_exceptionOop); \

@@ -308,28 +308,28 @@ namespace kivm {
                 OPCODE(CALOAD)
                 OPCODE(BALOAD)
                 {
-                    LOAD_ARRAY_ELEMENT(intOop, element, pushInt, element->getValue());
+                    LOAD_ARRAY_ELEMENT(intOop, element, typeArray, pushInt, element->getValue());
                     NEXT();
                 }
 
                 OPCODE(LALOAD)
                 {
-                    LOAD_ARRAY_ELEMENT(longOop, element, pushLong, element->getValue());
+                    LOAD_ARRAY_ELEMENT(longOop, element, typeArray, pushLong, element->getValue());
                     NEXT();
                 }
                 OPCODE(FALOAD)
                 {
-                    LOAD_ARRAY_ELEMENT(floatOop, element, pushFloat, element->getValue());
+                    LOAD_ARRAY_ELEMENT(floatOop, element, typeArray, pushFloat, element->getValue());
                     NEXT();
                 }
                 OPCODE(DALOAD)
                 {
-                    LOAD_ARRAY_ELEMENT(doubleOop, element, pushDouble, element->getValue());
+                    LOAD_ARRAY_ELEMENT(doubleOop, element, typeArray, pushDouble, element->getValue());
                     NEXT();
                 }
                 OPCODE(AALOAD)
                 {
-                    LOAD_ARRAY_ELEMENT(oop, element, pushReference, element);
+                    LOAD_ARRAY_ELEMENT(oop, element, objectArray, pushReference, element);
                     NEXT();
                 }
                 OPCODE(ISTORE)
