@@ -23,16 +23,15 @@ namespace kivm {
                 static Lock internLock;
                 LockGuard lockGuard(internLock);
 
-                instanceOop javaString = String::from(string);
-                // Find cached string oop
-                const auto &iter = _pool.find(javaString);
+                int hash = java::lang::StringHash()(string);
+                const auto &iter = _pool.find(hash);
                 if (iter != _pool.end()) {
-                    return *iter;
+                    return iter->second;
                 }
 
                 // No cache, create new.
-                _pool.insert(javaString);
-//                printf("intern string pool size: %zd\n", _pool.size());
+                instanceOop javaString = String::from(string);
+                _pool.insert(std::make_pair(hash, javaString));
                 return javaString;
             }
 

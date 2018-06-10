@@ -27,7 +27,7 @@ namespace kivm {
 
             private:
                 // hash -> string
-                spp::sparse_hash_set<instanceOop, StringHash, StringEqualTo> _pool;
+                spp::sparse_hash_map<int, instanceOop> _pool;
 
             public:
                 static InternStringPool *getGlobal();
