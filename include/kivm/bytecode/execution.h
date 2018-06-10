@@ -66,16 +66,6 @@ namespace kivm {
                              instanceOop receiver, Stack &stack,
                              int constantIndex);
 
-        static void loadIntArrayElement(Stack &stack);
-
-        static void loadFloatArrayElement(Stack &stack);
-
-        static void loadDoubleArrayElement(Stack &stack);
-
-        static void loadLongArrayElement(Stack &stack);
-
-        static void loadObjectArrayElement(Stack &stack);
-
         static void storeIntArrayElement(Stack &stack);
 
         static void storeFloatArrayElement(Stack &stack);
