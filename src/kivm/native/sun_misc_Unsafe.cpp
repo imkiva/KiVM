@@ -81,14 +81,14 @@ Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject 
     auto fieldOop = Resolver::instance(javaField);
     instanceOop p = nullptr;
 
-    if (!fieldOop->getFieldValue(J_FIELD, L"name", L"Ljava/lang/String;", (oop *) &p)) {
+    if (!fieldOop->getFieldValue(J_FIELD, "name", "Ljava/lang/String;", (oop *) &p)) {
         SHOULD_NOT_REACH_HERE();
     }
 
     String fieldName = java::lang::String::toNativeString(p);
     String fieldDesc;
 
-    if (!fieldOop->getFieldValue(J_FIELD, L"type", L"Ljava/lang/Class;", (oop *) &p)) {
+    if (!fieldOop->getFieldValue(J_FIELD, "type", "Ljava/lang/Class;", (oop *) &p)) {
         SHOULD_NOT_REACH_HERE();
     }
 
@@ -100,7 +100,7 @@ Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject 
         auto target = fieldTypeMirror->getMirrorTarget();
         switch (target->getClassType()) {
             case ClassType::INSTANCE_CLASS:
-                fieldDesc = L"L" + target->getName() + L";";
+                fieldDesc = "L" + target->getName() + ";";
                 break;
             case ClassType::TYPE_ARRAY_CLASS:
             case ClassType::OBJECT_ARRAY_CLASS:
@@ -109,7 +109,7 @@ Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject 
         }
     }
 
-    if (!fieldOop->getFieldValue(J_FIELD, L"clazz", L"Ljava/lang/Class;", (oop *) &p)) {
+    if (!fieldOop->getFieldValue(J_FIELD, "clazz", "Ljava/lang/Class;", (oop *) &p)) {
         SHOULD_NOT_REACH_HERE();
     }
 

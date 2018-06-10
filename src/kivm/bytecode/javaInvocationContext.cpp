@@ -12,9 +12,9 @@ namespace kivm {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypes();
 
         D("javaInvocationContext: %s.%s:%s, static: %s, native: %s, nargs: %zd",
-            strings::toStdString(_instanceKlass->getName()).c_str(),
-            strings::toStdString(_method->getName()).c_str(),
-            strings::toStdString(_method->getDescriptor()).c_str(),
+            _instanceKlass->getName().c_str(),
+            _method->getName().c_str(),
+            _method->getDescriptor().c_str(),
             hasThis ? "false" : "true",
             _method->isNative() ? "true" : "false",
             descriptorMap.size());

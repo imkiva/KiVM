@@ -34,7 +34,7 @@ JAVA_NATIVE void Java_java_lang_Thread_setPriority0(JNIEnv *env, jobject threadO
 JAVA_NATIVE jboolean Java_java_lang_Thread_isAlive(JNIEnv *env, jobject threadObject) {
     auto threadOop = Resolver::instance(threadObject);
     longOop eetopOop = nullptr;
-    if (!threadOop->getFieldValue(J_THREAD, L"eetop", L"J", (oop *) &eetopOop)) {
+    if (!threadOop->getFieldValue(J_THREAD, "eetop", "J", (oop *) &eetopOop)) {
         SHOULD_NOT_REACH_HERE();
     }
 
@@ -55,7 +55,7 @@ JAVA_NATIVE jboolean Java_java_lang_Thread_isAlive(JNIEnv *env, jobject threadOb
 
 JAVA_NATIVE void Java_java_lang_Thread_start0(JNIEnv *env, jobject threadObject) {
     auto threadOop = Resolver::instance(threadObject);
-    if (threadOop->getClass()->getName() == L"java/lang/ref/Reference$ReferenceHandler") {
+    if (threadOop->getClass()->getName() == "java/lang/ref/Reference$ReferenceHandler") {
         return;
     }
 

@@ -26,7 +26,7 @@ JAVA_NATIVE jobject Java_sun_reflect_NativeConstructorAccessorImpl_newInstance0(
     auto instance = mirrorTarget->newInstance();
     auto ctorMethod = mirrorTarget->getDeclaredMethodByOffset(slot);
 
-    if (ctorMethod->getName() != L"<init>") {
+    if (ctorMethod->getName() != "<init>") {
         SHOULD_NOT_REACH_HERE();
     }
 

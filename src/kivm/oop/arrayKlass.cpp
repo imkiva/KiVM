@@ -20,7 +20,7 @@ namespace kivm {
 
     void ArrayKlass::linkClass() {
         this->setSuperClass((InstanceKlass *) BootstrapClassLoader::requireClass(
-            BootstrapClassLoader::get(), L"java/lang/Object"
+            BootstrapClassLoader::get(), "java/lang/Object"
         ));
         this->setClassState(ClassState::LINKED);
     }
@@ -34,9 +34,9 @@ namespace kivm {
         : ArrayKlass(classLoader, javaLoader, dimension, ClassType::TYPE_ARRAY_CLASS),
           _componentType(componentType),
           _downDimensionType(nullptr) {
-        std::wstringstream ss;
+        std::stringstream ss;
         for (int i = 0; i < dimension; ++i) {
-            ss << L"[";
+            ss << "[";
         }
         ss << valueTypeToPrimitiveType(componentType);
         this->setName(ss.str());
@@ -76,11 +76,11 @@ namespace kivm {
         : ArrayKlass(classLoader, javaLoader, dimension, ClassType::OBJECT_ARRAY_CLASS),
           _componentType(componentType),
           _downDimensionType(nullptr) {
-        std::wstringstream ss;
+        std::stringstream ss;
         for (int i = 0; i < dimension; ++i) {
-            ss << L"[";
+            ss << "[";
         }
-        ss << L"L" << componentType->getName() << L";";
+        ss << "L" << componentType->getName() << ";";
         this->setName(ss.str());
     }
 

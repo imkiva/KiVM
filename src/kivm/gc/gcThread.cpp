@@ -16,7 +16,7 @@ namespace kivm {
     }
 
     void GCThread::run() {
-        setThreadName(L"GCThread");
+        setThreadName("GCThread");
 
         while (getThreadState() != ThreadState::DIED) {
             // Wait until GC is required

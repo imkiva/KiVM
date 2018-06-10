@@ -40,7 +40,7 @@ namespace kivm {
                 oop hashOop = nullptr;
 
                 auto klass = (InstanceKlass *) string->getClass();
-                FieldID *hashFieldId = klass->getInstanceFieldInfo(J_STRING, L"hash", L"I");
+                FieldID *hashFieldId = klass->getInstanceFieldInfo(J_STRING, "hash", "I");
                 if (string->getFieldValue(hashFieldId, &hashOop)) {
                     int cachedHash = ((intOop) hashOop)->getValue();
                     if (cachedHash != 0) {
@@ -50,7 +50,7 @@ namespace kivm {
 
                 // get string's content which is typed `TypeArrayOop` and calculate hash value.
                 typeArrayOop valueOop = nullptr;
-                if (string->getFieldValue(J_STRING, L"value", L"[C", (oop *) &valueOop)) {
+                if (string->getFieldValue(J_STRING, "value", "[C", (oop *) &valueOop)) {
                     int length = valueOop->getLength();
                     int hash = 0;
                     for (int i = 0; i < length; i++) {
@@ -66,7 +66,7 @@ namespace kivm {
 
             int StringHash::operator()(const kivm::String &string) const noexcept {
                 int hash = 0;
-                for (wchar_t ch : string) {
+                for (char ch : string) {
                     hash = 31 * hash + (unsigned short) ch;
                 }
                 return hash;
@@ -81,7 +81,7 @@ namespace kivm {
                 }
 
                 auto klass = (InstanceKlass *) lhs->getClass();
-                FieldID *valueFieldId = klass->getInstanceFieldInfo(J_STRING, L"value", L"[C");
+                FieldID *valueFieldId = klass->getInstanceFieldInfo(J_STRING, "value", "[C");
                 typeArrayOop lhsValue = nullptr;
                 typeArrayOop rhsValue = nullptr;
                 if (!lhs->getFieldValue(valueFieldId, (oop *) &lhsValue)
@@ -106,7 +106,7 @@ namespace kivm {
             }
 
             instanceOop String::from(const kivm::String &string) {
-                auto *charArrayKlass = (TypeArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[C");
+                auto *charArrayKlass = (TypeArrayKlass *) BootstrapClassLoader::get()->loadClass("[C");
                 auto *stringKlass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(J_STRING);
 
                 typeArrayOop chars = charArrayKlass->newInstance((int) string.size());
@@ -115,18 +115,18 @@ namespace kivm {
                 }
 
                 instanceOop javaString = stringKlass->newInstance();
-                javaString->setFieldValue(J_STRING, L"value", L"[C", chars);
+                javaString->setFieldValue(J_STRING, "value", "[C", chars);
                 return javaString;
             }
 
             kivm::String String::toNativeString(instanceOop stringOop) {
                 typeArrayOop valueOop = nullptr;
-                std::wstringstream builder;
-                if (stringOop->getFieldValue(J_STRING, L"value", L"[C", (oop *) &valueOop)) {
+                std::stringstream builder;
+                if (stringOop->getFieldValue(J_STRING, "value", "[C", (oop *) &valueOop)) {
                     int length = valueOop->getLength();
                     for (int i = 0; i < length; i++) {
                         auto charElement = (intOop) valueOop->getElementAt(i);
-                        builder << (wchar_t) charElement->getValue();
+                        builder << (char) charElement->getValue();
                     }
                 }
                 return builder.str();

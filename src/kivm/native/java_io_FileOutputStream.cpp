@@ -20,11 +20,11 @@ JAVA_NATIVE void Java_java_io_FileOutputStream_initIDs(JNIEnv *env, jclass java_
 JAVA_NATIVE void Java_java_io_FileOutputStream_writeBytes(JNIEnv *env, jobject javaOutputStream,
                                                           jbyteArray b, jint off, jint len, jboolean append) {
     static auto CLASS = (InstanceKlass *) BootstrapClassLoader::get()
-        ->loadClass(L"java/io/FileOutputStream");
+        ->loadClass("java/io/FileOutputStream");
     static auto FD_CLASS = (InstanceKlass *) BootstrapClassLoader::get()
-        ->loadClass(L"java/io/FileDescriptor");
-    static auto FD_FIELD = CLASS->getInstanceFieldInfo(CLASS->getName(), L"fd", L"Ljava/io/FileDescriptor;");
-    static auto FD_INT_FIELD = FD_CLASS->getInstanceFieldInfo(FD_CLASS->getName(), L"fd", L"I");
+        ->loadClass("java/io/FileDescriptor");
+    static auto FD_FIELD = CLASS->getInstanceFieldInfo(CLASS->getName(), "fd", "Ljava/io/FileDescriptor;");
+    static auto FD_INT_FIELD = FD_CLASS->getInstanceFieldInfo(FD_CLASS->getName(), "fd", "I");
 
     auto byteArray = Resolver::typeArray(b);
     if (byteArray == nullptr) {

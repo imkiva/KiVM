@@ -18,11 +18,11 @@ namespace kivm {
     void ClassPathManager::initialize() {
         ClassPathManager *cpm = ClassPathManager::get();
 
-        const String &classPathEnv = strings::fromStdString(getenv("CLASSPATH"));
+        const String &classPathEnv = String(getenv("CLASSPATH"));
         const auto &classPathArray = strings::split(classPathEnv, Global::PATH_DELIMITER);
         for (const auto &classPathEntry : classPathArray) {
             D("ClassPathManager: adding classpath: %s",
-              strings::toStdString(classPathEntry).c_str());
+                classPathEntry.c_str());
             cpm->addClassPath(classPathEntry);
         }
     }
@@ -60,7 +60,7 @@ namespace kivm {
 
         while (it != _runtimeClassPath.end()) {
             const ClassPathEntry &entry = *it++;
-            std::wstringstream filePathBuilder;
+            std::stringstream filePathBuilder;
             tempPath.clear();
 
             if (entry._source == ClassSource::DIR) {
@@ -88,7 +88,7 @@ namespace kivm {
             } else if (entry._source == ClassSource::JAR) {
 #ifdef KIVM_JAR_CLASS_LOADING
                 auto zip = (ZipArchive *) entry._cookie;
-                const auto &zipEntry = zip->getEntry(strings::toStdString(tempPath), false);
+                const auto &zipEntry = zip->getEntry(tempPath, false);
 
                 if (!zipEntry.isNull() && zipEntry.isFile()) {
                     buffer = (u1 *) zipEntry.readAsBinary();
@@ -105,8 +105,8 @@ namespace kivm {
 
         if (classSource != ClassSource::NOT_FOUND) {
             D("ClassPathManager: found class %s in file: %s",
-              strings::toStdString(className).c_str(),
-              strings::toStdString(classFile).c_str());
+                className.c_str(),
+                classFile.c_str());
         }
 
         return ClassSearchResult(classFile, fd, classSource, buffer, bufferSize);
@@ -132,7 +132,7 @@ namespace kivm {
         }
 
         D("ClassPathManager: ignoring unrecognized classpath: %s",
-          strings::toStdString(path).c_str());
+            path.c_str());
     }
 
     ClassSearchResult::ClassSearchResult(const String &file, int fd, ClassSource source,

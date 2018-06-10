@@ -13,20 +13,20 @@
 #include <kivm/bytecode/invocationContext.h>
 
 #if defined(KIVM_PLATFORM_UNIX) || defined(KIVM_PLATFORM_APPLE)
-#   define PATH_SEPARATOR_CHAR L"/"
-#   define PATH_DELIMITER_CHAR L":"
+#   define PATH_SEPARATOR_CHAR "/"
+#   define PATH_DELIMITER_CHAR ":"
 #elif defined(KIVM_PLATFORM_WINDOWS)
-#   define PATH_SEPARATOR_CHAR L"\\"
-#   define PATH_DELIMITER_CHAR L";"
+#   define PATH_SEPARATOR_CHAR "\\"
+#   define PATH_DELIMITER_CHAR ";"
 #endif
 
 namespace kivm {
-    String Global::SLASH(L"/"); // NOLINT
-    String Global::DOT(L"."); // NOLINT
-    String Global::UNDERLINE(L"_"); // NOLINT
+    String Global::SLASH("/"); // NOLINT
+    String Global::DOT("."); // NOLINT
+    String Global::UNDERLINE("_"); // NOLINT
     String Global::PATH_SEPARATOR(PATH_SEPARATOR_CHAR); // NOLINT
     String Global::PATH_DELIMITER(PATH_DELIMITER_CHAR); // NOLINT
-    String Global::CLASS_EXTENSION(L"class"); // NOLINT
+    String Global::CLASS_EXTENSION("class"); // NOLINT
     InstanceKlass *Global::java_lang_Object = nullptr;
     InstanceKlass *Global::java_lang_Cloneable = nullptr;
     InstanceKlass *Global::java_lang_Serializable = nullptr;
@@ -382,8 +382,8 @@ namespace kivm {
         }
 
         auto threadClass = javaThreadOop->getInstanceClass();
-        auto dispatcher = threadClass->getThisClassMethod(L"dispatchUncaughtException",
-            L"(Ljava/lang/Throwable;)V");
+        auto dispatcher = threadClass->getThisClassMethod("dispatchUncaughtException",
+            "(Ljava/lang/Throwable;)V");
         if (dispatcher == nullptr) {
             KiVM::uncaughtExceptionJVMInternal(ex);
             return;
@@ -400,25 +400,25 @@ namespace kivm {
     void KiVM::uncaughtExceptionJVMInternal(instanceOop exceptionOop) {
         oop messageOop = nullptr;
 
-        if (exceptionOop->getFieldValue(L"java/lang/Throwable", L"detailMessage", L"Ljava/lang/String;", &messageOop)) {
+        if (exceptionOop->getFieldValue("java/lang/Throwable", "detailMessage", "Ljava/lang/String;", &messageOop)) {
             if (messageOop == nullptr) {
                 PANIC("(JVM) UncaughtException: %s",
-                    strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str());
+                    exceptionOop->getInstanceClass()->getName().c_str());
 
             } else if (messageOop->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
                 auto instance = (instanceOop) messageOop;
                 PANIC("(JVM) UncaughtException: %s: %s",
-                    strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str(),
-                    strings::toStdString(java::lang::String::toNativeString(instance)).c_str());
+                    exceptionOop->getInstanceClass()->getName().c_str(),
+                    java::lang::String::toNativeString(instance).c_str());
 
             } else {
                 PANIC("(JVM) UncaughtException: %s (failed to convert message oop)",
-                    strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str());
+                    exceptionOop->getInstanceClass()->getName().c_str());
             }
 
         } else {
             PANIC("(JVM) UncaughtException: %s (failed to obtain message)",
-                strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str());
+                exceptionOop->getInstanceClass()->getName().c_str());
         }
     }
 }

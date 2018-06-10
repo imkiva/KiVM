@@ -23,7 +23,7 @@ namespace kivm {
         if (klass->getClassState() == ClassState::LINKED) {
             klass->setClassState(ClassState::BEING_INITIALIZED);
             D("Initializing class %s",
-                strings::toStdString(klass->getName()).c_str());
+                klass->getName().c_str());
 
             // Initialize super classes first.
             Klass *super_klass = klass->getSuperClass();
@@ -32,10 +32,10 @@ namespace kivm {
             }
 
             klass->initClass();
-            auto *clinit = klass->getThisClassMethod(L"<clinit>", L"()V");
+            auto *clinit = klass->getThisClassMethod("<clinit>", "()V");
             if (clinit != nullptr && clinit->getClass() == klass) {
                 D("<clinit> found in %s, invoking.",
-                    strings::toStdString(klass->getName()).c_str());
+                    klass->getName().c_str());
                 InvocationContext::invokeWithArgs(javaThread, clinit, {});
             }
             klass->setClassState(ClassState::FULLY_INITIALIZED);
@@ -98,9 +98,9 @@ namespace kivm {
 
         bool result = Execution::instanceOf(objClass, targetClass);
         D("Execution::instanceOf: %s %s %s: %s",
-            strings::toStdString(objClass->getName()).c_str(),
+            objClass->getName().c_str(),
             checkCast ? "checkcast" : "instanceof",
-            strings::toStdString(targetClass->getName()).c_str(),
+            targetClass->getName().c_str(),
             result ? "true" : "false");
 
         if (result) {
@@ -459,28 +459,28 @@ namespace kivm {
 
         switch (arrayType) {
             case T_BOOLEAN:
-                arrayClass = SystemDictionary::get()->find(L"[Z");
+                arrayClass = SystemDictionary::get()->find("[Z");
                 break;
             case T_BYTE:
-                arrayClass = SystemDictionary::get()->find(L"[B");
+                arrayClass = SystemDictionary::get()->find("[B");
                 break;
             case T_CHAR:
-                arrayClass = SystemDictionary::get()->find(L"[C");
+                arrayClass = SystemDictionary::get()->find("[C");
                 break;
             case T_DOUBLE:
-                arrayClass = SystemDictionary::get()->find(L"[D");
+                arrayClass = SystemDictionary::get()->find("[D");
                 break;
             case T_FLOAT:
-                arrayClass = SystemDictionary::get()->find(L"[F");
+                arrayClass = SystemDictionary::get()->find("[F");
                 break;
             case T_INT:
-                arrayClass = SystemDictionary::get()->find(L"[I");
+                arrayClass = SystemDictionary::get()->find("[I");
                 break;
             case T_SHORT:
-                arrayClass = SystemDictionary::get()->find(L"[S");
+                arrayClass = SystemDictionary::get()->find("[S");
                 break;
             case T_LONG:
-                arrayClass = SystemDictionary::get()->find(L"[J");
+                arrayClass = SystemDictionary::get()->find("[J");
                 break;
             default:
                 arrayClass = nullptr;
@@ -518,10 +518,10 @@ namespace kivm {
             ClassLoader *classLoader = instanceKlass->getClassLoader();
             if (classLoader == nullptr) {
                 objectArrayKlass = (ObjectArrayKlass *) BootstrapClassLoader::get()
-                    ->loadClass(L"[L" + instanceKlass->getName() + L";");
+                    ->loadClass("[L" + instanceKlass->getName() + ";");
             } else {
                 objectArrayKlass = (ObjectArrayKlass *) classLoader
-                    ->loadClass(L"[L" + instanceKlass->getName() + L";");
+                    ->loadClass("[L" + instanceKlass->getName() + ";");
             }
 
         } else if (classType == ClassType::OBJECT_ARRAY_CLASS) {
@@ -531,10 +531,10 @@ namespace kivm {
 
             if (classLoader == nullptr) {
                 objectArrayKlass = (ObjectArrayKlass *) BootstrapClassLoader::get()
-                    ->loadClass(L"[" + wrapperClass->getName() + L";");
+                    ->loadClass("[" + wrapperClass->getName() + ";");
             } else {
                 objectArrayKlass = (ObjectArrayKlass *) classLoader
-                    ->loadClass(L"[" + wrapperClass->getName() + L";");
+                    ->loadClass("[" + wrapperClass->getName() + ";");
             }
 
         } else if (classType == ClassType::TYPE_ARRAY_CLASS) {
@@ -542,7 +542,7 @@ namespace kivm {
             auto typeArrayKlass = (TypeArrayKlass *) arrayClass;
 
             objectArrayKlass = (ObjectArrayKlass *) BootstrapClassLoader::get()
-                ->loadClass(L"[" + typeArrayKlass->getName());
+                ->loadClass("[" + typeArrayKlass->getName());
 
         } else {
             PANIC("Unrecognized class type");

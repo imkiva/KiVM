@@ -15,9 +15,9 @@ int main(int argc, const char **argv) {
     // skip argv[0]
     ++argv;
 
-    String mainClassName = strings::replaceAll(strings::fromStdString(argv[0]),
+    String mainClassName = strings::replaceAll(argv[0],
         Global::DOT, Global::SLASH);
-    D("java: main class name: %s\n", strings::toStdString(mainClassName).c_str());
+    D("java: main class name: %s\n", mainClassName.c_str());
 
     JavaVM *javaVM = nullptr;
     JNIEnv *env = nullptr;
@@ -29,7 +29,7 @@ int main(int argc, const char **argv) {
     // skip main class name
     ++argv;
     while (*argv) {
-        arguments.push_back(strings::fromStdString(*argv++));
+        arguments.push_back(*argv++);
     }
 
     JavaMainThread javaMainThread(mainClassName, arguments);

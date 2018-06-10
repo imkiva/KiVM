@@ -21,18 +21,18 @@ namespace kivm {
             return it->second;
         }
 
-        std::wstringstream nativeSymbolBuilder;
+        std::stringstream nativeSymbolBuilder;
 
         nativeSymbolBuilder
-            << L"Java_"
+            << "Java_"
             << strings::replaceAll(method->getClass()->getName(), Global::SLASH, Global::UNDERLINE)
             << Global::UNDERLINE
             << strings::replaceAll(method->getName(), Global::SLASH, Global::UNDERLINE);
 
         const String &nativeSymbolName = nativeSymbolBuilder.str();
-        D("Looking up symbol: %s", strings::toStdString(nativeSymbolName).c_str());
+        D("Looking up symbol: %s", nativeSymbolName.c_str());
         dl::DLInterface dlInterface;
-        dl::DLSymbol nativeSymbol = dlInterface.findSymbol(strings::toStdString(nativeSymbolName));
+        dl::DLSymbol nativeSymbol = dlInterface.findSymbol(nativeSymbolName);
         if (nativeSymbol != nullptr) {
             _nativeMethods.insert(std::make_pair(method, nativeSymbol));
         }

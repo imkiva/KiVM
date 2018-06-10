@@ -17,11 +17,11 @@ using namespace kivm;
 
 JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobject javaThrowable, jint depth) {
     static auto ARRAY_CLASS = (ObjectArrayKlass *) BootstrapClassLoader::get()
-        ->loadClass(L"[Ljava/lang/StackTraceElement;");
+        ->loadClass("[Ljava/lang/StackTraceElement;");
     static auto ELEMENT_CLASS = (InstanceKlass *) BootstrapClassLoader::get()
-        ->loadClass(L"java/lang/StackTraceElement");
-    static auto ELEMENT_CTOR = ELEMENT_CLASS->getThisClassMethod(L"<init>",
-        L"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
+        ->loadClass("java/lang/StackTraceElement");
+    static auto ELEMENT_CTOR = ELEMENT_CLASS->getThisClassMethod("<init>",
+        "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
 
     auto throwableOop = Resolver::instance(javaThrowable);
     auto thread = Threads::currentThread();
@@ -50,17 +50,13 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
             new intOopDesc(lineNumber)
         });
         stackTraceArray->setElementAt(position, element);
-
-        D("### Stack Trace: %s:%s",
-            strings::toStdString(method->getClass()->getName()).c_str(),
-            strings::toStdString(method->getName()).c_str());
     }
 
-    throwableOop->setFieldValue(L"java/lang/Throwable",
-        L"stackTrace", L"[Ljava/lang/StackTraceElement;",
+    throwableOop->setFieldValue("java/lang/Throwable",
+        "stackTrace", "[Ljava/lang/StackTraceElement;",
         nullptr);
-    throwableOop->setFieldValue(L"java/lang/Throwable",
-        L"backtrace", L"Ljava/lang/Object;",
+    throwableOop->setFieldValue("java/lang/Throwable",
+        "backtrace", "Ljava/lang/Object;",
         stackTraceArray);
     return throwableOop;
 }
@@ -68,8 +64,8 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
 JAVA_NATIVE jint Java_java_lang_Throwable_getStackTraceDepth(JNIEnv *env, jobject javaThrowable) {
     auto throwableOop = Resolver::instance(javaThrowable);
     arrayOop stackTraceArray = nullptr;
-    if (throwableOop->getFieldValue(L"java/lang/Throwable",
-        L"backtrace", L"Ljava/lang/Object;",
+    if (throwableOop->getFieldValue("java/lang/Throwable",
+        "backtrace", "Ljava/lang/Object;",
         (oop *) &stackTraceArray)) {
         return stackTraceArray->getLength();
     }
@@ -79,8 +75,8 @@ JAVA_NATIVE jint Java_java_lang_Throwable_getStackTraceDepth(JNIEnv *env, jobjec
 JAVA_NATIVE jobject Java_java_lang_Throwable_getStackTraceElement(JNIEnv *env, jobject javaThrowable, jint index) {
     auto throwableOop = Resolver::instance(javaThrowable);
     arrayOop stackTraceArray = nullptr;
-    if (throwableOop->getFieldValue(L"java/lang/Throwable",
-        L"backtrace", L"Ljava/lang/Object;",
+    if (throwableOop->getFieldValue("java/lang/Throwable",
+        "backtrace", "Ljava/lang/Object;",
         (oop *) &stackTraceArray)) {
         if (index >= 0 && index < stackTraceArray->getLength()) {
             return stackTraceArray->getElementAt(index);

@@ -70,7 +70,7 @@ namespace kivm {
 
     void JavaThread::throwException(InstanceKlass *exceptionClass) {
         assert(exceptionClass != nullptr);
-        auto ctor = exceptionClass->getThisClassMethod(L"<init>", L"()V");
+        auto ctor = exceptionClass->getThisClassMethod("<init>", "()V");
         auto exceptionOop = exceptionClass->newInstance();
         InvocationContext::invokeWithArgs(this, ctor,
             {exceptionOop},
@@ -80,7 +80,7 @@ namespace kivm {
 
     void JavaThread::throwException(InstanceKlass *exceptionClass, const String &message) {
         assert(exceptionClass != nullptr);
-        auto ctor = exceptionClass->getThisClassMethod(L"<init>", L"(Ljava/lang/String;)V");
+        auto ctor = exceptionClass->getThisClassMethod("<init>", "(Ljava/lang/String;)V");
         auto exceptionOop = exceptionClass->newInstance();
         InvocationContext::invokeWithArgs(this, ctor,
             {exceptionOop, java::lang::String::from(message)},
