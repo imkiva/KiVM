@@ -70,10 +70,15 @@ namespace kivm {
         // native methods
         void *nativeMethod = _method->getNativePointer();
         if (nativeMethod == nullptr) {
-            PANIC("UnsatisfiedLinkError: %s.%s%s",
-                strings::toStdString(_instanceKlass->getName()).c_str(),
-                strings::toStdString(_method->getName()).c_str(),
-                strings::toStdString(_method->getDescriptor()).c_str());
+            auto klass = (InstanceKlass *) BootstrapClassLoader::get()
+                ->loadClass(L"java/lang/UnsatisfiedLinkError");
+            const String &fixedName = strings::replaceAll(_instanceKlass->getName(),
+                Global::SLASH, Global::DOT);
+            _thread->throwException(klass, fixedName
+                                           + L"."
+                                           + _method->getName()
+                                           + _method->getDescriptor());
+            return nullptr;
         }
 
         bool stackIsAllocated = false;
