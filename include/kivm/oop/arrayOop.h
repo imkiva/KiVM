@@ -12,6 +12,7 @@ namespace kivm {
     class arrayOopDesc : public oopDesc {
         // copyArrayTo() needs to use _elements
         friend class TypeArrayKlass;
+        friend class ObjectArrayKlass;
 
         friend class CopyingHeap;
 

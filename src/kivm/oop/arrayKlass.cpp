@@ -64,34 +64,8 @@ namespace kivm {
     }
 
     void TypeArrayKlass::copyArrayTo(arrayOop src, arrayOop dest, int srcPos, int destPos, int length) {
-        if (src->getClass()->getClassType() != ClassType::TYPE_ARRAY_CLASS
-            || dest->getClass()->getClassType() != ClassType::TYPE_ARRAY_CLASS) {
-            PANIC("java.lang.ArrayStoreException");
-        }
-
         auto srcOop = (typeArrayOop) src;
         auto destOop = (typeArrayOop) dest;
-        auto destClass = (TypeArrayKlass *) destOop->getClass();
-        if (destClass->getComponentType() != this->getComponentType()) {
-            PANIC("java.lang.ArrayStoreException");
-        }
-
-        // Check is all offsets and lengths are non negative
-        if (srcPos < 0 || destPos < 0 || length < 0) {
-            PANIC("java.lang.ArrayIndexOutOfBoundsException");
-        }
-
-        // Check if the ranges are valid
-        if ((((unsigned int) length + (unsigned int) srcPos) > (unsigned int) srcOop->getLength())
-            || (((unsigned int) length + (unsigned int) destPos) > (unsigned int) destOop->getLength())) {
-            PANIC("java.lang.ArrayIndexOutOfBoundsException");
-        }
-
-        // Check zero copy
-        if (length == 0) {
-            return;
-        }
-
         std::copy(srcOop->_elements.begin() + srcPos,
             srcOop->_elements.begin() + srcPos + length,
             destOop->_elements.begin() + destPos);
@@ -128,6 +102,10 @@ namespace kivm {
     }
 
     void ObjectArrayKlass::copyArrayTo(arrayOop src, arrayOop dest, int srcPos, int destPos, int length) {
-        PANIC("ObjectArrayKlass::copyArrayTo()");
+        auto srcOop = (objectArrayOop) src;
+        auto destOop = (objectArrayOop) dest;
+        std::copy(srcOop->_elements.begin() + srcPos,
+            srcOop->_elements.begin() + srcPos + length,
+            destOop->_elements.begin() + destPos);
     }
 }

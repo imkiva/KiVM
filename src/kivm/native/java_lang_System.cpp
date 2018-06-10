@@ -12,6 +12,13 @@
 
 using namespace kivm;
 
+static bool isArrayRangeInvalid(jint srcPos, jint destPos, jint length,
+                                arrayOopDesc *srcOop, arrayOopDesc *destOop) {
+    return srcPos < 0 || destPos < 0 || length < 0
+           || (((unsigned int) length + (unsigned int) srcPos) > (unsigned int) srcOop->getLength())
+           || (((unsigned int) length + (unsigned int) destPos) > (unsigned int) destOop->getLength());
+}
+
 JAVA_NATIVE jobject
 Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobject propertiesObject) {
     static std::unordered_map<String, String> PROPS{
@@ -69,17 +76,72 @@ Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobje
     return propertiesObject;
 }
 
-JAVA_NATIVE void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
-                                                 jobject javaSrc, jint srcPos,
-                                                 jobject javaDest, jint destPos,
-                                                 jint length) {
+JAVA_NATIVE
+void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
+                                     jobject javaSrc, jint srcPos,
+                                     jobject javaDest, jint destPos,
+                                     jint length) {
     auto srcOop = Resolver::array(javaSrc);
     auto destOop = Resolver::array(javaDest);
 
+    auto thread = Threads::currentThread();
+    assert(thread != nullptr);
+
     if (srcOop == nullptr || destOop == nullptr) {
-        auto thread = Threads::currentThread();
-        assert(thread != nullptr);
         thread->throwException(Global::java_lang_NullPointerException);
+        return;
+    }
+
+    if (srcOop->getClass()->getClassType() != destOop->getClass()->getClassType()) {
+        thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/lang/ArrayStoreException"));
+        return;
+    }
+
+    if (srcOop->getClass()->getClassType() == ClassType::TYPE_ARRAY_CLASS) {
+        auto srcOop_ = (typeArrayOop) srcOop;
+        auto destOop_ = (typeArrayOop) destOop;
+        auto srcClass_ = (TypeArrayKlass *) srcOop_->getClass();
+        auto destClass_ = (TypeArrayKlass *) destOop_->getClass();
+        if (destClass_->getComponentType() != srcClass_->getComponentType()) {
+            thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
+                ->loadClass(L"java/lang/ArrayStoreException"));
+            return;
+        }
+    } else {
+        auto srcOop_ = (objectArrayOop) srcOop;
+        auto destOop_ = (objectArrayOop) destOop;
+        auto srcClass_ = (ObjectArrayKlass *) srcOop_->getClass();
+        auto destClass_ = (ObjectArrayKlass *) destOop_->getClass();
+
+        auto srcComponent = srcClass_->getComponentType();
+
+        // TODO: temporary workaround, should add instanceof check
+        // for toArray() in collection classes
+        // for example:
+        // List<Object> l = new ArrayList();
+        // l.add("hello");
+        // String[] s = new String[1];
+        // l.toArray(s);
+        if (srcComponent != Global::java_lang_Object) {
+            if (srcComponent != Global::java_lang_Object
+                && destClass_->getComponentType() != srcClass_->getComponentType()) {
+                thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
+                    ->loadClass(L"java/lang/ArrayStoreException"));
+                return;
+            }
+        }
+    }
+
+    // Check if the ranges are valid
+    if (isArrayRangeInvalid(srcPos, destPos, length, srcOop, destOop)) {
+        thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/lang/ArrayIndexOutOfBoundsException"));
+        return;
+    }
+
+    // Check zero copy
+    if (length == 0) {
         return;
     }
 
