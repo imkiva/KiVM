@@ -302,44 +302,34 @@ namespace kivm {
                     stack.pushReference(locals.getReference(3));
                     NEXT();
                 }
+
                 OPCODE(IALOAD)
+                OPCODE(SALOAD)
+                OPCODE(CALOAD)
+                OPCODE(BALOAD)
                 {
-                    Execution::loadIntArrayElement(stack);
+                    LOAD_ARRAY_ELEMENT(intOop, element, pushInt, element->getValue());
                     NEXT();
                 }
+
                 OPCODE(LALOAD)
                 {
-                    Execution::loadLongArrayElement(stack);
+                    LOAD_ARRAY_ELEMENT(longOop, element, pushLong, element->getValue());
                     NEXT();
                 }
                 OPCODE(FALOAD)
                 {
-                    Execution::loadFloatArrayElement(stack);
+                    LOAD_ARRAY_ELEMENT(floatOop, element, pushFloat, element->getValue());
                     NEXT();
                 }
                 OPCODE(DALOAD)
                 {
-                    Execution::loadDoubleArrayElement(stack);
+                    LOAD_ARRAY_ELEMENT(doubleOop, element, pushDouble, element->getValue());
                     NEXT();
                 }
                 OPCODE(AALOAD)
                 {
-                    Execution::loadObjectArrayElement(stack);
-                    NEXT();
-                }
-                OPCODE(BALOAD)
-                {
-                    Execution::loadIntArrayElement(stack);
-                    NEXT();
-                }
-                OPCODE(CALOAD)
-                {
-                    Execution::loadIntArrayElement(stack);
-                    NEXT();
-                }
-                OPCODE(SALOAD)
-                {
-                    Execution::loadIntArrayElement(stack);
+                    LOAD_ARRAY_ELEMENT(oop, element, pushReference, element);
                     NEXT();
                 }
                 OPCODE(ISTORE)

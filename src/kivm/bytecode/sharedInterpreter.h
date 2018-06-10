@@ -45,3 +45,24 @@
 
 #define IF_ICMP_GOTO(occupied, op) __IF_CMP_GOTO_FACTORY(popInt, occupied, op)
 #define IF_ACMP_GOTO(occupied, op) __IF_CMP_GOTO_FACTORY(popReference, occupied, op)
+
+#define LOAD_ARRAY_ELEMENT(oopType, varName, pushFunc, exp) \
+    int index = stack.popInt(); \
+    jobject ref = stack.popReference(); \
+    auto array = Resolver::typeArray(ref); \
+    if (array == nullptr) { \
+        thread->throwException(Global::java_lang_NullPointerException); \
+        stack.pushReference(thread->_exceptionOop); \
+        goto exceptionHandler; \
+    } \
+    if (index < 0 || index >= array->getLength()) { \
+        thread->throwException(Global::java_lang_ArrayIndexOutOfBoundsException, \
+            L"length is " \
+            + std::to_wstring(array->getLength()) \
+            + L", but index is " \
+            + std::to_wstring(index)); \
+        stack.pushReference(thread->_exceptionOop); \
+        goto exceptionHandler; \
+    } \
+    auto varName = (oopType) array->getElementAt(index);\
+    stack.pushFunc(exp)

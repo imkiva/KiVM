@@ -12,25 +12,13 @@ namespace kivm {
     }
 
     oop arrayOopDesc::getElementAt(int position) const {
-        if (position < 0 || position >= getLength()) {
-            arrayIndexOutOfBounds(position);
-            return nullptr;
-        }
+        assert(position >= 0 && position < getLength());
         return _elements[position];
     }
 
     void arrayOopDesc::setElementAt(int position, oop element) {
-        if (position < 0 || position >= getLength()) {
-            arrayIndexOutOfBounds(position);
-            return;
-        }
+        assert(position >= 0 && position < getLength());
         _elements[position] = element;
-    }
-
-    void arrayOopDesc::arrayIndexOutOfBounds(int position) const {
-        // TODO: throw ArrayIndexOutOfBoundsException
-        PANIC("java.lang.ArrayIndexOutOfBoundsException: length is %d, but index is %d",
-            getLength(), position);
     }
 
     typeArrayOopDesc::typeArrayOopDesc(TypeArrayKlass *arrayClass, int length)
