@@ -1557,8 +1557,6 @@ namespace kivm {
         OPCODE(INVOKEVIRTUAL)
         {
             int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
-
-            currentFrame->setCurrentPc(pc - 1);
             pc += 2;
             Execution::invokeVirtual(thread, currentClass->getRuntimeConstantPool(),
                 stack, constantIndex);

@@ -36,7 +36,7 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
 
         // native method
         int lineNumber = -2;
-        if (!method->isNative()) {
+        if (!iter->isNativeFrame()) {
             lineNumber = method->getLineNumber(pc);
         }
 
