@@ -11,7 +11,7 @@
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/oop/method.h>
 #include <climits>
-#include <unordered_map>
+#include <sparsepp/spp.h>
 #include <deque>
 
 #include "sharedInterpreter.h"
@@ -1226,7 +1226,7 @@ namespace kivm {
                     ptr += 8;
 
                     // jump_table
-                    std::unordered_map<int, int> jumpTable;
+                    spp::sparse_hash_map<int, int> jumpTable;
                     for (int i = 0; i < count; i++) {
                         int value = ((codeBlob[ptr] << 24)
                                      | (codeBlob[ptr + 1] << 16)

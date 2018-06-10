@@ -15,7 +15,7 @@
 namespace kivm {
     namespace java {
         namespace lang {
-            std::unordered_map<kivm::String, mirrorOop> Class::_primitiveTypeMirrors;
+            spp::sparse_hash_map<kivm::String, mirrorOop> Class::_primitiveTypeMirrors;
 
             std::queue<kivm::String> &Class::getDelayedMirrors() {
                 static std::queue<kivm::String> mirrors;
@@ -27,7 +27,7 @@ namespace kivm {
                 return mirrors;
             }
 
-            std::unordered_map<kivm::String, mirrorOop> &Class::getPrimitiveTypeMirrors() {
+            spp::sparse_hash_map<kivm::String, mirrorOop> &Class::getPrimitiveTypeMirrors() {
                 return _primitiveTypeMirrors;
             }
 

@@ -8,7 +8,7 @@
 #include <kivm/oop/reflection.h>
 #include <kivm/runtime/constantPool.h>
 #include <shared/monitor.h>
-#include <unordered_map>
+#include <sparsepp/spp.h>
 #include <vector>
 
 namespace kivm {
@@ -49,25 +49,25 @@ namespace kivm {
          * all methods in this class.
          * map<name + " " + descriptor, method>
          */
-        std::unordered_map<String, MethodID *> _allMethods;
+        spp::sparse_hash_map<String, MethodID *> _allMethods;
 
         /**
          * virtual methods (public or protected methods).
          * map<name + " " + descriptor, method>
          */
-        std::unordered_map<String, MethodID *> _vtable;
+        spp::sparse_hash_map<String, MethodID *> _vtable;
 
         /**
          * static fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        std::unordered_map<String, FieldID *> _staticFields;
+        spp::sparse_hash_map<String, FieldID *> _staticFields;
 
         /**
          * instance fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        std::unordered_map<String, FieldID *> _instanceFields;
+        spp::sparse_hash_map<String, FieldID *> _instanceFields;
 
         /**
          * static fields' values.
@@ -78,7 +78,7 @@ namespace kivm {
          * interfaces
          * map<interface-name, class>
          */
-        std::unordered_map<String, InstanceKlass *> _interfaces;
+        spp::sparse_hash_map<String, InstanceKlass *> _interfaces;
 
     private:
         InstanceKlass *requireInstanceClass(u2 classInfoIndex);
@@ -119,15 +119,15 @@ namespace kivm {
 
         void initClass() override;
 
-        inline const std::unordered_map<String, FieldID *> &getStaticFields() {
+        inline const spp::sparse_hash_map<String, FieldID *> &getStaticFields() {
             return _staticFields;
         }
 
-        inline const std::unordered_map<String, FieldID *> &getInstanceFields() {
+        inline const spp::sparse_hash_map<String, FieldID *> &getInstanceFields() {
             return _instanceFields;
         }
 
-        inline const std::unordered_map<String, MethodID *> &getDeclaredMethods() {
+        inline const spp::sparse_hash_map<String, MethodID *> &getDeclaredMethods() {
             return _allMethods;
         }
 

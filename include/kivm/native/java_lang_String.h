@@ -5,7 +5,7 @@
 
 #include <kivm/kivm.h>
 #include <kivm/oop/oopfwd.h>
-#include <unordered_set>
+#include <sparsepp/spp.h>
 
 namespace kivm {
     class CopyingHeap;
@@ -27,7 +27,7 @@ namespace kivm {
 
             private:
                 // hash -> string
-                std::unordered_set<instanceOop, StringHash, StringEqualTo> _pool;
+                spp::sparse_hash_set<instanceOop, StringHash, StringEqualTo> _pool;
 
             public:
                 static InternStringPool *getGlobal();

@@ -4,7 +4,7 @@
 
 #include <kivm/kivm.h>
 #include <kivm/native/classNames.h>
-#include <unordered_map>
+#include <sparsepp/spp.h>
 #include <kivm/bytecode/execution.h>
 #include <csignal>
 
@@ -19,7 +19,7 @@ static void defaultSignalHandler(int signo) {
 
 JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jstring javaSignalName) {
 #if defined(__APPLE__)
-    static std::unordered_map<String, int> SIGNAL_TABLE{
+    static spp::sparse_hash_map<String, int> SIGNAL_TABLE{
         /* derived from /usr/include/bits/signum.h on RH7.2 */
         {L"HUP",    SIGHUP},         /* Hangup (POSIX).  */
         {L"INT",    SIGINT},         /* Interrupt (ANSI).  */
@@ -54,7 +54,7 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
         {L"USR2",   SIGUSR2},        /* User-defined signal 2 (POSIX).  */
     };
 #elif defined(__linux__)
-    static std::unordered_map<String, int> SIGNAL_TABLE{
+    static spp::sparse_hash_map<String, int> SIGNAL_TABLE{
         {L"HUP", SIGHUP},         /* Hangup (POSIX).  */
         {L"INT", SIGINT},         /* Interrupt (ANSI).  */
         {L"QUIT", SIGQUIT},        /* Quit (POSIX).  */

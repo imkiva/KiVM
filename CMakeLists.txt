@@ -181,6 +181,20 @@ set(SOURCE_FILES
         include/kivm/classfile/annotation.h
         include/kivm/bytecode/interpreter.h
         include/kivm/gc/gcThread.h
+        include/kivm/runtime/frameWalker.h
+        include/shared/osInfo.h
+        include/shared/os/unix/osInfo.h
+        include/shared/os/windows/osInfo.h
+        include/shared/os/macos/osInfo.h
+        include/sparsepp/spp.h
+        include/sparsepp/spp_config.h
+        include/sparsepp/spp_dlalloc.h
+        include/sparsepp/spp_memory.h
+        include/sparsepp/spp_smartptr.h
+        include/sparsepp/spp_stdint.h
+        include/sparsepp/spp_timer.h
+        include/sparsepp/spp_traits.h
+        include/sparsepp/spp_utils.h
         src/kivm/native/java_lang_ClassLoader.cpp
         src/shared/filesystem.cpp
         src/shared/string.cpp
@@ -256,11 +270,9 @@ set(SOURCE_FILES
         src/kivm/bytecode/sharedInterpreter.h
         src/kivm/gc/gcThread.cpp
         src/kivm/memory/copyingCollector.cpp
-        include/kivm/runtime/frameWalker.h
-        include/shared/osInfo.h
-        include/shared/os/unix/osInfo.h
-        include/shared/os/windows/osInfo.h
-        include/shared/os/macos/osInfo.h src/shared/os/unix/osInfo.cpp src/shared/os/macos/osInfo.cpp src/kivm/native/java_lang_Runtime.cpp)
+        src/shared/os/unix/osInfo.cpp
+        src/shared/os/macos/osInfo.cpp
+        src/kivm/native/java_lang_Runtime.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})

@@ -4,12 +4,12 @@
 #pragma once
 
 #include <kivm/oop/method.h>
-#include <unordered_map>
+#include <sparsepp/spp.h>
 
 namespace kivm {
     class NativeMethodPool {
     private:
-        std::unordered_map<Method *, void *> _nativeMethods;
+        spp::sparse_hash_map<Method *, void *> _nativeMethods;
 
     public:
         static NativeMethodPool *get();

@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <unordered_map>
+#include <sparsepp/spp.h>
 #include <kivm/kivm.h>
 #include <kivm/classfile/classFile.h>
 #include <kivm/classpath/classLoader.h>

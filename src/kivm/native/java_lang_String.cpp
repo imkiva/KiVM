@@ -8,7 +8,7 @@
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/arrayOop.h>
 #include <kivm/bytecode/execution.h>
-#include <unordered_map>
+#include <sparsepp/spp.h>
 #include <sstream>
 
 namespace kivm {

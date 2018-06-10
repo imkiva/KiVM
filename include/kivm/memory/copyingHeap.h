@@ -6,7 +6,7 @@
 #include <kivm/oop/klass.h>
 #include <kivm/memory/collectedHeap.h>
 #include <kivm/memory/heapRegion.h>
-#include <unordered_map>
+#include <sparsepp/spp.h>
 #include <kivm/runtime/stack.h>
 
 namespace kivm {
@@ -21,13 +21,13 @@ namespace kivm {
     private:
         void initializeRegions();
 
-        void copyObject(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, oop &target);
+        void copyObject(HeapRegion *newRegion, spp::sparse_hash_map<oop, oop> &map, oop &target);
 
-        void copyClass(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, Klass *klass);
+        void copyClass(HeapRegion *newRegion, spp::sparse_hash_map<oop, oop> &map, Klass *klass);
 
-        void copyThread(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, JavaThread *thread);
+        void copyThread(HeapRegion *newRegion, spp::sparse_hash_map<oop, oop> &map, JavaThread *thread);
 
-        void copySlotArray(HeapRegion *newRegion, std::unordered_map<oop, oop> &map, SlotArray *slotArray, int size);
+        void copySlotArray(HeapRegion *newRegion, spp::sparse_hash_map<oop, oop> &map, SlotArray *slotArray, int size);
 
     public:
         CopyingHeap();

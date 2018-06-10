@@ -29,7 +29,7 @@
 #include <kivm/runtime/javaThread.h>
 
 #include <cstdarg>
-#include <unordered_map>
+#include <sparsepp/spp.h>
 
 CS_EXTENSION(kivm) // NOLINT
 
@@ -133,7 +133,7 @@ CS_EXTENSION(kivm) // NOLINT
             return 0;
         }
 
-        std::unordered_map<kivm::Method *, cs::var> _csNatives;
+        spp::sparse_hash_map<kivm::Method *, cs::var> _csNatives;
     };
 
     CNI_NORMAL(void, registerNative,
