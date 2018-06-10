@@ -9,6 +9,7 @@
 #include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/arrayOop.h>
 #include <kivm/bytecode/invocationContext.h>
+#include <shared/osInfo.h>
 #include <sys/time.h>
 
 using namespace kivm;
@@ -42,6 +43,8 @@ Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobje
 //        {L"sun.java.launcher",             L"KIVM_LAUNCHER"},
 //        {L"sun.os.patch.level",            L"unknown"},
         {L"os.arch",             KIVM_ARCH_NAME},
+        {L"os.name",                       OSInformation::getOSName()},
+        {L"os.version",                    OSInformation::getOSVersion()},
         {L"sun.arch.data.model", KIVM_ARCH_DATA_MODEL},
         {L"line.separator",                L"\n"},
         {L"file.separator",                Global::PATH_DELIMITER},
@@ -60,10 +63,7 @@ Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobje
         L"put", L"(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
 
     auto thread = Threads::currentThread();
-
-    if (thread == nullptr) {
-        PANIC("thread cannot be null");
-    }
+    assert(thread != nullptr);
 
     for (const auto &e : PROPS) {
         D("initProperties: set %s to %s",

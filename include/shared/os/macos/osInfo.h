@@ -5,9 +5,15 @@
 #pragma once
 
 #include <compileTimeConfig.h>
+#include <shared/string.h>
 
-#ifdef KIVM_PLATFORM_APPLE
+#if defined(KIVM_PLATFORM_APPLE)
 namespace kivm {
-    class MacOSInformation {};
+    class MacOSInformation {
+    public:
+        static String getOSName();
+
+        static String getOSVersion();
+    };
 }
 #endif
