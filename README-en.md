@@ -10,13 +10,13 @@ Kiva's Java Virtual Machine.
 - JNI Support
 - JAR Class Loading Support
 - Full OracleJDK/OpenJDK compatibility
-- Garbage Collector [WIP]
+- Copying Garbage Collector
 
 ### Build
 1. Requirements
     * Linux or macOS. **Windows is not supported yet.**
     * Java Development Kit >= 8
-    * CMake >= 3.8
+    * CMake >= 3.2
 
 2. Build instructions
     1. First, clone this repo.

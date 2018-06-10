@@ -12,13 +12,13 @@ Kiva's Java Virtual Machine.
 - 支持标准的 JNI 接口
 - 支持从 jar 文件中加载类
 - 完全兼容 OracleJDK/OpenJDK
-- 垃圾收集器 [正在进行中]
+- 使用 Copying 算法的垃圾收集器
 
 ### 编译
 1. 要求
-    * 操作系统要求为 Linux 或者 macOS. **Windows 由于我不懂 windows 的相关特性，所以暂不支持.**
+    * 操作系统要求为 Linux 或者 macOS. **由于我不懂 windows 的相关特性，所以暂不支持.**
     * JDK >= 8
-    * CMake >= 3.8
+    * CMake >= 3.2
 
 2. 过程
     1. 首先，同步这个项目仓库
