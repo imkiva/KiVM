@@ -4,19 +4,12 @@
 
 #pragma once
 
-#if defined(KIVM_PLATFORM_UNIX)
-
-#include <shared/platform/unix/dl.h>
-
-#elif defined(KIVM_PLATFORM_WINDOWS)
-
-#include <shared/platform/windows/dl.hpp>
-
-#endif
+#include <shared/os/unix/dl.h>
+#include <shared/os/windows/dl.h>
 
 namespace kivm {
     namespace dl {
-#ifdef KIVM_PLATFORM_UNIX
+#if defined(KIVM_PLATFORM_UNIX) || defined(KIVM_PLATFORM_APPLE)
         using DLInterface = UnixDLInterface;
 #elif KIVM_PLATFORM_WINDOWS
         using DLInterface = WindowsDLInterface;

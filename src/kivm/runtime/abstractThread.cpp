@@ -10,7 +10,7 @@
 #include <kivm/bytecode/invocationContext.h>
 #include <algorithm>
 
-#ifdef KIVM_PLATFORM_UNIX
+#if defined(KIVM_PLATFORM_UNIX) || defined(KIVM_PLATFORM_APPLE)
 #include <pthread.h>
 #endif
 
@@ -45,6 +45,8 @@ namespace kivm {
         pthread_setname_np(strings::toStdString(name).c_str());
 #elif defined(KIVM_PLATFORM_UNIX)
         pthread_setname_np(pthread_self(), strings::toStdString(name).c_str());
+#elif defined(KIVM_PLATFORM_WINDOWS)
+        SHOULD_NOT_REACH_HERE();
 #endif
     }
 

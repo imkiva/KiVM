@@ -39,16 +39,17 @@ if (DEFINED ENV{KIVM_DEBUG_ALL})
     add_definitions(-DKIVM_CLASSPATH_DEBUG)
 endif ()
 
-#### check platform
+#### check os
 if (WIN32)
     add_definitions(-DKIVM_PLATFORM_WINDOWS)
-    aux_source_directory(src/shared/platform/windows KIVM_PLATFORM_SRC)
+    aux_source_directory(src/shared/os/windows KIVM_PLATFORM_SRC)
 elseif (UNIX)
     if (APPLE)
         add_definitions(-DKIVM_PLATFORM_APPLE)
+    else ()
+        add_definitions(-DKIVM_PLATFORM_UNIX)
     endif ()
-    add_definitions(-DKIVM_PLATFORM_UNIX)
-    aux_source_directory(src/shared/platform/unix KIVM_PLATFORM_SRC)
+    aux_source_directory(src/shared/os/unix KIVM_PLATFORM_SRC)
 else ()
     message(STATUS "Cannot detect current system, disabling platform related features.")
 endif ()
@@ -104,7 +105,7 @@ endif ()
 #### threaded interpretation
 try_run(IS_THREADED COMPILE_RESULT ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/cmake/check-threaded.cpp)
 if (IS_THREADED)
-    set (KIVM_THREADED 1)
+    set(KIVM_THREADED 1)
 endif ()
 
 #### post configuration
@@ -255,7 +256,11 @@ set(SOURCE_FILES
         src/kivm/bytecode/sharedInterpreter.h
         src/kivm/gc/gcThread.cpp
         src/kivm/memory/copyingCollector.cpp
-        include/kivm/runtime/frameWalker.h)
+        include/kivm/runtime/frameWalker.h
+        include/shared/osInfo.h
+        include/shared/os/unix/osInfo.h
+        include/shared/os/windows/osInfo.h
+        include/shared/os/macos/osInfo.h)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})

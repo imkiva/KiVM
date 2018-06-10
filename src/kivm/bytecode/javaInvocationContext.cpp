@@ -58,7 +58,8 @@ namespace kivm {
         if (hasThis) {
             thisObject = *_args.begin();
             if (thisObject == nullptr) {
-                PANIC("java.lang.NullPointerException");
+                _thread->throwException(Global::java_lang_NullPointerException);
+                return nullptr;
             }
         }
 

@@ -3,24 +3,24 @@
 //
 #pragma once
 
-#ifdef KIVM_PLATFORM_UNIX
+#ifdef KIVM_PLATFORM_WINDOWS
 
-#include <shared/platform/common/dl.h>
+#include <shared/os/common/dl.h>
 
 namespace kivm {
     namespace dl {
-        class UnixDLInterface {
+        class WindowsDLInterface {
         private:
             DLHandler handler;
 
         public:
-            UnixDLInterface();
+            WindowsDLInterface();
 
-            UnixDLInterface(const UnixDLInterface &) = delete;
+            WindowsDLInterface(const WindowsDLInterface &) = delete;
 
-            explicit UnixDLInterface(const std::string &file);
+            explicit WindowsDLInterface(const std::string &file);
 
-            ~UnixDLInterface();
+            ~WindowsDLInterface();
 
             bool open(const std::string &file);
 

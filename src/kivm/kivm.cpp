@@ -12,7 +12,7 @@
 #include <random>
 #include <kivm/bytecode/invocationContext.h>
 
-#if defined(KIVM_PLATFORM_UNIX)
+#if defined(KIVM_PLATFORM_UNIX) || defined(KIVM_PLATFORM_APPLE)
 #   define PATH_SEPARATOR_CHAR L"/"
 #   define PATH_DELIMITER_CHAR L":"
 #elif defined(KIVM_PLATFORM_WINDOWS)

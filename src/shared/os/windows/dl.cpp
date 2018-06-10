@@ -4,7 +4,7 @@
 
 #ifdef KIVM_PLATFORM_WINDOWS
 
-#include <shared/platform/windows/dl.h>
+#include <shared/os/windows/dl.h>
 #include <windows.h>
 
 namespace kivm {

@@ -2,14 +2,14 @@
 // Created by kiva on 2018/4/15.
 //
 
-#ifdef KIVM_PLATFORM_UNIX
+#if defined(KIVM_PLATFORM_UNIX) || defined(KIVM_PLATFORM_APPLE)
 
 // for RTLD_DEFAULT
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
 
-#include <shared/platform/unix/dl.h>
+#include <shared/os/unix/dl.h>
 #include <dlfcn.h>
 
 namespace kivm {

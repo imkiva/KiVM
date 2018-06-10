@@ -236,7 +236,14 @@ namespace kivm {
 
             thisObject = Resolver::javaOop(argsHolder[fillIndex].l);
             if (thisObject == nullptr) {
-                PANIC("NullPointerException");
+                _thread->throwException(Global::java_lang_NullPointerException);
+                // TODO: make it elegant
+                // XXX: Temporary workaround: allocate a stack to hold arguments
+                if (stackIsAllocated) {
+                    delete _stack;
+                    _stack = nullptr;
+                }
+                return nullptr;
             }
 
             if (resolveTwice) {
