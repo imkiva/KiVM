@@ -1,6 +1,6 @@
 package com.imkiva.kivm;
 
-public class ClassNameTest1 {
+public class ClassNameTest {
     public static void main(String[] args) {
         System.out.println(String.class.getName());
         System.out.println(byte.class.getName());

@@ -2,7 +2,7 @@ package com.imkiva.kivm;
 
 import java.util.*;
 
-public class ListTest1 {
+public class ListTest {
     public static void main(String[] args) {
         List<Object> l = new ArrayList<>();
         l.add("hhaa");

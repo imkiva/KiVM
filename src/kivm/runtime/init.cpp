@@ -41,12 +41,12 @@ namespace kivm {
 
         auto mainClass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(_mainClassName);
         if (mainClass == nullptr) {
-            PANIC("main class not found: %s", strings::toStdString(_mainClassName).c_str());
+            PANIC("class not found: %s", strings::toStdString(_mainClassName).c_str());
         }
 
         auto mainMethod = mainClass->getStaticMethod(L"main", L"([Ljava/lang/String;)V");
         if (mainMethod == nullptr) {
-            PANIC("method main(String[]) not found in class %s",
+            PANIC("method main(String[]) not found in %s",
                 strings::toStdString(_mainClassName).c_str());
         }
 
@@ -74,7 +74,7 @@ namespace kivm {
 
 
             if (threads == 0) {
-                D("[JavaThread-Scheduler]: no remaining java thread, exiting...");
+                D("no remaining java thread, exiting...");
                 break;
             }
 
