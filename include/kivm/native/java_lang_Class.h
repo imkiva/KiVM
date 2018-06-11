@@ -6,7 +6,7 @@
 #include <kivm/kivm.h>
 #include <kivm/oop/oopfwd.h>
 #include <queue>
-#include <sparsepp/spp.h>
+#include <shared/hashMap.h>
 #include <kivm/oop/klass.h>
 
 namespace kivm {
@@ -18,13 +18,13 @@ namespace kivm {
                 friend class kivm::CopyingHeap;
 
             private:
-                static spp::sparse_hash_map<kivm::String, mirrorOop> _primitiveTypeMirrors;
+                static HashMap<kivm::String, mirrorOop> _primitiveTypeMirrors;
 
                 enum ClassMirrorState {
                     FIXED, NOT_FIXED
                 };
 
-                static spp::sparse_hash_map<kivm::String, mirrorOop> &getPrimitiveTypeMirrors();
+                static HashMap<kivm::String, mirrorOop> &getPrimitiveTypeMirrors();
 
                 static std::queue<kivm::String> &getDelayedMirrors();
 

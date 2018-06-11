@@ -8,7 +8,7 @@
 #include <kivm/bytecode/codeBlob.h>
 #include <kivm/classfile/attributeInfo.h>
 #include <kivm/classfile/annotation.h>
-#include <sparsepp/spp.h>
+#include <shared/hashMap.h>
 #include <list>
 #include <vector>
 
@@ -73,7 +73,7 @@ namespace kivm {
         std::list<InstanceKlass *> _throws;
 
         /** map<start-pc, line-number> **/
-        spp::sparse_hash_map<u2, u2> _lineNumberTable;
+        HashMap<u2, u2> _lineNumberTable;
 
         /**
          * annotations

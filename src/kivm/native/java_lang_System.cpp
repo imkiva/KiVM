@@ -23,7 +23,7 @@ static bool isArrayRangeInvalid(jint srcPos, jint destPos, jint length,
 
 JAVA_NATIVE jobject
 Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobject propertiesObject) {
-    static spp::sparse_hash_map<String, String> PROPS{
+    static HashMap<String, String> PROPS{
 //        {L"java.vm.specification.name",    L"Java Virtual Machine Specification"},
         {L"java.vm.specification.version", L"1.8"},
 //        {L"java.vm.version",               L"0.1.0"},

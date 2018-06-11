@@ -5,7 +5,7 @@
 
 #include <kivm/kivm.h>
 #include <kivm/oop/oopfwd.h>
-#include <sparsepp/spp.h>
+#include <shared/hashMap.h>
 
 namespace kivm {
     class CopyingHeap;
@@ -27,7 +27,7 @@ namespace kivm {
 
             private:
                 // hash -> string
-                spp::sparse_hash_map<int, instanceOop> _pool;
+                HashMap<int, instanceOop> _pool;
 
             public:
                 static InternStringPool *getGlobal();

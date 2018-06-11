@@ -5,14 +5,14 @@
 
 #include <kivm/kivm.h>
 #include <shared/lock.h>
-#include <sparsepp/spp.h>
+#include <shared/hashMap.h>
 
 namespace kivm {
     class Klass;
 
     class SystemDictionary {
     private:
-        spp::sparse_hash_map<String, Klass *> _classes;
+        HashMap<String, Klass *> _classes;
         Lock _lock;
 
     public:
@@ -22,7 +22,7 @@ namespace kivm {
 
         void put(const String &name, Klass *klass);
 
-        inline const spp::sparse_hash_map<String, Klass *> &getLoadedClasses() const {
+        inline const HashMap<String, Klass *> &getLoadedClasses() const {
             return _classes;
         };
     };

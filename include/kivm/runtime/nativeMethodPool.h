@@ -4,12 +4,12 @@
 #pragma once
 
 #include <kivm/oop/method.h>
-#include <sparsepp/spp.h>
+#include <shared/hashMap.h>
 
 namespace kivm {
     class NativeMethodPool {
     private:
-        spp::sparse_hash_map<Method *, void *> _nativeMethods;
+        HashMap<Method *, void *> _nativeMethods;
 
     public:
         static NativeMethodPool *get();

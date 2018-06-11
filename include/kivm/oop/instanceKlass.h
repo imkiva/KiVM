@@ -8,7 +8,7 @@
 #include <kivm/oop/reflection.h>
 #include <kivm/runtime/constantPool.h>
 #include <shared/monitor.h>
-#include <sparsepp/spp.h>
+#include <shared/hashMap.h>
 #include <vector>
 
 namespace kivm {
@@ -49,25 +49,25 @@ namespace kivm {
          * all methods in this class.
          * map<name + " " + descriptor, method>
          */
-        spp::sparse_hash_map<String, MethodID *> _allMethods;
+        HashMap <String, MethodID *> _allMethods;
 
         /**
          * virtual methods (public or protected methods).
          * map<name + " " + descriptor, method>
          */
-        spp::sparse_hash_map<String, MethodID *> _vtable;
+        HashMap<String, MethodID *> _vtable;
 
         /**
          * static fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        spp::sparse_hash_map<String, FieldID *> _staticFields;
+        HashMap<String, FieldID *> _staticFields;
 
         /**
          * instance fields.
          * map<className + " " + name + " " + descriptor, <vector-offset, Field*>>
          */
-        spp::sparse_hash_map<String, FieldID *> _instanceFields;
+        HashMap<String, FieldID *> _instanceFields;
 
         /**
          * static fields' values.
@@ -78,7 +78,7 @@ namespace kivm {
          * interfaces
          * map<interface-name, class>
          */
-        spp::sparse_hash_map<String, InstanceKlass *> _interfaces;
+        HashMap<String, InstanceKlass *> _interfaces;
 
     private:
         InstanceKlass *requireInstanceClass(u2 classInfoIndex);
@@ -119,15 +119,15 @@ namespace kivm {
 
         void initClass() override;
 
-        inline const spp::sparse_hash_map<String, FieldID *> &getStaticFields() {
+        inline const HashMap<String, FieldID *> &getStaticFields() {
             return _staticFields;
         }
 
-        inline const spp::sparse_hash_map<String, FieldID *> &getInstanceFields() {
+        inline const HashMap<String, FieldID *> &getInstanceFields() {
             return _instanceFields;
         }
 
-        inline const spp::sparse_hash_map<String, MethodID *> &getDeclaredMethods() {
+        inline const HashMap<String, MethodID *> &getDeclaredMethods() {
             return _allMethods;
         }
 

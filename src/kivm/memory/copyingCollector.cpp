@@ -26,7 +26,7 @@
 // [*] 9. JavaThread::_frames[0 ~ the last frame]::_stack
 
 namespace kivm {
-    void CopyingHeap::copyObject(HeapRegion *newRegion, spp::sparse_hash_map<oop, oop> &map,
+    void CopyingHeap::copyObject(HeapRegion *newRegion, HashMap<oop, oop> &map,
                                  oop &target) {
         // there is no need to copy null objects
         if (target == nullptr) {
@@ -84,7 +84,7 @@ namespace kivm {
         }
     }
 
-    void CopyingHeap::copyClass(HeapRegion *newRegion, spp::sparse_hash_map<oop, oop> &map,
+    void CopyingHeap::copyClass(HeapRegion *newRegion, HashMap<oop, oop> &map,
                                 Klass *klass) {
         if (klass == nullptr) {
             return;
@@ -139,7 +139,7 @@ namespace kivm {
         }
     }
 
-    void CopyingHeap::copyThread(HeapRegion *newRegion, spp::sparse_hash_map<oop, oop> &map,
+    void CopyingHeap::copyThread(HeapRegion *newRegion, HashMap<oop, oop> &map,
                                  JavaThread *thread) {
         D("[GCThread]: copying exception oop");
         oop exceptionOop = thread->_exceptionOop;
@@ -166,7 +166,7 @@ namespace kivm {
         }
     }
 
-    void CopyingHeap::copySlotArray(HeapRegion *newRegion, spp::sparse_hash_map<oop, oop> &map,
+    void CopyingHeap::copySlotArray(HeapRegion *newRegion, HashMap<oop, oop> &map,
                                     SlotArray *slotArray, int size) {
         for (int i = 0; i < size; ++i) {
             Slot *slot = slotArray->_elements + i;
@@ -195,7 +195,7 @@ namespace kivm {
         this->_currentRegion = next;
 
         // the old->new oop map
-        spp::sparse_hash_map<oop, oop> map;
+        HashMap<oop, oop> map;
 
         D("[GCThread]: copying primitive types's java mirrors");
         for (auto &item :java::lang::Class::_primitiveTypeMirrors) {

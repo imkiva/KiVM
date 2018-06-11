@@ -1226,7 +1226,7 @@ namespace kivm {
                     ptr += 8;
 
                     // jump_table
-                    spp::sparse_hash_map<int, int> jumpTable;
+                    HashMap<int, int> jumpTable;
                     for (int i = 0; i < count; i++) {
                         int value = ((codeBlob[ptr] << 24)
                                      | (codeBlob[ptr + 1] << 16)

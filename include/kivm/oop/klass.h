@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <sparsepp/spp.h>
+#include <shared/hashMap.h>
 #include <kivm/kivm.h>
 #include <kivm/classfile/classFile.h>
 #include <kivm/classpath/classLoader.h>

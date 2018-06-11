@@ -4,9 +4,8 @@
 
 #include <kivm/classfile/attributeInfo.h>
 #include <kivm/classfile/classFileStream.h>
-#include <sparsepp/spp.h>
+#include <shared/hashMap.h>
 #include <cassert>
-#include <sparsepp/spp.h>
 
 namespace kivm {
     /**
@@ -926,7 +925,7 @@ namespace kivm {
      *******************************************************************/
 
     u2 AttributeParser::toAttributeTag(u2 attribute_name_index, cp_info **constant_pool) {
-        static spp::sparse_hash_map<String, u2> ATTRIBUTE_MAPPING{
+        static HashMap<String, u2> ATTRIBUTE_MAPPING{
                 {L"ConstantValue",                        ATTRIBUTE_ConstantValue},
                 {L"Code",                                 ATTRIBUTE_Code},
                 {L"StackMapTable",                        ATTRIBUTE_StackMapTable},
