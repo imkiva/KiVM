@@ -50,10 +50,6 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
             new intOopDesc(lineNumber)
         });
         stackTraceArray->setElementAt(position, element);
-
-        D("### Stack Trace: %s:%s",
-            strings::toStdString(method->getClass()->getName()).c_str(),
-            strings::toStdString(method->getName()).c_str());
     }
 
     throwableOop->setFieldValue(L"java/lang/Throwable",
