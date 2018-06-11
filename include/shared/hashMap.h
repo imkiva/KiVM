@@ -6,20 +6,20 @@
 
 #if defined(KIVM_PLATFORM_APPLE)
 
-#include <sparsepp/spp.h>
+#include <unordered_map>
 
 namespace kivm {
     template<typename K, typename V>
-    using HashMap = spp::sparse_hash_map<K, V>;
+    using HashMap = std::unordered_map<K, V>;
 }
 
 #else
 
-#include <unordered_map>
+#include <sparsepp/spp.h>
 
 namespace kivm {
     template <typename K, typename V>
-    using HashMap = std::unordered_map<K, V>;
+    using HashMap = spp::sparse_hash_map<K, V>;
 }
 
 #endif
