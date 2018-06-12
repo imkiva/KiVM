@@ -1739,15 +1739,20 @@ namespace kivm {
         {
             int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
             pc += 2;
-            Execution::instanceOf(currentClass->getRuntimeConstantPool(),
+            Execution::instanceOf(thread, currentClass->getRuntimeConstantPool(),
                 stack, constantIndex, true);
+            if (thread->isExceptionOccurred()) {
+                stack.clear();
+                stack.pushReference(thread->_exceptionOop);
+                goto exceptionHandler;
+            }
             NEXT();
         }
         OPCODE(INSTANCEOF)
         {
             int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
             pc += 2;
-            Execution::instanceOf(currentClass->getRuntimeConstantPool(),
+            Execution::instanceOf(thread, currentClass->getRuntimeConstantPool(),
                 stack, constantIndex, false);
             NEXT();
         }

@@ -83,7 +83,8 @@ namespace kivm {
 
         static bool instanceOf(Klass *S, Klass *T);
 
-        static void instanceOf(RuntimeConstantPool *rt, Stack &stack, int constantIndex,
+        static void instanceOf(JavaThread *thread, RuntimeConstantPool *rt,
+                               Stack &stack, int constantIndex,
                                bool checkCast);
 
         static instanceOop newInstance(JavaThread *thread, RuntimeConstantPool *rt,

@@ -435,11 +435,7 @@ namespace kivm {
     template<typename T>
     T *requireConstant(cp_info **pool, int index) {
         cp_info *info = pool[index];
-        if (info->tag != ConstantHelper<T>::get_tag()) {
-            // TODO: throw VerifyError
-            assert(false);
-            return nullptr;
-        }
+        assert(info->tag == ConstantHelper<T>::get_tag());
         return (T *) info;
     }
 }

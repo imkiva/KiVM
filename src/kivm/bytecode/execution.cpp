@@ -80,7 +80,9 @@ namespace kivm {
         }
     }
 
-    void Execution::instanceOf(RuntimeConstantPool *rt, Stack &stack, int constantIndex, bool checkCast) {
+    void Execution::instanceOf(JavaThread *thread, RuntimeConstantPool *rt,
+                               Stack &stack, int constantIndex,
+                               bool checkCast) {
         jobject ref = stack.popReference();
         if (ref == nullptr) {
             if (checkCast) {
@@ -111,8 +113,13 @@ namespace kivm {
             }
         } else {
             if (checkCast) {
-                // TODO: throw java.lang.ClassCastException
-                PANIC("java.lang.ClassCastException");
+                auto klass = (InstanceKlass *) BootstrapClassLoader::get()
+                    ->loadClass(L"java/lang/ClassCastException");
+                thread->throwException(klass, strings::replaceAll(objClass->getName(),
+                    Global::SLASH, Global::DOT)
+                                              + L" cannot be cast to "
+                                              + strings::replaceAll(targetClass->getName(),
+                    Global::SLASH, Global::DOT));
             } else {
                 stack.pushInt(0);
             }

@@ -163,7 +163,7 @@ vector<ZipEntry> ZipArchive::getEntries(State state) const {
             ZipEntry entry = createEntry(&stat);
             entries.push_back(entry);
         } else {
-            //TODO handle read error => crash ?
+            // Skip
         }
     }
     return entries;
