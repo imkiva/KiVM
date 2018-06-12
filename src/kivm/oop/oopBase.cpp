@@ -25,8 +25,6 @@ namespace kivm {
     void GCJavaObject::deallocate(void *ptr) {
 #ifdef KIVM_DEBUG_MALLOC_ONLY
         free(ptr);
-#else
-        // TODO: garbage collector
 #endif
     }
 
