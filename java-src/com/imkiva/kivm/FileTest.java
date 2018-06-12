@@ -1,7 +1,12 @@
 package com.imkiva.kivm;
 
+import java.io.*;
+
 public class FileTest {
     public static void main(String[] args) {
-        assert 1 + 1 == 2;
+        File f = new File(".");
+        for (String x : f.list()) {
+            System.out.println(x);
+        }
     }
 }

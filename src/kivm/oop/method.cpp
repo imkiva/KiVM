@@ -266,6 +266,10 @@ namespace kivm {
         this->_name = name_info->getConstant();
         this->_descriptor = desc_info->getConstant();
         linkAttributes(pool);
+
+        if (!isAbstract() && !isNative()) {
+            assert(_codeAttr != nullptr);
+        }
         _linked = true;
     }
 
