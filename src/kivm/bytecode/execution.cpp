@@ -450,11 +450,6 @@ namespace kivm {
     }
 
     typeArrayOop Execution::newPrimitiveArray(JavaThread *thread, int arrayType, int length) {
-        if (length < 0) {
-            // TODO: NegativeArraySizeException
-            PANIC("java.lang.NegativeArraySizeException");
-        }
-
         Klass *arrayClass = nullptr;
 
         switch (arrayType) {
@@ -497,11 +492,6 @@ namespace kivm {
 
     objectArrayOop Execution::newObjectArray(JavaThread *thread, RuntimeConstantPool *rt,
                                              int constantIndex, int length) {
-        if (length < 0) {
-            // TODO: NegativeArraySizeException
-            PANIC("java.lang.NegativeArraySizeException");
-        }
-
         Klass *arrayClass = rt->getClass(constantIndex);
         if (arrayClass == nullptr) {
             PANIC("Unrecognized array type(in constant pool): %d, array class: %p", constantIndex, arrayClass);

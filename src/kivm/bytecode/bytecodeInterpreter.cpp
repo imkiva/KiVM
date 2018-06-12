@@ -1304,6 +1304,7 @@ namespace kivm {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         thread->throwException(Global::java_lang_NullPointerException);
+                        stack.clear();
                         stack.pushReference(thread->_exceptionOop);
                         goto exceptionHandler;
                     } else {
@@ -1394,20 +1395,30 @@ namespace kivm {
                 {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
-                    stack.pushReference(Execution::newInstance(thread, currentClass->getRuntimeConstantPool(),
-                        constantIndex));
+                    auto instance = Execution::newInstance(thread, currentClass->getRuntimeConstantPool(),
+                        constantIndex);
                     if (thread->isExceptionOccurred()) {
                         stack.clear();
                         stack.pushReference(thread->_exceptionOop);
                         goto exceptionHandler;
                     }
+                    stack.pushReference(instance);
                     NEXT();
                 }
                 OPCODE(NEWARRAY)
                 {
                     int arrayType = codeBlob[pc++];
                     int length = stack.popInt();
-                    stack.pushReference(Execution::newPrimitiveArray(thread, arrayType, length));
+                    if (length < 0) {
+                        auto klass = (InstanceKlass *) BootstrapClassLoader::get()
+                            ->loadClass(L"java/lang/NegativeArraySizeException");
+                        thread->throwException(klass, std::to_wstring(length));
+                        stack.clear();
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    }
+                    auto array = Execution::newPrimitiveArray(thread, arrayType, length);
+                    stack.pushReference(array);
                     NEXT();
                 }
                 OPCODE(ANEWARRAY)
@@ -1415,9 +1426,18 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     pc += 2;
                     int length = stack.popInt();
-                    stack.pushReference(Execution::newObjectArray(thread,
+                    if (length < 0) {
+                        auto klass = (InstanceKlass *) BootstrapClassLoader::get()
+                            ->loadClass(L"java/lang/NegativeArraySizeException");
+                        thread->throwException(klass, std::to_wstring(length));
+                        stack.clear();
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    }
+                    auto array = Execution::newObjectArray(thread,
                         currentClass->getRuntimeConstantPool(),
-                        constantIndex, length));
+                        constantIndex, length);
+                    stack.pushReference(array);
                     NEXT();
                 }
                 OPCODE(ARRAYLENGTH)
@@ -1425,6 +1445,7 @@ namespace kivm {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         thread->throwException(Global::java_lang_NullPointerException);
+                        stack.clear();
                         stack.pushReference(thread->_exceptionOop);
                         goto exceptionHandler;
                     } else {
@@ -1442,6 +1463,7 @@ namespace kivm {
                     auto exceptionOop = Resolver::instance(stack.popReference());
                     if (exceptionOop == nullptr) {
                         thread->throwException(Global::java_lang_NullPointerException);
+                        stack.clear();
                         stack.pushReference(thread->_exceptionOop);
                         goto exceptionHandler;
                     }
@@ -1481,6 +1503,7 @@ namespace kivm {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         thread->throwException(Global::java_lang_NullPointerException);
+                        stack.clear();
                         stack.pushReference(thread->_exceptionOop);
                         goto exceptionHandler;
                     } else {
@@ -1497,6 +1520,7 @@ namespace kivm {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         thread->throwException(Global::java_lang_NullPointerException);
+                        stack.clear();
                         stack.pushReference(thread->_exceptionOop);
                         goto exceptionHandler;
                     } else {
@@ -1522,8 +1546,12 @@ namespace kivm {
                     for (int i = 0; i < dimension; ++i) {
                         int sub = stack.popInt();
                         if (sub < 0) {
-                            // TODO: NegativeArraySizeException
-                            PANIC("java.lang.NegativeArraySizeException");
+                            auto klass = (InstanceKlass *) BootstrapClassLoader::get()
+                                ->loadClass(L"java/lang/NegativeArraySizeException");
+                            thread->throwException(klass, std::to_wstring(sub));
+                            stack.clear();
+                            stack.pushReference(thread->_exceptionOop);
+                            goto exceptionHandler;
                         }
                         length.push_back(sub);
                     }
