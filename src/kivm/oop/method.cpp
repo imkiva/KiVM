@@ -418,10 +418,6 @@ namespace kivm {
     }
 
     int Method::findExceptionHandler(u4 currentPc, InstanceKlass *exceptionClass) {
-        if (this->_exceptionAttr == nullptr) {
-            return -1;
-        }
-
         auto codeAttr = this->_codeAttr;
         auto pool = this->getClass()->getRuntimeConstantPool();
 
@@ -438,7 +434,7 @@ namespace kivm {
 
             auto checkClass = pool->getClass(ex.catch_type);
             if (checkClass == exceptionClass
-                || Execution::instanceOf(checkClass, exceptionClass)) {
+                || Execution::instanceOf(exceptionClass, checkClass)) {
                 // Yes! we got exception handler
                 return ex.handler_pc;
             }
