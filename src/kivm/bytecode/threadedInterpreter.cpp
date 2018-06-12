@@ -903,8 +903,12 @@ namespace kivm {
             auto v2 = stack.popInt();
             auto v1 = stack.popInt();
             if (v2 == 0) {
-                // TODO: throw java.lang.ArithmeticException
-                PANIC("java.lang.ArithmeticException");
+                auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                    ->loadClass(L"java/lang/ArithmeticException");
+                thread->throwException(klass, L"/ by zero");
+                stack.clear();
+                stack.pushReference(thread->_exceptionOop);
+                goto exceptionHandler;
             }
             stack.pushInt(v1 / v2);
             NEXT();
@@ -914,8 +918,12 @@ namespace kivm {
             auto v2 = stack.popLong();
             auto v1 = stack.popLong();
             if (v2 == 0) {
-                // TODO: throw java.lang.ArithmeticException
-                PANIC("java.lang.ArithmeticException");
+                auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                    ->loadClass(L"java/lang/ArithmeticException");
+                thread->throwException(klass, L"/ by zero");
+                stack.clear();
+                stack.pushReference(thread->_exceptionOop);
+                goto exceptionHandler;
             }
             stack.pushLong(v1 / v2);
             NEXT();
@@ -925,8 +933,12 @@ namespace kivm {
             auto v2 = stack.popFloat();
             auto v1 = stack.popFloat();
             if (v2 == 0) {
-                // TODO: throw java.lang.ArithmeticException
-                PANIC("java.lang.ArithmeticException");
+                auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                    ->loadClass(L"java/lang/ArithmeticException");
+                thread->throwException(klass, L"/ by zero");
+                stack.clear();
+                stack.pushReference(thread->_exceptionOop);
+                goto exceptionHandler;
             }
             stack.pushFloat(v1 / v2);
             NEXT();
@@ -936,8 +948,12 @@ namespace kivm {
             auto v2 = stack.popDouble();
             auto v1 = stack.popDouble();
             if (v2 == 0) {
-                // TODO: throw java.lang.ArithmeticException
-                PANIC("java.lang.ArithmeticException");
+                auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                    ->loadClass(L"java/lang/ArithmeticException");
+                thread->throwException(klass, L"/ by zero");
+                stack.clear();
+                stack.pushReference(thread->_exceptionOop);
+                goto exceptionHandler;
             }
             stack.pushDouble(v1 / v2);
             NEXT();
@@ -947,8 +963,12 @@ namespace kivm {
             auto v2 = stack.popInt();
             auto v1 = stack.popInt();
             if (v2 == 0) {
-                // TODO: throw java.lang.ArithmeticException
-                PANIC("java.lang.ArithmeticException");
+                auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                    ->loadClass(L"java/lang/ArithmeticException");
+                thread->throwException(klass, L"/ by zero");
+                stack.clear();
+                stack.pushReference(thread->_exceptionOop);
+                goto exceptionHandler;
             }
             stack.pushInt(v1 - (v1 / v2) * v2);
             NEXT();
@@ -958,8 +978,12 @@ namespace kivm {
             auto v2 = stack.popLong();
             auto v1 = stack.popLong();
             if (v2 == 0) {
-                // TODO: throw java.lang.ArithmeticException
-                PANIC("java.lang.ArithmeticException");
+                auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                    ->loadClass(L"java/lang/ArithmeticException");
+                thread->throwException(klass, L"/ by zero");
+                stack.clear();
+                stack.pushReference(thread->_exceptionOop);
+                goto exceptionHandler;
             }
             stack.pushLong(v1 - (v1 / v2) * v2);
             NEXT();
