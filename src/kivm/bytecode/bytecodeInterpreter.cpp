@@ -462,46 +462,37 @@ namespace kivm {
                     locals.setReference(3, stack.popReference());
                     NEXT();
                 }
+
+                OPCODE(BASTORE)
+                OPCODE(CASTORE)
+                OPCODE(SASTORE)
                 OPCODE(IASTORE)
                 {
-                    Execution::storeIntArrayElement(stack);
+                    STORE_ARRAY_ELEMENT(value, typeArray, popInt, new intOopDesc(value));
                     NEXT();
                 }
+
                 OPCODE(LASTORE)
                 {
-                    Execution::storeLongArrayElement(stack);
+                    STORE_ARRAY_ELEMENT(value, typeArray, popLong, new longOopDesc(value));
                     NEXT();
                 }
                 OPCODE(FASTORE)
                 {
-                    Execution::storeFloatArrayElement(stack);
+                    STORE_ARRAY_ELEMENT(value, typeArray, popFloat, new floatOopDesc(value));
                     NEXT();
                 }
                 OPCODE(DASTORE)
                 {
-                    Execution::storeDoubleArrayElement(stack);
+                    STORE_ARRAY_ELEMENT(value, typeArray, popDouble, new doubleOopDesc(value));
                     NEXT();
                 }
                 OPCODE(AASTORE)
                 {
-                    Execution::storeObjectArrayElement(stack);
+                    STORE_ARRAY_ELEMENT(value, objectArray, popReference, Resolver::javaOop(value));
                     NEXT();
                 }
-                OPCODE(BASTORE)
-                {
-                    Execution::storeIntArrayElement(stack);
-                    NEXT();
-                }
-                OPCODE(CASTORE)
-                {
-                    Execution::storeIntArrayElement(stack);
-                    NEXT();
-                }
-                OPCODE(SASTORE)
-                {
-                    Execution::storeIntArrayElement(stack);
-                    NEXT();
-                }
+
                 OPCODE(POP)
                 {
                     stack.dropTop();

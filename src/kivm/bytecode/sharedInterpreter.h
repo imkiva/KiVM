@@ -52,6 +52,7 @@
     auto array = Resolver::resolveFunc(ref); \
     if (array == nullptr) { \
         thread->throwException(Global::java_lang_NullPointerException); \
+        stack.clear(); \
         stack.pushReference(thread->_exceptionOop); \
         goto exceptionHandler; \
     } \
@@ -66,3 +67,26 @@
     } \
     auto varName = (oopType) array->getElementAt(index);\
     stack.pushFunc(exp)
+
+#define STORE_ARRAY_ELEMENT(varName, resolveFunc, popFunc, exp) \
+    auto varName = stack.popFunc(); \
+    int index = stack.popInt(); \
+    auto ref = stack.popReference(); \
+    auto array = Resolver::resolveFunc(ref); \
+    if (array == nullptr) { \
+        thread->throwException(Global::java_lang_NullPointerException); \
+        stack.clear(); \
+        stack.pushReference(thread->_exceptionOop); \
+        goto exceptionHandler; \
+    } \
+    if (index < 0 || index >= array->getLength()) { \
+        thread->throwException(Global::java_lang_ArrayIndexOutOfBoundsException, \
+            L"length is " \
+            + std::to_wstring(array->getLength()) \
+            + L", but index is " \
+            + std::to_wstring(index)); \
+        stack.pushReference(thread->_exceptionOop); \
+        goto exceptionHandler; \
+    } \
+    array->setElementAt(index, exp);
+
