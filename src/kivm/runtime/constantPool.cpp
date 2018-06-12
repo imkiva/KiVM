@@ -18,6 +18,9 @@ namespace kivm {
                                                                    const String &,
                                                                    const String &) const;
 
+            typedef Method *(InstanceKlass::*MethodGetterType)(const String &,
+                                                               const String &) const;
+
             FieldPoolEntry getField(RuntimeConstantPool *rt, cp_info **pool, int index, bool isStatic) {
                 auto fieldRef = (CONSTANT_Fieldref_info *) pool[index];
                 Klass *klass = rt->getClass(fieldRef->class_index);
@@ -45,6 +48,22 @@ namespace kivm {
                     }
                 }
                 PANIC("Unsupported field & class type.");
+                return nullptr;
+            }
+
+            MethodPoolEntry getMethod(InstanceKlass *instanceKlass, MethodGetterType getter,
+                                      const String &name, const String &desc) {
+                auto currentClass = instanceKlass;
+                while (currentClass != nullptr) {
+                    auto found = (currentClass->*getter)(name, desc);
+                    if (found != nullptr) {
+                        return found;
+                    }
+
+                    // method not found in current method
+                    // try superclass
+                    currentClass = currentClass->getSuperClass();
+                }
                 return nullptr;
             }
         }
@@ -95,15 +114,13 @@ namespace kivm {
             if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
                 auto instanceKlass = (InstanceKlass *) klass;
 
-                // TODO: find static methods which are in super classes
                 if (tag == CONSTANT_Methodref) {
-                    // invokespecial and invokestatic
-                    auto found = instanceKlass->getThisClassMethod(*nameAndType->first, *nameAndType->second);
-                    if (found == nullptr) {
-                        // invokevirtual
-                        found = instanceKlass->getVirtualMethod(*nameAndType->first, *nameAndType->second);
-                    }
-                    return found;
+                    // invokespecial, invokestatic and invokevirtual
+                    // Note: we should use getVirtualMethod() to locate virtual methods
+                    // but getThisClassMethod() has covered getVirtualMethod()
+                    // so there is no need to check again
+                    return impl::getMethod(instanceKlass, &InstanceKlass::getThisClassMethod,
+                        *nameAndType->first, *nameAndType->second);
 
                 } else {
                     // invokeinterface

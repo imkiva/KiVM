@@ -36,7 +36,6 @@ namespace kivm {
         // Initialize Java Virtual Machine
         Threads::initializeJVM(this);
 
-        // TODO: invoke main(String[])
         D("Threads::initializeJVM() succeeded. Lunching main()");
 
         auto mainClass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(_mainClassName);
@@ -83,7 +82,6 @@ namespace kivm {
     }
 
     void Threads::initializeJVM(JavaMainThread *thread) {
-        // TODO: put initialization logic here.
         auto cl = BootstrapClassLoader::get();
 
         Threads::initializeVMStructs(cl, thread);
