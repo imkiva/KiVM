@@ -34,8 +34,11 @@ JAVA_NATIVE void Java_java_io_FileOutputStream_writeBytes(JNIEnv *env, jobject j
     if (byteArray->getLength() <= off && byteArray->getLength() < (off + len)) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        // TODO: verbose exception message
-        thread->throwException(Global::java_lang_ArrayIndexOutOfBoundsException);
+        thread->throwException(Global::java_lang_ArrayIndexOutOfBoundsException,
+            L"length is "
+            + std::to_wstring(byteArray->getLength())
+            + L", but index is "
+            + std::to_wstring(off));
         return;
     }
 
@@ -58,8 +61,7 @@ JAVA_NATIVE void Java_java_io_FileOutputStream_writeBytes(JNIEnv *env, jobject j
     if (write(fd, buf, (size_t) len) == -1) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        // TODO: verbose exception message
-        thread->throwException(Global::java_io_IOException);
+        thread->throwException(Global::java_io_IOException, L"write() failed");
         return;
     }
     Universe::deallocCObject(buf);
