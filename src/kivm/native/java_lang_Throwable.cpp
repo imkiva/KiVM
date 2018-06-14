@@ -13,8 +13,6 @@
 
 using namespace kivm;
 
-// TODO: Stack trace support
-
 JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobject javaThrowable, jint depth) {
     static auto ARRAY_CLASS = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/StackTraceElement;");

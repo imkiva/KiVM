@@ -289,7 +289,6 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env,
 JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredMethods0(JNIEnv *env,
                                                                   jobject java_lang_Class_mirror,
                                                                   jboolean publicOnly) {
-    // TODO: reflection support
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/reflect/Method;");
 
@@ -317,7 +316,6 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredMethods0(JNIEnv *env,
 JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *env,
                                                                        jobject java_lang_Class_mirror,
                                                                        jboolean publicOnly) {
-    // TODO: reflection support
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/reflect/Constructor;");
 
