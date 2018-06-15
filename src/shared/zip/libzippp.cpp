@@ -80,7 +80,19 @@ int ZipEntry::readContent(std::ofstream &ofOutput, ZipArchive::State state, libz
 ZipArchive::ZipArchive(const kivm::String &zipPath)
     : path(kivm::strings::toStdString(zipPath)),
       zipHandle(nullptr),
-      mode(NOT_OPEN) {
+      mode(NOT_OPEN),
+      zipBuffer(nullptr),
+      zipBufferSize(0),
+      zipSource(nullptr) {
+}
+
+ZipArchive::ZipArchive(const kivm::String &bufferName, void *buffer, size_t bufferSize)
+    : path(kivm::strings::toStdString(bufferName)),
+      zipHandle(nullptr),
+      mode(NOT_OPEN),
+      zipBuffer(buffer),
+      zipBufferSize(bufferSize),
+      zipSource(nullptr) {
 }
 
 ZipArchive::~ZipArchive() {
@@ -100,7 +112,27 @@ bool ZipArchive::open(OpenMode om, bool checkConsistency) {
     }
 
     int errorFlag = 0;
-    zipHandle = zip_open(path.c_str(), zipFlag, &errorFlag);
+
+    if (zipBuffer == nullptr) {
+        zipHandle = zip_open(path.c_str(), zipFlag, &errorFlag);
+
+    } else {
+        zip_error_t error;
+        zip_error_init(&error);
+        zipSource = zip_source_buffer_create(zipBuffer, zipBufferSize, 1, &error);
+        if (zipSource == nullptr) {
+            errorFlag = zip_error_code_zip(&error);
+            zip_error_fini(&error);
+        } else {
+            zipHandle = zip_open_from_source(zipSource, zipFlag, &error);
+            if (zipHandle == nullptr) {
+                zip_source_free(zipSource);
+                zipSource = nullptr;
+                errorFlag = zip_error_code_zip(&error);
+                zip_error_fini(&error);
+            }
+        }
+    }
 
     //error during opening of the file
     if (errorFlag != ZIP_ER_OK) {
@@ -120,6 +152,11 @@ int ZipArchive::close() {
     if (isOpen()) {
         int result = zip_close(zipHandle);
         zipHandle = nullptr;
+
+        if (zipBuffer != nullptr && zipSource != nullptr) {
+            zip_source_free(zipSource);
+            zipSource = nullptr;
+        }
         mode = NOT_OPEN;
 
         if (result != 0) { return result; }
