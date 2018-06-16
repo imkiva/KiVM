@@ -315,11 +315,6 @@ namespace kivm {
     }
 
     void InstanceKlass::setStaticFieldValue(FieldID *fieldID, oop value) {
-        if (fieldID == nullptr || fieldID->_field == nullptr) {
-            // TODO: throw java.lang.NoSuchFieldError
-            PANIC("java.lang.NoSuchFieldError");
-        }
-
         D("Set field %s::%s(%s) (slot: %d, max: %zd) to %p in %s",
             strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
             strings::toStdString(fieldID->_field->getName()).c_str(),
@@ -358,11 +353,6 @@ namespace kivm {
     }
 
     void InstanceKlass::setInstanceFieldValue(instanceOop receiver, FieldID *fieldID, oop value) {
-        if (fieldID == nullptr || fieldID->_field == nullptr) {
-            // throw java.lang.NoSuchFieldError
-            PANIC("java.lang.NoSuchFieldError");
-        }
-
         D("Set field %s::%s(%s) to %p",
             strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
             strings::toStdString(fieldID->_field->getName()).c_str(),
