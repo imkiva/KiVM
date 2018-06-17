@@ -221,6 +221,7 @@ namespace kivm {
                      : rt->getInstanceField(constantIndex);
 
         if (field == nullptr) {
+            // TODO: NoSuchFieldException
             PANIC("FieldID is null, constantIndex: %d", constantIndex);
         }
 
@@ -277,13 +278,26 @@ namespace kivm {
             }
 
             case ValueType::VOID:
-                PANIC("Field cannot be typed void");
-                break;
             default:
-                PANIC("Unrecognized field value type");
+                SHOULD_NOT_REACH_HERE();
                 break;
         }
     }
+
+#define PUTFIELD(value) \
+        if (isStatic) { \
+            instanceKlass->setStaticFieldValue(field, value); \
+        } else { \
+            jobject receiverRef = stack.popReference(); \
+            if (receiverRef == nullptr) { \
+                thread->throwException(Global::java_lang_NullPointerException); \
+            } \
+            instanceOop receiver = Resolver::instance(receiverRef); \
+            if (receiver == nullptr) { \
+                PANIC("Not an instance oop"); \
+            } \
+            instanceKlass->setInstanceFieldValue(receiver, field, value); \
+        }
 
     void Execution::putField(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
                              int constantIndex, bool isStatic) {
@@ -292,6 +306,7 @@ namespace kivm {
                      : rt->getInstanceField(constantIndex);
 
         if (field == nullptr) {
+            // TODO: NoSuchFieldException
             PANIC("FieldID is null, constantIndex: %d", constantIndex);
         }
 
@@ -299,21 +314,6 @@ namespace kivm {
         Execution::initializeClass(thread, instanceKlass);
 
         assert(isStatic == field->_field->isStatic());
-
-#define PUTFIELD(value) \
-        if (isStatic) { \
-            instanceKlass->setStaticFieldValue(field, value); \
-        } else { \
-            jobject receiverRef = stack.popReference(); \
-            if (receiverRef == nullptr) { \
-                PANIC("java.lang.NullPointerException"); \
-            } \
-            instanceOop receiver = Resolver::instance(receiverRef); \
-            if (receiver == nullptr) { \
-                PANIC("Not an instance oop"); \
-            } \
-            instanceKlass->setInstanceFieldValue(receiver, field, value); \
-        }
 
         switch (field->_field->getValueType()) {
             case ValueType::OBJECT:
@@ -353,10 +353,8 @@ namespace kivm {
             }
 
             case ValueType::VOID:
-                PANIC("Field cannot be typed void");
-                break;
             default:
-                PANIC("Unrecognized field value type");
+                SHOULD_NOT_REACH_HERE();
                 break;
         }
     }
