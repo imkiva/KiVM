@@ -289,14 +289,12 @@ namespace kivm {
             instanceKlass->setStaticFieldValue(field, value); \
         } else { \
             jobject receiverRef = stack.popReference(); \
-            if (receiverRef == nullptr) { \
-                thread->throwException(Global::java_lang_NullPointerException); \
-            } \
             instanceOop receiver = Resolver::instance(receiverRef); \
             if (receiver == nullptr) { \
-                PANIC("Not an instance oop"); \
+                thread->throwException(Global::java_lang_NullPointerException); \
+            } else { \
+                instanceKlass->setInstanceFieldValue(receiver, field, value); \
             } \
-            instanceKlass->setInstanceFieldValue(receiver, field, value); \
         }
 
     void Execution::putField(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
