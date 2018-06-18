@@ -42,7 +42,10 @@
 
 //defined in libzip
 struct zip;
+
+#ifdef KIVM_ZIP_OPEN_SOURCE
 struct zip_source;
+#endif
 
 #define DIRECTORY_SEPARATOR '/'
 #define IS_DIRECTORY(str) ((str).length()>0 && (str)[(str).length()-1]==DIRECTORY_SEPARATOR)
@@ -131,7 +134,9 @@ namespace libzippp {
          */
         explicit ZipArchive(const kivm::String &zipPath);
 
+#ifdef KIVM_ZIP_OPEN_SOURCE
         explicit ZipArchive(const kivm::String &bufferName, void *buffer, size_t bufferSize);
+#endif
 
         ~ZipArchive(); //commit all the changes if open
 
@@ -267,9 +272,12 @@ namespace libzippp {
     private:
         std::string path;
         zip *zipHandle;
+
+#ifdef KIVM_ZIP_OPEN_SOURCE
         zip_source *zipSource;
         void *zipBuffer;
         size_t zipBufferSize;
+#endif
         OpenMode mode;
 
         //generic method to create ZipEntry

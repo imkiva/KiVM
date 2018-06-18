@@ -85,6 +85,8 @@ if (HAVE_ZIP_H)
         int main(int argc, char *argv[]) { zip_flags_t flag = 0; }" HAVE_ZIP_FLAGS_T)
     check_c_source_compiles("#include <zip.h>
         int main(int argc, char *argv[]) { unsigned int flag = ZIP_FL_ENC_GUESS; }" HAVE_ZIP_FL_ENC_GUESS)
+    check_c_source_compiles("#include <zip.h>
+        int main(int argc, char *argv[]) { zip_source_t *src; }" HAVE_ZIP_SOURCE_T)
 
     # check libz if libzip is required
     if (NOT EXISTS "/system/framework/framework-res.apk")

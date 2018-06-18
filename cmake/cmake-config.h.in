@@ -3,6 +3,7 @@
 #ifdef HAVE_CONFIG_H
 
 #cmakedefine01 HAVE_ZIP_FLAGS_T
+#cmakedefine01 HAVE_ZIP_SOURCE_T
 #cmakedefine01 HAVE_ZIP_FL_ENC_GUESS
 #cmakedefine01 HAVE_ZIP_H
 #cmakedefine01 KIVM_THREADED
@@ -21,6 +22,9 @@
 
 #if HAVE_ZIP_H
 #define KIVM_JAR_CLASS_LOADING
+#if HAVE_ZIP_SOURCE_T
+#define KIVM_ZIP_OPEN_SOURCE
+#endif
 #endif
 
 #if KIVM_ARCH_x86_64 || KIVM_ARCH_x86
