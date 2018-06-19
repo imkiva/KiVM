@@ -1540,6 +1540,11 @@ namespace kivm {
             pc += 2;
             Execution::putField(thread, currentClass->getRuntimeConstantPool(),
                 stack, constantIndex, true);
+            if (thread->isExceptionOccurred()) {
+                stack.clear();
+                stack.pushReference(thread->_exceptionOop);
+                goto exceptionHandler;
+            }
             NEXT();
         }
         OPCODE(GETFIELD)
@@ -1568,6 +1573,11 @@ namespace kivm {
             pc += 2;
             Execution::putField(thread, currentClass->getRuntimeConstantPool(),
                 stack, constantIndex, false);
+            if (thread->isExceptionOccurred()) {
+                stack.clear();
+                stack.pushReference(thread->_exceptionOop);
+                goto exceptionHandler;
+            }
             NEXT();
         }
         OPCODE(INVOKEVIRTUAL)
