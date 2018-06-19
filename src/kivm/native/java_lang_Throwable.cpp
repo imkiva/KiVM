@@ -23,6 +23,7 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
 
     auto throwableOop = Resolver::instance(javaThrowable);
     auto thread = Threads::currentThread();
+    assert(thread != nullptr);
 
     FrameWalker walker(thread);
     auto stackTraceArray = ARRAY_CLASS->newInstance(walker.getSize());
