@@ -44,6 +44,8 @@ namespace kivm {
     }
 
     void JavaThread::run() {
+        this->setThreadName(L"JavaThread (start0)");
+
         // No other threads will join this thread.
         // So it is OK to detach()
         this->_nativeThread->detach();
