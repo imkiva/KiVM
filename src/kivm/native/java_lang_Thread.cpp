@@ -9,7 +9,7 @@
 #include <kivm/oop/primitiveOop.h>
 
 #include <pthread.h>
-#include <signal.h>
+#include <csignal>
 
 using namespace kivm;
 
@@ -55,9 +55,9 @@ JAVA_NATIVE jboolean Java_java_lang_Thread_isAlive(JNIEnv *env, jobject threadOb
 
 JAVA_NATIVE void Java_java_lang_Thread_start0(JNIEnv *env, jobject threadObject) {
     auto threadOop = Resolver::instance(threadObject);
-    if (threadOop->getClass()->getName() == L"java/lang/ref/Reference$ReferenceHandler") {
-        return;
-    }
-
-    PANIC("Thread.start0()");
+    auto klass = threadOop->getInstanceClass();
+    auto runMethod = klass->getVirtualMethod(L"run", L"()V");
+    assert(runMethod != nullptr);
+    auto thread = new JavaThread(runMethod, {threadOop});
+    thread->start(threadOop);
 }
