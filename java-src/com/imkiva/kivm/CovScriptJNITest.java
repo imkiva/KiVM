@@ -9,6 +9,10 @@ public class CovScriptJNITest {
         System.out.println("I am too old!");
     }
 
+    public int test(int a, int b) {
+        return a+b;
+    }
+
     public static void main(String[] args) {
         csSayHello();
         csSayHello(10086);
