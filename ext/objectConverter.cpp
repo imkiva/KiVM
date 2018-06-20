@@ -30,6 +30,9 @@ namespace helper {
             auto methodId = e.second;
             if (methodId->_method->isStatic()) {
                 callMethod(methodId, {/* args */});
+            } else {
+                auto thisObject = instanceKlass->newInstance();
+                callMethod(methodId, {thisObject, /* args */});
             }
         }
     }
