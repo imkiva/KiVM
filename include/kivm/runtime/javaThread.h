@@ -94,6 +94,10 @@ namespace kivm {
         inline bool isExceptionOccurred() const {
             return _exceptionOop != nullptr;
         }
+
+        inline instanceOop getException() const {
+            return _exceptionOop;
+        }
     };
 
     // The Java main thread
