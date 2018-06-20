@@ -31,7 +31,7 @@ namespace helper {
             if (methodId->_method->isStatic()) {
                 callMethod(methodId, {/* args */});
             } else {
-                auto thisObject = instanceKlass->newInstance();
+                instanceOop thisObject = nullptr;
                 callMethod(methodId, {thisObject, /* args */});
             }
         }
