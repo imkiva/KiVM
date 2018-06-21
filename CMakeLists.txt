@@ -311,7 +311,7 @@ if (DEFINED ENV{CS_SRC})
     include_directories(${CS_SRC}/include)
     add_library(covscript-kivm SHARED
             ext/covscript-kivm.cpp
-            ext/extension-helper.h)
+            ext/extension-helper.h ext/objectConverter.cpp)
     target_link_libraries(covscript-kivm kivm)
     set_target_properties(covscript-kivm PROPERTIES OUTPUT_NAME "kivm")
     set_target_properties(covscript-kivm PROPERTIES PREFIX "")
