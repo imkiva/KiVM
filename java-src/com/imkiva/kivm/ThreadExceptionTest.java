@@ -6,7 +6,7 @@ public class ThreadExceptionTest {
             for (int i = 0; i < 10; ++i) {
                 System.out.println(getName() + ": " + i);
             }
-            throw new RuntimeException("exception thrown from mt thread");
+            throw new RuntimeException("exception thrown from my thread: " + getName());
         }
     }
 

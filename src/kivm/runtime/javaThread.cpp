@@ -107,11 +107,11 @@ namespace kivm {
 
     JavaThread *Threads::currentThread() {
         JavaThread *found = nullptr;
-        auto currentThreadID = std::this_thread::get_id();
+        std::thread::id currentThreadID = std::this_thread::get_id();
 
         Threads::forEach([&](JavaThread *thread) {
             if (thread->getThreadState() != ThreadState::DIED) {
-                auto checkThreadID = thread->_nativeThread->get_id();
+                std::thread::id checkThreadID = thread->_nativeThread->get_id();
                 if (checkThreadID == currentThreadID) {
                     found = thread;
                     return true;
