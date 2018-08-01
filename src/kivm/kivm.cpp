@@ -373,8 +373,7 @@ namespace kivm {
         // clear exception object because we have handled it
         exceptionThread->_exceptionOop = nullptr;
 
-        auto *thread = Threads::currentThread();
-        auto javaThreadOop = thread->getJavaThreadObject();
+        auto javaThreadOop = exceptionThread->getJavaThreadObject();
 
         if (javaThreadOop == nullptr) {
             KiVM::uncaughtExceptionJVMInternal(ex);
@@ -391,7 +390,7 @@ namespace kivm {
 
         if (FIRST_TIME_DISPATCH) {
             FIRST_TIME_DISPATCH = false;
-            InvocationContext::invokeWithArgs(thread, dispatcher, {javaThreadOop, ex});
+            InvocationContext::invokeWithArgs(exceptionThread, dispatcher, {javaThreadOop, ex});
         } else {
             KiVM::uncaughtExceptionJVMInternal(ex);
         }

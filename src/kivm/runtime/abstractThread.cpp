@@ -33,7 +33,7 @@ namespace kivm {
     }
 
     void AbstractThread::onDestroy() {
-        // do nothing.
+        // Do nothing.
     }
 
     long AbstractThread::getNativeHandler() const {
