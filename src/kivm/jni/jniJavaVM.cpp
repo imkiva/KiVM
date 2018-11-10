@@ -23,6 +23,6 @@ JNI_ENTRY(jint, GetEnv(JavaVM * vm, void * *penv, jint
 }
 
 JNI_ENTRY(jint, AttachCurrentThreadAsDaemon(JavaVM * vm, void * *penv, void * args)) {
-    PANIC("jvm_AttachCurrentThreadAsDaemon()");
+    return kivm::KiVM::getEnv(vm, (JNIEnv **) penv, JNI_VERSION_1_6);
 }
 
