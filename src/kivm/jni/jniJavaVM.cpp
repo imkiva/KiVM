@@ -9,14 +9,16 @@ JNI_ENTRY(jint, DestroyJavaVM(JavaVM * vm)) {
 }
 
 JNI_ENTRY(jint, AttachCurrentThread(JavaVM * vm, void * *penv, void * args)) {
-    PANIC("jvm_AttachCurrentThread()");
+    kivm::KiVM::getEnv(vm, (JNIEnv **) penv, JNI_VERSION_1_6);
+    return JNI_OK;
 }
 
 JNI_ENTRY(jint, DetachCurrentThread(JavaVM * vm)) {
-    PANIC("jvm_DetachCurrentThread()");
+    return JNI_OK;
 }
 
-JNI_ENTRY(jint, GetEnv(JavaVM * vm, void * *penv, jint version)) {
+JNI_ENTRY(jint, GetEnv(JavaVM * vm, void * *penv, jint
+    version)) {
     return kivm::KiVM::getEnv(vm, (JNIEnv **) penv, version);
 }
 
