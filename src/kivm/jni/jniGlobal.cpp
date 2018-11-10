@@ -5,7 +5,15 @@
 
 _JNI_IMPORT_OR_EXPORT_
 jint JNICALL JNI_GetDefaultJavaVMInitArgs(void *args) {
-    return JNI_ERR;
+    auto initArgs = (JavaVMInitArgs *) args;
+    if (initArgs == nullptr) {
+        return JNI_ERR;
+    }
+    initArgs->version = JNI_VERSION_1_6;
+    initArgs->nOptions = 0;
+    initArgs->ignoreUnrecognized = JNI_TRUE;
+    initArgs->options = nullptr;
+    return JNI_OK;
 }
 
 _JNI_IMPORT_OR_EXPORT_
@@ -15,6 +23,8 @@ jint JNICALL JNI_CreateJavaVM(JavaVM **pvm, void **penv, void *args) {
 }
 
 _JNI_IMPORT_OR_EXPORT_
-jint JNICALL JNI_GetCreatedJavaVMs(JavaVM **, jsize, jsize *) {
-    PANIC("KiVM does not support JNI_GetCreatedJavaVMs()");
+jint JNICALL JNI_GetCreatedJavaVMs(JavaVM **pJavaVM, jsize bufLen, jsize *nVMs) {
+    *pJavaVM = kivm::KiVM::getJavaVMQuick();
+    *nVMs = 1;
+    return JNI_OK;
 }

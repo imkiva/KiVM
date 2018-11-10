@@ -147,7 +147,6 @@ namespace kivm {
         InvocationContext::invokeWithArgs(thread, threadCtor,
             {initThreadOop, mainThreadGroup, java::lang::String::intern(L"main")});
 
-        // TODO: java.nio.charset.Charset.forName() cannot find any charsets
         Threads::hackJavaClasses(cl, thread);
 
         // Initialize system classes.
@@ -178,6 +177,7 @@ namespace kivm {
     }
 
     void Threads::hackJavaClasses(BootstrapClassLoader *cl, JavaMainThread *thread) {
+        // TODO: java.nio.charset.Charset.forName() cannot find any charsets
         // hack java.nio.charset.Charset.defaultCharset
         auto charsetClass = (InstanceKlass *) BootstrapClassLoader::get()
             ->loadClass(L"java/nio/charset/Charset");
