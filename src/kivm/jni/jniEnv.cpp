@@ -3,6 +3,10 @@
 //
 
 #include <kivm/kivm.h>
+#include <kivm/oop/klass.h>
+#include <kivm/oop/instanceKlass.h>
+#include <kivm/classpath/classLoader.h>
+#include <kivm/native/java_lang_Class.h>
 
 JNI_ENTRY(jint, GetVersion(JNIEnv *env)) {
     return JNI_VERSION_1_8;
@@ -13,7 +17,9 @@ JNI_ENTRY(jclass, DefineClass(JNIEnv *env, const char *name, jobject loader, con
 }
 
 JNI_ENTRY(jclass, FindClass(JNIEnv *env, const char *name)) {
-    PANIC("not implemented");
+    using namespace kivm;
+    auto cl = ClassLoader::getCurrentClassLoader();
+    return cl->loadClass(strings::fromStdString(name))->getJavaMirror();
 }
 
 JNI_ENTRY(jmethodID, FromReflectedMethod(JNIEnv *env, jobject method)) {
@@ -29,10 +35,14 @@ JNI_ENTRY(jobject, ToReflectedMethod(JNIEnv *env, jclass cls, jmethodID methodID
 }
 
 JNI_ENTRY(jclass, GetSuperclass(JNIEnv *env, jclass sub)) {
-    PANIC("not implemented");
+    using namespace kivm;
+    auto klass = (Klass*) sub;
+    auto superClass = klass != nullptr ? klass->getSuperClass() : nullptr;
+    return superClass != nullptr ? superClass->getJavaMirror() : nullptr;
 }
 
 JNI_ENTRY(jboolean, IsAssignableFrom(JNIEnv *env, jclass sub, jclass sup)) {
+    using namespace kivm;
     PANIC("not implemented");
 }
 
@@ -85,7 +95,7 @@ JNI_ENTRY(void, DeleteLocalRef(JNIEnv *env, jobject obj)) {
 }
 
 JNI_ENTRY(jboolean, IsSameObject(JNIEnv *env, jobject obj1, jobject obj2)) {
-    PANIC("not implemented");
+    return JBOOLEAN(obj1 == obj2);
 }
 
 JNI_ENTRY(jobject, NewLocalRef(JNIEnv *env, jobject ref)) {

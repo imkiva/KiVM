@@ -21,13 +21,18 @@ namespace kivm {
         }
 
         Klass *loadedClass = classLoader == nullptr
-                              ? nullptr
-                              : classLoader->loadClass(className);
+                             ? nullptr
+                             : classLoader->loadClass(className);
         if (loadedClass == nullptr) {
             // TODO: throw LinkageError
             PANIC("LinkageError");
         }
         return loadedClass;
+    }
+
+    ClassLoader *ClassLoader::getCurrentClassLoader() {
+        // TODO: support user-defined class loader
+        return BootstrapClassLoader::get();
     }
 
     BootstrapClassLoader *BootstrapClassLoader::get() {

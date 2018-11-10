@@ -14,6 +14,8 @@ namespace kivm {
     public:
         static Klass *requireClass(ClassLoader *classLoader, const String &className);
 
+        static ClassLoader* getCurrentClassLoader();
+
         virtual Klass *loadClass(const String &className) = 0;
 
         ClassLoader() = default;
