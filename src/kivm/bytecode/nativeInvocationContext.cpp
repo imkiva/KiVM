@@ -266,7 +266,7 @@ namespace kivm {
 
         JavaVM *javaVM = KiVM::getJavaVMQuick();
         JNIEnv *env = nullptr;
-        if (javaVM->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
+        if (javaVM->GetEnv((void **) &env, JNI_VERSION_1_8) != JNI_OK) {
             PANIC("Failed to obtain JNIEnv");
         }
 

@@ -9,7 +9,7 @@ jint JNICALL JNI_GetDefaultJavaVMInitArgs(void *args) {
     if (initArgs == nullptr) {
         return JNI_ERR;
     }
-    initArgs->version = JNI_VERSION_1_6;
+    initArgs->version = JNI_VERSION_1_8;
     initArgs->nOptions = 0;
     initArgs->ignoreUnrecognized = JNI_TRUE;
     initArgs->options = nullptr;

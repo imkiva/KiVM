@@ -9,7 +9,7 @@ JNI_ENTRY(jint, DestroyJavaVM(JavaVM * vm)) {
 }
 
 JNI_ENTRY(jint, AttachCurrentThread(JavaVM * vm, void * *penv, void * args)) {
-    kivm::KiVM::getEnv(vm, (JNIEnv **) penv, JNI_VERSION_1_6);
+    kivm::KiVM::getEnv(vm, (JNIEnv **) penv, JNI_VERSION_1_8);
     return JNI_OK;
 }
 
@@ -23,6 +23,6 @@ JNI_ENTRY(jint, GetEnv(JavaVM * vm, void * *penv, jint
 }
 
 JNI_ENTRY(jint, AttachCurrentThreadAsDaemon(JavaVM * vm, void * *penv, void * args)) {
-    return kivm::KiVM::getEnv(vm, (JNIEnv **) penv, JNI_VERSION_1_6);
+    return kivm::KiVM::getEnv(vm, (JNIEnv **) penv, JNI_VERSION_1_8);
 }
 

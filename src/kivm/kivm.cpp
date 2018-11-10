@@ -122,6 +122,7 @@ namespace kivm {
             case JNI_VERSION_1_2:
             case JNI_VERSION_1_4:
             case JNI_VERSION_1_6:
+            case JNI_VERSION_1_8:
                 break;
             default:
                 return JNI_EVERSION;
