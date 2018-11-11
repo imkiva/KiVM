@@ -1239,7 +1239,7 @@ struct JNIEnv_ {
         jobject result;
         va_start(args, methodID);
         result = functions->CallNonvirtualObjectMethodV(this, obj, clazz,
-                                                        methodID, args);
+            methodID, args);
         va_end(args);
         return result;
     }
@@ -1247,13 +1247,13 @@ struct JNIEnv_ {
     jobject CallNonvirtualObjectMethodV(jobject obj, jclass clazz,
                                         jmethodID methodID, va_list args) {
         return functions->CallNonvirtualObjectMethodV(this, obj, clazz,
-                                                      methodID, args);
+            methodID, args);
     }
 
     jobject CallNonvirtualObjectMethodA(jobject obj, jclass clazz,
                                         jmethodID methodID, const jvalue *args) {
         return functions->CallNonvirtualObjectMethodA(this, obj, clazz,
-                                                      methodID, args);
+            methodID, args);
     }
 
     jboolean CallNonvirtualBooleanMethod(jobject obj, jclass clazz,
@@ -1262,7 +1262,7 @@ struct JNIEnv_ {
         jboolean result;
         va_start(args, methodID);
         result = functions->CallNonvirtualBooleanMethodV(this, obj, clazz,
-                                                         methodID, args);
+            methodID, args);
         va_end(args);
         return result;
     }
@@ -1270,13 +1270,13 @@ struct JNIEnv_ {
     jboolean CallNonvirtualBooleanMethodV(jobject obj, jclass clazz,
                                           jmethodID methodID, va_list args) {
         return functions->CallNonvirtualBooleanMethodV(this, obj, clazz,
-                                                       methodID, args);
+            methodID, args);
     }
 
     jboolean CallNonvirtualBooleanMethodA(jobject obj, jclass clazz,
                                           jmethodID methodID, const jvalue *args) {
         return functions->CallNonvirtualBooleanMethodA(this, obj, clazz,
-                                                       methodID, args);
+            methodID, args);
     }
 
     jbyte CallNonvirtualByteMethod(jobject obj, jclass clazz,
@@ -1285,7 +1285,7 @@ struct JNIEnv_ {
         jbyte result;
         va_start(args, methodID);
         result = functions->CallNonvirtualByteMethodV(this, obj, clazz,
-                                                      methodID, args);
+            methodID, args);
         va_end(args);
         return result;
     }
@@ -1293,13 +1293,13 @@ struct JNIEnv_ {
     jbyte CallNonvirtualByteMethodV(jobject obj, jclass clazz,
                                     jmethodID methodID, va_list args) {
         return functions->CallNonvirtualByteMethodV(this, obj, clazz,
-                                                    methodID, args);
+            methodID, args);
     }
 
     jbyte CallNonvirtualByteMethodA(jobject obj, jclass clazz,
                                     jmethodID methodID, const jvalue *args) {
         return functions->CallNonvirtualByteMethodA(this, obj, clazz,
-                                                    methodID, args);
+            methodID, args);
     }
 
     jchar CallNonvirtualCharMethod(jobject obj, jclass clazz,
@@ -1308,7 +1308,7 @@ struct JNIEnv_ {
         jchar result;
         va_start(args, methodID);
         result = functions->CallNonvirtualCharMethodV(this, obj, clazz,
-                                                      methodID, args);
+            methodID, args);
         va_end(args);
         return result;
     }
@@ -1316,13 +1316,13 @@ struct JNIEnv_ {
     jchar CallNonvirtualCharMethodV(jobject obj, jclass clazz,
                                     jmethodID methodID, va_list args) {
         return functions->CallNonvirtualCharMethodV(this, obj, clazz,
-                                                    methodID, args);
+            methodID, args);
     }
 
     jchar CallNonvirtualCharMethodA(jobject obj, jclass clazz,
                                     jmethodID methodID, const jvalue *args) {
         return functions->CallNonvirtualCharMethodA(this, obj, clazz,
-                                                    methodID, args);
+            methodID, args);
     }
 
     jshort CallNonvirtualShortMethod(jobject obj, jclass clazz,
@@ -1331,7 +1331,7 @@ struct JNIEnv_ {
         jshort result;
         va_start(args, methodID);
         result = functions->CallNonvirtualShortMethodV(this, obj, clazz,
-                                                       methodID, args);
+            methodID, args);
         va_end(args);
         return result;
     }
@@ -1339,13 +1339,13 @@ struct JNIEnv_ {
     jshort CallNonvirtualShortMethodV(jobject obj, jclass clazz,
                                       jmethodID methodID, va_list args) {
         return functions->CallNonvirtualShortMethodV(this, obj, clazz,
-                                                     methodID, args);
+            methodID, args);
     }
 
     jshort CallNonvirtualShortMethodA(jobject obj, jclass clazz,
                                       jmethodID methodID, const jvalue *args) {
         return functions->CallNonvirtualShortMethodA(this, obj, clazz,
-                                                     methodID, args);
+            methodID, args);
     }
 
     jint CallNonvirtualIntMethod(jobject obj, jclass clazz,
@@ -1354,7 +1354,7 @@ struct JNIEnv_ {
         jint result;
         va_start(args, methodID);
         result = functions->CallNonvirtualIntMethodV(this, obj, clazz,
-                                                     methodID, args);
+            methodID, args);
         va_end(args);
         return result;
     }
@@ -1362,13 +1362,13 @@ struct JNIEnv_ {
     jint CallNonvirtualIntMethodV(jobject obj, jclass clazz,
                                   jmethodID methodID, va_list args) {
         return functions->CallNonvirtualIntMethodV(this, obj, clazz,
-                                                   methodID, args);
+            methodID, args);
     }
 
     jint CallNonvirtualIntMethodA(jobject obj, jclass clazz,
                                   jmethodID methodID, const jvalue *args) {
         return functions->CallNonvirtualIntMethodA(this, obj, clazz,
-                                                   methodID, args);
+            methodID, args);
     }
 
     jlong CallNonvirtualLongMethod(jobject obj, jclass clazz,
@@ -1377,7 +1377,7 @@ struct JNIEnv_ {
         jlong result;
         va_start(args, methodID);
         result = functions->CallNonvirtualLongMethodV(this, obj, clazz,
-                                                      methodID, args);
+            methodID, args);
         va_end(args);
         return result;
     }
@@ -1385,13 +1385,13 @@ struct JNIEnv_ {
     jlong CallNonvirtualLongMethodV(jobject obj, jclass clazz,
                                     jmethodID methodID, va_list args) {
         return functions->CallNonvirtualLongMethodV(this, obj, clazz,
-                                                    methodID, args);
+            methodID, args);
     }
 
     jlong CallNonvirtualLongMethodA(jobject obj, jclass clazz,
                                     jmethodID methodID, const jvalue *args) {
         return functions->CallNonvirtualLongMethodA(this, obj, clazz,
-                                                    methodID, args);
+            methodID, args);
     }
 
     jfloat CallNonvirtualFloatMethod(jobject obj, jclass clazz,
@@ -1400,7 +1400,7 @@ struct JNIEnv_ {
         jfloat result;
         va_start(args, methodID);
         result = functions->CallNonvirtualFloatMethodV(this, obj, clazz,
-                                                       methodID, args);
+            methodID, args);
         va_end(args);
         return result;
     }
@@ -1409,14 +1409,14 @@ struct JNIEnv_ {
                                       jmethodID methodID,
                                       va_list args) {
         return functions->CallNonvirtualFloatMethodV(this, obj, clazz,
-                                                     methodID, args);
+            methodID, args);
     }
 
     jfloat CallNonvirtualFloatMethodA(jobject obj, jclass clazz,
                                       jmethodID methodID,
                                       const jvalue *args) {
         return functions->CallNonvirtualFloatMethodA(this, obj, clazz,
-                                                     methodID, args);
+            methodID, args);
     }
 
     jdouble CallNonvirtualDoubleMethod(jobject obj, jclass clazz,
@@ -1425,7 +1425,7 @@ struct JNIEnv_ {
         jdouble result;
         va_start(args, methodID);
         result = functions->CallNonvirtualDoubleMethodV(this, obj, clazz,
-                                                        methodID, args);
+            methodID, args);
         va_end(args);
         return result;
     }
@@ -1434,14 +1434,14 @@ struct JNIEnv_ {
                                         jmethodID methodID,
                                         va_list args) {
         return functions->CallNonvirtualDoubleMethodV(this, obj, clazz,
-                                                      methodID, args);
+            methodID, args);
     }
 
     jdouble CallNonvirtualDoubleMethodA(jobject obj, jclass clazz,
                                         jmethodID methodID,
                                         const jvalue *args) {
         return functions->CallNonvirtualDoubleMethodA(this, obj, clazz,
-                                                      methodID, args);
+            methodID, args);
     }
 
     void CallNonvirtualVoidMethod(jobject obj, jclass clazz,
@@ -2255,6 +2255,7 @@ JNI_OnLoad(JavaVM *vm, void *reserved);
 JNIEXPORT void JNICALL
 JNI_OnUnload(JavaVM *vm, void *reserved);
 
+#define JNI_VERSION_UNKNOWN 0x0
 #define JNI_VERSION_1_1 0x00010001
 #define JNI_VERSION_1_2 0x00010002
 #define JNI_VERSION_1_4 0x00010004

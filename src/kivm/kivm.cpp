@@ -117,15 +117,8 @@ namespace kivm {
             return JNI_ERR;
         }
 
-        switch (version) {
-            case JNI_VERSION_1_1:
-            case JNI_VERSION_1_2:
-            case JNI_VERSION_1_4:
-            case JNI_VERSION_1_6:
-            case JNI_VERSION_1_8:
-                break;
-            default:
-                return JNI_EVERSION;
+        if (!checkJavaVersion(version)) {
+            return JNI_EVERSION;
         }
 
         *pEnv = sJNIEnvInstance;
@@ -419,6 +412,19 @@ namespace kivm {
         } else {
             PANIC("(JVM) UncaughtException: %s (failed to obtain message)",
                 strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str());
+        }
+    }
+
+    bool KiVM::checkJavaVersion(int javaVersion) {
+        switch (javaVersion) {
+            case JNI_VERSION_1_1:
+            case JNI_VERSION_1_2:
+            case JNI_VERSION_1_4:
+            case JNI_VERSION_1_6:
+            case JNI_VERSION_1_8:
+                return true;
+            default:
+                return false;
         }
     }
 }

@@ -274,7 +274,9 @@ set(SOURCE_FILES
         src/kivm/memory/copyingCollector.cpp
         src/shared/os/unix/osInfo.cpp
         src/shared/os/macos/osInfo.cpp
-        src/kivm/native/java_lang_Runtime.cpp include/shared/hashMap.h)
+        src/kivm/native/java_lang_Runtime.cpp
+        include/shared/hashMap.h
+        include/kivm/runtime/nativeLibrariy.h src/kivm/runtime/nativeLibrary.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})
