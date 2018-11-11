@@ -182,7 +182,7 @@ set(SOURCE_FILES
         include/kivm/runtime/javaThread.h
         include/kivm/classfile/annotation.h
         include/kivm/bytecode/interpreter.h
-        include/kivm/gc/gcThread.h
+        include/kivm/memory/gcThread.h
         include/kivm/runtime/frameWalker.h
         include/shared/osInfo.h
         include/shared/os/unix/osInfo.h
@@ -270,7 +270,7 @@ set(SOURCE_FILES
         src/kivm/native/sun_misc_Signal.cpp
         src/kivm/runtime/javaThread.cpp
         src/kivm/bytecode/sharedInterpreter.h
-        src/kivm/gc/gcThread.cpp
+        src/kivm/memory/gcThread.cpp
         src/kivm/memory/copyingCollector.cpp
         src/shared/os/unix/osInfo.cpp
         src/shared/os/macos/osInfo.cpp

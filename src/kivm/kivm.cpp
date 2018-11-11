@@ -8,7 +8,7 @@
 #include <kivm/memory/universe.h>
 #include <kivm/classpath/classPathManager.h>
 #include <kivm/bytecode/interpreter.h>
-#include <kivm/gc/gcThread.h>
+#include <kivm/memory/gcThread.h>
 #include <random>
 #include <kivm/bytecode/invocationContext.h>
 

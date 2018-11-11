@@ -7,7 +7,7 @@
 #include <kivm/runtime/runtimeConfig.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/bytecode/invocationContext.h>
-#include <kivm/gc/gcThread.h>
+#include <kivm/memory/gcThread.h>
 
 namespace kivm {
     JavaThread::JavaThread(Method *method, const std::list<oop> &args)

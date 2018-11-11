@@ -6,7 +6,7 @@
 #include <kivm/memory/universe.h>
 #include <kivm/runtime/runtimeConfig.h>
 #include <cmath>
-#include <kivm/gc/gcThread.h>
+#include <kivm/memory/gcThread.h>
 #include <kivm/runtime/javaThread.h>
 
 #define REGION_COUNT 2
