@@ -13,7 +13,7 @@ namespace kivm {
         : libraryName(libraryName), linked(false) {
     }
 
-    bool JavaNativeLibrary::openAndLink() {
+    bool JavaNativeLibrary::prepare() {
         const String &path = findLibrary(libraryName);
         int javaVersion = JNI_VERSION_UNKNOWN;
         if (sharedLibrary.open(strings::toStdString(path))) {
@@ -26,7 +26,7 @@ namespace kivm {
         return linked;
     }
 
-    void JavaNativeLibrary::unlinkAndClose() {
+    void JavaNativeLibrary::dispose() {
         if (linked) {
             auto onUnloadFunction = (JNIOnUnloadFunction) sharedLibrary.findSymbol("JNI_OnUnload");
             if (onUnloadFunction) {
@@ -41,6 +41,6 @@ namespace kivm {
     }
 
     JavaNativeLibrary::~JavaNativeLibrary() {
-        unlinkAndClose();
+        dispose();
     }
 }

@@ -20,8 +20,8 @@ namespace kivm {
 
         ~JavaNativeLibrary();
 
-        bool openAndLink();
+        bool prepare();
 
-        void unlinkAndClose();
+        void dispose();
     };
 }
