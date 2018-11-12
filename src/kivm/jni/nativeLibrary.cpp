@@ -2,7 +2,7 @@
 // Created by kiva on 2018/11/11.
 //
 
-#include <kivm/runtime/nativeLibrariy.h>
+#include <kivm/jni/nativeLibrariy.h>
 
 namespace kivm {
     using JNIOnLoadFunction = jint(*)(JavaVM *, void *);
@@ -31,10 +31,15 @@ namespace kivm {
             if (onUnloadFunction) {
                 onUnloadFunction(KiVM::getJavaVMQuick(), nullptr);
             }
+            linked = false;
         }
     }
 
     String JavaNativeLibrary::findLibrary(const String &libraryName) {
         return kivm::String();
+    }
+
+    JavaNativeLibrary::~JavaNativeLibrary() {
+        unlinkAndClose();
     }
 }

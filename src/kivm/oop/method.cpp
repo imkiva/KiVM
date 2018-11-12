@@ -2,12 +2,14 @@
 // Created by kiva on 2018/2/27.
 //
 
+#include <shared/lock.h>
+#include <sstream>
+
 #include <kivm/oop/method.h>
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/bytecode/execution.h>
-#include <shared/lock.h>
-#include <sstream>
 #include <kivm/native/java_lang_Class.h>
+#include <kivm/jni/nativeMethod.h>
 
 namespace kivm {
     namespace helper {
@@ -396,10 +398,10 @@ namespace kivm {
         return _returnTypeNoWrap;
     }
 
-    void *Method::getNativePointer() {
+    JavaNativeMethod *Method::getNativeMethod() {
         if (this->isNative()) {
             if (this->_nativePointer == nullptr) {
-                this->_nativePointer = Resolver::nativePointer(this);
+                this->_nativePointer = JavaNativeMethod::resolve(this);
             }
             return this->_nativePointer;
         }

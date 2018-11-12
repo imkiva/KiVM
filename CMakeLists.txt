@@ -161,7 +161,7 @@ set(SOURCE_FILES
         include/kivm/bytecode/codeBlob.h
         include/kivm/runtime/constantPool.h
         include/kivm/bytecode/invocationContext.h
-        include/kivm/runtime/nativeMethodPool.h
+        include/kivm/jni/nativeMethodPool.h
         include/kivm/jni/jni_md.h
         include/kivm/jni/jni.h
         include/kivm/jni/jniJavaVM.h
@@ -234,7 +234,7 @@ set(SOURCE_FILES
         src/kivm/bytecode/resolver.cpp
         src/kivm/bytecode/invocationContext.cpp
         src/kivm/bytecode/nativeInvocationContext.cpp
-        src/kivm/runtime/nativeMethodPool.cpp
+        src/kivm/jni/nativeMethodPool.cpp
         src/kivm/native/java_lang_Thread.cpp
         src/kivm/jni/jniGlobal.cpp
         src/kivm/jni/jniJavaVM.cpp
@@ -276,7 +276,7 @@ set(SOURCE_FILES
         src/shared/os/macos/osInfo.cpp
         src/kivm/native/java_lang_Runtime.cpp
         include/shared/hashMap.h
-        include/kivm/runtime/nativeLibrariy.h src/kivm/runtime/nativeLibrary.cpp)
+        include/kivm/jni/nativeLibrariy.h src/kivm/jni/nativeLibrary.cpp include/kivm/jni/nativeMethod.h src/kivm/jni/nativeMethod.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})

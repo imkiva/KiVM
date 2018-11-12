@@ -7,7 +7,6 @@
 #include <kivm/oop/arrayOop.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
-#include <kivm/runtime/nativeMethodPool.h>
 #include <kivm/memory/universe.h>
 
 namespace kivm {
@@ -70,10 +69,6 @@ namespace kivm {
             return (objectArrayOop) n;
         }
         return nullptr;
-    }
-
-    void *Resolver::nativePointer(Method *method) {
-        return NativeMethodPool::get()->resolve(method);
     }
 
     Klass *Resolver::javaClass(jclass clazz) {

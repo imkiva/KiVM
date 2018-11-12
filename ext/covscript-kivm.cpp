@@ -25,7 +25,7 @@
 #include <kivm/oop/klass.h>
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/classpath/classLoader.h>
-#include <kivm/runtime/nativeMethodPool.h>
+#include <kivm/jni/nativeMethodPool.h>
 #include <kivm/runtime/javaThread.h>
 
 #include <cstdarg>

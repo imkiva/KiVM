@@ -7,15 +7,17 @@
 #include <shared/hashMap.h>
 
 namespace kivm {
+    class JavaNativeMethod;
+
     class NativeMethodPool {
     private:
-        HashMap<Method *, void *> _nativeMethods;
+        HashMap<Method *, JavaNativeMethod *> _nativeMethods;
 
     public:
         static NativeMethodPool *get();
 
-        void set(Method *method, void *nativePointer);
+        void set(Method *method, JavaNativeMethod *nativeMethod);
 
-        void *resolve(Method *method);
+        JavaNativeMethod *resolve(Method *method);
     };
 }

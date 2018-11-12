@@ -1,7 +1,8 @@
 //
 // Created by kiva on 2018/4/14.
 //
-#include <kivm/runtime/nativeMethodPool.h>
+#include <kivm/jni/nativeMethodPool.h>
+#include <kivm/jni/nativeMethod.h>
 #include <kivm/oop/instanceKlass.h>
 #include <shared/lock.h>
 #include <shared/dl.h>
@@ -14,7 +15,7 @@ namespace kivm {
         return lock;
     }
 
-    void *NativeMethodPool::resolve(Method *method) {
+    JavaNativeMethod *NativeMethodPool::resolve(Method *method) {
         LockGuard lg(nativeMethodPoolLock());
         auto it = _nativeMethods.find(method);
         if (it != _nativeMethods.end()) {
@@ -34,9 +35,11 @@ namespace kivm {
         dl::DLInterface dlInterface;
         dl::DLSymbol nativeSymbol = dlInterface.findSymbol(strings::toStdString(nativeSymbolName));
         if (nativeSymbol != nullptr) {
-            _nativeMethods.insert(std::make_pair(method, nativeSymbol));
+            JavaNativeMethod *nativeMethod = new JavaNativeMethod(method, nativeSymbol);
+            _nativeMethods.insert(std::make_pair(method, nativeMethod));
+            return nativeMethod;
         }
-        return nativeSymbol;
+        return nullptr;
     }
 
     NativeMethodPool *NativeMethodPool::get() {
@@ -44,7 +47,7 @@ namespace kivm {
         return &pool;
     }
 
-    void NativeMethodPool::set(Method *method, void *nativePointer) {
+    void NativeMethodPool::set(Method *method, JavaNativeMethod *nativePointer) {
         if (!method->isNative()) {
             return;
         }

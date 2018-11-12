@@ -37,8 +37,6 @@ namespace kivm {
         static Klass* javaClass(jclass clazz);
 
         static InstanceKlass *instanceClass(jclass clazz);
-
-        static void *nativePointer(Method *method);
     };
 
     /**

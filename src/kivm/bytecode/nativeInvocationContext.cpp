@@ -6,6 +6,7 @@
 #include <kivm/runtime/abstractThread.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
+#include <kivm/jni/nativeMethod.h>
 #include <ffi.h>
 #include <algorithm>
 
@@ -68,7 +69,9 @@ namespace kivm {
             descriptorMap.size());
 
         // native methods
-        void *nativeMethod = _method->getNativePointer();
+        JavaNativeMethod *javaNativeMethod = _method->getNativeMethod();
+        JNIMethodPointer nativeMethod = javaNativeMethod->getInvocationTarget();
+
         if (nativeMethod == nullptr) {
             auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                 ->loadClass(L"java/lang/UnsatisfiedLinkError");

@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <kivm/runtime/nativeMethodPool.h>
+#include <kivm/jni/nativeMethodPool.h>
 #include <shared/dl.h>
 
 namespace kivm {
@@ -18,9 +18,10 @@ namespace kivm {
     public:
         explicit JavaNativeLibrary(const String &libraryName);
 
+        ~JavaNativeLibrary();
+
         bool openAndLink();
 
         void unlinkAndClose();
     };
-
 }

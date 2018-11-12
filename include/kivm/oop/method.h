@@ -23,6 +23,8 @@ namespace kivm {
 
     class Exceptions_attribute;
 
+    class JavaNativeMethod;
+
     class Method {
     public:
         static bool isSame(const Method *lhs, const Method *rhs);
@@ -47,7 +49,7 @@ namespace kivm {
         /**
          * only available when this method is a native method
          */
-        void *_nativePointer;
+        JavaNativeMethod *_nativePointer;
 
         /**
          * flags related to descriptor parsing
@@ -142,7 +144,7 @@ namespace kivm {
          * Locate native method address
          * @return address of the native method
          */
-        void *getNativePointer();
+        JavaNativeMethod *getNativeMethod();
 
 
     public:
