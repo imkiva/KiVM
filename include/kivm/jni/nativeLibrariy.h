@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <kivm/jni/nativeMethodPool.h>
+#include <shared/string.h>
 #include <shared/dl.h>
 
 namespace kivm {

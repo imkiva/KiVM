@@ -2,6 +2,7 @@
 // Created by kiva on 2018/11/11.
 //
 
+#include <kivm/kivm.h>
 #include <kivm/jni/nativeLibrariy.h>
 
 namespace kivm {

@@ -161,7 +161,6 @@ set(SOURCE_FILES
         include/kivm/bytecode/codeBlob.h
         include/kivm/runtime/constantPool.h
         include/kivm/bytecode/invocationContext.h
-        include/kivm/jni/nativeMethodPool.h
         include/kivm/jni/jni_md.h
         include/kivm/jni/jni.h
         include/kivm/jni/jniJavaVM.h
@@ -234,7 +233,6 @@ set(SOURCE_FILES
         src/kivm/bytecode/resolver.cpp
         src/kivm/bytecode/invocationContext.cpp
         src/kivm/bytecode/nativeInvocationContext.cpp
-        src/kivm/jni/nativeMethodPool.cpp
         src/kivm/native/java_lang_Thread.cpp
         src/kivm/jni/jniGlobal.cpp
         src/kivm/jni/jniJavaVM.cpp
