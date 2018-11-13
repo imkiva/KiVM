@@ -10,29 +10,29 @@ namespace kivm {
     using JNIOnUnloadFunction = void (*)(JavaVM *, void *);
 
     JavaNativeLibrary::JavaNativeLibrary(const String &libraryName)
-        : libraryName(libraryName), linked(false) {
+        : _libraryName(libraryName), _linked(false) {
     }
 
     bool JavaNativeLibrary::prepare() {
-        const String &path = findLibrary(libraryName);
+        const String &path = findLibrary(_libraryName);
         int javaVersion = JNI_VERSION_UNKNOWN;
-        if (sharedLibrary.open(strings::toStdString(path))) {
-            auto onLoadFunction = (JNIOnLoadFunction) sharedLibrary.findSymbol("JNI_OnLoad");
+        if (_sharedLibrary.open(strings::toStdString(path))) {
+            auto onLoadFunction = (JNIOnLoadFunction) _sharedLibrary.findSymbol("JNI_OnLoad");
             if (onLoadFunction) {
                 javaVersion = onLoadFunction(KiVM::getJavaVMQuick(), nullptr);
             }
         }
-        linked = KiVM::checkJavaVersion(javaVersion);
-        return linked;
+        _linked = KiVM::checkJavaVersion(javaVersion);
+        return _linked;
     }
 
     void JavaNativeLibrary::dispose() {
-        if (linked) {
-            auto onUnloadFunction = (JNIOnUnloadFunction) sharedLibrary.findSymbol("JNI_OnUnload");
+        if (_linked) {
+            auto onUnloadFunction = (JNIOnUnloadFunction) _sharedLibrary.findSymbol("JNI_OnUnload");
             if (onUnloadFunction) {
                 onUnloadFunction(KiVM::getJavaVMQuick(), nullptr);
             }
-            linked = false;
+            _linked = false;
         }
     }
 

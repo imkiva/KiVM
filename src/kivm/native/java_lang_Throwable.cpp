@@ -2,6 +2,7 @@
 // Created by kiva on 2018/5/5.
 //
 
+#include <list>
 #include <kivm/kivm.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/native/classNames.h>
@@ -26,37 +27,50 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
     assert(thread != nullptr);
 
     FrameWalker walker(thread);
-    auto stackTraceArray = ARRAY_CLASS->newInstance(walker.getSize());
+    std::list<instanceOop> elements;
 
-    int position = 0;
-    for (auto iter = walker.begin(); *iter; ++iter, ++position) {
-        auto method = iter->getMethod();
-        auto pc = iter->getReturnPc();
-
-        // native method
-        int lineNumber = -2;
-        if (!iter->isNativeFrame()) {
-            lineNumber = method->getLineNumber(pc);
+    for (auto iter = walker.begin(); *iter; ++iter) {
+        if (iter->isExceptionThrownHere()) {
+            walker.startRecord();
         }
 
-        auto element = ELEMENT_CLASS->newInstance();
-        InvocationContext::invokeWithArgs(thread, ELEMENT_CTOR, {
-            element,
-            java::lang::String::from(strings::replaceAll(method->getClass()->getName(),
-                Global::SLASH, Global::DOT)),
-            java::lang::String::from(method->getName()),
-            java::lang::String::from(method->getClass()->getSourceFile()),
-            new intOopDesc(lineNumber)
-        });
-        stackTraceArray->setElementAt(position, element);
+        if (walker.isRecording()) {
+            auto method = iter->getMethod();
+            auto pc = iter->getReturnPc();
+
+            // native method
+            int lineNumber = -2;
+            if (!iter->isNativeFrame()) {
+                lineNumber = method->getLineNumber(pc);
+            }
+
+            auto element = ELEMENT_CLASS->newInstance();
+            InvocationContext::invokeWithArgs(thread, ELEMENT_CTOR, {
+                element,
+                java::lang::String::from(strings::replaceAll(method->getClass()->getName(),
+                    Global::SLASH, Global::DOT)),
+                java::lang::String::from(method->getName()),
+                java::lang::String::from(method->getClass()->getSourceFile()),
+                new intOopDesc(lineNumber)
+            });
+
+            elements.push_back(element);
+        }
+    }
+
+    auto stackTraceArray = ARRAY_CLASS->newInstance(static_cast<int>(elements.size()));
+    for (int i = 0; i < stackTraceArray->getLength(); ++i) {
+        auto element = elements.front();
+        elements.pop_front();
+        if (element != nullptr) {
+            stackTraceArray->setElementAt(i, element);
+        }
     }
 
     throwableOop->setFieldValue(L"java/lang/Throwable",
-        L"stackTrace", L"[Ljava/lang/StackTraceElement;",
-        nullptr);
+        L"stackTrace", L"[Ljava/lang/StackTraceElement;", nullptr);
     throwableOop->setFieldValue(L"java/lang/Throwable",
-        L"backtrace", L"Ljava/lang/Object;",
-        stackTraceArray);
+        L"backtrace", L"Ljava/lang/Object;", stackTraceArray);
     return throwableOop;
 }
 

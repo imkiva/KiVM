@@ -33,7 +33,6 @@ Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobje
 //        {L"java.version",                  L"1.8.0-debug"},
 //        {L"java.runtime.name",             L"Java(TM) SE Runtime Environment"},
 //        {L"java.runtime.version",          L"1.8.0"},
-//        {L"gopherProxySet",                L"false"},
         {L"java.vm.vendor",                L"imKiva"},
         {L"java.vendor.url",               L"https://github.com/imkiva"},
         {L"path.separator",                Global::PATH_SEPARATOR},
@@ -59,7 +58,7 @@ Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobje
     };
 
     auto propOop = Resolver::instance(propertiesObject);
-    auto put = ((InstanceKlass *) propOop->getInstanceClass())->getVirtualMethod(
+    auto put = propOop->getInstanceClass()->getVirtualMethod(
         L"put", L"(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
 
     auto thread = Threads::currentThread();
@@ -219,8 +218,3 @@ JAVA_NATIVE jlong Java_java_lang_System_nanoTime(JNIEnv *env, jclass java_lang_S
     }
     return time.tv_sec * 1000 * 1000 * 1000 + time.tv_usec * 1000;
 }
-
-// TODO: support System.load() and System.loadLibrary()
-JAVA_NATIVE void Java_java_lang_System_loadLibrary(JNIEnv *, jclass, jstring) {}
-
-JAVA_NATIVE void Java_java_lang_System_load(JNIEnv *, jclass, jstring) {}

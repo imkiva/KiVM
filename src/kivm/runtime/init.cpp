@@ -196,13 +196,5 @@ namespace kivm {
         auto method = encoder->getStaticMethod(L"forOutputStreamWriter",
             L"(Ljava/io/OutputStream;Ljava/lang/Object;Ljava/lang/String;)Lsun/nio/cs/StreamEncoder;");
         method->hackAsNative();
-
-        // TODO: support System.load() and System.loadLibrary()
-        auto systemClass = (InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass(L"java/lang/System");
-        auto loadMethod = systemClass->getStaticMethod(L"load", L"(Ljava/lang/String;)V");
-        loadMethod->hackAsNative();
-        auto loadLibraryMethod = systemClass->getStaticMethod(L"loadLibrary", L"(Ljava/lang/String;)V");
-        loadLibraryMethod->hackAsNative();
     }
 }

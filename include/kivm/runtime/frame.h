@@ -19,6 +19,7 @@ namespace kivm {
         Method *_method;
 
         bool _nativeFrame;
+        bool _exceptionThrownHere;
         u4 _returnPc;
 
         Locals _locals;
@@ -51,6 +52,10 @@ namespace kivm {
             return this->_returnPc;
         }
 
+        inline bool isExceptionThrownHere() const {
+            return this->_exceptionThrownHere;
+        }
+
         inline void setMethod(Method *method) {
             this->_method = method;
         }
@@ -61,6 +66,10 @@ namespace kivm {
 
         inline void setReturnPc(u4 returnPc) {
             this->_returnPc = returnPc;
+        }
+
+        inline void setExceptionThrownHere(bool here) {
+            this->_exceptionThrownHere = here;
         }
     };
 

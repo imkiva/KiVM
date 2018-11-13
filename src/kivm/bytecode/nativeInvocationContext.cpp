@@ -18,7 +18,7 @@
 
 #define CALL_FACTORY(type, pushFunc, exp) \
         type r; \
-        ffi_call(&cif, (void (*)()) nativeMethod, (void *) &r, argsPointer); \
+        ffi_call(&cif, (void (*)()) jniMethod, (void *) &r, argsPointer); \
         if (!_thread->isExceptionOccurred() && !stackIsAllocated) { \
             _stack->pushFunc(r); \
             resultOop = exp; \
@@ -69,10 +69,13 @@ namespace kivm {
             descriptorMap.size());
 
         // native methods
+        JNIMethodPointer jniMethod = nullptr;
         JavaNativeMethod *javaNativeMethod = _method->getNativeMethod();
-        JNIMethodPointer nativeMethod = javaNativeMethod->getInvocationTarget();
-
-        if (nativeMethod == nullptr) {
+        if (javaNativeMethod != nullptr) {
+            jniMethod = javaNativeMethod->getInvocationTarget();
+        }
+        
+        if (jniMethod == nullptr) {
             auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                 ->loadClass(L"java/lang/UnsatisfiedLinkError");
             const String &fixedName = strings::replaceAll(_instanceKlass->getName(),
@@ -299,7 +302,7 @@ namespace kivm {
 
         switch (returnValueType) {
             case ValueType::VOID: {
-                ffi_call(&cif, (void (*)()) nativeMethod, nullptr, argsPointer);
+                ffi_call(&cif, (void (*)()) jniMethod, nullptr, argsPointer);
                 break;
             }
             case ValueType::BOOLEAN: {

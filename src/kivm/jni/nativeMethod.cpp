@@ -66,7 +66,7 @@ namespace kivm {
     }
 
     JavaNativeMethod::JavaNativeMethod(Method *method, JNIMethodPointer target)
-        : javaMethod(method), invocationTarget(target) {
+        : _javaMethod(method), _invocationTarget(target) {
     }
 
     JavaNativeMethod::~JavaNativeMethod() = default;

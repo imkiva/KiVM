@@ -9,9 +9,9 @@
 namespace kivm {
     class JavaNativeLibrary {
     private:
-        dl::DLInterface sharedLibrary;
-        String libraryName;
-        bool linked;
+        dl::DLInterface _sharedLibrary;
+        String _libraryName;
+        bool _linked;
 
         String findLibrary(const String &libraryName);
 

@@ -54,19 +54,29 @@ namespace kivm {
     class FrameWalker {
     private:
         FrameIterator _iterator;
-        int _size;
+        size_t _size;
+        bool _recording;
 
     public:
         explicit FrameWalker(JavaThread *thread)
             : _iterator(thread->_frames.getCurrentFrame()),
-              _size(thread->_frames.getSize()) {
+              _size(static_cast<size_t>(thread->_frames.getSize())),
+              _recording(false) {
         }
 
-        int getSize() const {
+        inline void startRecord() {
+            this->_recording = true;
+        }
+
+        inline bool isRecording() const {
+            return this->_recording;
+        }
+
+        inline size_t getSize() const {
             return _size;
         }
 
-        FrameIterator begin() {
+        inline FrameIterator begin() {
             return _iterator;
         }
     };

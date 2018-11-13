@@ -17,8 +17,8 @@ namespace kivm {
         static JavaNativeMethod *resolve(Method *method);
 
     private:
-        Method *javaMethod;
-        JNIMethodPointer invocationTarget;
+        Method *_javaMethod;
+        JNIMethodPointer _invocationTarget;
 
     private:
         JavaNativeMethod(Method *method, JNIMethodPointer target);
@@ -27,7 +27,7 @@ namespace kivm {
 
     public:
         inline JNIMethodPointer getInvocationTarget() const {
-            return invocationTarget;
+            return _invocationTarget;
         }
     };
 }
