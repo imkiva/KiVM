@@ -218,3 +218,8 @@ JAVA_NATIVE jlong Java_java_lang_System_nanoTime(JNIEnv *env, jclass java_lang_S
     }
     return time.tv_sec * 1000 * 1000 * 1000 + time.tv_usec * 1000;
 }
+
+// TODO: support System.load() and System.loadLibrary()
+JAVA_NATIVE void Java_java_lang_System_loadLibrary(JNIEnv *, jclass, jstring) {}
+
+JAVA_NATIVE void Java_java_lang_System_load(JNIEnv *, jclass, jstring) {}
