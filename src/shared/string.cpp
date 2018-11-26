@@ -117,15 +117,15 @@ namespace kivm {
             size_t start = 0;
             size_t end;
             size_t delimiterLength = delimiter.length();
-            std::vector<String> res;
+            std::vector<String> results;
 
             while ((end = string.find(delimiter, start)) != String::npos) {
-                res.push_back(string.substr(start, end - start));
+                results.push_back(string.substr(start, end - start));
                 start = end + delimiterLength;
             }
 
-            res.push_back(string.substr(start));
-            return res;
+            results.push_back(string.substr(start));
+            return results;
         }
     }
 }
