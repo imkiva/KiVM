@@ -21,5 +21,7 @@ int main() {
     jfloat f = s.popFloat();
     assert(f == 3.14f);
     assert(s.popInt() == 1);
+
+
     return 0;
 }

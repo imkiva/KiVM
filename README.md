@@ -8,21 +8,22 @@ Kiva's Java Virtual Machine.
 
 ### Features
 - JNI Support
-- JAR Class Loading Support
+- JAR Class Loading Support (libzip needed)
 - Full OracleJDK/OpenJDK compatibility
 - Copying Garbage Collector
 
 ### Build
 1. Requirements
     * Linux or macOS. **Windows is not supported yet.**
-    * Java Development Kit >= 8
-    * CMake >= 3.2
+    * JDK (OpenJDK or OracleJDK) (>= 8)
+    * CMake (>= 3.2)
+    * libzip (>= 1.5.1) (to support JAR Class Loading)
 
 2. Build instructions
-    1. First, clone this repo.
-    2. `cd` into your directory that contains KiVM source code.
-    3. Type `cmake . && make` in your terminal app.
-    4. Enjoy it!
+    * Clone this repo.
+    * `cd` into your directory that contains KiVM source code.
+    * Type `cmake . && make` in your terminal app.
+    * Enjoy it!
 
 ### Run
 ```bash

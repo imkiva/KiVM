@@ -274,7 +274,10 @@ set(SOURCE_FILES
         src/shared/os/macos/osInfo.cpp
         src/kivm/native/java_lang_Runtime.cpp
         include/shared/hashMap.h
-        include/kivm/jni/nativeLibrariy.h src/kivm/jni/nativeLibrary.cpp include/kivm/jni/nativeMethod.h src/kivm/jni/nativeMethod.cpp)
+        include/kivm/jni/nativeLibrariy.h
+        src/kivm/jni/nativeLibrary.cpp
+        include/kivm/jni/nativeMethod.h
+        src/kivm/jni/nativeMethod.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})
@@ -304,6 +307,9 @@ target_link_libraries(bench-map kivm)
 
 add_executable(test-encode-decode tests/encode-decode-offset.cpp)
 target_link_libraries(test-encode-decode kivm)
+
+add_executable(test-oop-size tests/oop-size.cpp)
+target_link_libraries(test-oop-size kivm)
 
 #### CovScript extension
 if (DEFINED ENV{CS_SRC})
