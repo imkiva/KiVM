@@ -34,3 +34,9 @@ $ ./java <main-class-name> [args...]
 ### Credit
 * Inspired by [wind_jvm](https://github.com/wind2412/wind_jvm)
 * Modified version of [libzippp](https://github.com/ctabin/libzippp)
+
+### See Also
+* [HiVM](https://github.com/imkiva/HiVM)
+* [The Java Virtual Machine Specification Java SE 8 Edition](https://docs.oracle.com/javase/specs/jvms/se8/html/)
+* [HotSpot Virtual Machine Garbage Collection Tuning Guide](https://docs.oracle.com/en/java/javase/11/gctuning/preface.html#GUID-5650179B-DC2A-4F25-B2C6-F3961C93FD07)
+
