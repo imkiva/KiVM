@@ -14,7 +14,7 @@ Kiva's Java Virtual Machine.
 
 ### Build
 1. Requirements
-    * Linux or macOS. **Windows is not supported yet.**
+    * Linux or macOS. **Windows support is working-in-progress.**
     * JDK (OpenJDK or OracleJDK) (>= 8)
     * CMake (>= 3.2)
     * libzip (>= 1.5.1) (to support JAR Class Loading)
