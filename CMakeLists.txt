@@ -42,14 +42,12 @@ endif ()
 #### check os
 if (WIN32)
     add_definitions(-DKIVM_PLATFORM_WINDOWS)
-    aux_source_directory(src/shared/os/windows KIVM_PLATFORM_SRC)
 elseif (UNIX)
     if (APPLE)
         add_definitions(-DKIVM_PLATFORM_APPLE)
     else ()
         add_definitions(-DKIVM_PLATFORM_UNIX)
     endif ()
-    aux_source_directory(src/shared/os/unix KIVM_PLATFORM_SRC)
 else ()
     message(STATUS "Cannot detect current system, disabling platform related features.")
 endif ()
@@ -196,8 +194,10 @@ set(SOURCE_FILES
         include/sparsepp/spp_timer.h
         include/sparsepp/spp_traits.h
         include/sparsepp/spp_utils.h
+        include/shared/hashMap.h
+        include/kivm/jni/nativeLibrariy.h
+        include/kivm/jni/nativeMethod.h
         src/kivm/native/java_lang_ClassLoader.cpp
-        src/shared/filesystem.cpp
         src/shared/string.cpp
         src/kivm/oop/oopBase.cpp
         src/kivm/classfile/classFileStream.cpp
@@ -270,14 +270,17 @@ set(SOURCE_FILES
         src/kivm/bytecode/sharedInterpreter.h
         src/kivm/memory/gcThread.cpp
         src/kivm/memory/copyingCollector.cpp
-        src/shared/os/unix/osInfo.cpp
-        src/shared/os/macos/osInfo.cpp
         src/kivm/native/java_lang_Runtime.cpp
-        include/shared/hashMap.h
-        include/kivm/jni/nativeLibrariy.h
         src/kivm/jni/nativeLibrary.cpp
-        include/kivm/jni/nativeMethod.h
         src/kivm/jni/nativeMethod.cpp)
+
+set(KIVM_PLATFORM_SRC
+        src/shared/os/unix/osInfo.cpp
+        src/shared/os/unix/filesystem.cpp
+        src/shared/os/unix/dl.cpp
+        src/shared/os/macos/osInfo.cpp
+        src/shared/os/windows/dl.cpp
+        src/shared/os/windows/filesystem.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})

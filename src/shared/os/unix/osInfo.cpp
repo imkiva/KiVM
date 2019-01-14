@@ -1,12 +1,12 @@
 //
 // Created by kiva on 2018/6/10.
 //
-
 #include <shared/osInfo.h>
+
+#if defined(KIVM_PLATFORM_UNIX)
 #include <sys/utsname.h>
 #include <unistd.h>
 
-#if defined(KIVM_PLATFORM_UNIX)
 namespace kivm {
     String UnixInformation::getOSName() {
         struct utsname name{};

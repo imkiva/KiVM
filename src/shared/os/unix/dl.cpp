@@ -2,6 +2,8 @@
 // Created by kiva on 2018/4/15.
 //
 
+#include <shared/dl.h>
+
 #if defined(KIVM_PLATFORM_UNIX) || defined(KIVM_PLATFORM_APPLE)
 
 // for RTLD_DEFAULT
@@ -9,7 +11,6 @@
 #define _GNU_SOURCE
 #endif
 
-#include <shared/os/unix/dl.h>
 #include <dlfcn.h>
 
 namespace kivm {

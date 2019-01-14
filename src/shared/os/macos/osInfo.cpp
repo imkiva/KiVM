@@ -3,10 +3,11 @@
 //
 
 #include <shared/osInfo.h>
+
+#if defined(KIVM_PLATFORM_APPLE)
 #include <dlfcn.h>
 #include <unistd.h>
 
-#if defined(KIVM_PLATFORM_APPLE)
 namespace kivm {
     static void *getJRSFramework() {
         static void *jrsFwk = nullptr;

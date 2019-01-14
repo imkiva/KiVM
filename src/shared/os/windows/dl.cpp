@@ -1,10 +1,10 @@
 //
 // Created by kiva on 2018/4/15.
 //
+#include <shared/dl.h>
 
 #ifdef KIVM_PLATFORM_WINDOWS
 
-#include <shared/os/windows/dl.h>
 #include <windows.h>
 
 namespace kivm {
