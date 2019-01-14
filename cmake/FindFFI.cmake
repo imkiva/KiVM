@@ -15,13 +15,13 @@ endif ()
 mark_as_advanced(GNUTLS_INCLUDE_DIR GNUTLS_LIBRARY)
 
 find_library(FFI_LIBRARY NAMES ffi libffi
-        PATHS $ENV{FFI_DIR} ${FFI_DIR} /usr /usr/local /opt/local
+        PATHS $ENV{FFI_DIR} ${FFI_DIR} $ENV{WIN32_FFI_DIR} ${WIN32_FFI_DIR} /usr /usr/local /opt/local
         PATH_SUFFIXES lib lib64 x86_64-linux-gnu lib/x86_64-linux-gnu
         HINTS ${PC_LIBFFI_LIBDIR} ${PC_LIBFFI_LIBRARY_DIRS}
         )
 
 find_path(FFI_INCLUDE_DIR ffi.h
-        PATHS $ENV{FFI_DIR} ${FFI_DIR} /usr /usr/local /opt/local
+        PATHS $ENV{FFI_DIR} ${FFI_DIR} $ENV{WIN32_FFI_DIR} ${WIN32_FFI_DIR} /usr /usr/local /opt/local
         PATH_SUFFIXES include include/ffi include/x86_64-linux-gnu x86_64-linux-gnu
         HINTS ${PC_LIBFFI_INCLUDEDIR} ${PC_LIBFFI_INCLUDE_DIRS}
         )
