@@ -26,13 +26,6 @@ namespace kivm {
     };
 
     template<>
-    struct PrimitiveHelper<long> {
-        constexpr static ValueType getValueType() {
-            return ValueType::LONG;
-        };
-    };
-
-    template<>
     struct PrimitiveHelper<jfloat> {
         constexpr static ValueType getValueType() {
             return ValueType::FLOAT;
