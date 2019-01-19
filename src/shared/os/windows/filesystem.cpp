@@ -5,13 +5,15 @@
 
 #ifdef KIVM_PLATFORM_WINDOWS
 
+#include <windows.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
 #include <cstring>
 #include <cerrno>
 #include <fcntl.h>
+#include <tchar.h>
+#include "mmap.h"
 
 namespace kivm {
     bool WindowsFileSystem::isDirectory(const String &path) {
@@ -32,10 +34,10 @@ namespace kivm {
         if (fd < 0) {
             return nullptr;
         }
-        size_t size = UnixFileSystem::getFileSize(path);
+        size_t size = WindowsFileSystem::getFileSize(path);
         auto m = (jbyte *) mmap(nullptr, size,
-            PROT_READ,
-            MAP_SHARED, fd, 0);
+                                PROT_READ,
+                                MAP_SHARED, fd, 0);
         if (m == MAP_FAILED) {
             return nullptr;
         }

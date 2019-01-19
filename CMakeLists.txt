@@ -280,7 +280,7 @@ set(KIVM_PLATFORM_SRC
         src/shared/os/unix/dl.cpp
         src/shared/os/macos/osInfo.cpp
         src/shared/os/windows/dl.cpp
-        src/shared/os/windows/filesystem.cpp)
+        src/shared/os/windows/filesystem.cpp src/shared/os/windows/mmap.cpp src/shared/os/windows/mmap.h)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})
