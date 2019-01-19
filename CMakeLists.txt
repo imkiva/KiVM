@@ -172,6 +172,8 @@ set(SOURCE_FILES
         include/shared/filesystem.h
         include/shared/zip.h
         include/shared/atomic.h
+        include/shared/dl.h
+        include/shared/mmap.h
         include/kivm/native/java_lang_reflect_Constructor.h
         include/kivm/native/java_lang_reflect_Method.h
         include/kivm/runtime/vmThread.h
@@ -182,9 +184,6 @@ set(SOURCE_FILES
         include/kivm/memory/gcThread.h
         include/kivm/runtime/frameWalker.h
         include/shared/osInfo.h
-        include/shared/os/unix/osInfo.h
-        include/shared/os/windows/osInfo.h
-        include/shared/os/macos/osInfo.h
         include/sparsepp/spp.h
         include/sparsepp/spp_config.h
         include/sparsepp/spp_dlalloc.h
@@ -272,15 +271,22 @@ set(SOURCE_FILES
         src/kivm/memory/copyingCollector.cpp
         src/kivm/native/java_lang_Runtime.cpp
         src/kivm/jni/nativeLibrary.cpp
-        src/kivm/jni/nativeMethod.cpp)
+        src/kivm/jni/nativeMethod.cpp
+        src/shared/filesystem.cpp)
 
 set(KIVM_PLATFORM_SRC
+        include/shared/os/common/dl.h
+        include/shared/os/unix/osInfo.h
+        include/shared/os/unix/dl.h
+        include/shared/os/windows/dl.h
+        include/shared/os/windows/osInfo.h
+        include/shared/os/macos/osInfo.h
         src/shared/os/unix/osInfo.cpp
-        src/shared/os/unix/filesystem.cpp
         src/shared/os/unix/dl.cpp
         src/shared/os/macos/osInfo.cpp
         src/shared/os/windows/dl.cpp
-        src/shared/os/windows/filesystem.cpp src/shared/os/windows/mmap.cpp src/shared/os/windows/mmap.h)
+        src/shared/os/windows/mmap.cpp
+        src/shared/os/windows/osInfo.cpp)
 
 #### libkivm
 add_library(kivm SHARED ${SOURCE_FILES} ${KIVM_PLATFORM_SRC} ${KIVM_ARCH_SRC})

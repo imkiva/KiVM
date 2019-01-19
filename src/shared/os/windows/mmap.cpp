@@ -2,7 +2,7 @@
 // Created by kiva on 2019/1/19.
 //
 
-#include "mmap.h"
+#include <shared/mmap.h>
 
 #if defined(KIVM_PLATFORM_WINDOWS)
 

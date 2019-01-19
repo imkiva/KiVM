@@ -3,7 +3,7 @@
 //
 #include <kivm/memory/universe.h>
 #include <kivm/memory/copyingHeap.h>
-#include <sys/mman.h>
+#include <shared/mmap.h>
 #include <cstring>
 #include <cerrno>
 
