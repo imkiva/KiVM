@@ -32,7 +32,7 @@ namespace kivm {
             PROT_READ | PROT_WRITE,
             MAP_ANONYMOUS | MAP_SHARED, -1, 0);
         if (m == MAP_FAILED) {
-            PANIC("mmap() failed: %s", strerror(errno));
+            PANIC("Universe::allocVirtual(): mmap() failed: %s", strerror(errno));
             return nullptr;
         }
 

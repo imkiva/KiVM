@@ -10,7 +10,13 @@
 
 using namespace kivm;
 
-static void defaultSignalHandler(int signo) {
+#if defined(KIVM_PLATFORM_WINDOWS)
+#define CDECL __cdecl
+#else
+#define CDECL
+#endif
+
+static void CDECL defaultSignalHandler(int signo) {
     if (signo == SIGINT) {
         D("VM: DefaultSignalHandler: received SIGINT, exiting...");
         exit(0);
@@ -18,7 +24,7 @@ static void defaultSignalHandler(int signo) {
 }
 
 JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jstring javaSignalName) {
-#if defined(__APPLE__)
+#if defined(KIVM_PLATFORM_APPLE)
     static HashMap<String, int> SIGNAL_TABLE{
         /* derived from /usr/include/bits/signum.h on RH7.2 */
         {L"HUP",    SIGHUP},         /* Hangup (POSIX).  */
@@ -53,7 +59,7 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
         {L"USR1",   SIGUSR1},        /* User-defined signal 1 (POSIX).  */
         {L"USR2",   SIGUSR2},        /* User-defined signal 2 (POSIX).  */
     };
-#elif defined(__linux__)
+#elif defined(KIVM_PLATFORM_UNIX)
     static HashMap<String, int> SIGNAL_TABLE{
         {L"HUP", SIGHUP},         /* Hangup (POSIX).  */
         {L"INT", SIGINT},         /* Interrupt (ANSI).  */
@@ -96,6 +102,18 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
         {L"SYS", SIGSYS},         /* Bad system call. Only on some Linuxen! */
 #endif
     };
+#elif defined(KIVM_PLATFORM_WINDOWS)
+    static HashMap<String, int> SIGNAL_TABLE{
+        /* derived from signal.h */
+        {L"INT",   SIGINT},         /* Interrupt (ANSI).  */
+        {L"ILL",   SIGILL},         /* Illegal instruction (ANSI).  */
+        {L"ABRT",  SIGABRT},        /* Abort (ANSI).  */
+        {L"ABRT2", SIGABRT2},        /* Abort (ANSI).  */
+        {L"FPE",   SIGFPE},         /* Floating-point exception (ANSI).  */
+        {L"SEGV",  SIGSEGV},        /* Segmentation violation (ANSI).  */
+        {L"TERM",  SIGTERM},        /* Termination (ANSI).  */
+        {L"BREAK", SIGBREAK},        /* Termination (ANSI).  */
+    };
 #endif
 
     auto signalNameOop = Resolver::instance(javaSignalName);
@@ -109,11 +127,27 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
     const auto &signalName = java::lang::String::toNativeString(signalNameOop);
     const auto &iter = SIGNAL_TABLE.find(signalName);
     if (iter == SIGNAL_TABLE.end()) {
-        PANIC("sun/misc/Signal.findSignal(): unknown signal");
+        auto thread = Threads::currentThread();
+        thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
+                                   ->loadClass(L"java/lang/IllegalArgumentException"),
+                               L"unknown signal");
+        return -1;
     }
 
     return iter->second;
 }
+
+#if defined(KIVM_PLATFORM_WINDOWS)
+
+JAVA_NATIVE jlong Java_sun_misc_Signal_handle0(JNIEnv *env, jclass unused, jint signo, jlong handlerAddr) {
+    void (*realHandler)(int) = (handlerAddr == 2)
+                               ? (void (*)(int)) defaultSignalHandler
+                               : (void (*)(int)) handlerAddr;
+    signal(signo, realHandler);
+    return 2;
+}
+
+#else
 
 JAVA_NATIVE jlong Java_sun_misc_Signal_handle0(JNIEnv *env, jclass unused, jint signo, jlong handlerAddr) {
     void *realHandler = (handlerAddr == 2)
@@ -162,13 +196,17 @@ JAVA_NATIVE jlong Java_sun_misc_Signal_handle0(JNIEnv *env, jclass unused, jint 
     sigfillset(&act.sa_mask);
     act.sa_flags = SA_RESTART;
 
-#if defined(__APPLE__)
+#if defined(KIVM_PLATFORM_APPLE)
     act.__sigaction_u.__sa_handler = (void (*)(int)) realHandler;
     void *old_handler = (void *) oact.__sigaction_u.__sa_handler;
 
-#elif defined(__linux__)
-    act.sa_handler = (void (*)(int))realHandler;
-    void *old_handler = (void *)oact.sa_handler;
+#elif defined(KIVM_PLATFORM_UNIX)
+    act.sa_handler = (void (*)(int)) realHandler;
+    void *old_handler = (void *) oact.sa_handler;
+
+#elif defined(KIVM_PLATFORM_WINDOWS)
+    act.__sigaction_u.__sa_handler = (void (*)(int)) realHandler;
+    void *old_handler = (void *) oact.__sigaction_u.__sa_handler;
 #endif
 
     if (sigaction(signo, &act, &oact) != -1) {
@@ -182,3 +220,5 @@ JAVA_NATIVE jlong Java_sun_misc_Signal_handle0(JNIEnv *env, jclass unused, jint 
         return -1;
     }
 }
+
+#endif

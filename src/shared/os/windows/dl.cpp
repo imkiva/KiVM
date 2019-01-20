@@ -23,16 +23,17 @@ namespace kivm {
         }
 
         bool WindowsDLInterface::open(const std::string &file) {
-            DLHandler handler = (DLHandler) ::LoadLibrary(file.c_str());
+            auto handler = DLHandler(::LoadLibrary(file.c_str()));
             this->handler = handler;
             return this->handler != nullptr;
         }
 
         DLSymbol WindowsDLInterface::findSymbol(const std::string &symbolName) const {
-            DLSymbol sym = ::GetProcAddress(handler != nullptr ? handler : GetModuleHandle(nullptr),
+            auto hmod = HMODULE(handler);
+            FARPROC sym = ::GetProcAddress(hmod != nullptr ? hmod : GetModuleHandle(nullptr),
                                             symbolName.c_str());
             if (sym != nullptr) {
-                return sym;
+                return DLSymbol(sym);
             }
 
             return nullptr;
@@ -40,7 +41,7 @@ namespace kivm {
 
         void WindowsDLInterface::close() {
             if (handler != nullptr) {
-                ::FreeLibrary(handler);
+                ::FreeLibrary(HMODULE(handler));
                 handler = nullptr;
             }
         }
