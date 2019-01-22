@@ -28,17 +28,30 @@ namespace kivm {
 
     void *Universe::allocVirtual(size_t size) {
         D("allocVirtual: %zd", size);
-        auto m = (jbyte *) mmap(nullptr, size + sizeof(VirtualMemoryInfo),
+
+        jbyte *memory = nullptr;
+        jbyte* FAILURE;
+
+#if  defined(KIVM_PLATFORM_WINDOWS)
+        FAILURE = nullptr;
+        memory = (jbyte *) VirtualAlloc(nullptr, size,
+            MEM_RESERVE, PAGE_READWRITE);
+#else
+        FAILURE = (jbyte *) MAP_FAILED;
+        memory = (jbyte *) mmap(nullptr,
+            size + sizeof(VirtualMemoryInfo),
             PROT_READ | PROT_WRITE,
             MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-        if (m == MAP_FAILED) {
-            PANIC("Universe::allocVirtual(): mmap() failed: %s", strerror(errno));
+#endif
+
+        if (memory == FAILURE) {
+            PANIC("Universe::allocVirtual(): failed: %s", strerror(errno));
             return nullptr;
         }
 
-        auto memoryInfo = (VirtualMemoryInfo *) m;
+        auto memoryInfo = (VirtualMemoryInfo *) memory;
         memoryInfo->memorySize = size;
-        return m + sizeof(VirtualMemoryInfo);
+        return memory + sizeof(VirtualMemoryInfo);
     }
 
     void Universe::deallocVirtual(void *memory) {
