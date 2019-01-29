@@ -55,7 +55,12 @@ namespace kivm {
 
         // GC
         GCThread::initialize();
-        GCThread::get()->start();
+        auto gc = GCThread::get();
+        if (gc != nullptr) {
+            gc->start();
+        } else {
+            WARN("createVirtualMachine: failed to init gc thread");
+        }
 
         // initialize classpath
         ClassPathManager::initialize();
@@ -88,7 +93,11 @@ namespace kivm {
             return JNI_ERR;
         }
 
-        GCThread::get()->stop();
+        auto gc = GCThread::get();
+        if (gc != nullptr) {
+            gc->stop();
+        }
+
         ClassPathManager::get()->destroy();
         Universe::destroy();
 

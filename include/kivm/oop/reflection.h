@@ -43,7 +43,7 @@ namespace kivm {
             case L'V':    // void
                 return ValueType::VOID;
             default:
-                PANIC("primitive type required");
+                SHOULD_NOT_REACH_HERE_M("primitive type required");
                 break;
         }
     }
@@ -69,7 +69,7 @@ namespace kivm {
             case L'V':    // void
                 return ValueType::VOID;
             default:
-                PANIC("primitive type required");
+                SHOULD_NOT_REACH_HERE_M("primitive type required");
                 break;
         }
     }
@@ -95,7 +95,7 @@ namespace kivm {
             case ValueType::VOID:
                 return L'V';
             default:
-                PANIC("primitive type required");
+                SHOULD_NOT_REACH_HERE_M("primitive type required");
         }
     }
 
@@ -120,7 +120,7 @@ namespace kivm {
             case ValueType::VOID:
                 return L"V";
             default:
-                PANIC("primitive type required");
+                SHOULD_NOT_REACH_HERE_M("primitive type required");
         }
     }
 
@@ -145,7 +145,7 @@ namespace kivm {
             case ValueType::VOID:
                 return L"void";
             default:
-                PANIC("primitive type required");
+                SHOULD_NOT_REACH_HERE_M("primitive type required");
         }
     }
 

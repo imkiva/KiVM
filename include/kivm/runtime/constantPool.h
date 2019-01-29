@@ -43,7 +43,7 @@ namespace kivm {
 
             inline T findOrNew(RuntimeConstantPool *rt, int index) {
                 if (_raw_pool[index]->tag != CONSTANT_TAG) {
-                    PANIC("Accessing an incompatible constant entry");
+                    PANIC("Accessing an incompatible constant entry may cause undefined behavior, panicked.");
                 }
                 void *value = _pool[index];
                 if (value != nullptr) {

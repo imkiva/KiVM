@@ -45,7 +45,7 @@ namespace kivm {
 #endif
 
         if (memory == FAILURE) {
-            PANIC("Universe::allocVirtual(): failed: %s", strerror(errno));
+            WARN("Universe::allocVirtual(): failed: %s", strerror(errno));
             return nullptr;
         }
 
@@ -62,7 +62,8 @@ namespace kivm {
 
     void *Universe::allocHeap(size_t size) {
         if (sCollectedHeapInstance == nullptr) {
-            PANIC("heap not initialized");
+            WARN("heap not initialized");
+            return nullptr;
         }
         return sCollectedHeapInstance->allocate(size);
     }
@@ -70,7 +71,8 @@ namespace kivm {
     void *Universe::allocCObject(size_t size) {
         void *m = malloc(size);
         if (m == nullptr) {
-            PANIC("OutOfMemory: system heap");
+            WARN("OutOfMemory: system heap");
+            return nullptr;
         }
         memset(m, '\0', size);
         return m;
@@ -84,7 +86,8 @@ namespace kivm {
 
     bool Universe::isHeapObject(void *addr) {
         if (sCollectedHeapInstance == nullptr) {
-            PANIC("heap not initialized");
+            WARN("heap not initialized");
+            return false;
         }
         return sCollectedHeapInstance->isHeapObject(addr);
     }

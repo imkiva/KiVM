@@ -33,7 +33,17 @@
        exit(1); \
     } while (false)
 
+#define WARN(fmt, ...) \
+    do { \
+       (void) fprintf(stderr, "\n\n\n*** (warning) ***: " fmt "\n\n\n", \
+                ##__VA_ARGS__); \
+    } while (false)
+
 #define SHOULD_NOT_REACH_HERE() PANIC("should not reach here")
+#define WARN_SHOULD_NOT_REACH_HERE() WARN("should not reach here")
+
+#define SHOULD_NOT_REACH_HERE_M(fmt, ...) PANIC("should not reach here: " fmt, ##__VA_ARGS__)
+#define WARN_SHOULD_NOT_REACH_HERE_M(fmt, ...) WARN("should not reach here: " fmt, ##__VA_ARGS__)
 
 #define JNI_ENTRY_NAME(nameAndSignature) jni_##nameAndSignature
 #define JNI_ENTRY(returnType, nameAndSignature) returnType JNI_ENTRY_NAME(nameAndSignature)

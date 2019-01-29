@@ -22,7 +22,8 @@ namespace kivm {
     public:
         inline static GCThread *get() {
             if (sGCThreadInstance == nullptr) {
-                PANIC("GCThread not initialized");
+                WARN("GCThread not initialized");
+                return nullptr;
             }
             return sGCThreadInstance;
         }

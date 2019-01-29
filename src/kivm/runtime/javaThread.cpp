@@ -92,16 +92,20 @@ namespace kivm {
     }
 
     void JavaThread::enterSafepoint() {
-        ThreadState originalState = getThreadState();
-        Threads::setThreadStateLocked(this, ThreadState::BLOCKED);
-        _inSafepoint = true;
-        GCThread::get()->wait();
-        _inSafepoint = false;
-        Threads::setThreadStateLocked(this, originalState);
+        auto gc = GCThread::get();
+        if (gc != nullptr) {
+            ThreadState originalState = getThreadState();
+            Threads::setThreadStateLocked(this, ThreadState::BLOCKED);
+            _inSafepoint = true;
+            gc->wait();
+            _inSafepoint = false;
+            Threads::setThreadStateLocked(this, originalState);
+        }
     }
 
     void JavaThread::enterSafepointIfNeeded() {
-        if (GCThread::get()->getState() == GCState::WAITING_FOR_SAFEPOINT) {
+        auto gc = GCThread::get();
+        if (gc != nullptr && gc->getState() == GCState::WAITING_FOR_SAFEPOINT) {
             enterSafepoint();
         }
     }

@@ -751,12 +751,12 @@ namespace kivm {
                 }
                 OPCODE(FREM)
                 {
-                    PANIC("frem is not supported yet");
+                    PANIC("Use of deprecated instruction frem, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(DREM)
                 {
-                    PANIC("drem is not supported yet");
+                    PANIC("Use of deprecated instruction drem, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(INEG)
@@ -771,12 +771,12 @@ namespace kivm {
                 }
                 OPCODE(FNEG)
                 {
-                    PANIC("fneg is not supported yet");
+                    PANIC("Use of deprecated instruction fneg, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(DNEG)
                 {
-                    PANIC("dneg is not supported yet");
+                    PANIC("Use of deprecated instruction dneg, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(ISHL)
@@ -1160,13 +1160,13 @@ namespace kivm {
                 OPCODE(JSR)
                 {
                     pc += 2;
-                    PANIC("jsr should not appear in instructions!");
+                    PANIC("Use of deprecated instruction jsr, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(RET)
                 {
                     pc++;
-                    PANIC("ret should not appear in instructions!");
+                    PANIC("Use of deprecated instruction ret, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(TABLESWITCH)
@@ -1330,7 +1330,8 @@ namespace kivm {
                     } else {
                         instanceOop receiver = Resolver::instance(ref);
                         if (receiver == nullptr) {
-                            PANIC("Not an instance oop");
+                            // TODO: throw an exception
+                            SHOULD_NOT_REACH_HERE_M("Not an instance oop");
                         }
                         Execution::getField(thread, currentClass->getRuntimeConstantPool(),
                             receiver, stack, constantIndex);
@@ -1398,9 +1399,11 @@ namespace kivm {
                     pc += 4;
 
                     if (zero != 0) {
-                        PANIC("interpreter: invalid invokeinterface: "
+                        WARN("interpreter: malformed invokeinterface: "
                               "the value of the fourth operand byte must always be zero.");
+                        // Continue
                     }
+
                     Execution::invokeInterface(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex, count);
                     if (thread->isExceptionOccurred()) {
@@ -1413,7 +1416,8 @@ namespace kivm {
                 OPCODE(INVOKEDYNAMIC)
                 {
                     pc += 4;
-                    PANIC("invokedynamic");
+                    // TODO: invoke dynamic
+                    PANIC("invokedynamic is not supported");
                     NEXT();
                 }
                 OPCODE(NEW)
@@ -1476,7 +1480,8 @@ namespace kivm {
                     } else {
                         arrayOop array = Resolver::array(ref);
                         if (array == nullptr) {
-                            PANIC("Attempt to use arraylength on non-array objects");
+                            // TODO: throw an exception
+                            SHOULD_NOT_REACH_HERE_M("Attempt to use arraylength on non-array objects");
                         }
                         stack.pushInt(array->getLength());
                     }
@@ -1539,7 +1544,8 @@ namespace kivm {
                     } else {
                         auto object = Resolver::javaOop(ref);
                         if (object == nullptr) {
-                            PANIC("not an object");
+                            // TODO: throw an exception
+                            SHOULD_NOT_REACH_HERE_M("Attempt to use arraylength on non-array objects");
                         }
                         object->getMarkOop()->monitorEnter();
                     }
@@ -1556,7 +1562,8 @@ namespace kivm {
                     } else {
                         auto object = Resolver::javaOop(ref);
                         if (object == nullptr) {
-                            PANIC("not an object");
+                            // TODO: throw an exception
+                            SHOULD_NOT_REACH_HERE_M("Attempt to use arraylength on non-array objects");
                         }
                         object->getMarkOop()->monitorExit();
                     }
@@ -1564,7 +1571,7 @@ namespace kivm {
                 }
                 OPCODE(WIDE)
                 {
-                    PANIC("wide should not appear in instructions!");
+                    PANIC("Use of deprecated instruction wide, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(MULTIANEWARRAY)
@@ -1603,17 +1610,17 @@ namespace kivm {
                 OPCODE(GOTO_W)
                 {
                     pc += 4;
-                    PANIC("goto_w should not appear in instructions!");
+                    PANIC("Use of deprecated instruction goto_w, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(JSR_W)
                 {
                     pc += 4;
-                    PANIC("jsr_w should not appear in instructions!");
+                    PANIC("Use of deprecated instruction jsr_w, please check your Java compiler");
                     NEXT();
                 }
                 OTHERWISE() {
-                    PANIC("Unrecognized bytecode: %d at %d", codeBlob[pc - 1], pc - 1);
+                    PANIC("Use of undefined bytecode: %d at %d, please check your Java compiler", codeBlob[pc - 1], pc - 1);
                     NEXT();
                 }
             END()

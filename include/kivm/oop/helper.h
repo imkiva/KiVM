@@ -36,10 +36,10 @@ namespace kivm {
                 break;
 
             case ValueType::VOID:
-                PANIC("Field cannot be typed void");
+                SHOULD_NOT_REACH_HERE_M("Field cannot be typed void");
                 break;
             default:
-                PANIC("Unrecognized field value type");
+                SHOULD_NOT_REACH_HERE_M("Unrecognized field value type");
                 break;
         }
     }

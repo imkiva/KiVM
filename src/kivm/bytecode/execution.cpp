@@ -68,13 +68,13 @@ namespace kivm {
                 Klass *klass = rt->getClass(constantIndex);
                 auto mirror = klass->getJavaMirror();
                 if (mirror == nullptr) {
-                    PANIC("Pushing null classes");
+                    SHOULD_NOT_REACH_HERE_M("Pushing null classes");
                 }
                 stack.pushReference(mirror);
                 break;
             }
             default: {
-                PANIC("Unsupported constant tag");
+                SHOULD_NOT_REACH_HERE_M("Unsupported constant tag");
                 break;
             }
         }
@@ -364,7 +364,7 @@ namespace kivm {
         }
 
         if (klass->getClassType() != ClassType::INSTANCE_CLASS) {
-            PANIC("Not an instance class");
+            SHOULD_NOT_REACH_HERE_M("Not an instance class");
         }
 
         auto instanceKlass = (InstanceKlass *) klass;
