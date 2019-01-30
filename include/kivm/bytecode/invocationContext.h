@@ -65,7 +65,5 @@ namespace kivm {
                                           Stack *stack, bool forceNoResolve = false) {
             return InvocationContext(thread, method, stack).invoke(forceNoResolve);
         }
-
-        static inline oop invokeDynamic();
     };
 }
