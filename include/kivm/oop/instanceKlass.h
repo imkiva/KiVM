@@ -49,7 +49,7 @@ namespace kivm {
          * all methods in this class.
          * map<name + " " + descriptor, method>
          */
-        HashMap <String, MethodID *> _allMethods;
+        HashMap<String, MethodID *> _allMethods;
 
         /**
          * virtual methods (public or protected methods).
@@ -99,6 +99,10 @@ namespace kivm {
         InstanceKlass(ClassFile *classFile, ClassLoader *classLoader,
                       mirrorOop javaLoader, ClassType classType);
 
+        void linkClass() override;
+
+        void initClass() override;
+
         inline ClassLoader *getClassLoader() const {
             return _classLoader;
         }
@@ -115,20 +119,20 @@ namespace kivm {
             return _runtimePool;
         }
 
-        void linkClass() override;
-
-        void initClass() override;
-
-        inline const HashMap<String, FieldID *> &getStaticFields() {
+        inline const HashMap<String, FieldID *> &getStaticFields() const {
             return _staticFields;
         }
 
-        inline const HashMap<String, FieldID *> &getInstanceFields() {
+        inline const HashMap<String, FieldID *> &getInstanceFields() const {
             return _instanceFields;
         }
 
-        inline const HashMap<String, MethodID *> &getDeclaredMethods() {
+        inline const HashMap<String, MethodID *> &getDeclaredMethods() const {
             return _allMethods;
+        }
+
+        inline const BootstrapMethods_attribute *getBootstrapMethodTable() const {
+            return _bootstrapMethodAttr;
         }
 
         Method *getDeclaredMethodByOffset(int offset);

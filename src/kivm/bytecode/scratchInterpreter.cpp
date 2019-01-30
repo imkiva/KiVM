@@ -1,3 +1,68 @@
+//
+// Created by kiva on 2018/3/21.
+//
+
+#include <kivm/bytecode/bytecodeInterpreter.h>
+#include <kivm/bytecode/bytecodes.h>
+#include <kivm/bytecode/execution.h>
+#include <kivm/oop/instanceOop.h>
+#include <kivm/oop/arrayOop.h>
+#include <kivm/oop/primitiveOop.h>
+#include <kivm/oop/mirrorOop.h>
+#include <kivm/oop/method.h>
+#include <climits>
+#include <sparsepp/spp.h>
+#include <deque>
+
+#include "sharedInterpreter.h"
+
+#define BEGIN(code, pc) \
+    while ((code).validateOffset(pc)) \
+        switch ((code)[(pc)++]) {
+#define OTHERWISE() \
+    default:
+#define NEXT() break
+#define END() }
+
+#ifdef KIVM_INTERPRETER_DEBUG
+#define OPCODE(opcode) \
+    case OPC_##opcode: \
+        D("interpreter: pc: %d, opcode: %d, name: %s", pc - 1, codeBlob[pc - 1], #opcode);
+#else
+#define OPCODE(opcode) \
+    case OPC_##opcode:
+#endif
+
+namespace kivm {
+    class ScratchInterpreter {
+    public:
+        /**
+         * Run a thread method
+         *
+         * @param thread Java Thread that contains method
+         * @return method return value(nullptr if void) o
+         *         exception object(if thrown and not handled)
+         */
+        static oop interp(JavaThread *thread);
+    };
+
+    oop ScratchInterpreter::interp(JavaThread *thread) {
+        Frame *currentFrame = thread->getCurrentFrame();
+        auto currentMethod = currentFrame->getMethod();
+        auto currentClass = currentMethod->getClass();
+        const CodeBlob &codeBlob = currentMethod->getCodeBlob();
+        u4 &pc = thread->_pc;
+
+        D("currentMethod: %s.%s:%s",
+            strings::toStdString(currentClass->getName()).c_str(),
+            strings::toStdString(currentMethod->getName()).c_str(),
+            strings::toStdString(currentMethod->getDescriptor()).c_str());
+
+        Stack &stack = currentFrame->getStack();
+        Locals &locals = currentFrame->getLocals();
+
+        thread->enterSafepointIfNeeded();
+
         BEGIN(codeBlob, pc)
 
                 OPCODE(NOP)
@@ -694,12 +759,12 @@
                 }
                 OPCODE(FREM)
                 {
-                    PANIC("frem is not supported yet");
+                    PANIC("Use of deprecated instruction frem, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(DREM)
                 {
-                    PANIC("drem is not supported yet");
+                    PANIC("Use of deprecated instruction drem, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(INEG)
@@ -714,12 +779,12 @@
                 }
                 OPCODE(FNEG)
                 {
-                    PANIC("fneg is not supported yet");
+                    PANIC("Use of deprecated instruction fneg, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(DNEG)
                 {
-                    PANIC("dneg is not supported yet");
+                    PANIC("Use of deprecated instruction dneg, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(ISHL)
@@ -1103,13 +1168,13 @@
                 OPCODE(JSR)
                 {
                     pc += 2;
-                    PANIC("jsr should not appear in instructions!");
+                    PANIC("Use of deprecated instruction jsr, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(RET)
                 {
                     pc++;
-                    PANIC("ret should not appear in instructions!");
+                    PANIC("Use of deprecated instruction ret, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(TABLESWITCH)
@@ -1161,7 +1226,7 @@
                         GOTO_ABSOLUTE_WITH_OCCUPIED(static_cast<u4>(jumpTable[topValue - lowByte]), 1);
                     }
                 }
-                NEXT();
+                    NEXT();
                 OPCODE(LOOKUPSWITCH)
                 {
                     int bc = pc - 1;
@@ -1207,7 +1272,7 @@
                         GOTO_ABSOLUTE_WITH_OCCUPIED(iter->second, 1);
                     }
                 }
-                NEXT();
+                    NEXT();
                 OPCODE(IRETURN)
                 {
                     return new intOopDesc(stack.popInt());
@@ -1273,7 +1338,8 @@
                     } else {
                         instanceOop receiver = Resolver::instance(ref);
                         if (receiver == nullptr) {
-                            PANIC("Not an instance oop");
+                            // TODO: throw an exception
+                            SHOULD_NOT_REACH_HERE_M("Not an instance oop");
                         }
                         Execution::getField(thread, currentClass->getRuntimeConstantPool(),
                             receiver, stack, constantIndex);
@@ -1341,8 +1407,9 @@
                     pc += 4;
 
                     if (zero != 0) {
-                        PANIC("interpreter: invalid invokeinterface: "
+                        WARN("interpreter: invalid invokeinterface: "
                               "the value of the fourth operand byte must always be zero.");
+                        // continue
                     }
                     Execution::invokeInterface(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex, count);
@@ -1355,7 +1422,20 @@
                 }
                 OPCODE(INVOKEDYNAMIC)
                 {
-                    PANIC("invokedynamic");
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
+                    if (codeBlob[pc + 2] != 0 || codeBlob[pc + 3] != 0) {
+                        WARN("interpreter: invalid invokedynamic: "
+                              "the value of the third and fourth operand bytes must always be zero.");
+                        // continue
+                    }
+                    pc += 4;
+
+                    Execution::invokeDynamic(thread, currentClass, stack, constantIndex);
+                    if (thread->isExceptionOccurred()) {
+                        stack.clear();
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    }
                     NEXT();
                 }
                 OPCODE(NEW)
@@ -1418,7 +1498,8 @@
                     } else {
                         arrayOop array = Resolver::array(ref);
                         if (array == nullptr) {
-                            PANIC("Attempt to use arraylength on non-array objects");
+                            // TODO: throw an exception
+                            SHOULD_NOT_REACH_HERE_M("Attempt to use arraylength on non-array objects");
                         }
                         stack.pushInt(array->getLength());
                     }
@@ -1481,7 +1562,8 @@
                     } else {
                         auto object = Resolver::javaOop(ref);
                         if (object == nullptr) {
-                            PANIC("not an object");
+                            // TODO: throw an exception
+                            SHOULD_NOT_REACH_HERE_M("not an object");
                         }
                         object->getMarkOop()->monitorEnter();
                     }
@@ -1498,7 +1580,8 @@
                     } else {
                         auto object = Resolver::javaOop(ref);
                         if (object == nullptr) {
-                            PANIC("not an object");
+                            // TODO: throw an exception
+                            SHOULD_NOT_REACH_HERE_M("not an object");
                         }
                         object->getMarkOop()->monitorExit();
                     }
@@ -1506,7 +1589,7 @@
                 }
                 OPCODE(WIDE)
                 {
-                    PANIC("wide should not appear in instructions!");
+                    PANIC("Use of deprecated instruction wide, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(MULTIANEWARRAY)
@@ -1531,7 +1614,7 @@
                         currentClass->getRuntimeConstantPool(),
                         constantIndex, dimension, length));
                 }
-                NEXT();
+                    NEXT();
                 OPCODE(IFNULL)
                 {
                     IF_NULLCMP_GOTO(2, ==);
@@ -1545,17 +1628,21 @@
                 OPCODE(GOTO_W)
                 {
                     pc += 4;
-                    PANIC("goto_w should not appear in instructions!");
+                    PANIC("Use of deprecated instruction goto_w, please check your Java compiler");
                     NEXT();
                 }
                 OPCODE(JSR_W)
                 {
                     pc += 4;
-                    PANIC("jsr_w should not appear in instructions!");
+                    PANIC("Use of deprecated instruction jsr_w, please check your Java compiler");
                     NEXT();
                 }
                 OTHERWISE() {
-                    PANIC("Unrecognized bytecode: %d at %d", codeBlob[pc - 1], pc - 1);
+                    PANIC("Use of undefined bytecode: %d at %d", codeBlob[pc - 1], pc - 1);
                     NEXT();
                 }
-        END()
+            END()
+
+        return nullptr;
+    }
+}

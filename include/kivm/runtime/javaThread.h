@@ -21,6 +21,8 @@ namespace kivm {
 
         friend class ThreadedInterpreter;
 
+        friend class ScratchInterpreter;
+
         friend class InvocationContext;
 
         friend class InvocationContext;

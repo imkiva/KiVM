@@ -47,7 +47,7 @@ namespace kivm {
                         currentClass = currentClass->getSuperClass();
                     }
                 }
-                PANIC("Unsupported field & class type.");
+                SHOULD_NOT_REACH_HERE_M("Unsupported field & class type.");
                 return nullptr;
             }
 
@@ -105,7 +105,7 @@ namespace kivm {
                 nameAndTypeIndex = interfaceMethodRef->name_and_type_index;
 
             } else {
-                PANIC("Unsupported method & class type.");
+                SHOULD_NOT_REACH_HERE_M("Unsupported method & class type.");
             }
 
             Klass *klass = rt->getClass(classIndex);
@@ -143,6 +143,15 @@ namespace kivm {
             auto name = rt->getUtf8(nameAndType->name_index);
             auto desc = rt->getUtf8(nameAndType->descriptor_index);
             return new std::pair<Utf8PoolEntry, Utf8PoolEntry>(name, desc);
+        }
+
+        InvokeDynamicPoolEntry
+        InvokeDynamicCreator::operator()(RuntimeConstantPool *rt, cp_info **pool, int index) {
+            auto entry = new InvokeDynamicInfo;
+            auto invokeInfo = (CONSTANT_InvokeDynamic_info *) pool[index];
+            entry->methodIndex = invokeInfo->bootstrap_method_attr_index;
+            entry->methodNameAndType = rt->getNameAndType(invokeInfo->name_and_type_index);
+            return entry;
         }
     }
 }

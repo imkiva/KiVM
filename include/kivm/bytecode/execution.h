@@ -57,6 +57,9 @@ namespace kivm {
         static oop invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt,
                                   Stack &stack, int constantIndex);
 
+        static oop invokeDynamic(JavaThread *thread, InstanceKlass *klass,
+            Stack &stack, int constantIndex);
+
         static void putField(JavaThread *thread, RuntimeConstantPool *rt,
                              Stack &stack, int constantIndex, bool isStatic);
 

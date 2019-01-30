@@ -81,4 +81,12 @@ namespace kivm {
         // until we got `this` object
         return InvocationContext::invokeWithStack(thread, method, &stack);
     }
+
+    oop Execution::invokeDynamic(JavaThread *thread, InstanceKlass *klass,
+                      Stack &stack, int constantIndex) {
+        // TODO: invoke dynamic
+        auto invoke = klass->getRuntimeConstantPool()->getInvokeDynamic(constantIndex);
+        auto bmTable = klass->getBootstrapMethodTable();
+        return nullptr;
+    }
 }

@@ -211,6 +211,7 @@ set(SOURCE_FILES
         src/kivm/oop/method.cpp
         src/kivm/bytecode/bytecodeInterpreter.cpp
         src/kivm/bytecode/threadedInterpreter.cpp
+        src/kivm/bytecode/scratchInterpreter.cpp
         src/kivm/oop/field.cpp
         src/kivm/classpath/baseClassLoader.cpp
         src/kivm/oop/mirrorKlass.cpp

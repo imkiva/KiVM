@@ -27,6 +27,12 @@ namespace kivm {
         using Utf8PoolEntry = String *;
         using NameAndTypePoolEntry = std::pair<Utf8PoolEntry, Utf8PoolEntry> *;
 
+        struct InvokeDynamicInfo {
+            u2 methodIndex;
+            NameAndTypePoolEntry methodNameAndType;
+        };
+        using InvokeDynamicPoolEntry =  InvokeDynamicInfo *;
+
         template<typename T, typename Creator, int CONSTANT_TAG>
         class Pool {
         private:
@@ -94,12 +100,18 @@ namespace kivm {
             NameAndTypePoolEntry operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
         };
 
+        struct InvokeDynamicCreator {
+            InvokeDynamicPoolEntry operator()(RuntimeConstantPool *rt, cp_info **pool, int index);
+        };
+
+
         using IntegerPool = Pool<jint *, PrimitiveConstantCreator<jint, CONSTANT_Integer_info>, CONSTANT_Integer>;
         using FloatPool = Pool<jfloat *, PrimitiveConstantCreator<jfloat, CONSTANT_Float_info>, CONSTANT_Float>;
         using LongPool = Pool<jlong *, PrimitiveConstantCreator<jlong, CONSTANT_Long_info>, CONSTANT_Long>;
         using DoublePool = Pool<jdouble *, PrimitiveConstantCreator<jdouble, CONSTANT_Double_info>, CONSTANT_Double>;
         using Utf8Pool = Pool<Utf8PoolEntry, Utf8ConstantCreator, CONSTANT_Utf8>;
         using NameAndTypePool = Pool<NameAndTypePoolEntry, NameAndTypeCreator, CONSTANT_NameAndType>;
+        using InvokeDynamicPool = Pool<InvokeDynamicPoolEntry, InvokeDynamicCreator, CONSTANT_InvokeDynamic>;
 
         using ClassPool = Pool<ClassPoolEntey, ClassCreator, CONSTANT_Class>;
         using StringPool = Pool<StringPoolEntry, StringCreator, CONSTANT_String>;
@@ -126,6 +138,7 @@ namespace kivm {
         pools::InstanceFieldPool _instanceFieldPool;
         pools::InterfaceMethodPool _interfaceMethodPool;
         pools::NameAndTypePool _nameAndTypePool;
+        pools::InvokeDynamicPool _invokeDynamicPool;
         pools::Utf8Pool _utf8Pool;
         pools::IntegerPool _intPool;
         pools::FloatPool _floatPool;
@@ -151,6 +164,7 @@ namespace kivm {
             _doublePool.setRawPool(rawPool, _pool);
             _utf8Pool.setRawPool(rawPool, _pool);
             _nameAndTypePool.setRawPool(rawPool, _pool);
+            _invokeDynamicPool.setRawPool(rawPool, _pool);
         }
 
         inline cp_info **getRawPool() {
@@ -199,6 +213,11 @@ namespace kivm {
         inline pools::NameAndTypePoolEntry getNameAndType(int index) {
             assert(this->_rawPool != nullptr);
             return _nameAndTypePool.findOrNew(this, index);
+        }
+
+        inline pools::InvokeDynamicPoolEntry getInvokeDynamic(int index) {
+            assert(this->_rawPool != nullptr);
+            return _invokeDynamicPool.findOrNew(this, index);
         }
 
         inline jint getInt(int index) {
