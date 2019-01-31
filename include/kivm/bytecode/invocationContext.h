@@ -35,7 +35,7 @@ namespace kivm {
 
         bool prepareFrame(Frame *frame);
 
-       inline oop invoke(bool forceNoResolve) {
+        inline oop invoke(bool forceNoResolve) {
             prepareEnvironment();
             bool hasThis = !_method->isStatic();
             bool resolveTwice = forceNoResolve ? false :
@@ -65,5 +65,8 @@ namespace kivm {
                                           Stack *stack, bool forceNoResolve = false) {
             return InvocationContext(thread, method, stack).invoke(forceNoResolve);
         }
+
+        static oop invokeDynamic(JavaThread *thread, Method *invokeExact, instanceOop MH,
+                                 Stack *stack, int argSize);
     };
 }

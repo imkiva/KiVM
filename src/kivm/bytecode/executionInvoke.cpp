@@ -3,6 +3,12 @@
 //
 #include <kivm/bytecode/execution.h>
 #include <kivm/bytecode/invocationContext.h>
+#include <kivm/native/classNames.h>
+#include <kivm/oop/instanceOop.h>
+#include <kivm/oop/mirrorOop.h>
+#include <kivm/oop/primitiveOop.h>
+#include <kivm/oop/arrayOop.h>
+#include <kivm/oop/arrayKlass.h>
 
 namespace kivm {
     static void panicNoSuchMethod(RuntimeConstantPool *rt, int constantIndex) {
@@ -15,10 +21,182 @@ namespace kivm {
         auto methodName = requireConstant<CONSTANT_Utf8_info>(pool, nameAndTypeInfo->name_index);
         auto methodDesc = requireConstant<CONSTANT_Utf8_info>(pool, nameAndTypeInfo->descriptor_index);
 
+        // TODO: throw an exception
         PANIC("NoSuchMethodError: %s.%s:%s",
             strings::toStdString(className->getConstant()).c_str(),
             strings::toStdString(methodName->getConstant()).c_str(),
             strings::toStdString(methodDesc->getConstant()).c_str());
+    }
+
+    static instanceOop makeMethodHandlesLookup(JavaThread *thread) {
+        static String lookupMethodName = L"lookup";
+        static String lookupMethodDesc = L"()Ljava/lang/invoke/MethodHandles$Lookup;";
+
+        // TODO
+        auto klass = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/lang/invoke/MethodHandles");
+        auto lookupMethod = klass->getThisClassMethod(lookupMethodName, lookupMethodDesc);
+        auto lookupObject = InvocationContext::invokeWithArgs(thread, lookupMethod, {});
+        return Resolver::instance(lookupObject);
+    }
+
+    static instanceOop makeFieldHandle(JavaThread *thread, RuntimeConstantPool *rt,
+                                       instanceOop lookupObject, int kind, int index) {
+        if (rt->getRawPool()[index]->tag != CONSTANT_Fieldref) {
+            SHOULD_NOT_REACH_HERE();
+            return nullptr;
+        }
+
+        pools::FieldPoolEntry field = nullptr;
+        Method *method = nullptr;
+
+        if (kind == REF_getField || kind == REF_putField) {
+            field = rt->getInstanceField(index);
+            method = lookupObject->getInstanceClass()->getThisClassMethod(L"findGetter",
+                L"(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/invoke/MethodHandle;");
+        } else {
+            field = rt->getStaticField(index);
+            method = lookupObject->getInstanceClass()->getThisClassMethod(L"findStaticGetter",
+                L"(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/invoke/MethodHandle;");
+
+        }
+
+        auto f = field->_field;
+        auto mh = InvocationContext::invokeWithArgs(thread, method,
+            {lookupObject,
+             f->getClass()->getJavaMirror(),
+             java::lang::String::from(f->getName()),
+             f->getValueTypeClass()->getJavaMirror()});
+        return Resolver::instance(mh);
+    }
+
+    static instanceOop makeMethodType(JavaThread *thread, const std::vector<mirrorOop> &args, mirrorOop retType) {
+        auto classArrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"[Ljava/lang/Class;");
+        auto array = classArrayClass->newInstance(int(args.size()));
+        for (int i = 0; i < args.size(); ++i) {
+            array->setElementAt(i, args[i]);
+        }
+
+        auto methodTypeClass = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/lang/invoke/MethodType");
+        if (methodTypeClass == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+        }
+
+        auto ctor = methodTypeClass->getThisClassMethod(L"methodType",
+            L"(Ljava/lang/Class;[Ljava/lang/Class;)Ljava/lang/invoke/MethodType;");
+        if (ctor == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+        }
+
+        auto mt = InvocationContext::invokeWithArgs(thread, ctor, {retType, array});
+        return Resolver::instance(mt);
+    }
+
+    static instanceOop makeMethodType(JavaThread *thread, const String &descriptor) {
+        auto args = parseArguments(descriptor);
+        auto retType = parseReturnType(descriptor);
+        return makeMethodType(thread, args, retType);
+    }
+
+    static instanceOop makeMethodType(JavaThread *thread, Method *method) {
+        auto &args = method->getArgumentClassTypes();
+        auto retType = method->getReturnClassType();
+        return makeMethodType(thread, args, retType);
+    }
+
+    static instanceOop makeInvokeHandle(JavaThread *thread, RuntimeConstantPool *rt,
+                                        instanceOop lookupObject, int kind, int index) {
+        if (rt->getRawPool()[index]->tag != CONSTANT_Methodref
+            && rt->getRawPool()[index]->tag != CONSTANT_InterfaceMethodref) {
+            SHOULD_NOT_REACH_HERE();
+            return nullptr;
+        }
+
+        if (kind == REF_invokeSpecial || kind == REF_newInvokeSpecial) {
+            PANIC("not supported");
+        }
+
+        auto targetMethod = rt->getMethod(index);
+        Method *findMethod = nullptr;
+        switch (kind) {
+            case REF_invokeVirtual:
+                findMethod = lookupObject->getInstanceClass()->getVirtualMethod(L"findVirtual",
+                    L"(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/MethodHandle;");
+                break;
+            case REF_invokeInterface:
+                findMethod = lookupObject->getInstanceClass()->getThisClassMethod(L"findVirtual",
+                    L"(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/MethodHandle;");
+                break;
+            case REF_invokeStatic:
+                if (targetMethod->getName() == L"<init>" || targetMethod->getName() == L"<clinit>") {
+                    SHOULD_NOT_REACH_HERE();
+                    return nullptr;
+                }
+
+                findMethod = lookupObject->getInstanceClass()->getVirtualMethod(L"findStatic",
+                    L"(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/MethodHandle;");
+                break;
+            default:
+                SHOULD_NOT_REACH_HERE();
+                return nullptr;
+        }
+
+        auto mh = InvocationContext::invokeWithArgs(thread, findMethod,
+            {lookupObject,
+             targetMethod->getClass()->getJavaMirror(),
+             java::lang::String::from(targetMethod->getName()),
+             makeMethodType(thread, targetMethod)});
+        return Resolver::instance(mh);
+    }
+
+    static instanceOop makeMethodHandle(JavaThread *thread, RuntimeConstantPool *rt, int index, bool isBootstrap) {
+        auto lookupObject = makeMethodHandlesLookup(thread);
+        if (lookupObject == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+            return nullptr;
+        }
+
+        if (rt->getRawPool()[index]->tag != CONSTANT_MethodHandle) {
+            SHOULD_NOT_REACH_HERE();
+            return nullptr;
+        }
+
+        auto methodHandle = (CONSTANT_MethodHandle_info *) rt->getRawPool()[index];
+        auto refIndex = methodHandle->reference_index;
+        auto refKind = methodHandle->reference_kind;
+
+        if (isBootstrap) {
+            switch (refKind) {
+                case REF_invokeStatic:
+                case REF_newInvokeSpecial:
+                    break;
+                default:
+                    SHOULD_NOT_REACH_HERE();
+                    return nullptr;
+            }
+        }
+
+        switch (refKind) {
+            case REF_getField:
+            case REF_getStatic:
+            case REF_putField:
+            case REF_putStatic:
+                return makeFieldHandle(thread, rt, lookupObject, refKind, refIndex);
+
+            case REF_invokeVirtual:
+            case REF_invokeStatic:
+            case REF_invokeSpecial:
+            case REF_newInvokeSpecial:
+            case REF_invokeInterface:
+                return makeInvokeHandle(thread, rt, lookupObject, refKind, refIndex);
+
+            default:
+                SHOULD_NOT_REACH_HERE();
+        }
+
+        return nullptr;
     }
 
     oop Execution::invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
@@ -65,8 +243,8 @@ namespace kivm {
     oop Execution::invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
                                    int constantIndex, int count) {
         // Do not use invokeVirtual()
-        // we need rt->getInterfaceMethod()
-        Method *method = rt->getInterfaceMethod(constantIndex);
+        // we need rt->getMethod()
+        Method *method = rt->getMethod(constantIndex);
         if (method == nullptr) {
             panicNoSuchMethod(rt, constantIndex);
             return nullptr;
@@ -83,10 +261,120 @@ namespace kivm {
     }
 
     oop Execution::invokeDynamic(JavaThread *thread, InstanceKlass *klass,
-                      Stack &stack, int constantIndex) {
+                                 Stack &stack, int constantIndex) {
         // TODO: invoke dynamic
         auto invoke = klass->getRuntimeConstantPool()->getInvokeDynamic(constantIndex);
+        if (invoke == nullptr) {
+            SHOULD_NOT_REACH_HERE_M("Illegal invokedynamic, please check your Java compiler");
+        }
+
         auto bmTable = klass->getBootstrapMethodTable();
-        return nullptr;
+        if (bmTable == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+        }
+
+        auto methodIndex = invoke->methodIndex;
+        if (methodIndex >= bmTable->num_bootstrap_methods) {
+            SHOULD_NOT_REACH_HERE_M("Illegal invokedynamic, please check your Java compiler");
+        }
+
+        auto bootstrap = bmTable->bootstrap_methods[methodIndex];
+        auto rt = klass->getRuntimeConstantPool();
+        const String &descriptor = *invoke->methodNameAndType->second;
+
+        auto methodHandleIndex = bootstrap.bootstrap_method_ref;
+        auto methodHandle = makeMethodHandle(thread, rt, methodHandleIndex, true);
+
+        auto lookupObject = makeMethodHandlesLookup(thread);
+        std::list<oop> callSiteArgs;
+        callSiteArgs.push_back(lookupObject);
+        callSiteArgs.push_back(java::lang::String::from(*invoke->methodNameAndType->first));
+        callSiteArgs.push_back(makeMethodType(thread, descriptor));
+
+        for (int i = 0; i < bootstrap.num_bootstrap_arguments; ++i) {
+            int argIndex = bootstrap.bootstrap_arguments[i];
+            switch (rt->getRawPool()[argIndex]->tag) {
+                case CONSTANT_String:
+                    callSiteArgs.push_back(rt->getString(argIndex));
+                    break;
+                case CONSTANT_Class:
+                    callSiteArgs.push_back(rt->getClass(argIndex)->getJavaMirror());
+                    break;
+                case CONSTANT_Integer:
+                    callSiteArgs.push_back(new intOopDesc(rt->getInt(argIndex)));
+                    break;
+                case CONSTANT_Float:
+                    callSiteArgs.push_back(new floatOopDesc(rt->getFloat(argIndex)));
+                    break;
+                case CONSTANT_Long:
+                    callSiteArgs.push_back(new longOopDesc(rt->getLong(argIndex)));
+                    break;
+                case CONSTANT_Double:
+                    callSiteArgs.push_back(new doubleOopDesc(rt->getDouble(argIndex)));
+                    break;
+                case CONSTANT_MethodHandle:
+                    callSiteArgs.push_back(makeMethodHandle(thread, rt, argIndex, false));
+                    break;
+                case CONSTANT_MethodType: {
+                    auto methodType = (CONSTANT_MethodType_info *) rt->getRawPool()[argIndex];
+                    int descIndex = methodType->descriptor_index;
+                    auto desc = rt->getUtf8(descIndex);
+                    callSiteArgs.push_back(makeMethodType(thread, *desc));
+                    break;
+                }
+                default:
+                    SHOULD_NOT_REACH_HERE();
+            }
+        }
+
+        auto arrayListClass = (InstanceKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"java/util/ArrayList");
+        if (arrayListClass == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+        }
+
+        auto ctor = arrayListClass->getThisClassMethod(L"<init>", L"()V");
+        auto addMethod = arrayListClass->getThisClassMethod(L"add", L"(Ljava/lang/Object;)Z");
+
+        auto arrayList = arrayListClass->newInstance();
+        InvocationContext::invokeWithArgs(thread, ctor, {arrayList});
+
+        for (auto a : callSiteArgs) {
+            auto r = (intOop) InvocationContext::invokeWithArgs(thread, addMethod, {arrayList, a});
+            if (r->getValue() != JNI_TRUE) {
+                WARN("Add to list failed");
+            }
+        }
+
+        auto invokeWithArgsMethod = methodHandle->getInstanceClass()
+            ->getVirtualMethod(L"invokeWithArguments", L"(Ljava/util/List;)Ljava/lang/Object;");
+        if (invokeWithArgsMethod == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+        }
+
+        // Finally we got the java.lang.invoke.CallSite
+        auto callSite = (instanceOop) InvocationContext::invokeWithArgs(thread, invokeWithArgsMethod,
+            {methodHandle, arrayList});
+
+        auto dynamicInvokerMethod = callSite->getInstanceClass()
+            ->getVirtualMethod(L"dynamicInvoker", L"()Ljava/lang/invoke/MethodHandle;");
+        if (dynamicInvokerMethod == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+        }
+
+        auto MH = (instanceOop) InvocationContext::invokeWithArgs(thread, dynamicInvokerMethod,
+            {callSite});
+        if (MH == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+        }
+
+        auto invokeExactMethod = MH->getInstanceClass()
+            ->getVirtualMethod(L"invokeExact", L"([Ljava/lang/Object;)Ljava/lang/Object;");
+        if (invokeExactMethod == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+        }
+
+        auto argSize = int(parseArguments(descriptor).size());
+        return InvocationContext::invokeDynamic(thread, invokeExactMethod, MH, &stack, argSize);
     }
 }

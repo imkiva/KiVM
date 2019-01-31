@@ -34,6 +34,8 @@
 #endif
 
 namespace kivm {
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
     class ScratchInterpreter {
     public:
         /**
@@ -45,6 +47,7 @@ namespace kivm {
          */
         static oop interp(JavaThread *thread);
     };
+#pragma clang diagnostic pop
 
     oop ScratchInterpreter::interp(JavaThread *thread) {
         Frame *currentFrame = thread->getCurrentFrame();

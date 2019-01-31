@@ -472,4 +472,17 @@ namespace kivm {
         }
         return 0;
     }
+
+    std::vector<mirrorOop> parseArguments(const String &descriptor) {
+        std::vector<mirrorOop> args;
+        bool dummy = false;
+        helper::argumentListParser(&args, &dummy, descriptor);
+        return args;
+    }
+
+    mirrorOop parseReturnType(const String &descriptor) {
+        mirrorOop ret;
+        helper::returnTypeParser(&ret, descriptor);
+        return ret;
+    }
 }

@@ -34,7 +34,7 @@ namespace kivm {
 
         static objectArrayOop objectArray(jobjectArray object);
 
-        static Klass* javaClass(jclass clazz);
+        static Klass *javaClass(jclass clazz);
 
         static InstanceKlass *instanceClass(jclass clazz);
     };
@@ -46,19 +46,19 @@ namespace kivm {
     class Execution {
     public:
         static oop invokeInterface(JavaThread *thread, RuntimeConstantPool *rt,
-                                    Stack &stack, int constantIndex, int count);
+                                   Stack &stack, int constantIndex, int count);
 
         static oop invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt,
-                                  Stack &stack, int constantIndex);
-
-        static oop invokeStatic(JavaThread *thread, RuntimeConstantPool *rt,
                                  Stack &stack, int constantIndex);
 
+        static oop invokeStatic(JavaThread *thread, RuntimeConstantPool *rt,
+                                Stack &stack, int constantIndex);
+
         static oop invokeSpecial(JavaThread *thread, RuntimeConstantPool *rt,
-                                  Stack &stack, int constantIndex);
+                                 Stack &stack, int constantIndex);
 
         static oop invokeDynamic(JavaThread *thread, InstanceKlass *klass,
-            Stack &stack, int constantIndex);
+                                 Stack &stack, int constantIndex);
 
         static void putField(JavaThread *thread, RuntimeConstantPool *rt,
                              Stack &stack, int constantIndex, bool isStatic);

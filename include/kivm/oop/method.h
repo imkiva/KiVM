@@ -243,4 +243,8 @@ namespace kivm {
 
         static const std::list<Method *> &getEntries();
     };
+
+    std::vector<mirrorOop> parseArguments(const String &descriptor);
+
+    mirrorOop parseReturnType(const String &descriptor);
 }

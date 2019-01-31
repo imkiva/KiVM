@@ -33,7 +33,7 @@ namespace kivm {
         };
         using InvokeDynamicPoolEntry =  InvokeDynamicInfo *;
 
-        template<typename T, typename Creator, int CONSTANT_TAG>
+        template<typename T, typename Creator,int CONSTANT_TAG1, int CONSTANT_TAG2 = CONSTANT_TAG1>
         class Pool {
         private:
             cp_info **_raw_pool = nullptr;
@@ -48,7 +48,8 @@ namespace kivm {
             }
 
             inline T findOrNew(RuntimeConstantPool *rt, int index) {
-                if (_raw_pool[index]->tag != CONSTANT_TAG) {
+                if (_raw_pool[index]->tag != CONSTANT_TAG1
+                    && _raw_pool[index]->tag != CONSTANT_TAG2) {
                     PANIC("Accessing an incompatible constant entry may cause undefined behavior, panicked.");
                 }
                 void *value = _pool[index];
@@ -115,8 +116,7 @@ namespace kivm {
 
         using ClassPool = Pool<ClassPoolEntey, ClassCreator, CONSTANT_Class>;
         using StringPool = Pool<StringPoolEntry, StringCreator, CONSTANT_String>;
-        using MethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_Methodref>;
-        using InterfaceMethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_InterfaceMethodref>;
+        using MethodPool = Pool<MethodPoolEntry, MethodCreator, CONSTANT_Methodref, CONSTANT_InterfaceMethodref>;
         using StaticFieldPool = Pool<FieldPoolEntry, StaticFieldCreator, CONSTANT_Fieldref>;
         using InstanceFieldPool = Pool<FieldPoolEntry, InstanceFieldCreator, CONSTANT_Fieldref>;
     }
@@ -136,7 +136,6 @@ namespace kivm {
         pools::MethodPool _methodPool;
         pools::StaticFieldPool _staticFieldPool;
         pools::InstanceFieldPool _instanceFieldPool;
-        pools::InterfaceMethodPool _interfaceMethodPool;
         pools::NameAndTypePool _nameAndTypePool;
         pools::InvokeDynamicPool _invokeDynamicPool;
         pools::Utf8Pool _utf8Pool;
@@ -157,7 +156,6 @@ namespace kivm {
             _methodPool.setRawPool(rawPool, _pool);
             _staticFieldPool.setRawPool(rawPool, _pool);
             _instanceFieldPool.setRawPool(rawPool, _pool);
-            _interfaceMethodPool.setRawPool(rawPool, _pool);
             _intPool.setRawPool(rawPool, _pool);
             _floatPool.setRawPool(rawPool, _pool);
             _longPool.setRawPool(rawPool, _pool);
@@ -188,11 +186,6 @@ namespace kivm {
         inline pools::MethodPoolEntry getMethod(int index) {
             assert(this->_rawPool != nullptr);
             return _methodPool.findOrNew(this, index);
-        }
-
-        inline pools::MethodPoolEntry getInterfaceMethod(int index) {
-            assert(this->_rawPool != nullptr);
-            return _interfaceMethodPool.findOrNew(this, index);
         }
 
         inline pools::FieldPoolEntry getStaticField(int index) {

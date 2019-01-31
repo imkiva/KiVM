@@ -170,6 +170,7 @@ namespace kivm {
         Global::java_lang_ClassNotFoundException = use(cl, thread, J_CLASS_NOT_FOUND);
         Global::java_lang_InternalError = use(cl, thread, J_INTERNAL_ERROR);
         Global::java_io_IOException = use(cl, thread, J_IOEXCEPTION);
+//        Global::java_lang_invoke_MethodHandles = use(cl, thread, J_METHODHANDLES);
         java::lang::reflect::Constructor::initialize();
         java::lang::reflect::Method::initialize();
 

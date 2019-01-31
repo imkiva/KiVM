@@ -240,6 +240,7 @@ set(SOURCE_FILES
         src/kivm/jni/jniEnv.cpp
         src/kivm/bytecode/executionInvoke.cpp
         src/kivm/bytecode/javaInvocationContext.cpp
+        src/kivm/bytecode/dynamicInvocation.cpp
         src/kivm/memory/copyingHeap.cpp
         src/kivm/memory/universe.cpp
         src/kivm/native/java_lang_System.cpp
