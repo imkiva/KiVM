@@ -36,6 +36,7 @@
 namespace kivm {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCDFAInspection"
+
     class ScratchInterpreter {
     public:
         /**
@@ -47,6 +48,7 @@ namespace kivm {
          */
         static oop interp(JavaThread *thread);
     };
+
 #pragma clang diagnostic pop
 
     oop ScratchInterpreter::interp(JavaThread *thread) {
@@ -675,7 +677,7 @@ namespace kivm {
                     auto v2 = stack.popInt();
                     auto v1 = stack.popInt();
                     if (v2 == 0) {
-                        auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                        auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
                         thread->throwException(klass, L"/ by zero");
                         stack.clear();
@@ -690,7 +692,7 @@ namespace kivm {
                     auto v2 = stack.popLong();
                     auto v1 = stack.popLong();
                     if (v2 == 0) {
-                        auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                        auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
                         thread->throwException(klass, L"/ by zero");
                         stack.clear();
@@ -705,7 +707,7 @@ namespace kivm {
                     auto v2 = stack.popFloat();
                     auto v1 = stack.popFloat();
                     if (v2 == 0) {
-                        auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                        auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
                         thread->throwException(klass, L"/ by zero");
                         stack.clear();
@@ -720,7 +722,7 @@ namespace kivm {
                     auto v2 = stack.popDouble();
                     auto v1 = stack.popDouble();
                     if (v2 == 0) {
-                        auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                        auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
                         thread->throwException(klass, L"/ by zero");
                         stack.clear();
@@ -735,7 +737,7 @@ namespace kivm {
                     auto v2 = stack.popInt();
                     auto v1 = stack.popInt();
                     if (v2 == 0) {
-                        auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                        auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
                         thread->throwException(klass, L"/ by zero");
                         stack.clear();
@@ -750,7 +752,7 @@ namespace kivm {
                     auto v2 = stack.popLong();
                     auto v1 = stack.popLong();
                     if (v2 == 0) {
-                        auto klass = (InstanceKlass* ) BootstrapClassLoader::get()
+                        auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
                         thread->throwException(klass, L"/ by zero");
                         stack.clear();
@@ -1229,7 +1231,7 @@ namespace kivm {
                         GOTO_ABSOLUTE_WITH_OCCUPIED(static_cast<u4>(jumpTable[topValue - lowByte]), 1);
                     }
                 }
-                    NEXT();
+                NEXT();
                 OPCODE(LOOKUPSWITCH)
                 {
                     int bc = pc - 1;
@@ -1275,7 +1277,7 @@ namespace kivm {
                         GOTO_ABSOLUTE_WITH_OCCUPIED(iter->second, 1);
                     }
                 }
-                    NEXT();
+                NEXT();
                 OPCODE(IRETURN)
                 {
                     return new intOopDesc(stack.popInt());
@@ -1411,7 +1413,7 @@ namespace kivm {
 
                     if (zero != 0) {
                         WARN("interpreter: invalid invokeinterface: "
-                              "the value of the fourth operand byte must always be zero.");
+                             "the value of the fourth operand byte must always be zero.");
                         // continue
                     }
                     Execution::invokeInterface(thread, currentClass->getRuntimeConstantPool(),
@@ -1428,7 +1430,7 @@ namespace kivm {
                     int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
                     if (codeBlob[pc + 2] != 0 || codeBlob[pc + 3] != 0) {
                         WARN("interpreter: invalid invokedynamic: "
-                              "the value of the third and fourth operand bytes must always be zero.");
+                             "the value of the third and fourth operand bytes must always be zero.");
                         // continue
                     }
                     pc += 4;
@@ -1617,7 +1619,7 @@ namespace kivm {
                         currentClass->getRuntimeConstantPool(),
                         constantIndex, dimension, length));
                 }
-                    NEXT();
+                NEXT();
                 OPCODE(IFNULL)
                 {
                     IF_NULLCMP_GOTO(2, ==);

@@ -1355,7 +1355,20 @@
                 }
                 OPCODE(INVOKEDYNAMIC)
                 {
-                    PANIC("invokedynamic");
+                    int constantIndex = codeBlob[pc] << 8 | codeBlob[pc + 1];
+                    if (codeBlob[pc + 2] != 0 || codeBlob[pc + 3] != 0) {
+                        WARN("interpreter: invalid invokedynamic: "
+                             "the value of the third and fourth operand bytes must always be zero.");
+                        // continue
+                    }
+                    pc += 4;
+
+                    Execution::invokeDynamic(thread, currentClass, stack, constantIndex);
+                    if (thread->isExceptionOccurred()) {
+                        stack.clear();
+                        stack.pushReference(thread->_exceptionOop);
+                        goto exceptionHandler;
+                    }
                     NEXT();
                 }
                 OPCODE(NEW)
