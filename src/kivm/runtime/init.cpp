@@ -82,6 +82,10 @@ namespace kivm {
     }
 
     void Threads::initializeJVM(JavaMainThread *thread) {
+        if (Global::jvmBooted) {
+            return;
+        }
+
         auto cl = BootstrapClassLoader::get();
 
         Threads::initializeVMStructs(cl, thread);
@@ -155,6 +159,8 @@ namespace kivm {
 
         // re-enable sun.security.util.Debug
         sunDebugClass->setClassState(ClassState::FULLY_INITIALIZED);
+
+        Global::jvmBooted = true;
     }
 
     void Threads::initializeVMStructs(BootstrapClassLoader *cl, JavaMainThread *thread) {

@@ -72,6 +72,8 @@ namespace kivm {
         static InstanceKlass *java_io_IOException;
 
         static JavaObject("java/nio/charset/Charset") DEFAULT_UTF8_CHARSET;
+
+        static bool jvmBooted;
     };
 
     class JavaThread;

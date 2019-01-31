@@ -38,6 +38,8 @@ namespace kivm {
 
     JavaObject("java/nio/charset/Charset") Global::DEFAULT_UTF8_CHARSET = nullptr;
 
+    bool Global::jvmBooted = false;
+
     JavaVM *KiVM::sJavaVMInstance = nullptr;
     JNIEnv *KiVM::sJNIEnvInstance = nullptr;
 
