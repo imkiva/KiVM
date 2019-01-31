@@ -48,7 +48,8 @@
 #define JNI_ENTRY_NAME(nameAndSignature) jni_##nameAndSignature
 #define JNI_ENTRY(returnType, nameAndSignature) returnType JNI_ENTRY_NAME(nameAndSignature)
 
-#define O(X) instanceOop
+#define JavaObject(X) instanceOop
+#define JO(X) JavaObject(X)
 
 namespace kivm {
     class InstanceKlass;
@@ -70,7 +71,7 @@ namespace kivm {
         static InstanceKlass *java_lang_InternalError;
         static InstanceKlass *java_io_IOException;
 
-        static O("java/nio/charset/Charset") DEFAULT_UTF8_CHARSET;
+        static JavaObject("java/nio/charset/Charset") DEFAULT_UTF8_CHARSET;
     };
 
     class JavaThread;

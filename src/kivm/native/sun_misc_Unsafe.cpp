@@ -14,29 +14,7 @@
 
 using namespace kivm;
 
-//union OffsetEncoder {
-//    struct {
-//        int isStatic;
-//        int offset;
-//    };
-//    jlong result;
-//
-//    std::tuple<int, bool> decode() {
-//        return std::make_tuple(offset, isStatic != 0);
-//    };
-//
-//    OffsetEncoder(int offset, bool isStatic) {
-//        this->offset = offset;
-//        this->isStatic = isStatic;
-//    }
-//
-//    OffsetEncoder(jlong encoded) {
-//        this->result = encoded;
-//    }
-//};
-
 static jlong encodeOffset(int offset, bool isStatic) {
-//    return OffsetEncoder(offset, isStatic).result;
     ++offset;
     if (isStatic) {
         return offset * 2;
@@ -45,7 +23,6 @@ static jlong encodeOffset(int offset, bool isStatic) {
 }
 
 static std::tuple<int, bool> decodeOffset(jlong encoded) {
-//    return OffsetEncoder(encoded).decode();
     if (encoded % 2 == 0) {
         return std::make_tuple((int) (encoded / 2) - 1, true);
     }

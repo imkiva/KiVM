@@ -28,11 +28,11 @@ namespace kivm {
 #endif
     }
 
-    void *GCJavaObject::operator new(size_t size, bool addToPool) throw() {
+    void *GCJavaObject::operator new(size_t size, bool addToPool) noexcept {
         return allocate(size);
     }
 
-    void *GCJavaObject::operator new[](size_t size, bool addToPool) throw() {
+    void *GCJavaObject::operator new[](size_t size, bool addToPool) noexcept {
         return allocate(size);
     }
 

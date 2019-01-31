@@ -36,7 +36,7 @@ namespace kivm {
     InstanceKlass *Global::java_lang_InternalError = nullptr;
     InstanceKlass *Global::java_io_IOException = nullptr;
 
-    O("java/nio/charset/Charset") Global::DEFAULT_UTF8_CHARSET = nullptr;
+    JavaObject("java/nio/charset/Charset") Global::DEFAULT_UTF8_CHARSET = nullptr;
 
     JavaVM *KiVM::sJavaVMInstance = nullptr;
     JNIEnv *KiVM::sJNIEnvInstance = nullptr;

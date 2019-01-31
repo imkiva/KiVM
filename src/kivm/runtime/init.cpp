@@ -91,7 +91,7 @@ namespace kivm {
         auto threadGroupClass = use(cl, thread, J_THREAD_GROUP);
 
         // Create the init thread
-        instanceOop initThreadOop = threadClass->newInstance();
+        JavaObject("Thread") initThreadOop = threadClass->newInstance();
         // eetop is a pointer to the underlying OS-level native thread instance of the JVM.
         initThreadOop->setFieldValue(J_THREAD, L"eetop", L"J",
             new longOopDesc(thread->getNativeHandler()));
@@ -106,12 +106,12 @@ namespace kivm {
         // Threads::addJavaThread(thread);
 
         // Create and construct the system thread group.
-        instanceOop systemThreadGroup = threadGroupClass->newInstance();
+        JavaObject("ThreadGroup") systemThreadGroup = threadGroupClass->newInstance();
         auto tgDefaultCtor = threadGroupClass->getThisClassMethod(L"<init>", L"()V");
         InvocationContext::invokeWithArgs(thread, tgDefaultCtor, {systemThreadGroup});
 
         // Create the main thread group
-        instanceOop mainThreadGroup = threadGroupClass->newInstance();
+        JavaObject("ThreadGroup") mainThreadGroup = threadGroupClass->newInstance();
         initThreadOop->setFieldValue(J_THREAD, L"group", L"Ljava/lang/ThreadGroup;", mainThreadGroup);
 
         // Load system classes.
