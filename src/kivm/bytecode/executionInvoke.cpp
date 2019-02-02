@@ -2,7 +2,7 @@
 // Created by kiva on 2018/4/19.
 //
 #include <kivm/bytecode/execution.h>
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <kivm/native/classNames.h>
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/mirrorOop.h>
@@ -51,7 +51,7 @@ namespace kivm {
         }
 
         auto f = field->_field;
-        auto mh = InvocationContext::invokeWithArgs(thread, method,
+        auto mh = JavaCall::withArgs(thread, method,
             {lookupObject,
              f->getClass()->getJavaMirror(),
              java::lang::String::from(f->getName()),
@@ -68,7 +68,7 @@ namespace kivm {
         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
             ->loadClass(L"java/lang/invoke/MethodHandles");
         auto lookupMethod = klass->getThisClassMethod(lookupMethodName, lookupMethodDesc);
-        auto lookupObject = InvocationContext::invokeWithArgs(thread, lookupMethod, {});
+        auto lookupObject = JavaCall::withArgs(thread, lookupMethod, {});
         return Resolver::instance(lookupObject);
     }
 
@@ -93,7 +93,7 @@ namespace kivm {
             SHOULD_NOT_REACH_HERE();
         }
 
-        auto mt = InvocationContext::invokeWithArgs(thread, ctor, {retType, array});
+        auto mt = JavaCall::withArgs(thread, ctor, {retType, array});
         return Resolver::instance(mt);
     }
 
@@ -149,7 +149,7 @@ namespace kivm {
                 return nullptr;
         }
 
-        auto mh = InvocationContext::invokeWithArgs(thread, findMethod,
+        auto mh = JavaCall::withArgs(thread, findMethod,
             {lookupObject,
              targetMethod->getClass()->getJavaMirror(),
              java::lang::String::from(targetMethod->getName()),
@@ -213,7 +213,7 @@ namespace kivm {
             return nullptr;
         }
 
-        return InvocationContext::invokeWithStack(thread, method, &stack, true);
+        return JavaCall::withStack(thread, method, &stack, true);
     }
 
     oop Execution::invokeStatic(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
@@ -227,7 +227,7 @@ namespace kivm {
             PANIC("invalid invokeStatic");
         }
 
-        return InvocationContext::invokeWithStack(thread, method, &stack, true);
+        return JavaCall::withStack(thread, method, &stack, true);
     }
 
     oop Execution::invokeVirtual(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
@@ -244,7 +244,7 @@ namespace kivm {
         // abstract methods need to be resolve by name
         // but currently we cannot get exact method
         // until we got `this` object
-        return InvocationContext::invokeWithStack(thread, method, &stack);
+        return JavaCall::withStack(thread, method, &stack);
     }
 
     oop Execution::invokeInterface(JavaThread *thread, RuntimeConstantPool *rt, Stack &stack,
@@ -264,7 +264,7 @@ namespace kivm {
         // interface methods need to be resolve by name
         // but currently we cannot get exact method
         // until we got `this` object
-        return InvocationContext::invokeWithStack(thread, method, &stack);
+        return JavaCall::withStack(thread, method, &stack);
     }
 
     oop Execution::invokeDynamic(JavaThread *thread, InstanceKlass *klass,
@@ -344,10 +344,10 @@ namespace kivm {
         auto addMethod = arrayListClass->getThisClassMethod(L"add", L"(Ljava/lang/Object;)Z");
 
         JavaObject("ArrayList") arrayList = arrayListClass->newInstance();
-        InvocationContext::invokeWithArgs(thread, ctor, {arrayList});
+        JavaCall::withArgs(thread, ctor, {arrayList});
 
         for (auto a : callSiteArgs) {
-            auto r = (intOop) InvocationContext::invokeWithArgs(thread, addMethod, {arrayList, a});
+            auto r = (intOop) JavaCall::withArgs(thread, addMethod, {arrayList, a});
             if (r->getValue() != JNI_TRUE) {
                 WARN("Add to list failed");
             }
@@ -360,7 +360,7 @@ namespace kivm {
         }
 
         // Finally we got the java.lang.invoke.CallSite
-        JavaObject("CallSite") callSite = (instanceOop) InvocationContext::invokeWithArgs(thread, invokeWithArgsMethod,
+        JavaObject("CallSite") callSite = (instanceOop) JavaCall::withArgs(thread, invokeWithArgsMethod,
             {methodHandle, arrayList});
 
         auto dynamicInvokerMethod = callSite->getInstanceClass()
@@ -369,7 +369,7 @@ namespace kivm {
             SHOULD_NOT_REACH_HERE();
         }
 
-        JavaObject("MethodHandle") MH = (instanceOop) InvocationContext::invokeWithArgs(thread, dynamicInvokerMethod,
+        JavaObject("MethodHandle") MH = (instanceOop) JavaCall::withArgs(thread, dynamicInvokerMethod,
             {callSite});
         if (MH == nullptr) {
             SHOULD_NOT_REACH_HERE();
@@ -382,6 +382,6 @@ namespace kivm {
         }
 
         auto argSize = int(parseArguments(descriptor).size());
-        return InvocationContext::invokeDynamic(thread, invokeExactMethod, MH, &stack, argSize);
+        return JavaCall::invokeDynamic(thread, invokeExactMethod, MH, &stack, argSize);
     }
 }

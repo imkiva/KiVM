@@ -2,7 +2,7 @@
 // Created by kiva on 2019-01-31.
 //
 
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/runtime/abstractThread.h>
 #include <kivm/oop/oopfwd.h>
@@ -16,7 +16,7 @@
 #include <kivm/bytecode/bytecodeInterpreter.h>
 
 namespace kivm {
-    oop InvocationContext::invokeDynamic(JavaThread *thread, Method *invokeExact,
+    oop JavaCall::invokeDynamic(JavaThread *thread, Method *invokeExact,
                                          instanceOop MH, Stack *stack, int argSize) {
         // TODO: obtain args from stack and call invokeExact with MH
         return nullptr;

@@ -2,10 +2,10 @@
 // Created by kiva on 2018/4/26.
 //
 
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 
 namespace kivm {
-    Method *InvocationContext::resolveVirtualMethod(oop thisObject, Method *tagMethod) {
+    Method *JavaCall::resolveVirtualMethod(oop thisObject, Method *tagMethod) {
         auto thisClass = thisObject->getClass();
         Method *resolved = nullptr;
 

@@ -2,7 +2,7 @@
 // Created by kiva on 2018/3/27.
 //
 #include <kivm/bytecode/execution.h>
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/arrayOop.h>
@@ -36,7 +36,7 @@ namespace kivm {
             if (clinit != nullptr && clinit->getClass() == klass) {
                 D("<clinit> found in %s, invoking.",
                     strings::toStdString(klass->getName()).c_str());
-                InvocationContext::invokeWithArgs(javaThread, clinit, {});
+                JavaCall::withArgs(javaThread, clinit, {});
             }
             klass->setClassState(ClassState::FULLY_INITIALIZED);
         }

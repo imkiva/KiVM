@@ -1,14 +1,14 @@
 //
 // Created by kiva on 2018/4/19.
 //
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/runtime/abstractThread.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/mirrorOop.h>
 
 namespace kivm {
-    oop InvocationContext::invokeJava(bool hasThis, bool resolveTwice) {
+    oop JavaCall::invokeJava(bool hasThis, bool resolveTwice) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypes();
 
         D("javaInvocationContext: %s.%s:%s, static: %s, native: %s, nargs: %zd",

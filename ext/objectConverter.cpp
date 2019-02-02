@@ -2,7 +2,7 @@
 // Created by kiva on 2018/6/20.
 //
 
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <kivm/runtime/javaThread.h>
 #include <kivm/oop/instanceOop.h>
 #include <kivm/oop/primitiveOop.h>
@@ -19,7 +19,7 @@ namespace helper {
             return;
         }
 
-        InvocationContext::invokeWithArgs(thread, method->_method, args);
+        JavaCall::withArgs(thread, method->_method, args);
         if (thread->isExceptionOccurred()) {
             KiVM::uncaughtException(thread);
         }

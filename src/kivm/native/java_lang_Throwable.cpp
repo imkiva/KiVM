@@ -9,7 +9,7 @@
 #include <kivm/runtime/frameWalker.h>
 #include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/arrayOop.h>
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <kivm/oop/primitiveOop.h>
 
 using namespace kivm;
@@ -45,7 +45,7 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
             }
 
             auto element = ELEMENT_CLASS->newInstance();
-            InvocationContext::invokeWithArgs(thread, ELEMENT_CTOR, {
+            JavaCall::withArgs(thread, ELEMENT_CTOR, {
                 element,
                 java::lang::String::from(strings::replaceAll(method->getClass()->getName(),
                     Global::SLASH, Global::DOT)),

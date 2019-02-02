@@ -23,9 +23,9 @@ namespace kivm {
 
         friend class ScratchInterpreter;
 
-        friend class InvocationContext;
+        friend class JavaCall;
 
-        friend class InvocationContext;
+        friend class JavaCall;
 
         friend class CopyingHeap;
 

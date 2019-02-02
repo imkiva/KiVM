@@ -10,7 +10,7 @@
 #include <kivm/bytecode/interpreter.h>
 #include <kivm/memory/gcThread.h>
 #include <random>
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 
 #if defined(KIVM_PLATFORM_UNIX) || defined(KIVM_PLATFORM_APPLE)
 #   define PATH_SEPARATOR_CHAR L"/"
@@ -395,7 +395,7 @@ namespace kivm {
 
         if (FIRST_TIME_DISPATCH) {
             FIRST_TIME_DISPATCH = false;
-            InvocationContext::invokeWithArgs(exceptionThread, dispatcher, {javaThreadOop, ex});
+            JavaCall::withArgs(exceptionThread, dispatcher, {javaThreadOop, ex});
         } else {
             KiVM::uncaughtExceptionJVMInternal(ex);
         }

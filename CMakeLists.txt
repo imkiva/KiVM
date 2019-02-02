@@ -158,7 +158,7 @@ set(SOURCE_FILES
         include/kivm/classpath/system.h
         include/kivm/bytecode/codeBlob.h
         include/kivm/runtime/constantPool.h
-        include/kivm/bytecode/invocationContext.h
+        include/kivm/bytecode/javaCall.h
         include/kivm/jni/jni_md.h
         include/kivm/jni/jni.h
         include/kivm/jni/jniJavaVM.h
@@ -231,16 +231,16 @@ set(SOURCE_FILES
         src/kivm/native/java_lang_String.cpp
         src/kivm/runtime/constantPool.cpp
         src/kivm/bytecode/resolver.cpp
-        src/kivm/bytecode/invocationContext.cpp
-        src/kivm/bytecode/nativeInvocationContext.cpp
+        src/kivm/bytecode/javaCall.cpp
+        src/kivm/bytecode/nativeMethodCall.cpp
         src/kivm/native/java_lang_Thread.cpp
         src/kivm/jni/jniGlobal.cpp
         src/kivm/jni/jniJavaVM.cpp
         src/kivm/kivm.cpp
         src/kivm/jni/jniEnv.cpp
         src/kivm/bytecode/executionInvoke.cpp
-        src/kivm/bytecode/javaInvocationContext.cpp
-        src/kivm/bytecode/dynamicInvocation.cpp
+        src/kivm/bytecode/javaMethodCall.cpp
+        src/kivm/bytecode/dynamicCall.cpp
         src/kivm/memory/copyingHeap.cpp
         src/kivm/memory/universe.cpp
         src/kivm/native/java_lang_System.cpp

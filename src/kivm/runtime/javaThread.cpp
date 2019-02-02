@@ -6,7 +6,7 @@
 #include <kivm/runtime/javaThread.h>
 #include <kivm/runtime/runtimeConfig.h>
 #include <kivm/oop/primitiveOop.h>
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <kivm/memory/gcThread.h>
 
 namespace kivm {
@@ -53,7 +53,7 @@ namespace kivm {
         // Only one argument(this) in java.lang.Thread#run()
         assert(_args.size() == 1);
 
-        InvocationContext::invokeWithArgs(this, _method, _args);
+        JavaCall::withArgs(this, _method, _args);
     }
 
     void JavaThread::onDestroy() {
@@ -73,7 +73,7 @@ namespace kivm {
 
         auto ctor = exceptionClass->getThisClassMethod(L"<init>", L"()V");
         auto exceptionOop = exceptionClass->newInstance();
-        InvocationContext::invokeWithArgs(this, ctor,
+        JavaCall::withArgs(this, ctor,
             {exceptionOop},
             true);
         this->_exceptionOop = exceptionOop;
@@ -85,7 +85,7 @@ namespace kivm {
 
         auto ctor = exceptionClass->getThisClassMethod(L"<init>", L"(Ljava/lang/String;)V");
         auto exceptionOop = exceptionClass->newInstance();
-        InvocationContext::invokeWithArgs(this, ctor,
+        JavaCall::withArgs(this, ctor,
             {exceptionOop, java::lang::String::from(message)},
             true);
         this->_exceptionOop = exceptionOop;

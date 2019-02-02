@@ -8,7 +8,7 @@
 #include <kivm/bytecode/execution.h>
 #include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/arrayOop.h>
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <shared/osInfo.h>
 #include <sys/time.h>
 
@@ -56,7 +56,7 @@ Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobje
         std::list<oop> args{propOop,
                             java::lang::String::intern(e.first),
                             java::lang::String::intern(e.second)};
-        InvocationContext::invokeWithArgs(thread, put, args);
+        JavaCall::withArgs(thread, put, args);
     }
     return propertiesObject;
 }

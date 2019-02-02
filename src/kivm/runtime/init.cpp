@@ -3,7 +3,7 @@
 //
 #include <kivm/runtime/javaThread.h>
 #include <kivm/bytecode/execution.h>
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/oop/arrayKlass.h>
 #include <kivm/oop/arrayOop.h>
@@ -59,7 +59,7 @@ namespace kivm {
 
         this->_method = mainMethod;
         this->_args.push_back(argumentArrayOop);
-        InvocationContext::invokeWithArgs(this, _method, _args);
+        JavaCall::withArgs(this, _method, _args);
     }
 
     void JavaMainThread::onThreadLaunched() {
@@ -112,7 +112,7 @@ namespace kivm {
         // Create and construct the system thread group.
         JavaObject("ThreadGroup") systemThreadGroup = threadGroupClass->newInstance();
         auto tgDefaultCtor = threadGroupClass->getThisClassMethod(L"<init>", L"()V");
-        InvocationContext::invokeWithArgs(thread, tgDefaultCtor, {systemThreadGroup});
+        JavaCall::withArgs(thread, tgDefaultCtor, {systemThreadGroup});
 
         // Create the main thread group
         JavaObject("ThreadGroup") mainThreadGroup = threadGroupClass->newInstance();
@@ -137,7 +137,7 @@ namespace kivm {
             args.push_back(nullptr);
             args.push_back(systemThreadGroup);
             args.push_back(java::lang::String::intern(L"main"));
-            InvocationContext::invokeWithArgs(thread, threadGroupCtor, args);
+            JavaCall::withArgs(thread, threadGroupCtor, args);
         }
 
 
@@ -148,14 +148,14 @@ namespace kivm {
         // Construct the init thread by attaching the main thread group to it.
         auto threadCtor = threadClass->getThisClassMethod(L"<init>",
             L"(Ljava/lang/ThreadGroup;Ljava/lang/String;)V");
-        InvocationContext::invokeWithArgs(thread, threadCtor,
+        JavaCall::withArgs(thread, threadCtor,
             {initThreadOop, mainThreadGroup, java::lang::String::intern(L"main")});
 
         Threads::hackJavaClasses(cl, thread);
 
         // Initialize system classes.
         auto initSystemClassesMethod = systemClass->getStaticMethod(L"initializeSystemClass", L"()V");
-        InvocationContext::invokeWithArgs(thread, initSystemClassesMethod, {});
+        JavaCall::withArgs(thread, initSystemClassesMethod, {});
 
         // re-enable sun.security.util.Debug
         sunDebugClass->setClassState(ClassState::FULLY_INITIALIZED);

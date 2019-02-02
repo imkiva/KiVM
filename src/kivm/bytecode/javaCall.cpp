@@ -1,7 +1,7 @@
 //
 // Created by kiva on 2018/4/13.
 //
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/runtime/abstractThread.h>
 #include <kivm/oop/oopfwd.h>
@@ -15,21 +15,21 @@
 #include <kivm/bytecode/bytecodeInterpreter.h>
 
 namespace kivm {
-    InvocationContext::InvocationContext(JavaThread *thread, Method *method, Stack *stack)
+    JavaCall::JavaCall(JavaThread *thread, Method *method, Stack *stack)
         : _thread(thread), _method(method), _stack(stack), _instanceKlass(_method->getClass()),
           _obtainArgsFromStack(true) {
     }
 
-    InvocationContext::InvocationContext(JavaThread *thread, Method *method, const std::list<oop> &args)
+    JavaCall::JavaCall(JavaThread *thread, Method *method, const std::list<oop> &args)
         : _thread(thread), _method(method), _stack(nullptr), _instanceKlass(_method->getClass()),
           _obtainArgsFromStack(false), _args(args) {
     }
 
-    void InvocationContext::prepareEnvironment() {
+    void JavaCall::prepareEnvironment() {
         Execution::initializeClass(_thread, _instanceKlass);
     }
 
-    void InvocationContext::prepareSynchronized(oop thisObject) {
+    void JavaCall::prepareSynchronized(oop thisObject) {
         if (_method->isSynchronized()) {
             D("invocationContext: method is synchronized");
             if (_method->isStatic()) {
@@ -40,7 +40,7 @@ namespace kivm {
         }
     }
 
-    void InvocationContext::finishSynchronized(oop thisObject) {
+    void JavaCall::finishSynchronized(oop thisObject) {
         if (_method->isSynchronized()) {
             if (_method->isStatic()) {
                 _method->getClass()->getJavaMirror()->getMarkOop()->monitorExit();
@@ -50,7 +50,7 @@ namespace kivm {
         }
     }
 
-    oop InvocationContext::callInterpreter() {
+    oop JavaCall::callInterpreter() {
         Frame frame(_method->getMaxLocals(), _method->getMaxStack());
 
         // something went wrong when preparing frame
@@ -159,7 +159,7 @@ namespace kivm {
         return result;
     }
 
-    bool InvocationContext::prepareFrame(Frame *frame) {
+    bool JavaCall::prepareFrame(Frame *frame) {
         if (_thread->_frames.getSize() >= _thread->_frames.getMaxFrames()) {
             _thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
                 ->loadClass(L"java/lang/StackOverflowException"));

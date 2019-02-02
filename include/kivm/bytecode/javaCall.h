@@ -7,7 +7,7 @@
 #include <list>
 
 namespace kivm {
-    class InvocationContext {
+    class JavaCall {
     private:
         JavaThread *_thread;
         Method *_method;
@@ -51,19 +51,19 @@ namespace kivm {
             }
         }
 
-        InvocationContext(JavaThread *thread, Method *method, Stack *stack);
+        JavaCall(JavaThread *thread, Method *method, Stack *stack);
 
-        InvocationContext(JavaThread *thread, Method *method, const std::list<oop> &args);
+        JavaCall(JavaThread *thread, Method *method, const std::list<oop> &args);
 
     public:
-        static inline oop invokeWithArgs(JavaThread *thread, Method *method,
-                                         const std::list<oop> &args, bool forceNoResolve = false) {
-            return InvocationContext(thread, method, args).invoke(forceNoResolve);
+        static inline oop withArgs(JavaThread *thread, Method *method,
+                                   const std::list<oop> &args, bool forceNoResolve = false) {
+            return JavaCall(thread, method, args).invoke(forceNoResolve);
         }
 
-        static inline oop invokeWithStack(JavaThread *thread, Method *method,
-                                          Stack *stack, bool forceNoResolve = false) {
-            return InvocationContext(thread, method, stack).invoke(forceNoResolve);
+        static inline oop withStack(JavaThread *thread, Method *method,
+                                    Stack *stack, bool forceNoResolve = false) {
+            return JavaCall(thread, method, stack).invoke(forceNoResolve);
         }
 
         static oop invokeDynamic(JavaThread *thread, Method *invokeExact, instanceOop MH,

@@ -9,7 +9,7 @@
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/oop/arrayOop.h>
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 
 using namespace kivm;
 
@@ -39,6 +39,6 @@ JAVA_NATIVE jobject Java_sun_reflect_NativeConstructorAccessorImpl_newInstance0(
             callingArgs.push_back(arguments->getElementAt(i));
         }
     }
-    InvocationContext::invokeWithArgs(thread, ctorMethod, callingArgs, true);
+    JavaCall::withArgs(thread, ctorMethod, callingArgs, true);
     return instance;
 }

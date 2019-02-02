@@ -9,7 +9,7 @@
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/oop/instanceKlass.h>
 #include <kivm/oop/arrayOop.h>
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 
 using namespace kivm;
 
@@ -24,7 +24,7 @@ JAVA_NATIVE jobject Java_sun_nio_cs_StreamEncoder_forOutputStreamWriter(JNIEnv *
     auto method = encoder->getThisClassMethod(L"<init>",
         L"(Ljava/io/OutputStream;Ljava/lang/Object;Ljava/nio/charset/Charset;)V");
     auto encoderOop = encoder->newInstance();
-    InvocationContext::invokeWithArgs(thread, method,
+    JavaCall::withArgs(thread, method,
         {
             encoderOop,
             Resolver::instance(javaOutputStream),

@@ -1,7 +1,7 @@
 //
 // Created by kiva on 2018/4/14.
 //
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <kivm/bytecode/execution.h>
 #include <kivm/runtime/abstractThread.h>
 #include <kivm/oop/primitiveOop.h>
@@ -57,7 +57,7 @@ namespace kivm {
         }
     }
 
-    oop InvocationContext::invokeNative(bool hasThis, bool resolveTwice) {
+    oop JavaCall::invokeNative(bool hasThis, bool resolveTwice) {
         const std::vector<ValueType> &descriptorMap = _method->getArgumentValueTypesNoWrap();
 
         D("nativeInvocationContext: %s.%s:%s, static: %s, native: %s, nargs: %zd",

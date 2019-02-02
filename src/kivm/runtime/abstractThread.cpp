@@ -7,7 +7,7 @@
 #include <kivm/oop/method.h>
 #include <kivm/oop/primitiveOop.h>
 #include <kivm/runtime/runtimeConfig.h>
-#include <kivm/bytecode/invocationContext.h>
+#include <kivm/bytecode/javaCall.h>
 #include <algorithm>
 
 #if defined(KIVM_PLATFORM_UNIX) || defined(KIVM_PLATFORM_APPLE)
