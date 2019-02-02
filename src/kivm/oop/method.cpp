@@ -2,8 +2,9 @@
 // Created by kiva on 2018/2/27.
 //
 
-#include <shared/lock.h>
 #include <sstream>
+#include <utility>
+#include <shared/lock.h>
 
 #include <kivm/oop/method.h>
 #include <kivm/oop/instanceKlass.h>
@@ -15,10 +16,12 @@ namespace kivm {
     namespace helper {
         static void argumentListParser(std::vector<ValueType> *valueTypes, bool *flag,
                                        const String &desc, bool wrap) {
-            if (*flag) {
-                return;
+            if (flag != nullptr) {
+                if (*flag) {
+                    return;
+                }
+                *flag = true;
             }
-            *flag = true;
 
             bool isArray = false;
 
@@ -368,36 +371,6 @@ namespace kivm {
         _codeBlob.init(_codeAttr->code, _codeAttr->code_length);
     }
 
-    const std::vector<ValueType> &Method::getArgumentValueTypes() {
-        helper::argumentListParser(&_argumentValueTypes,
-            &_argumentValueTypesResolved,
-            getDescriptor(), true);
-        return _argumentValueTypes;
-    }
-
-    ValueType Method::getReturnType() {
-        helper::returnTypeParser(&_returnType,
-            &_returnTypeResolved,
-            getDescriptor(),
-            true);
-        return _returnType;
-    }
-
-    const std::vector<ValueType> &Method::getArgumentValueTypesNoWrap() {
-        helper::argumentListParser(&_argumentValueTypesNoWrap,
-            &_argumentValueTypesNoWrapResolved,
-            getDescriptor(),
-            false);
-        return _argumentValueTypesNoWrap;
-    }
-
-    ValueType Method::getReturnTypeNoWrap() {
-        helper::returnTypeParser(&_returnTypeNoWrap,
-            &_returnTypeNoWrapResolved,
-            getDescriptor(), false);
-        return _returnTypeNoWrap;
-    }
-
     JavaNativeMethod *Method::getNativeMethod() {
         if (this->isNative()) {
             if (this->_nativePointer == nullptr) {
@@ -453,6 +426,34 @@ namespace kivm {
         return false;
     }
 
+    const std::vector<ValueType> &Method::getArgumentValueTypes() {
+        helper::argumentListParser(&_argumentValueTypes,
+            &_argumentValueTypesResolved,
+            getDescriptor(), true);
+        return _argumentValueTypes;
+    }
+
+    ValueType Method::getReturnType() {
+        helper::returnTypeParser(&_returnType,
+            &_returnTypeResolved,
+            getDescriptor(), true);
+        return _returnType;
+    }
+
+    const std::vector<ValueType> &Method::getArgumentValueTypesNoWrap() {
+        helper::argumentListParser(&_argumentValueTypesNoWrap,
+            &_argumentValueTypesNoWrapResolved,
+            getDescriptor(), false);
+        return _argumentValueTypesNoWrap;
+    }
+
+    ValueType Method::getReturnTypeNoWrap() {
+        helper::returnTypeParser(&_returnTypeNoWrap,
+            &_returnTypeNoWrapResolved,
+            getDescriptor(), false);
+        return _returnTypeNoWrap;
+    }
+
     mirrorOop Method::getReturnClassType() {
         helper::returnTypeParser(&_returnClassType, getDescriptor());
         return _returnClassType;
@@ -473,16 +474,29 @@ namespace kivm {
         return 0;
     }
 
+    //===============================================================================
+
     std::vector<mirrorOop> parseArguments(const String &descriptor) {
         std::vector<mirrorOop> args;
-        bool dummy = false;
-        helper::argumentListParser(&args, &dummy, descriptor);
-        return args;
+        helper::argumentListParser(&args, nullptr, descriptor);
+        return std::move(args);
     }
 
     mirrorOop parseReturnType(const String &descriptor) {
         mirrorOop ret;
         helper::returnTypeParser(&ret, descriptor);
+        return ret;
+    }
+
+    std::vector<ValueType> parseArgumentValueTypes(const String &descriptor) {
+        std::vector<ValueType> args;
+        helper::argumentListParser(&args, nullptr, descriptor, true);
+        return std::move(args);
+    }
+
+    ValueType parseReturnValueType(const String &descriptor) {
+        ValueType ret;
+        helper::returnTypeParser(&ret, nullptr, descriptor, true);
         return ret;
     }
 }

@@ -66,7 +66,8 @@ namespace kivm {
             return JavaCall(thread, method, stack).invoke(forceNoResolve);
         }
 
-        static oop invokeDynamic(JavaThread *thread, Method *invokeExact, instanceOop MH,
-                                 Stack *stack, int argSize);
+        static oop invokeDynamic(JavaThread *thread, Method *invokeExact,
+                                 instanceOop MH, Stack *stack,
+                                 const String &descriptor);
     };
 }
