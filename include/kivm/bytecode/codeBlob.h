@@ -6,7 +6,7 @@
 #include <kivm/kivm.h>
 
 namespace kivm {
-    class CodeBlob {
+    class CodeBlob final {
         friend class Method;
 
     private:

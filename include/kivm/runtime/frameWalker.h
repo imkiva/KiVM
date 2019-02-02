@@ -9,8 +9,8 @@
 namespace kivm {
     class FrameIterator : public std::iterator<std::input_iterator_tag, Frame *> {
     private:
-        Frame *_start;
-        Frame *_current;
+        Frame *_start = nullptr;
+        Frame *_current = nullptr;
 
     public:
         explicit FrameIterator(Frame *start)
@@ -51,7 +51,7 @@ namespace kivm {
         }
     };
 
-    class FrameWalker {
+    class FrameWalker final {
     private:
         FrameIterator _iterator;
         size_t _size;

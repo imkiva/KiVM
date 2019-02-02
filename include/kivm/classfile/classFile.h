@@ -112,24 +112,24 @@ namespace kivm {
         void init(ClassFileStream &stream, cp_info **constant_pool);
     };
 
-    struct ClassFile {
+    struct ClassFile final {
         /**
          * The magic item supplies the magic number identifying the class file format.
          * It has the value 0xCAFEBABE.
          */
-        u4 magic;
-        u2 minor_version;
-        u2 major_version;
+        u4 magic{};
+        u2 minor_version{};
+        u2 major_version{};
 
-        u2 constant_pool_count;
+        u2 constant_pool_count{};
 
         /**
          * The constant_pool table is indexed
          * from {@code 1} to {@code constant_pool_count - 1}.
          */
-        cp_info **constant_pool;
+        cp_info **constant_pool = nullptr;
 
-        u2 access_flags;
+        u2 access_flags{};
 
         /**
          * The value of the {@code this_class} item must be
@@ -138,7 +138,7 @@ namespace kivm {
          * a {@code CONSTANT_Class_info} structure (§4.4.1)
          * representing the class or interface defined by this class file.
          */
-        u2 this_class;
+        u2 this_class{};
 
         /**
          * For a class, the value of the {@code super_class} item either must
@@ -147,18 +147,18 @@ namespace kivm {
          * a {@code CONSTANT_Class_info} structure representing
          * the direct superclass of the class defined by this class file.
          */
-        u2 super_class;
+        u2 super_class{};
 
-        u2 interfaces_count;
-        u2 *interfaces;
+        u2 interfaces_count{};
+        u2 *interfaces = nullptr;
 
-        u2 fields_count;
-        field_info *fields;
+        u2 fields_count{};
+        field_info *fields = nullptr;
 
-        u2 methods_count;
-        method_info *methods;
+        u2 methods_count{};
+        method_info *methods = nullptr;
 
-        u2 attributes_count;
-        attribute_info **attributes;
+        u2 attributes_count{};
+        attribute_info **attributes = nullptr;
     };
 }

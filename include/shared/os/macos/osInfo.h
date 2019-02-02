@@ -9,7 +9,7 @@
 
 #if defined(KIVM_PLATFORM_APPLE)
 namespace kivm {
-    class MacOSInformation {
+    class MacOSInformation final {
     public:
         static String getOSName();
 

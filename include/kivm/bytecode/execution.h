@@ -20,7 +20,7 @@
 #define T_LONG                 11
 
 namespace kivm {
-    class Resolver {
+    class Resolver final {
     public:
         static oop javaOop(jobject obj);
 
@@ -43,7 +43,7 @@ namespace kivm {
      * Each country has an execution officer,
      * and virtual machines are no exception.
      */
-    class Execution {
+    class Execution final {
     public:
         static oop invokeInterface(JavaThread *thread, RuntimeConstantPool *rt,
                                    Stack &stack, int constantIndex, int count);

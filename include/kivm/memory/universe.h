@@ -7,7 +7,7 @@
 #include <kivm/memory/collectedHeap.h>
 
 namespace kivm {
-    class Universe {
+    class Universe final {
         friend class GCThread;
 
     private:

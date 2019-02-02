@@ -10,7 +10,7 @@
 namespace kivm {
     class Klass;
 
-    class SystemDictionary {
+    class SystemDictionary final {
     private:
         HashMap<String, Klass *> _classes;
         Lock _lock;

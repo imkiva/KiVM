@@ -7,7 +7,7 @@
 #include <list>
 
 namespace kivm {
-    class JavaCall {
+    class JavaCall final {
     private:
         JavaThread *_thread;
         Method *_method;

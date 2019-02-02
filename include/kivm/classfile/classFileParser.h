@@ -8,16 +8,16 @@
 #include <kivm/classfile/classFileStream.h>
 
 namespace kivm {
-    class ClassFileParser {
+    class ClassFileParser final {
     public:
         static ClassFile *alloc();
 
         static void dealloc(ClassFile *class_file);
 
     private:
-        ClassFile *_classFile;
+        ClassFile *_classFile = nullptr;
         ClassFileStream _classFileStream;
-        u1 *_content;
+        u1 *_content = nullptr;
         size_t _size;
 
         ClassFile *parse();

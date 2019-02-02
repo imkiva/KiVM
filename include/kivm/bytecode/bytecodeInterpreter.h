@@ -9,7 +9,7 @@
 #include <kivm/runtime/javaThread.h>
 
 namespace kivm {
-    class ByteCodeInterpreter {
+    class ByteCodeInterpreter final {
     public:
         /**
          * Run a thread method

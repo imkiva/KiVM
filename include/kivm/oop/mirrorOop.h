@@ -11,7 +11,7 @@ namespace kivm {
         friend class CopyingHeap;
 
     private:
-        Klass *_mirrorTarget;
+        Klass *_mirrorTarget = nullptr;
         ValueType _mirroringPrimitiveType;
 
     public:

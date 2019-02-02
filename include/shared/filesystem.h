@@ -6,7 +6,7 @@
 #include <shared/string.h>
 
 namespace kivm {
-    class FileSystem {
+    class FileSystem final {
     public:
         static bool isDirectory(const String &path);
 

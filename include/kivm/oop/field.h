@@ -27,7 +27,7 @@ namespace kivm {
         static String makeIdentity(InstanceKlass *belongTo, const Field *f);
 
     private:
-        InstanceKlass *_klass;
+        InstanceKlass *_klass = nullptr;
         String _name;
         String _descriptor;
         String _signature;
@@ -38,11 +38,11 @@ namespace kivm {
         /**
          * Only available when _value_type is OBJECT or ARRAY
          */
-        Klass *_valueClassType;
+        Klass *_valueClassType = nullptr;
         String _valueClassTypeName;
 
-        field_info *_fieldInfo;
-        ConstantValue_attribute *_constantAttr;
+        field_info *_fieldInfo = nullptr;
+        ConstantValue_attribute *_constantAttr = nullptr;
 
         bool _linked;
 

@@ -36,7 +36,7 @@ namespace kivm {
         static void operator delete[](void *ptr);
     };
 
-    class markOopDesc {
+    class markOopDesc final {
     private:
         oopType _type;
         Monitor _monitor;
@@ -74,12 +74,10 @@ namespace kivm {
         inline void forceUnlockWhenExceptionOccurred() { _monitor.forceUnlock(); }
     };
 
-    typedef markOopDesc *markOop;
-
     class oopDesc : public GCJavaObject {
     private:
-        markOop _mark;
-        Klass *_klass;
+        markOop _mark = nullptr;
+        Klass *_klass = nullptr;
 
     public:
         explicit oopDesc(Klass *klass, oopType type);

@@ -7,7 +7,7 @@
 #include <shared/dl.h>
 
 namespace kivm {
-    class JavaNativeLibrary {
+    class JavaNativeLibrary final {
     private:
         dl::DLInterface _sharedLibrary;
         String _libraryName;

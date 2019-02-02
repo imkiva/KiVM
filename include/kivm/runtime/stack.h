@@ -8,11 +8,11 @@
 #include <kivm/runtime/slot.h>
 
 namespace kivm {
-    class SlotArray {
+    class SlotArray final {
         friend class CopyingHeap;
 
     protected:
-        Slot *_elements;
+        Slot *_elements = nullptr;
         int _size;
 
     public:
@@ -112,7 +112,7 @@ namespace kivm {
         virtual ~SlotArray();
     };
 
-    class Stack {
+    class Stack final {
         friend class CopyingHeap;
 
     private:
@@ -177,7 +177,7 @@ namespace kivm {
         }
     };
 
-    class Locals {
+    class Locals final {
         friend class CopyingHeap;
 
     private:

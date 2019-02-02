@@ -9,14 +9,14 @@
 namespace kivm {
     class Method;
 
-    class Frame {
+    class Frame final {
         friend class FrameList;
 
         friend class CopyingHeap;
 
     private:
-        Frame *_previous;
-        Method *_method;
+        Frame *_previous = nullptr;
+        Method *_method = nullptr;
 
         bool _nativeFrame;
         bool _exceptionThrownHere;

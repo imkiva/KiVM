@@ -8,7 +8,7 @@
 
 #ifdef KIVM_PLATFORM_WINDOWS
 namespace kivm {
-    class WindowsInformation {
+    class WindowsInformation final {
     public:
         static String getOSName();
 

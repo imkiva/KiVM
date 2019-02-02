@@ -10,15 +10,15 @@ namespace kivm {
 
     class NativeMethodPool;
 
-    class JavaNativeMethod {
+    class JavaNativeMethod final {
         friend class NativeMethodPool;
 
     public:
         static JavaNativeMethod *resolve(Method *method);
 
     private:
-        Method *_javaMethod;
-        JNIMethodPointer _invocationTarget;
+        Method *_javaMethod = nullptr;
+        JNIMethodPointer _invocationTarget = nullptr;
 
     private:
         JavaNativeMethod(Method *method, JNIMethodPointer target);

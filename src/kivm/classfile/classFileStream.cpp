@@ -8,13 +8,6 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "missing_default_case"
 namespace kivm {
-
-    ClassFileStream::ClassFileStream() {
-        this->_current = nullptr;
-        this->_bufferStart = nullptr;
-        this->_bufferEnd = nullptr;
-    }
-
     void ClassFileStream::init(u1 *buffer, size_t length) {
         this->_bufferStart = buffer;
         this->_bufferEnd = buffer + length;

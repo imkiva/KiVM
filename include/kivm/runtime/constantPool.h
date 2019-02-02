@@ -121,14 +121,14 @@ namespace kivm {
         using InstanceFieldPool = Pool<FieldPoolEntry, InstanceFieldCreator, CONSTANT_Fieldref>;
     }
 
-    class RuntimeConstantPool {
+    class RuntimeConstantPool final {
         friend class CopyingHeap;
 
     private:
-        ClassLoader *_classLoader;
-        cp_info **_rawPool;
+        ClassLoader *_classLoader = nullptr;
+        cp_info **_rawPool = nullptr;
         // constant-pool-index -> constant
-        void **_pool;
+        void **_pool = nullptr;
         int _entryCount;
 
         pools::ClassPool _classPool;

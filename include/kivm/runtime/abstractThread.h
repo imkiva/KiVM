@@ -12,7 +12,7 @@ namespace kivm {
         friend class Threads;
 
     protected:
-        std::thread *_nativeThread;
+        std::thread *_nativeThread = nullptr;
 
         ThreadState _state;
 

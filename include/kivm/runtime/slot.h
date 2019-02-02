@@ -6,7 +6,7 @@
 #include <shared/types.h>
 
 namespace kivm {
-    struct Slot {
+    struct Slot final {
         bool isObject;
         union {
             jint i32;

@@ -28,18 +28,18 @@ namespace kivm {
         friend class CopyingHeap;
 
     private:
-        ClassLoader *_classLoader;
-        mirrorOop _javaLoader;
+        ClassLoader *_classLoader = nullptr;
+        mirrorOop _javaLoader = nullptr;
 
-        ClassFile *_classFile;
+        ClassFile *_classFile = nullptr;
         String _sourceFile;
         String _signature;
 
-        InnerClasses_attribute *_innerClassAttr;
-        EnclosingMethod_attribute *_enclosingMethodAttr;
-        BootstrapMethods_attribute *_bootstrapMethodAttr;
+        InnerClasses_attribute *_innerClassAttr = nullptr;
+        EnclosingMethod_attribute *_enclosingMethodAttr = nullptr;
+        BootstrapMethods_attribute *_bootstrapMethodAttr = nullptr;
 
-        RuntimeConstantPool *_runtimePool;
+        RuntimeConstantPool *_runtimePool = nullptr;
 
         int _nStaticFields;
 

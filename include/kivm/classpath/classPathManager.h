@@ -13,25 +13,25 @@ namespace kivm {
         JAR
     };
 
-    struct ClassSearchResult {
+    struct ClassSearchResult final {
         String _file;
-        int _fd;
+        int _fd{};
         ClassSource _source;
-        u1 *_buffer;
-        size_t _bufferSize;
+        u1 *_buffer = nullptr;
+        size_t _bufferSize{};
 
         ClassSearchResult(const String &file, int fd, ClassSource source, u1 *buffer, size_t bufferSize);
 
         void closeResource() const;
     };
 
-    struct ClassPathEntry {
+    struct ClassPathEntry final {
         ClassSource _source;
         String _path;
         void *_cookie;
     };
 
-    class ClassPathManager {
+    class ClassPathManager final {
     private:
         std::list<ClassPathEntry> _runtimeClassPath;
 

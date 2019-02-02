@@ -12,11 +12,11 @@
 namespace kivm {
     class CopyingHeap : public CollectedHeap {
     private:
-        jbyte *_memoryStart;
+        jbyte *_memoryStart = nullptr;
         size_t _totalSize;
-        HeapRegion *_regions;
-        HeapRegion *_currentRegion;
-        HeapRegion *_nextRegion;
+        HeapRegion *_regions = nullptr;
+        HeapRegion *_currentRegion = nullptr;
+        HeapRegion *_nextRegion = nullptr;
 
     private:
         void initializeRegions();

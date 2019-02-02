@@ -9,13 +9,7 @@
 
 namespace kivm {
     ClassFile *ClassFileParser::alloc() {
-        auto *classFile = new ClassFile();
-        classFile->constant_pool = nullptr;
-        classFile->interfaces = nullptr;
-        classFile->fields = nullptr;
-        classFile->methods = nullptr;
-        classFile->attributes = nullptr;
-        return classFile;
+        return new ClassFile;
     }
 
     void ClassFileParser::dealloc(ClassFile *class_file) {
@@ -36,7 +30,6 @@ namespace kivm {
     }
 
     ClassFileParser::ClassFileParser(const String &filePath, u1 *buffer, size_t size) {
-        _classFile = nullptr;
         _content = buffer;
         _size = size;
         _classFileStream.setSource(filePath);

@@ -10,7 +10,7 @@
 namespace kivm {
     struct FieldID {
         int _offset;
-        Field *_field;
+        Field *_field = nullptr;
 
         FieldID(int _offset, Field *_field)
             : _offset(_offset), _field(_field) {
@@ -19,7 +19,7 @@ namespace kivm {
 
     struct MethodID {
         int _offset;
-        Method *_method;
+        Method *_method = nullptr;
 
         MethodID(int _offset, Method *_method)
             : _offset(_offset), _method(_method) {

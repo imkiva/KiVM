@@ -20,7 +20,7 @@ namespace kivm {
 
     class InstanceKlass;
 
-    class ThreadedInterpreter {
+    class ThreadedInterpreter final {
     public:
         /**
          * Run a thread method

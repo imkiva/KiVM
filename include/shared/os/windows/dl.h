@@ -9,7 +9,7 @@
 
 namespace kivm {
     namespace dl {
-        class WindowsDLInterface {
+        class WindowsDLInterface final {
         private:
             DLHandler handler;
 

@@ -6,7 +6,7 @@
 #include <shared/types.h>
 
 namespace kivm {
-    struct RuntimeConfig {
+    struct RuntimeConfig final {
         int threadMaxStackFrames;
         size_t initialHeapSizeInBytes;
         size_t maxHeapSizeInBytes;

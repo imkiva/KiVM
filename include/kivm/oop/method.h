@@ -32,7 +32,7 @@ namespace kivm {
         static String makeIdentity(const Method *m);
 
     private:
-        InstanceKlass *_klass;
+        InstanceKlass *_klass = nullptr;
         String _name;
         String _descriptor;
         String _signature;
@@ -42,14 +42,14 @@ namespace kivm {
          * basic information about a method
          */
         CodeBlob _codeBlob;
-        method_info *_methodInfo;
-        Exceptions_attribute *_exceptionAttr;
-        Code_attribute *_codeAttr;
+        method_info *_methodInfo = nullptr;
+        Exceptions_attribute *_exceptionAttr = nullptr;
+        Code_attribute *_codeAttr = nullptr;
 
         /**
          * only available when this method is a native method
          */
-        JavaNativeMethod *_nativePointer;
+        JavaNativeMethod *_nativePointer = nullptr;
 
         /**
          * flags related to descriptor parsing

@@ -36,8 +36,8 @@ namespace kivm {
         String _name;
         ClassType _type;
 
-        mirrorOop _javaMirror;
-        InstanceKlass *_superClass;
+        mirrorOop _javaMirror = nullptr;
+        InstanceKlass *_superClass = nullptr;
 
     public:
         mirrorOop getJavaMirror() {

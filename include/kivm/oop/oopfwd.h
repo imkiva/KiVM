@@ -25,6 +25,8 @@ namespace kivm {
         ARRAY,
     };
 
+    class markOopDesc;
+
     class oopDesc;
 
     class instanceOopDesc;
@@ -45,6 +47,7 @@ namespace kivm {
 
     class doubleOopDesc;
 
+    using markOop = markOopDesc *;
     using oop = oopDesc *;
     using instanceOop = instanceOopDesc *;
     using mirrorOop = mirrorOopDesc *;

@@ -6,10 +6,10 @@
 #include <kivm/kivm.h>
 
 namespace kivm {
-    struct HeapRegion {
-        size_t _regionSize;
-        jbyte *_regionStart;
-        jbyte *_current;
+    struct HeapRegion final {
+        size_t _regionSize{};
+        jbyte *_regionStart = nullptr;
+        jbyte *_current = nullptr;
 
         inline size_t getUsed() const {
             return _current - _regionStart;

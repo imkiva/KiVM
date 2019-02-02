@@ -9,7 +9,7 @@
 
 namespace kivm {
     namespace dl {
-        class UnixDLInterface {
+        class UnixDLInterface final {
         private:
             DLHandler handler;
 

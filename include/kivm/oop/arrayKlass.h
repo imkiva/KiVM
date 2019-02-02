@@ -11,8 +11,8 @@ namespace kivm {
         friend class CopyingHeap;
 
     private:
-        ClassLoader *_classLoader;
-        mirrorOop _javaLoader;
+        ClassLoader *_classLoader = nullptr;
+        mirrorOop _javaLoader = nullptr;
 
         int _dimension;
 
@@ -48,7 +48,7 @@ namespace kivm {
         ValueType _componentType;
 
         // Only available when dimension > 1
-        TypeArrayKlass *_downDimensionType;
+        TypeArrayKlass *_downDimensionType = nullptr;
 
     public:
         TypeArrayKlass(ClassLoader *classLoader, mirrorOop javaLoader,
@@ -73,7 +73,7 @@ namespace kivm {
 
     class ObjectArrayKlass : public ArrayKlass {
     private:
-        InstanceKlass *_componentType;
+        InstanceKlass *_componentType = nullptr;
 
         // Only available when dimension > 1
         ObjectArrayKlass *_downDimensionType;

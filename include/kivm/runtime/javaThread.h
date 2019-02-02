@@ -37,12 +37,12 @@ namespace kivm {
         u4 _pc;
         bool _inSafepoint;
 
-        instanceOop _javaThreadObject;
-        instanceOop _exceptionOop;
+        instanceOop _javaThreadObject = nullptr;
+        instanceOop _exceptionOop = nullptr;
 
         // note: this is not the current method
         // use getCurrentMethod() instead
-        Method *_method;
+        Method *_method = nullptr;
 
     protected:
         void run() override;
@@ -122,7 +122,7 @@ namespace kivm {
         }
     };
 
-    class Threads {
+    class Threads final {
         friend class GCThread;
 
     private:

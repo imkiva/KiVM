@@ -23,13 +23,13 @@ namespace kivm {
      *  The entire input stream is present in a buffer allocated by the caller.
      *  The caller is responsible for deallocating the buffer.
      */
-    class ClassFileStream {
+    class ClassFileStream final {
     private:
-        u1 *_bufferStart; // Buffer bottom
-        u1 *_bufferEnd;   // Buffer top (one past last element)
-        u1 *_current;      // Current buffer position
+        u1 *_bufferStart = nullptr; // Buffer bottom
+        u1 *_bufferEnd = nullptr;   // Buffer top (one past last element)
+        u1 *_current = nullptr;      // Current buffer position
         String _source;    // Source of stream (directory name, ZIP/JAR archive name)
-        bool _needVerify;  // True if verification is on for the class file
+        bool _needVerify{};  // True if verification is on for the class file
 
         void guaranteeMore(int size) {
             auto remaining = (size_t) (_bufferEnd - _current);
@@ -40,7 +40,7 @@ namespace kivm {
         }
 
     public:
-        ClassFileStream();
+        ClassFileStream() = default;
 
         void init(u1 *buffer, size_t length);
 
