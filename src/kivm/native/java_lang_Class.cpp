@@ -470,7 +470,8 @@ JAVA_NATIVE jclass Java_java_lang_Class_getComponentType(JNIEnv *env, jobject mi
 
     switch (mirrorTarget->getClassType()) {
         case ClassType::OBJECT_ARRAY_CLASS: {
-            return ((ObjectArrayKlass *) mirrorTarget)->getComponentType();
+            auto comp = ((ObjectArrayKlass *) mirrorTarget)->getComponentType()->getJavaMirror();
+            return comp;
         }
         case ClassType::TYPE_ARRAY_CLASS: {
             ValueType valueType = ((TypeArrayKlass *) mirrorTarget)->getComponentType();
@@ -489,7 +490,7 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getEnclosingMethod0(JNIEnv *env, j
     }
 
     auto target = (InstanceKlass *) classMirror->getTarget();
-    auto enclosing = target->getEnclosingMethodTable();
+    auto enclosing = target->getEnclosingMethodInfo();
     if (enclosing == nullptr) {
         return nullptr;
     }
@@ -521,4 +522,50 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getEnclosingMethod0(JNIEnv *env, j
         array->setElementAt(2, java::lang::String::intern(*desc));
     }
     return array;
+}
+
+JAVA_NATIVE jclass Java_java_lang_Class_getDeclaringClass0(JNIEnv *env, jobject mirror) {
+    auto classMirror = Resolver::mirror(mirror);
+    if (classMirror == nullptr || classMirror->getTarget() == nullptr
+        || classMirror->getTarget()->getClassType() != ClassType::INSTANCE_CLASS) {
+        return nullptr;
+    }
+
+    auto target = (InstanceKlass *) classMirror->getTarget();
+    auto inner = target->getInnerClassInfo();
+    if (inner == nullptr) {
+        return nullptr;
+    }
+
+    auto rt = target->getRuntimeConstantPool();
+    for (int i = 0; i < inner->number_of_classes; i++) {
+        int innerClassInfo = inner->classes[i].inner_class_info_index;
+        if (innerClassInfo == 0) {
+            continue;
+        }
+
+        auto checkInnerClass = rt->getClass(innerClassInfo);
+        if (checkInnerClass == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+        }
+
+        // Find this inner class
+        if (checkInnerClass == target) {
+            int outerClassInfoIndex = inner->classes[i].outer_class_info_index;
+
+            if (outerClassInfoIndex == 0) {
+                return nullptr;
+
+            } else {
+                auto outerKlass = rt->getClass(outerClassInfoIndex);
+                if (outerKlass == nullptr) {
+                    SHOULD_NOT_REACH_HERE();
+                }
+
+                return outerKlass->getJavaMirror();
+            }
+        }
+    }
+
+    return nullptr;
 }
