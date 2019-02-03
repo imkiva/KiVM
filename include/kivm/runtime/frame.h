@@ -18,8 +18,8 @@ namespace kivm {
         Frame *_previous = nullptr;
         Method *_method = nullptr;
 
-        bool _nativeFrame;
-        bool _exceptionThrownHere;
+        bool _nativeFrame = false;
+        volatile bool _exceptionThrownHere = false;
         u4 _returnPc;
 
         Locals _locals;

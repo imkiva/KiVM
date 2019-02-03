@@ -67,38 +67,58 @@ namespace kivm {
         Threads::notifyJavaThreadDeadLocked(this);
     }
 
-    void JavaThread::throwException(InstanceKlass *exceptionClass) {
+    void JavaThread::throwException(InstanceKlass *exceptionClass, bool rethrow) {
         assert(exceptionClass != nullptr);
-        this->getCurrentFrame()->setExceptionThrownHere(true);
+        if (!rethrow) {
+            this->getCurrentFrame()->setExceptionThrownHere(true);
+        }
 
         auto ctor = exceptionClass->getThisClassMethod(L"<init>", L"()V");
         auto exceptionOop = exceptionClass->newInstance();
         JavaCall::withArgs(this, ctor,
             {exceptionOop},
             true);
-        this->_exceptionOop = exceptionOop;
+        if (this->isExceptionOccurred()) {
+            // exception occurred in exception's ctor
+            // we should throw this new exception instead
+            throwException(this->_exceptionOop, true);
+        } else {
+            throwException(exceptionOop, rethrow);
+        }
     }
 
-    void JavaThread::throwException(InstanceKlass *exceptionClass, const String &message) {
+    void JavaThread::throwException(InstanceKlass *exceptionClass, const String &message,
+                                    bool rethrow) {
         assert(exceptionClass != nullptr);
-        this->getCurrentFrame()->setExceptionThrownHere(true);
+        if (!rethrow) {
+            this->getCurrentFrame()->setExceptionThrownHere(true);
+        }
 
         auto ctor = exceptionClass->getThisClassMethod(L"<init>", L"(Ljava/lang/String;)V");
         auto exceptionOop = exceptionClass->newInstance();
         JavaCall::withArgs(this, ctor,
             {exceptionOop, java::lang::String::from(message)},
             true);
-        this->_exceptionOop = exceptionOop;
+        if (this->isExceptionOccurred()) {
+            // exception occurred in exception's ctor
+            // we should throw this new exception instead
+            throwException(this->_exceptionOop, true);
+        } else {
+            throwException(exceptionOop, rethrow);
+        }
     }
 
-    void JavaThread::throwException(instanceOop exception) {
+    void JavaThread::throwException(instanceOop exception, bool rethrow) {
         // wtf
         if (exception == nullptr) {
-            throwException(Global::_NullPointerException);
+            throwException(Global::_NullPointerException, false);
             return;
         }
 
-        
+        this->_exceptionOop = exception;
+        if (!rethrow) {
+            this->getCurrentFrame()->setExceptionThrownHere(true);
+        }
     }
 
     void JavaThread::enterSafepoint() {

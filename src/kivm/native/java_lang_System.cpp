@@ -73,13 +73,13 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
     assert(thread != nullptr);
 
     if (srcOop == nullptr || destOop == nullptr) {
-        thread->throwException(Global::_NullPointerException);
+        thread->throwException(Global::_NullPointerException, false);
         return;
     }
 
     if (srcOop->getClass()->getClassType() != destOop->getClass()->getClassType()) {
         thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass(L"java/lang/ArrayStoreException"));
+            ->loadClass(L"java/lang/ArrayStoreException"), false);
         return;
     }
 
@@ -90,7 +90,7 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
         auto destClass_ = (TypeArrayKlass *) destOop_->getClass();
         if (destClass_->getComponentType() != srcClass_->getComponentType()) {
             thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
-                ->loadClass(L"java/lang/ArrayStoreException"));
+                ->loadClass(L"java/lang/ArrayStoreException"), false);
             return;
         }
     } else {
@@ -112,7 +112,7 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
             if (srcComponent != Global::_Object
                 && destClass_->getComponentType() != srcClass_->getComponentType()) {
                 thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
-                    ->loadClass(L"java/lang/ArrayStoreException"));
+                    ->loadClass(L"java/lang/ArrayStoreException"), false);
                 return;
             }
         }
@@ -121,7 +121,7 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
     // Check if the ranges are valid
     if (isArrayRangeInvalid(srcPos, destPos, length, srcOop, destOop)) {
         thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
-            ->loadClass(L"java/lang/ArrayIndexOutOfBoundsException"));
+            ->loadClass(L"java/lang/ArrayIndexOutOfBoundsException"), false);
         return;
     }
 
@@ -161,7 +161,7 @@ JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass jav
     if (stringOop == nullptr) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        thread->throwException(Global::_NullPointerException);
+        thread->throwException(Global::_NullPointerException, false);
         return nullptr;
     }
 

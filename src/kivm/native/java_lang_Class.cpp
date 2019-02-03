@@ -203,7 +203,7 @@ JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass j
     if (stringInstance == nullptr) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        thread->throwException(Global::_NullPointerException);
+        thread->throwException(Global::_NullPointerException, false);
         return nullptr;
     }
 
@@ -416,7 +416,7 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
 
     auto klass = BootstrapClassLoader::get()->loadClass(fixedName);
     if (klass == nullptr || klass->getClassType() != ClassType::INSTANCE_CLASS) {
-        thread->throwException(Global::_ClassNotFoundException, className);
+        thread->throwException(Global::_ClassNotFoundException, className, false);
         return nullptr;
     }
 

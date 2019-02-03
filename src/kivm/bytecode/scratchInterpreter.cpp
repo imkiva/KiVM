@@ -1321,7 +1321,7 @@ namespace kivm {
                     pc += 2;
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        thread->throwException(Global::_NullPointerException);
+                        thread->throwException(Global::_NullPointerException, false);
                         HANDLE_EXCEPTION();
                     } else {
                         instanceOop receiver = Resolver::instance(ref);
@@ -1420,7 +1420,7 @@ namespace kivm {
                     if (length < 0) {
                         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/NegativeArraySizeException");
-                        thread->throwException(klass, std::to_wstring(length));
+                        thread->throwException(klass, std::to_wstring(length), false);
                         HANDLE_EXCEPTION();
                     }
                     auto array = Execution::newPrimitiveArray(thread, arrayType, length);
@@ -1435,7 +1435,7 @@ namespace kivm {
                     if (length < 0) {
                         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/NegativeArraySizeException");
-                        thread->throwException(klass, std::to_wstring(length));
+                        thread->throwException(klass, std::to_wstring(length), false);
                         HANDLE_EXCEPTION();
                     }
                     auto array = Execution::newObjectArray(thread,
@@ -1449,7 +1449,7 @@ namespace kivm {
                 {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        thread->throwException(Global::_NullPointerException);
+                        thread->throwException(Global::_NullPointerException, false);
                         HANDLE_EXCEPTION();
                     } else {
                         arrayOop array = Resolver::array(ref);
@@ -1466,7 +1466,7 @@ namespace kivm {
                     exceptionHandler:
                     auto exceptionOop = Resolver::instance(stack.popReference());
                     if (exceptionOop == nullptr) {
-                        thread->throwException(Global::_NullPointerException);
+                        thread->throwException(Global::_NullPointerException, false);
                         HANDLE_EXCEPTION();
                     }
 
@@ -1505,7 +1505,7 @@ namespace kivm {
                 {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        thread->throwException(Global::_NullPointerException);
+                        thread->throwException(Global::_NullPointerException, false);
                         HANDLE_EXCEPTION();
                     } else {
                         auto object = Resolver::javaOop(ref);
@@ -1521,7 +1521,7 @@ namespace kivm {
                 {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        thread->throwException(Global::_NullPointerException);
+                        thread->throwException(Global::_NullPointerException, false);
                         HANDLE_EXCEPTION();
                     } else {
                         auto object = Resolver::javaOop(ref);
@@ -1549,7 +1549,7 @@ namespace kivm {
                         if (sub < 0) {
                             auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                                 ->loadClass(L"java/lang/NegativeArraySizeException");
-                            thread->throwException(klass, std::to_wstring(sub));
+                            thread->throwException(klass, std::to_wstring(sub), false);
                             HANDLE_EXCEPTION();
                         }
                         length.push_back(sub);

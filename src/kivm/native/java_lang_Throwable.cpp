@@ -31,7 +31,7 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
 
     for (auto iter = walker.begin(); *iter; ++iter) {
         if (iter->isExceptionThrownHere()) {
-            walker.startRecord();
+            walker.startRecording();
         }
 
         if (walker.isRecording()) {
@@ -45,14 +45,15 @@ JAVA_NATIVE jobject Java_java_lang_Throwable_fillInStackTrace(JNIEnv *env, jobje
             }
 
             auto element = ELEMENT_CLASS->newInstance();
-            JavaCall::withArgs(thread, ELEMENT_CTOR, {
-                element,
-                java::lang::String::from(strings::replaceAll(method->getClass()->getName(),
-                    Global::SLASH, Global::DOT)),
-                java::lang::String::from(method->getName()),
-                java::lang::String::from(method->getClass()->getSourceFile()),
-                new intOopDesc(lineNumber)
-            });
+            JavaCall::withArgs(thread, ELEMENT_CTOR,
+                {
+                    element,
+                    java::lang::String::from(strings::replaceAll(method->getClass()->getName(),
+                        Global::SLASH, Global::DOT)),
+                    java::lang::String::from(method->getName()),
+                    java::lang::String::from(method->getClass()->getSourceFile()),
+                    new intOopDesc(lineNumber)
+                });
 
             elements.push_back(element);
         }

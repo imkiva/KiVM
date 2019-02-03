@@ -64,7 +64,7 @@ namespace kivm {
               _recording(false) {
         }
 
-        inline void startRecord() {
+        inline void startRecording() {
             this->_recording = true;
         }
 

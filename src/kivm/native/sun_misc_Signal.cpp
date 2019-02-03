@@ -120,7 +120,7 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
     if (signalNameOop == nullptr) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        thread->throwException(Global::_NullPointerException);
+        thread->throwException(Global::_NullPointerException, false);
         return 0;
     }
 
@@ -129,8 +129,8 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
     if (iter == SIGNAL_TABLE.end()) {
         auto thread = Threads::currentThread();
         thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
-                                   ->loadClass(L"java/lang/IllegalArgumentException"),
-                               L"unknown signal");
+                ->loadClass(L"java/lang/IllegalArgumentException"),
+            L"unknown signal");
         return -1;
     }
 

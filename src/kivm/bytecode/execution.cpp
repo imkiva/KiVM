@@ -121,11 +121,13 @@ namespace kivm {
             if (checkCast) {
                 auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                     ->loadClass(L"java/lang/ClassCastException");
-                thread->throwException(klass, strings::replaceAll(objClass->getName(),
-                    Global::SLASH, Global::DOT)
-                                              + L" cannot be cast to "
-                                              + strings::replaceAll(targetClass->getName(),
-                    Global::SLASH, Global::DOT));
+                thread->throwException(klass,
+                    strings::replaceAll(objClass->getName(),
+                        Global::SLASH, Global::DOT)
+                    + L" cannot be cast to "
+                    + strings::replaceAll(targetClass->getName(),
+                        Global::SLASH, Global::DOT),
+                    false);
             } else {
                 stack.pushInt(0);
             }
@@ -299,7 +301,7 @@ namespace kivm {
             jobject receiverRef = stack.popReference(); \
             instanceOop receiver = Resolver::instance(receiverRef); \
             if (receiver == nullptr) { \
-                thread->throwException(Global::_NullPointerException); \
+                thread->throwException(Global::_NullPointerException, false); \
             } else { \
                 instanceKlass->setInstanceFieldValue(receiver, field, value); \
             } \

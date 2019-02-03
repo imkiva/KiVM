@@ -46,50 +46,6 @@
 #define IF_ICMP_GOTO(occupied, op) __IF_CMP_GOTO_FACTORY(popInt, occupied, op)
 #define IF_ACMP_GOTO(occupied, op) __IF_CMP_GOTO_FACTORY(popReference, occupied, op)
 
-#define LOAD_ARRAY_ELEMENT(oopType, varName, resolveFunc, pushFunc, exp) \
-    int index = stack.popInt(); \
-    jobject ref = stack.popReference(); \
-    auto array = Resolver::resolveFunc(ref); \
-    if (array == nullptr) { \
-        thread->throwException(Global::_NullPointerException); \
-        stack.clear(); \
-        stack.pushReference(thread->_exceptionOop); \
-        goto exceptionHandler; \
-    } \
-    if (index < 0 || index >= array->getLength()) { \
-        thread->throwException(Global::_ArrayIndexOutOfBoundsException, \
-            L"length is " \
-            + std::to_wstring(array->getLength()) \
-            + L", but index is " \
-            + std::to_wstring(index)); \
-        stack.pushReference(thread->_exceptionOop); \
-        goto exceptionHandler; \
-    } \
-    auto varName = (oopType) array->getElementAt(index);\
-    stack.pushFunc(exp)
-
-#define STORE_ARRAY_ELEMENT(varName, resolveFunc, popFunc, exp) \
-    auto varName = stack.popFunc(); \
-    int index = stack.popInt(); \
-    auto ref = stack.popReference(); \
-    auto array = Resolver::resolveFunc(ref); \
-    if (array == nullptr) { \
-        thread->throwException(Global::_NullPointerException); \
-        stack.clear(); \
-        stack.pushReference(thread->_exceptionOop); \
-        goto exceptionHandler; \
-    } \
-    if (index < 0 || index >= array->getLength()) { \
-        thread->throwException(Global::_ArrayIndexOutOfBoundsException, \
-            L"length is " \
-            + std::to_wstring(array->getLength()) \
-            + L", but index is " \
-            + std::to_wstring(index)); \
-        stack.pushReference(thread->_exceptionOop); \
-        goto exceptionHandler; \
-    } \
-    array->setElementAt(index, exp);
-
 #define HANDLE_EXCEPTION() \
      stack.clear(); \
      stack.pushReference(thread->_exceptionOop); \
@@ -100,3 +56,40 @@
         HANDLE_EXCEPTION(); \
     }
 
+#define LOAD_ARRAY_ELEMENT(oopType, varName, resolveFunc, pushFunc, exp) \
+    int index = stack.popInt(); \
+    jobject ref = stack.popReference(); \
+    auto array = Resolver::resolveFunc(ref); \
+    if (array == nullptr) { \
+        thread->throwException(Global::_NullPointerException, false); \
+        HANDLE_EXCEPTION(); \
+    } \
+    if (index < 0 || index >= array->getLength()) { \
+        thread->throwException(Global::_ArrayIndexOutOfBoundsException, \
+            L"length is " \
+            + std::to_wstring(array->getLength()) \
+            + L", but index is " \
+            + std::to_wstring(index), false); \
+        HANDLE_EXCEPTION(); \
+    } \
+    auto varName = (oopType) array->getElementAt(index);\
+    stack.pushFunc(exp)
+
+#define STORE_ARRAY_ELEMENT(varName, resolveFunc, popFunc, exp) \
+    auto varName = stack.popFunc(); \
+    int index = stack.popInt(); \
+    auto ref = stack.popReference(); \
+    auto array = Resolver::resolveFunc(ref); \
+    if (array == nullptr) { \
+        thread->throwException(Global::_NullPointerException, false); \
+        HANDLE_EXCEPTION(); \
+    } \
+    if (index < 0 || index >= array->getLength()) { \
+        thread->throwException(Global::_ArrayIndexOutOfBoundsException, \
+            L"length is " \
+            + std::to_wstring(array->getLength()) \
+            + L", but index is " \
+            + std::to_wstring(index), false); \
+        HANDLE_EXCEPTION(); \
+    } \
+    array->setElementAt(index, exp);

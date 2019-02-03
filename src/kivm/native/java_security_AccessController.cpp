@@ -16,7 +16,7 @@ JAVA_NATIVE jobject Java_java_security_AccessController_doPrivileged(JNIEnv *env
     if (actionOop == nullptr) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        thread->throwException(Global::_NullPointerException);
+        thread->throwException(Global::_NullPointerException, false);
         return nullptr;
     }
 

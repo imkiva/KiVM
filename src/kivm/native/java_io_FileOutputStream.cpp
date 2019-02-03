@@ -38,7 +38,7 @@ JAVA_NATIVE void Java_java_io_FileOutputStream_writeBytes(JNIEnv *env, jobject j
             L"length is "
             + std::to_wstring(byteArray->getLength())
             + L", but index is "
-            + std::to_wstring(off));
+            + std::to_wstring(off), false);
         return;
     }
 

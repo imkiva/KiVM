@@ -151,7 +151,7 @@ namespace kivm {
     bool JavaCall::prepareFrame(Frame *frame) {
         if (_thread->_frames.getSize() >= _thread->_frames.getMaxFrames()) {
             _thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
-                ->loadClass(L"java/lang/StackOverflowException"));
+                ->loadClass(L"java/lang/StackOverflowException"), false);
             return false;
         }
 

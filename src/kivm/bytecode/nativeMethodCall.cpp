@@ -75,7 +75,7 @@ namespace kivm {
         if (javaNativeMethod != nullptr) {
             jniMethod = javaNativeMethod->getInvocationTarget();
         }
-        
+
         if (jniMethod == nullptr) {
             auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                 ->loadClass(L"java/lang/UnsatisfiedLinkError");
@@ -84,7 +84,7 @@ namespace kivm {
             _thread->throwException(klass, fixedName
                                            + L"."
                                            + _method->getName()
-                                           + _method->getDescriptor());
+                                           + _method->getDescriptor(), false);
             return nullptr;
         }
 
@@ -240,7 +240,7 @@ namespace kivm {
 
             thisObject = Resolver::javaOop(argsHolder[fillIndex].l);
             if (thisObject == nullptr) {
-                _thread->throwException(Global::_NullPointerException);
+                _thread->throwException(Global::_NullPointerException, false);
                 // TODO: make it elegant
                 // XXX: Temporary workaround: allocate a stack to hold arguments
                 if (stackIsAllocated) {

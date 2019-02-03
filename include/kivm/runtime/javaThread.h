@@ -62,11 +62,11 @@ namespace kivm {
 
         void onDestroy() override;
 
-        void throwException(InstanceKlass *exceptionClass);
+        void throwException(InstanceKlass *exceptionClass, bool rethrow);
 
-        void throwException(InstanceKlass *exceptionClass, const String &message);
+        void throwException(InstanceKlass *exceptionClass, const String &message, bool rethrow);
 
-        void throwException(instanceOop exception);
+        void throwException(instanceOop exception, bool rethrow);
 
         void enterSafepoint();
 
