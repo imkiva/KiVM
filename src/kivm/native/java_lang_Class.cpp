@@ -493,4 +493,32 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getEnclosingMethod0(JNIEnv *env, j
     if (enclosing == nullptr) {
         return nullptr;
     }
+
+    if (enclosing->class_index == 0) {
+        SHOULD_NOT_REACH_HERE_M("enclosing->class_index should not be 0");
+    }
+
+    auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
+        ->loadClass(L"[Ljava/lang/Object;");
+    if (arrayClass == nullptr) {
+        SHOULD_NOT_REACH_HERE();
+    }
+
+    auto array = arrayClass->newInstance(3);
+    auto rt = target->getRuntimeConstantPool();
+
+    auto klass = rt->getClass(enclosing->class_index);
+    if (klass == nullptr) {
+        SHOULD_NOT_REACH_HERE();
+    }
+    array->setElementAt(0, klass->getJavaMirror());
+
+    if (enclosing->method_index != 0) {
+        auto nameAndType = rt->getNameAndType(enclosing->method_index);
+        auto name = nameAndType->first;
+        auto desc = nameAndType->second;
+        array->setElementAt(1, java::lang::String::intern(*name));
+        array->setElementAt(2, java::lang::String::intern(*desc));
+    }
+    return array;
 }
