@@ -315,7 +315,9 @@ namespace kivm {
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        bool getInstanceFieldValueUnsafe(instanceOop receiver, int offset, oop *result);
+        bool getInstanceFieldValueUnsafe(instanceOop receiver, int offset, oop **result);
+
+        bool getStaticFieldValueUnsafe(int offset, oop **result);
 
         instanceOop newInstance();
 

@@ -383,12 +383,21 @@ namespace kivm {
         return true;
     }
 
-    bool InstanceKlass::getInstanceFieldValueUnsafe(instanceOop receiver, int offset, oop *result) {
+    bool InstanceKlass::getInstanceFieldValueUnsafe(instanceOop receiver, int offset, oop **result) {
         if (offset >= receiver->_instanceFieldValues.size()) {
             return false;
         }
 
-        *result = receiver->_instanceFieldValues[offset];
+        *result = &(receiver->_instanceFieldValues[offset]);
+        return true;
+    }
+
+    bool InstanceKlass::getStaticFieldValueUnsafe(int offset, oop **result) {
+        if (offset >= _staticFieldValues.size()) {
+            return false;
+        }
+
+        *result = &(_staticFieldValues[offset]);
         return true;
     }
 

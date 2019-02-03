@@ -7,6 +7,7 @@
 #include <kivm/native/java_lang_String.h>
 #include <kivm/oop/mirrorOop.h>
 #include <kivm/oop/primitiveOop.h>
+#include <kivm/oop/arrayOop.h>
 #include <kivm/bytecode/execution.h>
 #include <shared/atomic.h>
 #include <tuple>
@@ -28,6 +29,37 @@ static std::tuple<int, bool> decodeOffset(jlong encoded) {
     }
     return std::make_tuple((int) ((encoded - 1) / 2) - 1, false);
 };
+
+oop *getFieldByOffset(oop owner, int offset, bool isStatic) {
+    switch (owner->getMarkOop()->getOopType()) {
+        case oopType::OBJECT_ARRAY_OOP:
+        case oopType::TYPE_ARRAY_OOP: {
+            int arrayIndex = offset / sizeof(intptr_t);
+            auto array = Resolver::array(owner);
+            return array->getElementUnsafe(arrayIndex);
+        }
+
+        case oopType::INSTANCE_OOP: {
+            auto instance = Resolver::instance(owner);
+            oop *result = nullptr;
+            if (isStatic) {
+                auto klass = (InstanceKlass *) owner->getClass();
+                if (!klass->getStaticFieldValueUnsafe(offset, &result)) {
+                    SHOULD_NOT_REACH_HERE();
+                }
+            } else {
+                if (!instance->getFieldValueUnsafe(offset, &result)) {
+                    SHOULD_NOT_REACH_HERE();
+                }
+            }
+            return result;
+        }
+
+        default:
+            SHOULD_NOT_REACH_HERE();
+    }
+    return nullptr;
+}
 
 JAVA_NATIVE void
 Java_sun_misc_Unsafe_registerNatives(JNIEnv *env, jclass sun_misc_Unsafe) {
@@ -114,33 +146,35 @@ Java_sun_misc_Unsafe_staticFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject 
     return Java_sun_misc_Unsafe_objectFieldOffset(env, javaUnsafe, javaField);
 }
 
-#define DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset, fieldType, field) \
+#define DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset) \
     int offset = 0; \
     bool isStatic = false; \
     std::tie(offset, isStatic) = decodeOffset(encodedOffset); \
     D("decode offset: %lld -> %d, %s", encodedOffset, offset, isStatic ? "true" : "false"); \
-    auto owner = Resolver::instance(javaOwner); \
-    fieldType field = nullptr; \
-    if (isStatic) { \
-        SHOULD_NOT_REACH_HERE(); \
-    } else { \
-        if (!owner->getFieldValueUnsafe(offset, (oop *) &result)) { \
-            SHOULD_NOT_REACH_HERE(); \
-        } \
-    }
+    auto owner = Resolver::javaOop(javaOwner)
+
 
 JAVA_NATIVE jint
 Java_sun_misc_Unsafe_getIntVolatile(JNIEnv *env, jobject javaUnsafe, jobject javaOwner, jlong encodedOffset) {
-    DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset, intOop, result);
-    return result->getValueVolatile();
+    DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset);
+    oop *addr = getFieldByOffset(owner, offset, isStatic);
+    return (*((volatile intOop *) addr))->getValueVolatile();
+}
+
+JAVA_NATIVE jobject
+Java_sun_misc_Unsafe_getObjectVolatile(JNIEnv *env, jobject javaUnsafe, jobject javaOwner, jlong encodedOffset) {
+    DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset);
+    oop *addr = getFieldByOffset(owner, offset, isStatic);
+    return *((volatile oop *) addr);
 }
 
 JAVA_NATIVE jboolean
 Java_sun_misc_Unsafe_compareAndSwapInt(JNIEnv *env, jobject javaUnsafe,
                                        jobject javaOwner, jlong encodedOffset,
                                        jint expected, jint update) {
-    DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset, intOop, result);
-    auto ptr = result->getValueUnsafe();
+    DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset);
+    oop *addr = getFieldByOffset(owner, offset, isStatic);
+    auto ptr = (*((intOop *) addr))->getValueUnsafe();
     return JBOOLEAN(cmpxchg(ptr, expected, update) == expected);
 }
 

@@ -11,16 +11,6 @@ namespace kivm {
         _elements.resize(static_cast<unsigned>(length));
     }
 
-    oop arrayOopDesc::getElementAt(int position) const {
-        assert(position >= 0 && position < getLength());
-        return _elements[position];
-    }
-
-    void arrayOopDesc::setElementAt(int position, oop element) {
-        assert(position >= 0 && position < getLength());
-        _elements[position] = element;
-    }
-
     typeArrayOopDesc::typeArrayOopDesc(TypeArrayKlass *arrayClass, int length)
         : arrayOopDesc(arrayClass, oopType::TYPE_ARRAY_OOP, length) {
         switch (arrayClass->getComponentType()) {

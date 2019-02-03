@@ -40,9 +40,20 @@ namespace kivm {
             return static_cast<int>(_elements.size());
         }
 
-        oop getElementAt(int position) const;
+        inline oop getElementAt(int position) const {
+            assert(position >= 0 && position < getLength());
+            return _elements[position];
+        }
 
-        void setElementAt(int position, oop element);
+        inline void setElementAt(int position, oop element) {
+            assert(position >= 0 && position < getLength());
+            _elements[position] = element;
+        }
+
+        inline oop* getElementUnsafe(int position) {
+            assert(position >= 0 && position < getLength());
+            return &_elements[position];
+        }
     };
 
     class typeArrayOopDesc : public arrayOopDesc {

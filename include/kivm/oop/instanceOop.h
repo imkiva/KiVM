@@ -94,7 +94,7 @@ namespace kivm {
          * @param result pointer to result
          * @return {@code true} if found, otherwise {@code false}
          */
-        inline bool getFieldValueUnsafe(int offset, oop *result) {
+        inline bool getFieldValueUnsafe(int offset, oop **result) {
             return getInstanceClass()->getInstanceFieldValueUnsafe(this, offset, result);
         }
     };
