@@ -49,7 +49,7 @@ JAVA_NATIVE jobject Java_sun_reflect_Reflection_getCallerClass(JNIEnv *env, jcla
     return found->getMethod()->getClass()->getJavaMirror();
 }
 
-JAVA_NATIVE jint Java_java_lang_Class_getModifiers(JNIEnv *env, jobject java_lang_Class_mirror);
+JAVA_NATIVE jint Java_java_lang_Class_getModifiers(JNIEnv *env, jobject mirror);
 
 JAVA_NATIVE jint Java_sun_reflect_Reflection_getClassAccessFlags(JNIEnv *env,
                                                                  jclass sun_reflect_Reflection,

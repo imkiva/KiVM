@@ -119,12 +119,12 @@ namespace kivm {
                                 if (isPrimitiveArray) {
                                     // Only arrays need them.
                                     auto *array_klass = BootstrapClassLoader::get()->loadClass(name);
-                                    mirror->setMirrorTarget(array_klass);
+                                    mirror->setTarget(array_klass);
                                     array_klass->setJavaMirror(mirror);
                                 } else {
                                     // use primitiveTypeToValueTypeNoWrap() instead of primitiveTypeToValueType()
                                     // because in Java, booleans, chars, shorts and bytes are not ints
-                                    mirror->setMirroringPrimitiveType(primitiveTypeToValueTypeNoWrap(primitiveType));
+                                    mirror->setPrimitiveType(primitiveTypeToValueTypeNoWrap(primitiveType));
                                 }
 
                                 break;
@@ -193,11 +193,11 @@ namespace kivm {
 
 using namespace kivm;
 
-JAVA_NATIVE void Java_java_lang_Class_registerNatives(JNIEnv *env, jclass java_lang_Class) {
+JAVA_NATIVE void Java_java_lang_Class_registerNatives(JNIEnv *env, jclass mirror) {
     D("java/lang/Class.registerNatives()V");
 }
 
-JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass java_lang_Class,
+JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass mirror,
                                                            jstring className) {
     auto stringInstance = Resolver::instance(className);
     if (stringInstance == nullptr) {
@@ -240,19 +240,19 @@ JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass j
         strings::toStdString(signature).c_str());
 }
 
-JAVA_NATIVE jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, jclass java_lang_Class) {
+JAVA_NATIVE jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, jclass mirror) {
     return JNI_FALSE;
 }
 
 JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env,
-                                                                 jobject java_lang_Class_mirror,
+                                                                 jobject mirror,
                                                                  jboolean publicOnly) {
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/reflect/Field;");
 
     std::vector<instanceOop> fields;
-    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
-    auto mirrorTarget = classMirror->getMirrorTarget();
+    auto classMirror = Resolver::mirror(mirror);
+    auto mirrorTarget = classMirror->getTarget();
 
     if (mirrorTarget->getClassType() != ClassType::INSTANCE_CLASS) {
         PANIC("native: attempt to get fields of non-instance oops");
@@ -285,14 +285,14 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env,
 }
 
 JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredMethods0(JNIEnv *env,
-                                                                  jobject java_lang_Class_mirror,
+                                                                  jobject mirror,
                                                                   jboolean publicOnly) {
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/reflect/Method;");
 
     std::vector<instanceOop> methods;
-    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
-    auto mirrorTarget = classMirror->getMirrorTarget();
+    auto classMirror = Resolver::mirror(mirror);
+    auto mirrorTarget = classMirror->getTarget();
 
     if (mirrorTarget->getClassType() != ClassType::INSTANCE_CLASS) {
         PANIC("native: attempt to get fields of non-instance oops");
@@ -312,14 +312,14 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredMethods0(JNIEnv *env,
 }
 
 JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *env,
-                                                                       jobject java_lang_Class_mirror,
+                                                                       jobject mirror,
                                                                        jboolean publicOnly) {
     auto arrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
         ->loadClass(L"[Ljava/lang/reflect/Constructor;");
 
     std::vector<instanceOop> ctors;
-    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
-    auto mirrorTarget = classMirror->getMirrorTarget();
+    auto classMirror = Resolver::mirror(mirror);
+    auto mirrorTarget = classMirror->getTarget();
 
     if (mirrorTarget->getClassType() != ClassType::INSTANCE_CLASS) {
         PANIC("native: attempt to get fields of non-instance oops");
@@ -341,13 +341,13 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredConstructors0(JNIEnv *e
     return ctorOopArray;
 }
 
-JAVA_NATIVE jstring Java_java_lang_Class_getName0(JNIEnv *env, jobject java_lang_Class_mirror) {
-    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
-    auto mirrorTarget = classMirror->getMirrorTarget();
+JAVA_NATIVE jstring Java_java_lang_Class_getName0(JNIEnv *env, jobject mirror) {
+    auto classMirror = Resolver::mirror(mirror);
+    auto mirrorTarget = classMirror->getTarget();
 
     if (mirrorTarget == nullptr) {
         return java::lang::String::intern(valueTypeToPrimitiveTypeName(
-            classMirror->getMirroringPrimitiveType()));
+            classMirror->getPrimitiveType()));
     }
 
     auto instanceClass = (InstanceKlass *) mirrorTarget;
@@ -356,9 +356,9 @@ JAVA_NATIVE jstring Java_java_lang_Class_getName0(JNIEnv *env, jobject java_lang
     return java::lang::String::intern(javaClassName);
 }
 
-JAVA_NATIVE jstring Java_java_lang_Class_getSuperclass(JNIEnv *env, jobject java_lang_Class_mirror) {
-    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
-    auto mirrorTarget = classMirror->getMirrorTarget();
+JAVA_NATIVE jstring Java_java_lang_Class_getSuperclass(JNIEnv *env, jobject mirror) {
+    auto classMirror = Resolver::mirror(mirror);
+    auto mirrorTarget = classMirror->getTarget();
 
     if (mirrorTarget == nullptr || mirrorTarget == Global::_Object) {
         return nullptr;
@@ -368,19 +368,19 @@ JAVA_NATIVE jstring Java_java_lang_Class_getSuperclass(JNIEnv *env, jobject java
     return instanceClass->getSuperClass()->getJavaMirror();
 }
 
-JAVA_NATIVE jboolean Java_java_lang_Class_isPrimitive(JNIEnv *env, jobject java_lang_Class_mirror) {
-    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
-    return classMirror->getMirrorTarget() == nullptr ? JNI_TRUE : JNI_FALSE;
+JAVA_NATIVE jboolean Java_java_lang_Class_isPrimitive(JNIEnv *env, jobject mirror) {
+    auto classMirror = Resolver::mirror(mirror);
+    return classMirror->getTarget() == nullptr ? JNI_TRUE : JNI_FALSE;
 }
 
 JAVA_NATIVE jboolean Java_java_lang_Class_isAssignableFrom(JNIEnv *env,
-                                                           jobject java_lang_Class_mirror_lhs,
-                                                           jobject java_lang_Class_mirror_rhs) {
-    auto lhs = Resolver::mirror(java_lang_Class_mirror_lhs);
-    auto rhs = Resolver::mirror(java_lang_Class_mirror_rhs);
+                                                           jobject mirrorL,
+                                                           jobject mirrorR) {
+    auto lhs = Resolver::mirror(mirrorL);
+    auto rhs = Resolver::mirror(mirrorR);
 
-    auto lhsKlass = lhs->getMirrorTarget();
-    auto rhsKlass = rhs->getMirrorTarget();
+    auto lhsKlass = lhs->getTarget();
+    auto rhsKlass = rhs->getTarget();
 
     if (lhsKlass == nullptr && rhsKlass == nullptr) {
         return JBOOLEAN(lhs == rhs);
@@ -389,11 +389,11 @@ JAVA_NATIVE jboolean Java_java_lang_Class_isAssignableFrom(JNIEnv *env,
     return JBOOLEAN(Execution::instanceOf(lhsKlass, rhsKlass));
 }
 
-JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_Class,
+JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass mirror,
                                                  jstring javaName,
                                                  jboolean initialize,
                                                  jobject javaClassLoader,
-                                                 jobject javaCallerClass_mirror) {
+                                                 jobject callerMirror) {
     auto thread = Threads::currentThread();
     assert(thread != nullptr);
 
@@ -429,16 +429,16 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
     return klass->getJavaMirror();
 }
 
-JAVA_NATIVE jboolean Java_java_lang_Class_isInterface(JNIEnv *env, jobject java_lang_Class_mirror) {
-    auto mirrorOop = Resolver::mirror(java_lang_Class_mirror);
+JAVA_NATIVE jboolean Java_java_lang_Class_isInterface(JNIEnv *env, jobject mirror) {
+    auto mirrorOop = Resolver::mirror(mirror);
     return JBOOLEAN(mirrorOop != nullptr
-                    && mirrorOop->getMirrorTarget() != nullptr
-                    && mirrorOop->getMirrorTarget()->isInterface());
+                    && mirrorOop->getTarget() != nullptr
+                    && mirrorOop->getTarget()->isInterface());
 }
 
-JAVA_NATIVE jint Java_java_lang_Class_getModifiers(JNIEnv *env, jobject java_lang_Class_mirror) {
-    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
-    auto mirrorTarget = classMirror->getMirrorTarget();
+JAVA_NATIVE jint Java_java_lang_Class_getModifiers(JNIEnv *env, jobject mirror) {
+    auto classMirror = Resolver::mirror(mirror);
+    auto mirrorTarget = classMirror->getTarget();
 
     if (mirrorTarget == nullptr) {
         return ACC_ABSTRACT | ACC_FINAL | ACC_PUBLIC;
@@ -448,9 +448,9 @@ JAVA_NATIVE jint Java_java_lang_Class_getModifiers(JNIEnv *env, jobject java_lan
     return instanceClass->getAccessFlag();
 }
 
-JAVA_NATIVE jboolean Java_java_lang_Class_isArray(JNIEnv *env, jobject java_lang_Class_mirror) {
-    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
-    auto mirrorTarget = classMirror->getMirrorTarget();
+JAVA_NATIVE jboolean Java_java_lang_Class_isArray(JNIEnv *env, jobject mirror) {
+    auto classMirror = Resolver::mirror(mirror);
+    auto mirrorTarget = classMirror->getTarget();
 
     if (mirrorTarget == nullptr) {
         return JNI_FALSE;
@@ -461,9 +461,9 @@ JAVA_NATIVE jboolean Java_java_lang_Class_isArray(JNIEnv *env, jobject java_lang
                     || classType == ClassType::OBJECT_ARRAY_CLASS);
 }
 
-JAVA_NATIVE jclass Java_java_lang_Class_getComponentType(JNIEnv *env, jobject java_lang_Class_mirror) {
-    auto classMirror = Resolver::mirror(java_lang_Class_mirror);
-    auto mirrorTarget = classMirror->getMirrorTarget();
+JAVA_NATIVE jclass Java_java_lang_Class_getComponentType(JNIEnv *env, jobject mirror) {
+    auto classMirror = Resolver::mirror(mirror);
+    auto mirrorTarget = classMirror->getTarget();
     if (mirrorTarget == nullptr) {
         SHOULD_NOT_REACH_HERE();
     }
@@ -478,5 +478,19 @@ JAVA_NATIVE jclass Java_java_lang_Class_getComponentType(JNIEnv *env, jobject ja
         }
         default:
             SHOULD_NOT_REACH_HERE();
+    }
+}
+
+JAVA_NATIVE jobjectArray Java_java_lang_Class_getEnclosingMethod0(JNIEnv *env, jobject mirror) {
+    auto classMirror = Resolver::mirror(mirror);
+    if (classMirror == nullptr || classMirror->getTarget() == nullptr
+        || classMirror->getTarget()->getClassType() != ClassType::INSTANCE_CLASS) {
+        return nullptr;
+    }
+
+    auto target = (InstanceKlass *) classMirror->getTarget();
+    auto enclosing = target->getEnclosingMethodTable();
+    if (enclosing == nullptr) {
+        return nullptr;
     }
 }

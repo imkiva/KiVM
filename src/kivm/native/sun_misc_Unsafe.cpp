@@ -70,11 +70,11 @@ Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject 
     }
 
     auto fieldTypeMirror = Resolver::mirror(p);
-    if (fieldTypeMirror->getMirrorTarget() == nullptr) {
-        fieldDesc = valueTypeToPrimitiveTypeDesc(fieldTypeMirror->getMirroringPrimitiveType());
+    if (fieldTypeMirror->getTarget() == nullptr) {
+        fieldDesc = valueTypeToPrimitiveTypeDesc(fieldTypeMirror->getPrimitiveType());
 
     } else {
-        auto target = fieldTypeMirror->getMirrorTarget();
+        auto target = fieldTypeMirror->getTarget();
         switch (target->getClassType()) {
             case ClassType::INSTANCE_CLASS:
                 fieldDesc = L"L" + target->getName() + L";";
@@ -91,12 +91,12 @@ Java_sun_misc_Unsafe_objectFieldOffset(JNIEnv *env, jobject javaUnsafe, jobject 
     }
 
     auto fieldOwnerMirror = Resolver::mirror(p);
-    if (fieldOwnerMirror->getMirrorTarget() == nullptr
-        || fieldOwnerMirror->getMirrorTarget()->getClassType() != ClassType::INSTANCE_CLASS) {
+    if (fieldOwnerMirror->getTarget() == nullptr
+        || fieldOwnerMirror->getTarget()->getClassType() != ClassType::INSTANCE_CLASS) {
         SHOULD_NOT_REACH_HERE();
     }
 
-    auto owner = (InstanceKlass *) fieldOwnerMirror->getMirrorTarget();
+    auto owner = (InstanceKlass *) fieldOwnerMirror->getTarget();
     auto fieldInfo = owner->getThisClassField(fieldName, fieldDesc);
     if (fieldInfo == nullptr) {
         SHOULD_NOT_REACH_HERE();

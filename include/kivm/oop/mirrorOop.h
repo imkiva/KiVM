@@ -17,25 +17,25 @@ namespace kivm {
     public:
         explicit mirrorOopDesc(Klass *mirror);
 
-        Klass *getMirrorTarget() const {
+        Klass *getTarget() const {
             return _mirrorTarget;
         }
 
-        void setMirrorTarget(Klass *_mirrorTarget) {
+        void setTarget(Klass *_mirrorTarget) {
             mirrorOopDesc::_mirrorTarget = _mirrorTarget;
         }
 
-        ValueType getMirroringPrimitiveType() const {
+        ValueType getPrimitiveType() const {
             return _mirroringPrimitiveType;
         }
 
-        void setMirroringPrimitiveType(ValueType mirroringPrimitiveType) {
-            setMirrorTarget(nullptr);
+        void setPrimitiveType(ValueType mirroringPrimitiveType) {
+            setTarget(nullptr);
             mirrorOopDesc::_mirroringPrimitiveType = mirroringPrimitiveType;
         }
 
-        bool isMirroringPrimitiveTypes() const {
-            return getMirrorTarget() != nullptr;
+        bool isPrimitiveMirror() const {
+            return getTarget() != nullptr;
         }
     };
 }

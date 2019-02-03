@@ -21,7 +21,7 @@ JAVA_NATIVE jobject Java_sun_reflect_NativeConstructorAccessorImpl_newInstance0(
     auto ctorOop = Resolver::instance(javaConstructor);
     auto targetClass = getClassFromConstructor(ctorOop);
     auto slot = getSlotFromConstructor(ctorOop);
-    auto mirrorTarget = (InstanceKlass *) targetClass->getMirrorTarget();
+    auto mirrorTarget = (InstanceKlass *) targetClass->getTarget();
 
     auto instance = mirrorTarget->newInstance();
     auto ctorMethod = mirrorTarget->getDeclaredMethodByOffset(slot);

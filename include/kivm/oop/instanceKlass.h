@@ -135,6 +135,10 @@ namespace kivm {
             return _bootstrapMethodAttr;
         }
 
+        inline const EnclosingMethod_attribute *getEnclosingMethodTable() const {
+            return _enclosingMethodAttr;
+        }
+
         Method *getDeclaredMethodByOffset(int offset);
 
         /**
