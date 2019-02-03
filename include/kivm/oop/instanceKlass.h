@@ -131,6 +131,10 @@ namespace kivm {
             return _allMethods;
         }
 
+        inline const HashMap<String, InstanceKlass *> &getInterfaces() const {
+            return _interfaces;
+        }
+
         inline const BootstrapMethods_attribute *getBootstrapMethodTable() const {
             return _bootstrapMethodAttr;
         }

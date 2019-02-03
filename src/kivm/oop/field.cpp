@@ -36,7 +36,7 @@ namespace kivm {
 
     String Field::makeIdentity(InstanceKlass *belongTo, const Field *f) {
         std::wstringstream ss;
-        ss << belongTo->getName() << L" " << f->getName() << L" " << f->getDescriptor();
+        ss << belongTo->getName() << L":" << f->getName() << L":" << f->getDescriptor();
         return ss.str();
     }
 

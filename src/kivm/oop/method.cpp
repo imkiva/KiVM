@@ -243,7 +243,7 @@ namespace kivm {
 
     String Method::makeIdentity(const Method *m) {
         std::wstringstream ss;
-        ss << m->getName() << L" " << m->getDescriptor();
+        ss << m->getName() << L":" << m->getDescriptor();
         return ss.str();
     }
 

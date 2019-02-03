@@ -135,16 +135,20 @@ namespace kivm {
 
             auto methodID = new MethodID(i, method);
             const auto &id = Method::makeIdentity(method);
-            const auto &pair = make_pair(id, methodID);
+            auto pair = make_pair(id, methodID);
             _allMethods.insert(pair);
 
-            auto iter = _vtable.find(id);
-            if (iter != _vtable.end()) {
-                iter->second = methodID;
-
-            } else {
-                if (!method->isStatic()) {
-                    _vtable.insert(pair);
+            if (!method->isStatic()) {
+                auto ret = _vtable.insert(pair);
+                if (!ret.second) {
+                    D("%s: New override method %s",
+                        strings::toStdString(getName()).c_str(),
+                        strings::toStdString(id).c_str());
+                    (*ret.first).second = methodID;
+                } else {
+                    D("%s: New virtual method %s",
+                        strings::toStdString(getName()).c_str(),
+                        strings::toStdString(id).c_str());
                 }
             }
         }
@@ -240,10 +244,10 @@ namespace kivm {
     }
 
 #define KEY_MAKER(CLASS, NAME, DESC) \
-        ((CLASS) + L" " + (NAME) + L" " + (DESC))
+        ((CLASS) + L":" + (NAME) + L":" + (DESC))
 
 #define ND_KEY_MAKER(NAME, DESC) \
-        ((NAME) + L" " + (DESC))
+        ((NAME) + L":" + (DESC))
 
 #define RETURN_IF(ITER, COLLECTION, KEY, SUCCESS, FAIL) \
     const auto &ITER = (COLLECTION).find(KEY); \

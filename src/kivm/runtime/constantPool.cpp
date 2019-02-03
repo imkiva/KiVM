@@ -66,6 +66,35 @@ namespace kivm {
                 }
                 return nullptr;
             }
+
+            MethodPoolEntry getInterfaceMethod(InstanceKlass *instanceKlass,
+                                               const String &name, const String &desc) {
+                auto currentClass = instanceKlass;
+                Method *found = nullptr;
+
+                while (currentClass != nullptr) {
+                    found = currentClass->getVirtualMethod(name, desc);
+
+                    // Trial 1: if this method was declared in itself
+                    if (found != nullptr) {
+                        return found;
+                    }
+
+                    // Trial 2: if this method was declared in its implemented interfaces
+                    for (auto &i : currentClass->getInterfaces()) {
+                        auto klass = i.second;
+                        found = klass->getVirtualMethod(name, desc);
+                        if (found != nullptr) {
+                            return found;
+                        }
+                    }
+
+                    // method not found in current method
+                    // try superclass
+                    currentClass = currentClass->getSuperClass();
+                }
+                return nullptr;
+            }
         }
 
         FieldPoolEntry
@@ -124,8 +153,8 @@ namespace kivm {
 
                 } else {
                     // invokeinterface
-                    // interface methods are virtual methods
-                    return instanceKlass->getVirtualMethod(*nameAndType->first, *nameAndType->second);
+                    return impl::getInterfaceMethod(instanceKlass,
+                        *nameAndType->first, *nameAndType->second);
                 }
 
             } else if (klass->getClassType() == ClassType::OBJECT_ARRAY_CLASS

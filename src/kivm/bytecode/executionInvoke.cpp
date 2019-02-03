@@ -251,6 +251,7 @@ namespace kivm {
         // Do not use invokeVirtual()
         // we need rt->getMethod()
         Method *method = rt->getMethod(constantIndex);
+
         if (method == nullptr) {
             panicNoSuchMethod(rt, constantIndex);
             return nullptr;
