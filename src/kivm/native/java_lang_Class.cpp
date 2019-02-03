@@ -266,7 +266,6 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env,
         if (publicOnly && !fieldId->_field->isPublic()) {
             continue;
         }
-
         fields.push_back(newJavaFieldObject(fieldId));
     }
 
@@ -275,7 +274,6 @@ JAVA_NATIVE jobjectArray Java_java_lang_Class_getDeclaredFields0(JNIEnv *env,
         if (publicOnly && !fieldId->_field->isPublic()) {
             continue;
         }
-
         fields.push_back(newJavaFieldObject(fieldId));
     }
 
@@ -423,7 +421,9 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
     }
 
     if (initialize) {
-        Execution::initializeClass(thread, (InstanceKlass *) klass);
+        if (!Execution::initializeClass(thread, (InstanceKlass *) klass)) {
+            return nullptr;
+        }
     }
 
     return klass->getJavaMirror();

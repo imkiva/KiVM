@@ -19,7 +19,7 @@ namespace kivm {
         return false;
     }
 
-    void Execution::initializeClass(JavaThread *javaThread, InstanceKlass *klass) {
+    bool Execution::initializeClass(JavaThread *thread, InstanceKlass *klass) {
         if (klass->getClassState() == ClassState::LINKED) {
             klass->setClassState(ClassState::BEING_INITIALIZED);
             D("Initializing class %s",
@@ -28,7 +28,9 @@ namespace kivm {
             // Initialize super classes first.
             Klass *super_klass = klass->getSuperClass();
             if (super_klass != nullptr) {
-                Execution::initializeClass(javaThread, (InstanceKlass *) super_klass);
+                if (!Execution::initializeClass(thread, (InstanceKlass *) super_klass)) {
+                    return false;
+                }
             }
 
             klass->initClass();
@@ -36,10 +38,14 @@ namespace kivm {
             if (clinit != nullptr && clinit->getClass() == klass) {
                 D("<clinit> found in %s, invoking.",
                     strings::toStdString(klass->getName()).c_str());
-                JavaCall::withArgs(javaThread, clinit, {});
+                JavaCall::withArgs(thread, clinit, {});
+                if (thread->isExceptionOccurred()) {
+                    return false;
+                }
             }
             klass->setClassState(ClassState::FULLY_INITIALIZED);
         }
+        return true;
     }
 
     void Execution::loadConstant(RuntimeConstantPool *rt, Stack &stack, int constantIndex) {
@@ -226,7 +232,9 @@ namespace kivm {
         }
 
         auto instanceKlass = field->_field->getClass();
-        Execution::initializeClass(thread, instanceKlass);
+        if (!Execution::initializeClass(thread, instanceKlass)) {
+            return;
+        }
 
         oop fieldValue = nullptr;
 
@@ -309,7 +317,9 @@ namespace kivm {
         }
 
         auto instanceKlass = field->_field->getClass();
-        Execution::initializeClass(thread, instanceKlass);
+        if (!Execution::initializeClass(thread, instanceKlass)) {
+            return;
+        }
 
         assert(isStatic == field->_field->isStatic());
 
@@ -368,7 +378,9 @@ namespace kivm {
         }
 
         auto instanceKlass = (InstanceKlass *) klass;
-        Execution::initializeClass(thread, instanceKlass);
+        if (!Execution::initializeClass(thread, instanceKlass)) {
+            return nullptr;
+        }
         return instanceKlass->newInstance();
     }
 
@@ -426,7 +438,9 @@ namespace kivm {
         if (classType == ClassType::INSTANCE_CLASS) {
             // ClassType::INSTANCE_CLASS
             auto instanceKlass = (InstanceKlass *) arrayClass;
-            Execution::initializeClass(thread, instanceKlass);
+            if (!Execution::initializeClass(thread, instanceKlass)) {
+                return nullptr;
+            }
 
             ClassLoader *classLoader = instanceKlass->getClassLoader();
             if (classLoader == nullptr) {

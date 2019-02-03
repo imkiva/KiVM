@@ -76,31 +76,38 @@ namespace kivm {
 
         static void argumentListParser(std::vector<mirrorOop> *argumentTypes, bool *flag,
                                        const String &desc) {
-            if (*flag) {
-                return;
+            if (flag) {
+                if (*flag) {
+                    return;
+                }
+                *flag = true;
             }
-            *flag = true;
 
-            int startIndex = 0;
-            bool inClassName = false;
+            size_t arrayDimension = 0;
+            auto size = desc.size();
 
-            for (int i = 0; i < desc.size(); ++i) {
+            for (int i = 0; i < size; ++i) {
                 wchar_t ch = desc[i];
                 if (ch == L')') {
                     break;
                 }
 
                 switch (ch) {
-                    case L'(':
-                    case L'[' :
-                        startIndex = i;
+                    case L'L': {
+                        int startIndex = i;
+                        while (i < size && ch != L';') {
+                            ch = desc[++i];
+                        }
+                        if (ch != L';') {
+                            PANIC("Enclosing class name");
+                        }
+                        const auto &className = String(arrayDimension, L'[')
+                            + desc.substr(startIndex, i - startIndex + 1);
+                        arrayDimension = 0;
+                        D("oop: parsing arg list: type: %s",
+                            strings::toStdString(className).c_str());
                         break;
-
-                    case L'L':
-                        inClassName = true;
-                        startIndex = i;
-                        break;
-
+                    }
                     case L'B':    // byte
                     case L'Z':    // boolean
                     case L'S':    // short
@@ -110,22 +117,17 @@ namespace kivm {
                     case L'F':    // float
                     case L'D':    // double
                     {
-                        const auto &part = desc.substr(startIndex, i - startIndex);
-                        D("oop: parsing arg list: primitive type: %s",
-                            strings::toStdString(part).c_str());
-                        startIndex = i;
+                        const auto &className = String(arrayDimension, L'[') + ch;
+                        arrayDimension = 0;
+                        D("oop: parsing arg list: type: %s",
+                            strings::toStdString(className).c_str());
                         break;
                     }
-
-                    case ';':
-                        if (inClassName) {
-                            inClassName = false;
-                            const auto &part = desc.substr(startIndex, i - startIndex);
-                            D("oop: parsing arg list: reference type: %s",
-                                strings::toStdString(part).c_str());
-                        }
+                    case L'[' :
+                        ++arrayDimension;
                         break;
-
+                    case L'(':
+                        break;
                     default:
                         PANIC("Unrecognized char %c in descriptor", ch);
                 }
@@ -194,7 +196,13 @@ namespace kivm {
 
                 case L'L':
                 case L'[': {
-                    auto returnClass = BootstrapClassLoader::get()->loadClass(returnTypeDesc);
+                    Klass *returnClass = nullptr;
+                    if (ch == L'L') {
+                        const auto &className = returnTypeDesc.substr(1, returnTypeDesc.size() - 2);
+                        returnClass = BootstrapClassLoader::get()->loadClass(className);
+                    } else {
+                        returnClass = BootstrapClassLoader::get()->loadClass(returnTypeDesc);
+                    }
                     if (returnClass == nullptr) {
                         PANIC("cannot parse return type of method");
                     }

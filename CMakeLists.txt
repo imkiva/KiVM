@@ -8,6 +8,8 @@ include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 
+enable_testing()
+
 #### Check C++11
 check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
 check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
@@ -307,20 +309,23 @@ add_executable(java src/bin/java.cpp)
 target_link_libraries(java kivm)
 
 #### Tests
-add_executable(test_stack-and-frame tests/stack-and-locals.cpp)
-target_link_libraries(test_stack-and-frame kivm)
+macro(add_test_target name)
+    add_executable(test-${name} tests/test-${name}.cpp)
+    target_link_libraries(test-${name} kivm)
+    add_test(${name} test-${name})
+endmacro()
 
+add_test_target(stack-and-locals)
+add_test_target(encode-decode-offset)
+add_test_target(oop-size)
+add_test_target(args-parser)
+
+#### Benchmarks
 add_executable(bench-allocation tests/bench-allocation.cpp)
 target_link_libraries(bench-allocation kivm)
 
 add_executable(bench-map tests/bench-map.cpp)
 target_link_libraries(bench-map kivm)
-
-add_executable(test-encode-decode tests/encode-decode-offset.cpp)
-target_link_libraries(test-encode-decode kivm)
-
-add_executable(test-oop-size tests/oop-size.cpp)
-target_link_libraries(test-oop-size kivm)
 
 #### CovScript extension
 if (DEFINED ENV{CS_SRC})

@@ -70,7 +70,7 @@ namespace kivm {
         static void loadConstant(RuntimeConstantPool *rt, Stack &stack,
                                  int constantIndex);
 
-        static void initializeClass(JavaThread *javaThread, InstanceKlass *klass);
+        static bool initializeClass(JavaThread *thread, InstanceKlass *klass);
 
         static bool instanceOf(Klass *S, Klass *T);
 

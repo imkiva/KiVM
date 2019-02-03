@@ -90,3 +90,13 @@
     } \
     array->setElementAt(index, exp);
 
+#define HANDLE_EXCEPTION() \
+     stack.clear(); \
+     stack.pushReference(thread->_exceptionOop); \
+     goto exceptionHandler
+
+#define CHECK_EXCEPTION() \
+    if (thread->isExceptionOccurred()) { \
+        HANDLE_EXCEPTION(); \
+    }
+

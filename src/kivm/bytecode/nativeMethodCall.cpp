@@ -1,5 +1,6 @@
 //
 // Created by kiva on 2018/4/14.
+// TODO: keep pace with shared functions
 //
 #include <kivm/bytecode/javaCall.h>
 #include <kivm/bytecode/execution.h>
@@ -92,7 +93,6 @@ namespace kivm {
         // TODO: make it elegant
         // XXX: Temporary workaround: allocate a stack to hold arguments
         if (_stack == nullptr) {
-            D("nativeInvocation(call from args): allocate a stack to hold arguments");
             _stack = new Stack((int) _args.size());
             stackIsAllocated = true;
             int localVariableIndex = 0;
@@ -108,7 +108,6 @@ namespace kivm {
                     case oopType::INSTANCE_OOP:
                     case oopType::OBJECT_ARRAY_OOP:
                     case oopType::TYPE_ARRAY_OOP: {
-                        D("nativeInvocationContext: copying reference: #%d - %p", localVariableIndex, arg);
                         localVariableIndex++;
                         _stack->pushReference(arg);
                         break;
@@ -119,28 +118,24 @@ namespace kivm {
                         switch (valueType) {
                             case ValueType::INT: {
                                 int value = ((intOop) arg)->getValue();
-                                D("Copying int: #%d - %d", localVariableIndex, value);
                                 localVariableIndex++;
                                 _stack->pushInt(value);
                                 break;
                             }
                             case ValueType::FLOAT: {
                                 float value = ((floatOop) arg)->getValue();
-                                D("Copying float: #%d - %f", localVariableIndex, value);
                                 localVariableIndex++;
                                 _stack->pushFloat(value);
                                 break;
                             }
                             case ValueType::DOUBLE: {
                                 double value = ((doubleOop) arg)->getValue();
-                                D("Copying double: #%d - %lf", localVariableIndex, value);
                                 localVariableIndex++;
                                 _stack->pushDouble(value);
                                 break;
                             }
                             case ValueType::LONG: {
                                 long value = ((longOop) arg)->getValue();
-                                D("Copying long: #%d - %ld", localVariableIndex, value);
                                 localVariableIndex++;
                                 _stack->pushLong(value);
                                 break;
@@ -236,12 +231,10 @@ namespace kivm {
         }
 
         if (!hasThis) {
-            D("nativeInvocationContext: Pass jclass to static methods");
             FILL_ARG_VALUE((void *) _method->getClass(), l);
             argsType[fillIndex] = &ffi_type_pointer;
 
         } else {
-            D("nativeInvocationContext: Pass jobject to member methods");
             FILL_ARG(popReference, l);
             argsType[fillIndex] = &ffi_type_pointer;
 
@@ -276,7 +269,6 @@ namespace kivm {
             PANIC("Failed to obtain JNIEnv");
         }
 
-        D("nativeInvocationContext: Pass JNIEnv to native methods");
         FILL_ARG_VALUE((void *) env, l);
         argsType[fillIndex] = &ffi_type_pointer;
 

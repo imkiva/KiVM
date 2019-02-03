@@ -105,5 +105,7 @@ namespace kivm {
         static int destroyJavaVM(JavaVM *vm);
 
         static void uncaughtException(JavaThread *exceptionThread);
+
+        static void printStackTrace(JavaThread *thread);
     };
 }

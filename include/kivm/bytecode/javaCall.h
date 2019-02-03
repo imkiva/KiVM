@@ -21,9 +21,13 @@ namespace kivm {
         static Method *resolveVirtualMethod(oop thisObject, Method *tagMethod);
 
     private:
-        void prepareEnvironment();
+        bool prepareFrame(Frame *frame);
+
+        bool prepareEnvironment();
 
         void prepareSynchronized(oop thisObject);
+
+        bool fillArguments(const std::vector<ValueType> &argTypes, bool hasThis);
 
         void finishSynchronized(oop thisObject);
 
@@ -31,12 +35,15 @@ namespace kivm {
 
         oop invokeJava(bool hasThis, bool resolveTwice);
 
+        oop invokeDynamic(instanceOop MH, const String &descriptor);
+
         oop callInterpreter();
 
-        bool prepareFrame(Frame *frame);
+        inline oop invokeSimple(bool forceNoResolve) {
+            if (!prepareEnvironment()) {
+                return nullptr;
+            }
 
-        inline oop invoke(bool forceNoResolve) {
-            prepareEnvironment();
             bool hasThis = !_method->isStatic();
             bool resolveTwice = forceNoResolve ? false :
                                 _method->isAbstract()
@@ -58,16 +65,18 @@ namespace kivm {
     public:
         static inline oop withArgs(JavaThread *thread, Method *method,
                                    const std::list<oop> &args, bool forceNoResolve = false) {
-            return JavaCall(thread, method, args).invoke(forceNoResolve);
+            return JavaCall(thread, method, args).invokeSimple(forceNoResolve);
         }
 
         static inline oop withStack(JavaThread *thread, Method *method,
                                     Stack *stack, bool forceNoResolve = false) {
-            return JavaCall(thread, method, stack).invoke(forceNoResolve);
+            return JavaCall(thread, method, stack).invokeSimple(forceNoResolve);
         }
 
-        static oop invokeDynamic(JavaThread *thread, Method *invokeExact,
-                                 instanceOop MH, Stack *stack,
-                                 const String &descriptor);
+        static inline oop withMethodHandle(JavaThread *thread, Method *invokeExact,
+                                           Stack *stack, instanceOop MH,
+                                           const String &descriptor) {
+            return JavaCall(thread, invokeExact, stack).invokeDynamic(MH, descriptor);
+        }
     };
 }

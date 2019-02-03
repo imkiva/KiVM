@@ -53,7 +53,7 @@ namespace kivm {
             dl::DLInterface dlInterface;
             dl::DLSymbol nativeSymbol = dlInterface.findSymbol(strings::toStdString(nativeSymbolName));
             if (nativeSymbol != nullptr) {
-                JavaNativeMethod *nativeMethod = new JavaNativeMethod(method, nativeSymbol);
+                auto nativeMethod = new JavaNativeMethod(method, nativeSymbol);
                 _nativeMethods.insert(std::make_pair(method, nativeMethod));
                 return nativeMethod;
             }

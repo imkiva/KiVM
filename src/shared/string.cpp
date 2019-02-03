@@ -7,6 +7,8 @@
 #include <vector>
 #include <codecvt>
 #include <locale>
+#include <sstream>
+#include <utility>
 
 namespace kivm {
     namespace strings {

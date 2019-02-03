@@ -438,4 +438,18 @@ namespace kivm {
                 return false;
         }
     }
+
+    void KiVM::printStackTrace(JavaThread *thread) {
+        auto exception = thread->_exceptionOop ;
+        thread->_exceptionOop = nullptr;
+        auto exClass = exception->getInstanceClass();
+        auto printer = exClass->getVirtualMethod(L"printStackTrace",
+            L"()V");
+        if (printer != nullptr) {
+            JavaCall::withArgs(thread, printer, {exception});
+        } else {
+            PANIC("not an exception object");
+        }
+        thread->_exceptionOop = exception;
+    }
 }

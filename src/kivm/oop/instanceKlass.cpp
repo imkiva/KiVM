@@ -8,8 +8,8 @@
 #include <kivm/oop/helper.h>
 #include <kivm/oop/method.h>
 #include <kivm/oop/field.h>
-#include <sstream>
 #include <kivm/native/java_lang_Class.h>
+#include <sstream>
 
 namespace kivm {
     InstanceKlass::InstanceKlass(ClassFile *classFile, ClassLoader *classLoader,

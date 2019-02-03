@@ -247,4 +247,8 @@ namespace kivm {
     std::vector<mirrorOop> parseArguments(const String &descriptor);
 
     mirrorOop parseReturnType(const String &descriptor);
+
+    std::vector<ValueType> parseArgumentValueTypes(const String &descriptor);
+
+    ValueType parseReturnValueType(const String &descriptor);
 }

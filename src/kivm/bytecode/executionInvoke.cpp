@@ -67,6 +67,10 @@ namespace kivm {
             ->loadClass(L"java/lang/invoke/MethodHandles");
         auto lookupMethod = klass->getThisClassMethod(lookupMethodName, lookupMethodDesc);
         auto lookupObject = JavaCall::withArgs(thread, lookupMethod, {});
+        if (thread->isExceptionOccurred()) {
+            KiVM::printStackTrace(thread);
+            SHOULD_NOT_REACH_HERE_M("wtf");
+        }
         return Resolver::instance(lookupObject);
     }
 
@@ -369,7 +373,6 @@ namespace kivm {
             SHOULD_NOT_REACH_HERE();
         }
 
-
-        return JavaCall::invokeDynamic(thread, invokeExactMethod, MH, &stack, descriptor);
+        return JavaCall::withMethodHandle(thread, invokeExactMethod, &stack, MH, descriptor);
     }
 }

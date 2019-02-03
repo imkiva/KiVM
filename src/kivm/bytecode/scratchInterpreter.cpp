@@ -679,10 +679,8 @@ namespace kivm {
                     if (v2 == 0) {
                         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
-                        thread->throwException(klass, L"/ by zero");
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        thread->throwException(klass, L"divide by zero");
+                        HANDLE_EXCEPTION();
                     }
                     stack.pushInt(v1 / v2);
                     NEXT();
@@ -694,10 +692,8 @@ namespace kivm {
                     if (v2 == 0) {
                         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
-                        thread->throwException(klass, L"/ by zero");
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        thread->throwException(klass, L"divide by zero");
+                        HANDLE_EXCEPTION();
                     }
                     stack.pushLong(v1 / v2);
                     NEXT();
@@ -709,10 +705,8 @@ namespace kivm {
                     if (v2 == 0) {
                         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
-                        thread->throwException(klass, L"/ by zero");
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        thread->throwException(klass, L"divide by zero");
+                        HANDLE_EXCEPTION();
                     }
                     stack.pushFloat(v1 / v2);
                     NEXT();
@@ -724,10 +718,8 @@ namespace kivm {
                     if (v2 == 0) {
                         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
-                        thread->throwException(klass, L"/ by zero");
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        thread->throwException(klass, L"divide by zero");
+                        HANDLE_EXCEPTION();
                     }
                     stack.pushDouble(v1 / v2);
                     NEXT();
@@ -739,10 +731,8 @@ namespace kivm {
                     if (v2 == 0) {
                         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
-                        thread->throwException(klass, L"/ by zero");
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        thread->throwException(klass, L"divide by zero");
+                        HANDLE_EXCEPTION();
                     }
                     stack.pushInt(v1 - (v1 / v2) * v2);
                     NEXT();
@@ -754,10 +744,8 @@ namespace kivm {
                     if (v2 == 0) {
                         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/ArithmeticException");
-                        thread->throwException(klass, L"/ by zero");
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        thread->throwException(klass, L"divide by zero");
+                        HANDLE_EXCEPTION();
                     }
                     stack.pushLong(v1 - (v1 / v2) * v2);
                     NEXT();
@@ -1315,6 +1303,7 @@ namespace kivm {
                     pc += 2;
                     Execution::getField(thread, currentClass->getRuntimeConstantPool(),
                         nullptr, stack, constantIndex);
+                    CHECK_EXCEPTION();
                     NEXT();
                 }
                 OPCODE(PUTSTATIC)
@@ -1323,11 +1312,7 @@ namespace kivm {
                     pc += 2;
                     Execution::putField(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex, true);
-                    if (thread->isExceptionOccurred()) {
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
-                    }
+                    CHECK_EXCEPTION();
                     NEXT();
                 }
                 OPCODE(GETFIELD)
@@ -1337,9 +1322,7 @@ namespace kivm {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         thread->throwException(Global::java_lang_NullPointerException);
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        HANDLE_EXCEPTION();
                     } else {
                         instanceOop receiver = Resolver::instance(ref);
                         if (receiver == nullptr) {
@@ -1348,6 +1331,7 @@ namespace kivm {
                         }
                         Execution::getField(thread, currentClass->getRuntimeConstantPool(),
                             receiver, stack, constantIndex);
+                        CHECK_EXCEPTION();
                     }
                     NEXT();
                 }
@@ -1357,11 +1341,7 @@ namespace kivm {
                     pc += 2;
                     Execution::putField(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex, false);
-                    if (thread->isExceptionOccurred()) {
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
-                    }
+                    CHECK_EXCEPTION();
                     NEXT();
                 }
                 OPCODE(INVOKEVIRTUAL)
@@ -1371,11 +1351,7 @@ namespace kivm {
                     Execution::invokeVirtual(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex);
 
-                    if (thread->isExceptionOccurred()) {
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
-                    }
+                    CHECK_EXCEPTION();
                     NEXT();
                 }
                 OPCODE(INVOKESPECIAL)
@@ -1384,11 +1360,7 @@ namespace kivm {
                     pc += 2;
                     Execution::invokeSpecial(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex);
-                    if (thread->isExceptionOccurred()) {
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
-                    }
+                    CHECK_EXCEPTION();
                     NEXT();
                 }
                 OPCODE(INVOKESTATIC)
@@ -1397,11 +1369,7 @@ namespace kivm {
                     pc += 2;
                     Execution::invokeStatic(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex);
-                    if (thread->isExceptionOccurred()) {
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
-                    }
+                    CHECK_EXCEPTION();
                     NEXT();
                 }
                 OPCODE(INVOKEINTERFACE)
@@ -1418,11 +1386,7 @@ namespace kivm {
                     }
                     Execution::invokeInterface(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex, count);
-                    if (thread->isExceptionOccurred()) {
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
-                    }
+                    CHECK_EXCEPTION();
                     NEXT();
                 }
                 OPCODE(INVOKEDYNAMIC)
@@ -1436,11 +1400,7 @@ namespace kivm {
                     pc += 4;
 
                     Execution::invokeDynamic(thread, currentClass, stack, constantIndex);
-                    if (thread->isExceptionOccurred()) {
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
-                    }
+                    CHECK_EXCEPTION();
                     NEXT();
                 }
                 OPCODE(NEW)
@@ -1449,11 +1409,7 @@ namespace kivm {
                     pc += 2;
                     auto instance = Execution::newInstance(thread, currentClass->getRuntimeConstantPool(),
                         constantIndex);
-                    if (thread->isExceptionOccurred()) {
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
-                    }
+                    CHECK_EXCEPTION();
                     stack.pushReference(instance);
                     NEXT();
                 }
@@ -1465,9 +1421,7 @@ namespace kivm {
                         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/NegativeArraySizeException");
                         thread->throwException(klass, std::to_wstring(length));
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        HANDLE_EXCEPTION();
                     }
                     auto array = Execution::newPrimitiveArray(thread, arrayType, length);
                     stack.pushReference(array);
@@ -1482,13 +1436,12 @@ namespace kivm {
                         auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                             ->loadClass(L"java/lang/NegativeArraySizeException");
                         thread->throwException(klass, std::to_wstring(length));
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        HANDLE_EXCEPTION();
                     }
                     auto array = Execution::newObjectArray(thread,
                         currentClass->getRuntimeConstantPool(),
                         constantIndex, length);
+                    CHECK_EXCEPTION();
                     stack.pushReference(array);
                     NEXT();
                 }
@@ -1497,9 +1450,7 @@ namespace kivm {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         thread->throwException(Global::java_lang_NullPointerException);
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        HANDLE_EXCEPTION();
                     } else {
                         arrayOop array = Resolver::array(ref);
                         if (array == nullptr) {
@@ -1516,9 +1467,7 @@ namespace kivm {
                     auto exceptionOop = Resolver::instance(stack.popReference());
                     if (exceptionOop == nullptr) {
                         thread->throwException(Global::java_lang_NullPointerException);
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        HANDLE_EXCEPTION();
                     }
 
                     int handler = thread->tryHandleException(exceptionOop);
@@ -1541,11 +1490,7 @@ namespace kivm {
                     pc += 2;
                     Execution::instanceOf(thread, currentClass->getRuntimeConstantPool(),
                         stack, constantIndex, true);
-                    if (thread->isExceptionOccurred()) {
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
-                    }
+                    CHECK_EXCEPTION();
                     NEXT();
                 }
                 OPCODE(INSTANCEOF)
@@ -1561,9 +1506,7 @@ namespace kivm {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         thread->throwException(Global::java_lang_NullPointerException);
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        HANDLE_EXCEPTION();
                     } else {
                         auto object = Resolver::javaOop(ref);
                         if (object == nullptr) {
@@ -1579,9 +1522,7 @@ namespace kivm {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
                         thread->throwException(Global::java_lang_NullPointerException);
-                        stack.clear();
-                        stack.pushReference(thread->_exceptionOop);
-                        goto exceptionHandler;
+                        HANDLE_EXCEPTION();
                     } else {
                         auto object = Resolver::javaOop(ref);
                         if (object == nullptr) {
@@ -1609,9 +1550,7 @@ namespace kivm {
                             auto klass = (InstanceKlass *) BootstrapClassLoader::get()
                                 ->loadClass(L"java/lang/NegativeArraySizeException");
                             thread->throwException(klass, std::to_wstring(sub));
-                            stack.clear();
-                            stack.pushReference(thread->_exceptionOop);
-                            goto exceptionHandler;
+                            HANDLE_EXCEPTION();
                         }
                         length.push_back(sub);
                     }

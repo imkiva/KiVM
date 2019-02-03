@@ -16,10 +16,27 @@
 #include <algorithm>
 
 namespace kivm {
-    oop JavaCall::invokeDynamic(JavaThread *thread, Method *invokeExact,
-                                         instanceOop MH, Stack *stack,
-                                         const String &descriptor) {
+    oop JavaCall::invokeDynamic(instanceOop MH, const String &descriptor) {
         // TODO: obtain args from stack and call invokeExact with MH
+        _obtainArgsFromStack = true;
+        if (_stack == nullptr) {
+            SHOULD_NOT_REACH_HERE_M("Stack must not be null");
+        }
+
+        const std::vector<ValueType> &descriptorMap = parseArgumentValueTypes(descriptor);
+        ValueType returnType = parseReturnValueType(descriptor);
+
+        // Do not obtain this form stack
+        // The `this` object is `MH`
+        if (!fillArguments(descriptorMap, false)) {
+            // TODO: throw StackOverflow
+            PANIC("StackOverflow");
+        }
+
+        // The `this`
+        _args.push_front(MH);
+
+        assert(_method->isNative());
         return nullptr;
     }
 }

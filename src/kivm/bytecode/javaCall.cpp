@@ -25,8 +25,8 @@ namespace kivm {
           _obtainArgsFromStack(false), _args(args) {
     }
 
-    void JavaCall::prepareEnvironment() {
-        Execution::initializeClass(_thread, _instanceKlass);
+    bool JavaCall::prepareEnvironment() {
+        return Execution::initializeClass(_thread, _instanceKlass);
     }
 
     void JavaCall::prepareSynchronized(oop thisObject) {
@@ -68,7 +68,6 @@ namespace kivm {
 
         std::for_each(_args.begin(), _args.end(), [&](oop arg) {
             if (arg == nullptr) {
-                D("Copying reference: #%d - null to locals:(%d)", localVariableIndex, localSlotIndex);
                 locals.setReference(localSlotIndex++, nullptr);
 
             } else {
@@ -76,8 +75,6 @@ namespace kivm {
                     case oopType::INSTANCE_OOP:
                     case oopType::OBJECT_ARRAY_OOP:
                     case oopType::TYPE_ARRAY_OOP: {
-                        D("Copying reference: #%d - %p to locals:(%d)", localVariableIndex, arg,
-                            localSlotIndex);
                         locals.setReference(localSlotIndex++, arg);
                         break;
                     }
@@ -89,30 +86,22 @@ namespace kivm {
                         switch (valueType) {
                             case ValueType::INT: {
                                 int value = ((intOop) arg)->getValue();
-                                D("Copying int: #%d - %d to locals:(%d)", localVariableIndex,
-                                    value, localSlotIndex);
                                 locals.setInt(localSlotIndex++, value);
                                 break;
                             }
                             case ValueType::FLOAT: {
                                 float value = ((floatOop) arg)->getValue();
-                                D("Copying float: #%d - %f to locals:(%d)", localVariableIndex,
-                                    value, localSlotIndex);
                                 locals.setFloat(localSlotIndex++, value);
                                 break;
                             }
                             case ValueType::DOUBLE: {
                                 double value = ((doubleOop) arg)->getValue();
-                                D("Copying double: #%d - %lf to locals:(%d)", localVariableIndex,
-                                    value, localSlotIndex);
                                 locals.setDouble(localSlotIndex, value);
                                 localSlotIndex += 2;
                                 break;
                             }
                             case ValueType::LONG: {
                                 jlong value = ((longOop) arg)->getValue();
-                                D("Copying long: #%d - %lld to locals:(%d)", localVariableIndex,
-                                    value, localSlotIndex);
                                 locals.setLong(localSlotIndex, value);
                                 localSlotIndex += 2;
                                 break;
@@ -171,6 +160,42 @@ namespace kivm {
         frame->setNativeFrame(_method->isNative());
 
         _thread->_frames.push(frame);
+        return true;
+    }
+
+    bool JavaCall::fillArguments(const std::vector<ValueType> &argTypes, bool hasThis) {
+        std::list<oop> callingArgs;
+        for (auto it = argTypes.rbegin(); it != argTypes.rend(); ++it) {
+            ValueType valueType = *it;
+
+            switch (valueType) {
+                case ValueType::INT:
+                    callingArgs.push_front(new intOopDesc(_stack->popInt()));
+                    break;
+                case ValueType::LONG:
+                    callingArgs.push_front(new longOopDesc(_stack->popLong()));
+                    break;
+                case ValueType::FLOAT:
+                    callingArgs.push_front(new floatOopDesc(_stack->popFloat()));
+                    break;
+                case ValueType::DOUBLE:
+                    callingArgs.push_front(new doubleOopDesc(_stack->popDouble()));
+                    break;
+                case ValueType::OBJECT:
+                case ValueType::ARRAY:
+                    callingArgs.push_front(Resolver::javaOop(_stack->popReference()));
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        if (hasThis) {
+            oop thiz = Resolver::javaOop(_stack->popReference());
+            callingArgs.push_front(thiz);
+        }
+
+        this->_args.swap(callingArgs);
         return true;
     }
 }

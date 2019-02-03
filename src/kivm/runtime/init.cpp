@@ -21,7 +21,9 @@ namespace kivm {
             PANIC("java.lang.LinkError: class not found: %s",
                 strings::toStdString(name).c_str());
         }
-        Execution::initializeClass(thread, klass);
+        if (!Execution::initializeClass(thread, klass)) {
+            PANIC("class init failed");
+        }
         return klass;
     }
 
@@ -188,10 +190,10 @@ namespace kivm {
         // hack java.nio.charset.Charset.defaultCharset
         auto charsetClass = (InstanceKlass *) BootstrapClassLoader::get()
             ->loadClass(L"java/nio/charset/Charset");
-        Execution::initializeClass(thread, charsetClass);
+        assert(Execution::initializeClass(thread, charsetClass));
         auto utf8CharsetClass = (InstanceKlass *) BootstrapClassLoader::get()
             ->loadClass(L"sun/nio/cs/UTF_8");
-        Execution::initializeClass(thread, utf8CharsetClass);
+        assert(Execution::initializeClass(thread, utf8CharsetClass));
         Global::DEFAULT_UTF8_CHARSET = utf8CharsetClass->newInstance();
         charsetClass->setStaticFieldValue(charsetClass->getName(),
             L"defaultCharset", L"Ljava/nio/charset/Charset;",

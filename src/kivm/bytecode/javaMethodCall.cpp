@@ -20,38 +20,9 @@ namespace kivm {
             descriptorMap.size());
 
         if (_obtainArgsFromStack && _stack != nullptr) {
-            std::list<oop> callingArgs;
-            for (auto it = descriptorMap.rbegin(); it != descriptorMap.rend(); ++it) {
-                ValueType valueType = *it;
-
-                switch (valueType) {
-                    case ValueType::INT:
-                        callingArgs.push_front(new intOopDesc(_stack->popInt()));
-                        break;
-                    case ValueType::LONG:
-                        callingArgs.push_front(new longOopDesc(_stack->popLong()));
-                        break;
-                    case ValueType::FLOAT:
-                        callingArgs.push_front(new floatOopDesc(_stack->popFloat()));
-                        break;
-                    case ValueType::DOUBLE:
-                        callingArgs.push_front(new doubleOopDesc(_stack->popDouble()));
-                        break;
-                    case ValueType::OBJECT:
-                    case ValueType::ARRAY:
-                        callingArgs.push_front(Resolver::javaOop(_stack->popReference()));
-                        break;
-                    default:
-                        PANIC("Unknown value type: %d", valueType);
-                }
+            if (!fillArguments(descriptorMap, hasThis)) {
+                SHOULD_NOT_REACH_HERE_M("Unknown value type");
             }
-
-            if (hasThis) {
-                oop thisObjectOnStack = Resolver::javaOop(_stack->popReference());
-                callingArgs.push_front(thisObjectOnStack);
-            }
-
-            this->_args.swap(callingArgs);
         }
 
         oop thisObject = nullptr;
