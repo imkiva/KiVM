@@ -27,14 +27,14 @@ namespace kivm {
     String Global::PATH_SEPARATOR(PATH_SEPARATOR_CHAR); // NOLINT
     String Global::PATH_DELIMITER(PATH_DELIMITER_CHAR); // NOLINT
     String Global::CLASS_EXTENSION(L"class"); // NOLINT
-    InstanceKlass *Global::java_lang_Object = nullptr;
-    InstanceKlass *Global::java_lang_Cloneable = nullptr;
-    InstanceKlass *Global::java_lang_Serializable = nullptr;
-    InstanceKlass *Global::java_lang_NullPointerException = nullptr;
-    InstanceKlass *Global::java_lang_ArrayIndexOutOfBoundsException = nullptr;
-    InstanceKlass *Global::java_lang_ClassNotFoundException = nullptr;
-    InstanceKlass *Global::java_lang_InternalError = nullptr;
-    InstanceKlass *Global::java_io_IOException = nullptr;
+    InstanceKlass *Global::_Object = nullptr;
+    InstanceKlass *Global::_Cloneable = nullptr;
+    InstanceKlass *Global::_Serializable = nullptr;
+    InstanceKlass *Global::_NullPointerException = nullptr;
+    InstanceKlass *Global::_ArrayIndexOutOfBoundsException = nullptr;
+    InstanceKlass *Global::_ClassNotFoundException = nullptr;
+    InstanceKlass *Global::_InternalError = nullptr;
+    InstanceKlass *Global::_IOException = nullptr;
 
     JavaObject("java/nio/charset/Charset") Global::DEFAULT_UTF8_CHARSET = nullptr;
 

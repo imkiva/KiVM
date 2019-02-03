@@ -167,7 +167,7 @@ namespace kivm {
 
             // If T is a class type, then T must be Object
             if (T->getClassType() == ClassType::INSTANCE_CLASS) {
-                return T == Global::java_lang_Object;
+                return T == Global::_Object;
             }
             return false;
         }
@@ -184,13 +184,13 @@ namespace kivm {
             // 1. java/lang/Cloneable
             // 2. java/io/Serializable
             if (T->isInterface()) {
-                return T == Global::java_lang_Serializable
-                       || T == Global::java_lang_Cloneable;
+                return T == Global::_Serializable
+                       || T == Global::_Cloneable;
             }
 
             // If T is a class type, then T must be Object
             if (T->getClassType() == ClassType::INSTANCE_CLASS) {
-                return T == Global::java_lang_Object;
+                return T == Global::_Object;
             }
 
             // If T is an array type TC[], that is, an array of components of type TC
@@ -299,7 +299,7 @@ namespace kivm {
             jobject receiverRef = stack.popReference(); \
             instanceOop receiver = Resolver::instance(receiverRef); \
             if (receiver == nullptr) { \
-                thread->throwException(Global::java_lang_NullPointerException); \
+                thread->throwException(Global::_NullPointerException); \
             } else { \
                 instanceKlass->setInstanceFieldValue(receiver, field, value); \
             } \

@@ -62,14 +62,14 @@ namespace kivm {
         static String PATH_DELIMITER;
         static String CLASS_EXTENSION;
 
-        static InstanceKlass *java_lang_Object;
-        static InstanceKlass *java_lang_Cloneable;
-        static InstanceKlass *java_lang_Serializable;
-        static InstanceKlass *java_lang_NullPointerException;
-        static InstanceKlass *java_lang_ArrayIndexOutOfBoundsException;
-        static InstanceKlass *java_lang_ClassNotFoundException;
-        static InstanceKlass *java_lang_InternalError;
-        static InstanceKlass *java_io_IOException;
+        static InstanceKlass *_Object;
+        static InstanceKlass *_Cloneable;
+        static InstanceKlass *_Serializable;
+        static InstanceKlass *_NullPointerException;
+        static InstanceKlass *_ArrayIndexOutOfBoundsException;
+        static InstanceKlass *_ClassNotFoundException;
+        static InstanceKlass *_InternalError;
+        static InstanceKlass *_IOException;
 
         static JavaObject("java/nio/charset/Charset") DEFAULT_UTF8_CHARSET;
 

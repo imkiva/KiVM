@@ -66,6 +66,8 @@ namespace kivm {
 
         void throwException(InstanceKlass *exceptionClass, const String &message);
 
+        void throwException(instanceOop exception);
+
         void enterSafepoint();
 
         void enterSafepointIfNeeded();

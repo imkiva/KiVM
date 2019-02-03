@@ -1251,7 +1251,7 @@ OPCODE(GETFIELD)
         pc += 2;
         jobject ref = stack.popReference();
         if (ref == nullptr) {
-        thread->throwException(Global::java_lang_NullPointerException);
+        thread->throwException(Global::_NullPointerException);
         HANDLE_EXCEPTION();
     } else {
         instanceOop receiver = Resolver::instance(ref);
@@ -1379,7 +1379,7 @@ OPCODE(ARRAYLENGTH)
     {
         jobject ref = stack.popReference();
         if (ref == nullptr) {
-        thread->throwException(Global::java_lang_NullPointerException);
+        thread->throwException(Global::_NullPointerException);
         HANDLE_EXCEPTION();
     } else {
         arrayOop array = Resolver::array(ref);
@@ -1396,7 +1396,7 @@ OPCODE(ATHROW)
         exceptionHandler:
         auto exceptionOop = Resolver::instance(stack.popReference());
         if (exceptionOop == nullptr) {
-        thread->throwException(Global::java_lang_NullPointerException);
+        thread->throwException(Global::_NullPointerException);
         HANDLE_EXCEPTION();
     }
 
@@ -1435,7 +1435,7 @@ OPCODE(MONITORENTER)
     {
         jobject ref = stack.popReference();
         if (ref == nullptr) {
-        thread->throwException(Global::java_lang_NullPointerException);
+        thread->throwException(Global::_NullPointerException);
         HANDLE_EXCEPTION();
     } else {
         auto object = Resolver::javaOop(ref);
@@ -1451,7 +1451,7 @@ OPCODE(MONITOREXIT)
     {
         jobject ref = stack.popReference();
         if (ref == nullptr) {
-        thread->throwException(Global::java_lang_NullPointerException);
+        thread->throwException(Global::_NullPointerException);
         HANDLE_EXCEPTION();
     } else {
         auto object = Resolver::javaOop(ref);

@@ -73,7 +73,7 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
     assert(thread != nullptr);
 
     if (srcOop == nullptr || destOop == nullptr) {
-        thread->throwException(Global::java_lang_NullPointerException);
+        thread->throwException(Global::_NullPointerException);
         return;
     }
 
@@ -108,8 +108,8 @@ void Java_java_lang_System_arraycopy(JNIEnv *env, jclass java_lang_System,
         // l.add("hello");
         // String[] s = new String[1];
         // l.toArray(s);
-        if (srcComponent != Global::java_lang_Object) {
-            if (srcComponent != Global::java_lang_Object
+        if (srcComponent != Global::_Object) {
+            if (srcComponent != Global::_Object
                 && destClass_->getComponentType() != srcClass_->getComponentType()) {
                 thread->throwException((InstanceKlass *) BootstrapClassLoader::get()
                     ->loadClass(L"java/lang/ArrayStoreException"));
@@ -161,7 +161,7 @@ JAVA_NATIVE jstring Java_java_lang_System_mapLibraryName(JNIEnv *env, jclass jav
     if (stringOop == nullptr) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        thread->throwException(Global::java_lang_NullPointerException);
+        thread->throwException(Global::_NullPointerException);
         return nullptr;
     }
 
@@ -188,7 +188,7 @@ JAVA_NATIVE jlong Java_java_lang_System_currentTimeMillis(JNIEnv *env, jclass ja
     timeval time{};
     if (gettimeofday(&time, nullptr) == -1) {
         auto thread = Threads::currentThread();
-        thread->throwException(Global::java_lang_InternalError, L"gettimeofday() failed");
+        thread->throwException(Global::_InternalError, L"gettimeofday() failed");
         return 0;
     }
     return time.tv_sec * 1000 + time.tv_usec / 1000;
@@ -198,7 +198,7 @@ JAVA_NATIVE jlong Java_java_lang_System_nanoTime(JNIEnv *env, jclass java_lang_S
     timeval time{};
     if (gettimeofday(&time, nullptr) == -1) {
         auto thread = Threads::currentThread();
-        thread->throwException(Global::java_lang_InternalError, L"gettimeofday() failed");
+        thread->throwException(Global::_InternalError, L"gettimeofday() failed");
         return 0;
     }
     return time.tv_sec * 1000 * 1000 * 1000 + time.tv_usec * 1000;

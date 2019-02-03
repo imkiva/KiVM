@@ -51,13 +51,13 @@
     jobject ref = stack.popReference(); \
     auto array = Resolver::resolveFunc(ref); \
     if (array == nullptr) { \
-        thread->throwException(Global::java_lang_NullPointerException); \
+        thread->throwException(Global::_NullPointerException); \
         stack.clear(); \
         stack.pushReference(thread->_exceptionOop); \
         goto exceptionHandler; \
     } \
     if (index < 0 || index >= array->getLength()) { \
-        thread->throwException(Global::java_lang_ArrayIndexOutOfBoundsException, \
+        thread->throwException(Global::_ArrayIndexOutOfBoundsException, \
             L"length is " \
             + std::to_wstring(array->getLength()) \
             + L", but index is " \
@@ -74,13 +74,13 @@
     auto ref = stack.popReference(); \
     auto array = Resolver::resolveFunc(ref); \
     if (array == nullptr) { \
-        thread->throwException(Global::java_lang_NullPointerException); \
+        thread->throwException(Global::_NullPointerException); \
         stack.clear(); \
         stack.pushReference(thread->_exceptionOop); \
         goto exceptionHandler; \
     } \
     if (index < 0 || index >= array->getLength()) { \
-        thread->throwException(Global::java_lang_ArrayIndexOutOfBoundsException, \
+        thread->throwException(Global::_ArrayIndexOutOfBoundsException, \
             L"length is " \
             + std::to_wstring(array->getLength()) \
             + L", but index is " \

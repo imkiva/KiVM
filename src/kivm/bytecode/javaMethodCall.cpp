@@ -29,7 +29,7 @@ namespace kivm {
         if (hasThis) {
             thisObject = *_args.begin();
             if (thisObject == nullptr) {
-                _thread->throwException(Global::java_lang_NullPointerException);
+                _thread->throwException(Global::_NullPointerException);
                 return nullptr;
             }
         }

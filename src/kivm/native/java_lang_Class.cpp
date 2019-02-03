@@ -203,7 +203,7 @@ JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass j
     if (stringInstance == nullptr) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        thread->throwException(Global::java_lang_NullPointerException);
+        thread->throwException(Global::_NullPointerException);
         return nullptr;
     }
 
@@ -360,7 +360,7 @@ JAVA_NATIVE jstring Java_java_lang_Class_getSuperclass(JNIEnv *env, jobject java
     auto classMirror = Resolver::mirror(java_lang_Class_mirror);
     auto mirrorTarget = classMirror->getMirrorTarget();
 
-    if (mirrorTarget == nullptr || mirrorTarget == Global::java_lang_Object) {
+    if (mirrorTarget == nullptr || mirrorTarget == Global::_Object) {
         return nullptr;
     }
 
@@ -404,7 +404,7 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
 
     auto nameOop = Resolver::instance(javaName);
     if (nameOop == nullptr) {
-        thread->throwException(Global::java_lang_NullPointerException,
+        thread->throwException(Global::_NullPointerException,
             L"name cannot be null");
         return nullptr;
     }
@@ -416,7 +416,7 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass java_lang_C
 
     auto klass = BootstrapClassLoader::get()->loadClass(fixedName);
     if (klass == nullptr || klass->getClassType() != ClassType::INSTANCE_CLASS) {
-        thread->throwException(Global::java_lang_ClassNotFoundException, className);
+        thread->throwException(Global::_ClassNotFoundException, className);
         return nullptr;
     }
 

@@ -91,6 +91,16 @@ namespace kivm {
         this->_exceptionOop = exceptionOop;
     }
 
+    void JavaThread::throwException(instanceOop exception) {
+        // wtf
+        if (exception == nullptr) {
+            throwException(Global::_NullPointerException);
+            return;
+        }
+
+        
+    }
+
     void JavaThread::enterSafepoint() {
         auto gc = GCThread::get();
         if (gc != nullptr) {

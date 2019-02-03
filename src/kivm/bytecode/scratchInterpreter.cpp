@@ -1321,7 +1321,7 @@ namespace kivm {
                     pc += 2;
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        thread->throwException(Global::java_lang_NullPointerException);
+                        thread->throwException(Global::_NullPointerException);
                         HANDLE_EXCEPTION();
                     } else {
                         instanceOop receiver = Resolver::instance(ref);
@@ -1449,7 +1449,7 @@ namespace kivm {
                 {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        thread->throwException(Global::java_lang_NullPointerException);
+                        thread->throwException(Global::_NullPointerException);
                         HANDLE_EXCEPTION();
                     } else {
                         arrayOop array = Resolver::array(ref);
@@ -1466,7 +1466,7 @@ namespace kivm {
                     exceptionHandler:
                     auto exceptionOop = Resolver::instance(stack.popReference());
                     if (exceptionOop == nullptr) {
-                        thread->throwException(Global::java_lang_NullPointerException);
+                        thread->throwException(Global::_NullPointerException);
                         HANDLE_EXCEPTION();
                     }
 
@@ -1505,7 +1505,7 @@ namespace kivm {
                 {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        thread->throwException(Global::java_lang_NullPointerException);
+                        thread->throwException(Global::_NullPointerException);
                         HANDLE_EXCEPTION();
                     } else {
                         auto object = Resolver::javaOop(ref);
@@ -1521,7 +1521,7 @@ namespace kivm {
                 {
                     jobject ref = stack.popReference();
                     if (ref == nullptr) {
-                        thread->throwException(Global::java_lang_NullPointerException);
+                        thread->throwException(Global::_NullPointerException);
                         HANDLE_EXCEPTION();
                     } else {
                         auto object = Resolver::javaOop(ref);

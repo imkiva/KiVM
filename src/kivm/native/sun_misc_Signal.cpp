@@ -120,7 +120,7 @@ JAVA_NATIVE jint Java_sun_misc_Signal_findSignal(JNIEnv *env, jclass unused, jst
     if (signalNameOop == nullptr) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        thread->throwException(Global::java_lang_NullPointerException);
+        thread->throwException(Global::_NullPointerException);
         return 0;
     }
 

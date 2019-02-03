@@ -34,7 +34,7 @@ JAVA_NATIVE void Java_java_io_FileOutputStream_writeBytes(JNIEnv *env, jobject j
     if (byteArray->getLength() <= off && byteArray->getLength() < (off + len)) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        thread->throwException(Global::java_lang_ArrayIndexOutOfBoundsException,
+        thread->throwException(Global::_ArrayIndexOutOfBoundsException,
             L"length is "
             + std::to_wstring(byteArray->getLength())
             + L", but index is "
@@ -61,7 +61,7 @@ JAVA_NATIVE void Java_java_io_FileOutputStream_writeBytes(JNIEnv *env, jobject j
     if (write(fd, buf, (size_t) len) == -1) {
         auto thread = Threads::currentThread();
         assert(thread != nullptr);
-        thread->throwException(Global::java_io_IOException, L"write() failed");
+        thread->throwException(Global::_IOException, L"write() failed");
         return;
     }
     Universe::deallocCObject(buf);
