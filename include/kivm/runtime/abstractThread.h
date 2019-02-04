@@ -34,6 +34,8 @@ namespace kivm {
 
         void setThreadName(const String &name);
 
+        void setPriority(jint priority);
+
         inline ThreadState getThreadState() const {
             return _state;
         }

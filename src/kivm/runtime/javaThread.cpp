@@ -154,6 +154,24 @@ namespace kivm {
             }
             return false;
         });
+
+        return found;
+    }
+
+    JavaThread *Threads::searchNativeThread(instanceOop threadObject) {
+        if (threadObject == nullptr) {
+            return nullptr;
+        }
+
+        JavaThread *found = nullptr;
+        Threads::forEach([&](JavaThread *thread) {
+            if (thread->getJavaThreadObject() == threadObject) {
+                found = thread;
+                return true;
+            }
+            return false;
+        });
+
         return found;
     }
 }

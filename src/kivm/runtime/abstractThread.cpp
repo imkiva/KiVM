@@ -20,6 +20,8 @@ namespace kivm {
           _state(ThreadState::RUNNING) {
     }
 
+    AbstractThread::~AbstractThread() = default;
+
     void AbstractThread::start() {
         this->_nativeThread = new std::thread([this] {
             this->run();
@@ -50,5 +52,7 @@ namespace kivm {
 #endif
     }
 
-    AbstractThread::~AbstractThread() = default;
+    void AbstractThread::setPriority(jint priority) {
+        // TODO: set thread priority
+    }
 }

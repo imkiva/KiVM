@@ -91,7 +91,7 @@ namespace kivm {
     }
 
     int KiVM::destroyJavaVM(JavaVM *vm) {
-        if (vm == nullptr || vm != sJavaVMInstance) {
+        if (vm == nullptr || vm != sJavaVMInstance || !Global::jvmBooted) {
             return JNI_ERR;
         }
 
@@ -110,7 +110,8 @@ namespace kivm {
         sJavaVMInstance = nullptr;
         sJNIEnvInstance = nullptr;
 
-        // TODO: notify JavaVM destroyed
+        // notify JavaVM destroyed
+        Global::jvmBooted = false;
         return JNI_OK;
     }
 
@@ -440,7 +441,7 @@ namespace kivm {
     }
 
     void KiVM::printStackTrace(JavaThread *thread) {
-        auto exception = thread->_exceptionOop ;
+        auto exception = thread->_exceptionOop;
         thread->_exceptionOop = nullptr;
         auto exClass = exception->getInstanceClass();
         auto printer = exClass->getVirtualMethod(L"printStackTrace",

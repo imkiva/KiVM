@@ -28,7 +28,18 @@ JAVA_NATIVE jobject Java_java_lang_Thread_currentThread(JNIEnv *env, jclass java
 
 JAVA_NATIVE void Java_java_lang_Thread_setPriority0(JNIEnv *env, jobject threadObject, jint priority) {
     auto instanceOop = Resolver::instance(threadObject);
-    // TODO: set native thread's priority
+    auto thread = Threads::searchNativeThread(instanceOop);
+    if (thread == nullptr) {
+        auto current = Threads::currentThread();
+        if (current == nullptr) {
+            SHOULD_NOT_REACH_HERE();
+        }
+        current->throwException(Global::_NullPointerException, false);
+        return;
+    }
+
+    // set native thread's priority
+    thread->setPriority(priority);
 }
 
 JAVA_NATIVE jboolean Java_java_lang_Thread_isAlive(JNIEnv *env, jobject threadObject) {

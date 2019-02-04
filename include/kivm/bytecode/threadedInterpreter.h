@@ -45,16 +45,6 @@ namespace kivm {
                             u4 &pc,
                             Stack &stack,
                             Locals &locals);
-
-#define HELPER_FUNC(opcode) \
-        static oop opcode(JavaThread *thread, void **jump, \
-                            Frame *currentFrame, \
-                            Method *currentMethod, \
-                            InstanceKlass *currentClass, \
-                            const CodeBlob &codeBlob, \
-                            u4 &pc, \
-                            Stack &stack, \
-                            Locals &locals);
     };
 }
 #endif

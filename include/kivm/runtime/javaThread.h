@@ -147,6 +147,8 @@ namespace kivm {
 
         static JavaThread *currentThread();
 
+        static JavaThread *searchNativeThread(instanceOop threadObject);
+
         static void forEach(const std::function<bool(JavaThread *)> &callback) {
             LockGuard lockGuard(appThreadLock());
             for (auto it : getJavaThreadList()) {

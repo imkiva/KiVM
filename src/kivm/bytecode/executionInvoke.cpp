@@ -58,7 +58,7 @@ namespace kivm {
         return Resolver::instance(mh);
     }
 
-    static JavaObject("MethodHandles.Lookup") makeMethodHandlesLookup(JavaThread *thread) {
+    static JavaObject("Lookup") makeLookup(JavaThread *thread) {
         static String lookupMethodName = L"lookup";
         static String lookupMethodDesc = L"()Ljava/lang/invoke/MethodHandles$Lookup;";
 
@@ -155,9 +155,9 @@ namespace kivm {
         return Resolver::instance(mh);
     }
 
-    static JavaObject("MethodHandle")
-    makeMethodHandle(JavaThread *thread, RuntimeConstantPool *rt, int index, bool isBootstrap) {
-        auto lookupObject = makeMethodHandlesLookup(thread);
+    static JavaObject("MethodHandle") makeMethodHandle(JavaThread *thread, RuntimeConstantPool *rt,
+                                                       int index, bool isBootstrap) {
+        auto lookupObject = makeLookup(thread);
         if (lookupObject == nullptr) {
             return nullptr;
         }
@@ -293,7 +293,7 @@ namespace kivm {
             return nullptr;
         }
 
-        JavaObject("Lookup") lookupObject = makeMethodHandlesLookup(thread);
+        JavaObject("Lookup") lookupObject = makeLookup(thread);
         if (lookupObject == nullptr) {
             return nullptr;
         }
