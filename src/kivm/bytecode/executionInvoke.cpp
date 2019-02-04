@@ -68,8 +68,7 @@ namespace kivm {
         auto lookupMethod = klass->getThisClassMethod(lookupMethodName, lookupMethodDesc);
         auto lookupObject = JavaCall::withArgs(thread, lookupMethod, {});
         if (thread->isExceptionOccurred()) {
-            KiVM::printStackTrace(thread);
-            SHOULD_NOT_REACH_HERE_M("wtf");
+            return nullptr;
         }
         return Resolver::instance(lookupObject);
     }
@@ -160,7 +159,6 @@ namespace kivm {
     makeMethodHandle(JavaThread *thread, RuntimeConstantPool *rt, int index, bool isBootstrap) {
         auto lookupObject = makeMethodHandlesLookup(thread);
         if (lookupObject == nullptr) {
-            SHOULD_NOT_REACH_HERE();
             return nullptr;
         }
 
@@ -290,9 +288,16 @@ namespace kivm {
         const String &descriptor = *invoke->methodNameAndType->second;
 
         auto methodHandleIndex = bootstrap.bootstrap_method_ref;
-        auto methodHandle = makeMethodHandle(thread, rt, methodHandleIndex, true);
+        JavaObject("MethodHandle") methodHandle = makeMethodHandle(thread, rt, methodHandleIndex, true);
+        if (methodHandle == nullptr) {
+            return nullptr;
+        }
 
         JavaObject("Lookup") lookupObject = makeMethodHandlesLookup(thread);
+        if (lookupObject == nullptr) {
+            return nullptr;
+        }
+
         std::list<oop> callSiteArgs;
         callSiteArgs.push_back(lookupObject);
         callSiteArgs.push_back(java::lang::String::from(*invoke->methodNameAndType->first));
@@ -319,9 +324,14 @@ namespace kivm {
                 case CONSTANT_Double:
                     callSiteArgs.push_back(new doubleOopDesc(rt->getDouble(argIndex)));
                     break;
-                case CONSTANT_MethodHandle:
-                    callSiteArgs.push_back(makeMethodHandle(thread, rt, argIndex, false));
+                case CONSTANT_MethodHandle: {
+                    auto mh = makeMethodHandle(thread, rt, argIndex, false);
+                    if (mh == nullptr) {
+                        return nullptr;
+                    }
+                    callSiteArgs.push_back(mh);
                     break;
+                }
                 case CONSTANT_MethodType: {
                     auto methodType = (CONSTANT_MethodType_info *) rt->getRawPool()[argIndex];
                     int descIndex = methodType->descriptor_index;
@@ -355,6 +365,9 @@ namespace kivm {
         // Finally we got the java.lang.invoke.CallSite
         JavaObject("CallSite") callSite = (instanceOop) JavaCall::withArgs(thread, invokeWithArgsMethod,
             {methodHandle, callSiteArgArray});
+        if (thread->isExceptionOccurred()) {
+            return nullptr;
+        }
 
         auto dynamicInvokerMethod = callSite->getInstanceClass()
             ->getVirtualMethod(L"dynamicInvoker", L"()Ljava/lang/invoke/MethodHandle;");
@@ -364,8 +377,8 @@ namespace kivm {
 
         JavaObject("MethodHandle") MH = (instanceOop) JavaCall::withArgs(thread, dynamicInvokerMethod,
             {callSite});
-        if (MH == nullptr) {
-            SHOULD_NOT_REACH_HERE();
+        if (thread->isExceptionOccurred()) {
+            return nullptr;
         }
 
         auto invokeExactMethod = MH->getInstanceClass()
