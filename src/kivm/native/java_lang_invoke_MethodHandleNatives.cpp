@@ -18,6 +18,7 @@ JAVA_NATIVE jint Java_java_lang_invoke_MethodHandleNatives_getConstant(JNIEnv *e
 JAVA_NATIVE jobject Java_java_lang_invoke_MethodHandleNatives_resolve(JNIEnv *env, jclass mhn,
                                                                       jobject memberName, jclass caller) {
     // TODO: implement
+    WARN("MethodHandleNatives.resolve() is not implemented");
     return nullptr;
 }
 
