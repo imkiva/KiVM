@@ -15,19 +15,37 @@
 
 using namespace kivm;
 
-static jlong encodeOffset(int offset, bool isStatic) {
-    ++offset;
-    if (isStatic) {
-        return offset * 2;
+union OffsetEncoder {
+    struct {
+        int isStatic;
+        int offset;
+    };
+    jlong result{};
+
+    std::tuple<int, bool> decode() {
+        return std::make_tuple(offset, isStatic != 0);
+    };
+
+    jlong encode() {
+        return result;
     }
-    return offset * 2 + 1;
+
+    OffsetEncoder(int offset, bool isStatic) {
+        this->offset = offset;
+        this->isStatic = isStatic;
+    }
+
+    explicit OffsetEncoder(jlong encoded) {
+        this->result = encoded;
+    }
+};
+
+static jlong encodeOffset(int offset, bool isStatic) {
+    return OffsetEncoder(offset, isStatic).encode();
 }
 
 static std::tuple<int, bool> decodeOffset(jlong encoded) {
-    if (encoded % 2 == 0) {
-        return std::make_tuple((int) (encoded / 2) - 1, true);
-    }
-    return std::make_tuple((int) ((encoded - 1) / 2) - 1, false);
+    return OffsetEncoder(encoded).decode();
 };
 
 oop *getFieldByOffset(oop owner, int offset, bool isStatic) {
@@ -174,8 +192,27 @@ Java_sun_misc_Unsafe_compareAndSwapInt(JNIEnv *env, jobject javaUnsafe,
                                        jint expected, jint update) {
     DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset);
     oop *addr = getFieldByOffset(owner, offset, isStatic);
-    auto ptr = (*((intOop *) addr))->getValueUnsafe();
+    volatile jint *ptr = (*((intOop *) addr))->getValueUnsafe();
     return JBOOLEAN(cmpxchg(ptr, expected, update) == expected);
+}
+
+JAVA_NATIVE jboolean
+Java_sun_misc_Unsafe_compareAndSwapLong(JNIEnv *env, jobject javaUnsafe,
+                                       jobject javaOwner, jlong encodedOffset,
+                                       jlong expected, jlong update) {
+    DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset);
+    oop *addr = getFieldByOffset(owner, offset, isStatic);
+    volatile jlong *ptr = (*((longOop *) addr))->getValueUnsafe();
+    return JBOOLEAN(cmpxchg(ptr, expected, update) == expected);
+}
+
+JAVA_NATIVE jboolean
+Java_sun_misc_Unsafe_compareAndSwapObject(JNIEnv *env, jobject javaUnsafe,
+                                          jobject javaOwner, jlong encodedOffset,
+                                          jobject expected, jobject update) {
+    DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset);
+    auto ptr = (volatile uintptr_t *) getFieldByOffset(owner, offset, isStatic);
+    return JBOOLEAN(cmpxchg(ptr, (uintptr_t) expected, (uintptr_t) update) == (uintptr_t) expected);
 }
 
 JAVA_NATIVE jlong Java_sun_misc_Unsafe_allocateMemory(JNIEnv *env, jobject javaUnsafe, jlong size) {

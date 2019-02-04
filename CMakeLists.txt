@@ -276,7 +276,7 @@ set(SOURCE_FILES
         src/kivm/native/java_lang_Runtime.cpp
         src/kivm/jni/nativeLibrary.cpp
         src/kivm/jni/nativeMethod.cpp
-        src/shared/filesystem.cpp)
+        src/shared/filesystem.cpp src/kivm/native/java_lang_invoke_MethodHandleNatives.cpp)
 
 set(KIVM_PLATFORM_SRC
         include/shared/os/common/dl.h
