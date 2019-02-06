@@ -42,7 +42,7 @@ Options:
 ### Credit
 * Inspired by [wind_jvm](https://github.com/wind2412/wind_jvm)
 * Modified version of [libzippp](https://github.com/ctabin/libzippp)
-# Command line options parsing using [clipp](https://github.com/muellan/clipp)
+* Command line options parsing using [clipp](https://github.com/muellan/clipp)
 
 ### See Also
 * [HiVM](https://github.com/imkiva/HiVM)
