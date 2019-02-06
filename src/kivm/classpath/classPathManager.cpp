@@ -19,7 +19,7 @@ namespace kivm {
         ClassPathManager *cpm = ClassPathManager::get();
 
         const char *classpathEnv = getenv("CLASSPATH");
-        if (classpathEnv) {
+        if (classpathEnv != nullptr) {
             const String &classpath = strings::fromStdString(classpathEnv);
             cpm->addClassPaths(classpath);
         }
