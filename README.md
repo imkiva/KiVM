@@ -25,6 +25,20 @@ Kiva's Java Virtual Machine.
     * Type `cmake . && make` in your terminal app.
     * Enjoy it!
 
+### Usage
+```
+Usage:
+        ./java [-?] [-v] [-cp <path>] [-classpath <path>] <class-name> [<args>]...
+
+Options:
+        -?, -help           show help
+        -v, -version        show version
+        -cp <path>          class search path
+        -classpath <path>   same as -cp
+        <class-name>        name of the class to run
+
+```
+
 ### Run
 ```bash
 $ ./java -cp </path/to/rt.jar>:</path/to/charsets.jar>:... <main-class-name> [args...]
