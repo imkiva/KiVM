@@ -28,7 +28,7 @@ Kiva's Java Virtual Machine.
 ### Usage
 ```
 Usage:
-        ./java [-?] [-v] [-cp <path>] [-classpath <path>] <class-name> [<args>]...
+        java [-?] [-v] [-cp <path>] [-classpath <path>] <class-name> [<args>]...
 
 Options:
         -?, -help           show help
