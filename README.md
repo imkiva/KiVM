@@ -27,8 +27,7 @@ Kiva's Java Virtual Machine.
 
 ### Run
 ```bash
-$ export CLASSPATH=</path/to/rt.jar>:</path/to/charsets.jar>:...
-$ ./java <main-class-name> [args...]
+$ ./java -cp </path/to/rt.jar>:</path/to/charsets.jar>:... <main-class-name> [args...]
 ```
 
 ### Credit
