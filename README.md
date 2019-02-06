@@ -39,11 +39,6 @@ Options:
 
 ```
 
-### Run
-```bash
-$ ./java -cp </path/to/rt.jar>:</path/to/charsets.jar>:... <main-class-name> [args...]
-```
-
 ### Credit
 * Inspired by [wind_jvm](https://github.com/wind2412/wind_jvm)
 * Modified version of [libzippp](https://github.com/ctabin/libzippp)
