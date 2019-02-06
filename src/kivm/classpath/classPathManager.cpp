@@ -18,12 +18,10 @@ namespace kivm {
     void ClassPathManager::initialize() {
         ClassPathManager *cpm = ClassPathManager::get();
 
-        const String &classPathEnv = strings::fromStdString(getenv("CLASSPATH"));
-        const auto &classPathArray = strings::split(classPathEnv, Global::PATH_DELIMITER);
-        for (const auto &classPathEntry : classPathArray) {
-            D("ClassPathManager: adding classpath: %s",
-              strings::toStdString(classPathEntry).c_str());
-            cpm->addClassPath(classPathEntry);
+        const char *classpathEnv = getenv("CLASSPATH");
+        if (classpathEnv) {
+            const String &classpath = strings::fromStdString(classpathEnv);
+            cpm->addClassPaths(classpath);
         }
     }
 
@@ -105,8 +103,8 @@ namespace kivm {
 
         if (classSource != ClassSource::NOT_FOUND) {
             D("ClassPathManager: found class %s in file: %s",
-              strings::toStdString(className).c_str(),
-              strings::toStdString(classFile).c_str());
+                strings::toStdString(className).c_str(),
+                strings::toStdString(classFile).c_str());
         }
 
         return ClassSearchResult(classFile, fd, classSource, buffer, bufferSize);
@@ -132,7 +130,16 @@ namespace kivm {
         }
 
         D("ClassPathManager: ignoring unrecognized classpath: %s",
-          strings::toStdString(path).c_str());
+            strings::toStdString(path).c_str());
+    }
+
+    void ClassPathManager::addClassPaths(const String &classpath) {
+        const auto &classPathArray = strings::split(classpath, Global::PATH_DELIMITER);
+        for (const auto &classPathEntry : classPathArray) {
+            D("ClassPathManager: adding classpath: %s",
+                strings::toStdString(classPathEntry).c_str());
+            addClassPath(classPathEntry);
+        }
     }
 
     ClassSearchResult::ClassSearchResult(const String &file, int fd, ClassSource source,

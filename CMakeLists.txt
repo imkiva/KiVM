@@ -305,7 +305,7 @@ IF (UNIX)
 ENDIF ()
 
 #### Executables
-add_executable(java src/bin/java.cpp)
+add_executable(java src/bin/java.cpp include/bin/clipp.h)
 target_link_libraries(java kivm)
 
 #### Tests

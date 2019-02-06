@@ -42,6 +42,8 @@ namespace kivm {
 
         void addClassPath(const String &path);
 
+        void addClassPaths(const String &classpath);
+
         ClassSearchResult searchClass(const String &className);
 
         void destroy();
