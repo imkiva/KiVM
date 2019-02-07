@@ -21,15 +21,15 @@ int main(int argc, char **argv) {
                 fprintf(stderr, "%s: %s\n", argv[0], strings::toStdString(KIVM_VERSION_STRING).c_str());
             }) % "show version",
             (option("-cp") & value("path").set(optClassPath)) % "class search path",
-            (option("-classpath") & value("path").set(optClassPath)) % "same as -cp",
-            value("class-name").set(optClassName) % "name of the class to run",
+            value("class-name").set(optClassName),
             opt_values("args", optArgs)
     );
 
     if (!parse(argc, argv, cli) || optShowHelp) {
         auto fmt = doc_formatting{}.doc_column(28);
+        auto filter = param_filter{}.prefix("-");
         std::cerr << "Usage:\n" << usage_lines(cli, argv[0]) << "\n\n"
-                  << "Options:\n" << documentation(cli, fmt) << "\n\n";
+                  << "Options:\n" << documentation(cli, fmt, filter) << "\n\n";
         return optShowHelp ? 0 : 1;
     }
 
