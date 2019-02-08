@@ -171,6 +171,8 @@ namespace kivm {
         java::lang::Class::mirrorCoreAndDelayedClasses();
         java::lang::Class::mirrorDelayedArrayClasses();
         Global::_Object = use(cl, thread, J_OBJECT);
+        Global::_Class = classClass;
+        Global::_String = use(cl, thread, J_STRING);
         Global::_Cloneable = use(cl, thread, J_CLONEABLE);
         Global::_Serializable = use(cl, thread, J_SERIALIZABLE);
         Global::_NullPointerException = use(cl, thread, J_NPE);
@@ -178,7 +180,6 @@ namespace kivm {
         Global::_ClassNotFoundException = use(cl, thread, J_CLASS_NOT_FOUND);
         Global::_InternalError = use(cl, thread, J_INTERNAL_ERROR);
         Global::_IOException = use(cl, thread, J_IOEXCEPTION);
-//        Global::java_lang_invoke_MethodHandles = use(cl, thread, J_METHODHANDLES);
         java::lang::reflect::Constructor::initialize();
         java::lang::reflect::Method::initialize();
 

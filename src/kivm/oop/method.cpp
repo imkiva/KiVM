@@ -83,6 +83,7 @@ namespace kivm {
                 *flag = true;
             }
 
+            auto cl = BootstrapClassLoader::get();
             size_t arrayDimension = 0;
             auto size = desc.size();
 
@@ -103,9 +104,16 @@ namespace kivm {
                         }
                         const auto &className = String(arrayDimension, L'[')
                             + desc.substr(startIndex, i - startIndex + 1);
-                        arrayDimension = 0;
                         D("oop: parsing arg list: type: %s",
                             strings::toStdString(className).c_str());
+
+                        if (arrayDimension > 0) {
+                            arrayDimension = 0;
+                            argumentTypes->push_back(cl->loadClass(className)->getJavaMirror());
+                        } else {
+                            const auto &fixedName = className.substr(1, className.length() - 2);
+                            argumentTypes->push_back(cl->loadClass(fixedName)->getJavaMirror());
+                        }
                         break;
                     }
                     case L'B':    // byte
@@ -118,9 +126,15 @@ namespace kivm {
                     case L'D':    // double
                     {
                         const auto &className = String(arrayDimension, L'[') + ch;
-                        arrayDimension = 0;
                         D("oop: parsing arg list: type: %s",
                             strings::toStdString(className).c_str());
+
+                        if (arrayDimension > 0) {
+                            argumentTypes->push_back(cl->loadClass(className)->getJavaMirror());
+                            arrayDimension = 0;
+                        } else {
+                            argumentTypes->push_back(java::lang::Class::findPrimitiveTypeMirror(className));
+                        }
                         break;
                     }
                     case L'[' :

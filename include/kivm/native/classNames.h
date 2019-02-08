@@ -20,7 +20,8 @@
 #define J_METHOD L"java/lang/reflect/Method"
 #define J_CTOR L"java/lang/reflect/Constructor"
 #define J_ACCESSIBLE_OBJECT L"java/lang/reflect/AccessibleObject"
-#define J_METHODHANDLES L"java/lang/invoke/MethodHandles"
+#define J_METHODHANDLE L"java/lang/invoke/MethodHandle"
+#define J_METHODTYPE L"java/lang/invoke/MethodType"
 
 #define J_INTERNAL_ERROR L"java/lang/InternalError"
 #define J_NPE L"java/lang/NullPointerException"

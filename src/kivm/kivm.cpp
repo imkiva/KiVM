@@ -28,6 +28,8 @@ namespace kivm {
     String Global::PATH_DELIMITER(PATH_DELIMITER_CHAR); // NOLINT
     String Global::CLASS_EXTENSION(L"class"); // NOLINT
     InstanceKlass *Global::_Object = nullptr;
+    InstanceKlass *Global::_Class = nullptr;
+    InstanceKlass *Global::_String = nullptr;
     InstanceKlass *Global::_Cloneable = nullptr;
     InstanceKlass *Global::_Serializable = nullptr;
     InstanceKlass *Global::_NullPointerException = nullptr;

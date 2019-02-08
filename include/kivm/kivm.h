@@ -65,6 +65,8 @@ namespace kivm {
         static String CLASS_EXTENSION;
 
         static InstanceKlass *_Object;
+        static InstanceKlass *_Class;
+        static InstanceKlass *_String;
         static InstanceKlass *_Cloneable;
         static InstanceKlass *_Serializable;
         static InstanceKlass *_NullPointerException;
