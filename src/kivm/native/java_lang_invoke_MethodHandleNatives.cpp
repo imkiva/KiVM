@@ -263,7 +263,7 @@ JAVA_NATIVE jobject Java_java_lang_invoke_MethodHandleNatives_resolve(JNIEnv *en
             return nullptr;
         }
 
-        return makeMemberName(refKind, target, nameObj, typeObj);
+        return makeMemberName(refKind, target, memberName, typeObj);
     }
 
     if (isField(flags)) {
@@ -276,7 +276,7 @@ JAVA_NATIVE jobject Java_java_lang_invoke_MethodHandleNatives_resolve(JNIEnv *en
             SHOULD_NOT_REACH_HERE();
         }
 
-        return makeMemberName(refKind, fieldInfo->_field, nameObj);
+        return makeMemberName(refKind, fieldInfo->_field, memberName);
     }
 
     if (isConstructor(flags)) {
