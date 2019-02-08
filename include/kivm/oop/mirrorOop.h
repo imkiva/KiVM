@@ -35,7 +35,7 @@ namespace kivm {
         }
 
         bool isPrimitiveMirror() const {
-            return getTarget() != nullptr;
+            return getTarget() == nullptr;
         }
     };
 }

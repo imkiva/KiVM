@@ -45,12 +45,11 @@ static bool isSpecializedMethod(const String &methodName) {
 }
 
 static String toClassName(mirrorOop mirror) {
-    auto target = mirror->getTarget();
-
-    if (target == nullptr) {
+    if (mirror->isPrimitiveMirror()) {
         return std::to_wstring(mirror->getPrimitiveType());
 
     } else {
+        auto target = mirror->getTarget();
         switch (target->getClassType()) {
             case ClassType::INSTANCE_CLASS:
                 return L"L" + target->getName() + L";";
