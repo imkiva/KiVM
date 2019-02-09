@@ -54,8 +54,7 @@ namespace kivm {
             if (field->isFinal()) {
                 if (!helperInitConstantField(_staticFieldValues, e.second->_offset,
                     _classFile->constant_pool, field)) {
-                    // TODO: throw VerifyError
-                    PANIC("java.lang.VerifyError: static final fields must be initialized");
+                    helperInitField(_staticFieldValues, e.second->_offset, field);
                 }
             } else {
                 helperInitField(_staticFieldValues, e.second->_offset, field);

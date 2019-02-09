@@ -386,7 +386,7 @@ JAVA_NATIVE jboolean Java_java_lang_Class_isAssignableFrom(JNIEnv *env,
         return JBOOLEAN(lhs == rhs);
     }
 
-    return JBOOLEAN(Execution::instanceOf(lhsKlass, rhsKlass));
+    return JBOOLEAN(Execution::instanceOf(rhsKlass, lhsKlass));
 }
 
 JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass mirror,

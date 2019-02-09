@@ -83,11 +83,13 @@ namespace kivm {
                     break;
                 }
                 default: {
-                    assert(false);
+                    SHOULD_NOT_REACH_HERE();
                 }
             }
+            return true;
         }
-        return true;
+        
+        return false;
     }
 }
 
