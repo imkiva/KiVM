@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     auto cli = (
             option("-h", "-help").call([&]() { optShowHelp = true; }) % "show help",
             option("-v", "-version").call([argv]() {
-                fprintf(stderr, "%s: %s\n", argv[0], strings::toStdString(KIVM_VERSION_STRING).c_str());
+                fprintf(stderr, "%s: %s\n", argv[0], KIVM_VERSION_STRING);
             }) % "show version",
             (option("-cp") & value("path").set(optClassPath)) % "class search path",
             value("class-name").set(optClassName),
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 
     String mainClassName = strings::replaceAll(strings::fromStdString(optClassName),
         Global::DOT, Global::SLASH);
-    D("java: main class name: %s\n", strings::toStdString(mainClassName).c_str());
+    D("java: main class name: %S\n", (mainClassName).c_str());
 
     JavaVM *javaVM = nullptr;
     JNIEnv *env = nullptr;

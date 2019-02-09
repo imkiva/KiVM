@@ -22,8 +22,8 @@ namespace kivm {
     bool Execution::initializeClass(JavaThread *thread, InstanceKlass *klass) {
         if (klass->getClassState() == ClassState::LINKED) {
             klass->setClassState(ClassState::BEING_INITIALIZED);
-            D("Initializing class %s",
-                strings::toStdString(klass->getName()).c_str());
+            D("Initializing class %S",
+                (klass->getName()).c_str());
 
             // Initialize super classes first.
             Klass *super_klass = klass->getSuperClass();
@@ -36,8 +36,8 @@ namespace kivm {
             klass->initClass();
             auto *clinit = klass->getThisClassMethod(L"<clinit>", L"()V");
             if (clinit != nullptr && clinit->getClass() == klass) {
-                D("<clinit> found in %s, invoking.",
-                    strings::toStdString(klass->getName()).c_str());
+                D("<clinit> found in %S, invoking.",
+                    (klass->getName()).c_str());
                 JavaCall::withArgs(thread, clinit, {});
                 if (thread->isExceptionOccurred()) {
                     return false;
@@ -105,10 +105,10 @@ namespace kivm {
         Klass *targetClass = rt->getClass(constantIndex);
 
         bool result = Execution::instanceOf(objClass, targetClass);
-        D("Execution::instanceOf: %s %s %s: %s",
-            strings::toStdString(objClass->getName()).c_str(),
+        D("Execution::instanceOf: %S %s %S: %s",
+            (objClass->getName()).c_str(),
             checkCast ? "checkcast" : "instanceof",
-            strings::toStdString(targetClass->getName()).c_str(),
+            (targetClass->getName()).c_str(),
             result ? "true" : "false");
 
         if (result) {

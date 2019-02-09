@@ -14,7 +14,7 @@
 #include <shared/string.h>
 #include <kivm/oop/oopfwd.h>
 
-#define KIVM_VERSION_STRING L"1.0.1"
+#define KIVM_VERSION_STRING "1.0.1"
 
 #ifdef KIVM_DEBUG
 #define D(fmt, ...) \

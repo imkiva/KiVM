@@ -104,8 +104,6 @@ namespace kivm {
                         }
                         const auto &className = String(arrayDimension, L'[')
                             + desc.substr(startIndex, i - startIndex + 1);
-                        D("oop: parsing arg list: type: %s",
-                            strings::toStdString(className).c_str());
 
                         if (arrayDimension > 0) {
                             arrayDimension = 0;
@@ -126,8 +124,6 @@ namespace kivm {
                     case L'D':    // double
                     {
                         const auto &className = String(arrayDimension, L'[') + ch;
-                        D("oop: parsing arg list: type: %s",
-                            strings::toStdString(className).c_str());
 
                         if (arrayDimension > 0) {
                             argumentTypes->push_back(cl->loadClass(className)->getJavaMirror());

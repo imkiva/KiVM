@@ -278,7 +278,8 @@ set(SOURCE_FILES
         src/kivm/jni/nativeMethod.cpp
         src/shared/filesystem.cpp
         src/kivm/native/java_lang_invoke_MethodHandleNatives.cpp
-        src/kivm/native/java_lang_reflect_Array.cpp)
+        src/kivm/native/java_lang_reflect_Array.cpp
+        src/kivm/native/sun_misc_URLClassPath.cpp)
 
 set(KIVM_PLATFORM_SRC
         include/shared/os/common/dl.h

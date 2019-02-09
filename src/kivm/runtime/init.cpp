@@ -18,8 +18,8 @@ namespace kivm {
     static inline InstanceKlass *use(ClassLoader *cl, JavaMainThread *thread, const String &name) {
         auto klass = (InstanceKlass *) cl->loadClass(name);
         if (klass == nullptr) {
-            PANIC("java.lang.LinkError: class not found: %s",
-                strings::toStdString(name).c_str());
+            PANIC("java.lang.LinkError: class not found: %S",
+                (name).c_str());
         }
         if (!Execution::initializeClass(thread, klass)) {
             PANIC("class init failed");
@@ -42,13 +42,13 @@ namespace kivm {
 
         auto mainClass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(_mainClassName);
         if (mainClass == nullptr) {
-            PANIC("class not found: %s", strings::toStdString(_mainClassName).c_str());
+            PANIC("class not found: %S", (_mainClassName).c_str());
         }
 
         auto mainMethod = mainClass->getStaticMethod(L"main", L"([Ljava/lang/String;)V");
         if (mainMethod == nullptr) {
-            PANIC("method main(String[]) not found in %s",
-                strings::toStdString(_mainClassName).c_str());
+            PANIC("method main(String[]) not found in %S",
+                (_mainClassName).c_str());
         }
 
         auto stringArrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[Ljava/lang/String;");

@@ -93,8 +93,8 @@ namespace kivm {
 
                         mirrorOop mirror = mirrorKlass::newMirror(klass, nullptr);
                         klass->setJavaMirror(mirror);
-                        D("native: Class::mirrorCoreAndDelayedClasses: mirroring %s",
-                            strings::toStdString(klass->getName()).c_str());
+                        D("native: Class::mirrorCoreAndDelayedClasses: mirroring %S",
+                            (klass->getName()).c_str());
 
                     } else {
                         if (primitiveType == L'V' && isPrimitiveArray) {
@@ -113,8 +113,8 @@ namespace kivm {
                             case L'V': {
                                 mirrorOop mirror = mirrorKlass::newMirror(nullptr, nullptr);
                                 getPrimitiveTypeMirrors().insert(std::make_pair(name, mirror));
-                                D("native: Class::mirrorCoreAndDelayedClasses: mirroring primitive type %s",
-                                    strings::toStdString(name).c_str());
+                                D("native: Class::mirrorCoreAndDelayedClasses: mirroring primitive type %S",
+                                    (name).c_str());
 
                                 if (isPrimitiveArray) {
                                     // Only arrays need them.
@@ -236,8 +236,8 @@ JAVA_NATIVE jobject Java_java_lang_Class_getPrimitiveClass(JNIEnv *env, jclass m
         return java::lang::Class::findPrimitiveTypeMirror(L"V");
     }
 
-    PANIC("Class.getPrimitiveClass(String): unknown primitive type: %s",
-        strings::toStdString(signature).c_str());
+    PANIC("Class.getPrimitiveClass(String): unknown primitive type: %S",
+        (signature).c_str());
 }
 
 JAVA_NATIVE jboolean Java_java_lang_Class_desiredAssertionStatus0(JNIEnv *env, jclass mirror) {
@@ -412,7 +412,7 @@ JAVA_NATIVE jclass Java_java_lang_Class_forName0(JNIEnv *env, jclass mirror,
     const String &className = java::lang::String::toNativeString(nameOop);
     const String &fixedName = strings::replaceAll(className, Global::DOT, Global::SLASH);
 
-    D("Class.forName0(): %s", strings::toStdString(fixedName).c_str());
+    D("Class.forName0(): %S", (fixedName).c_str());
 
     auto klass = BootstrapClassLoader::get()->loadClass(fixedName);
     if (klass == nullptr || klass->getClassType() != ClassType::INSTANCE_CLASS) {

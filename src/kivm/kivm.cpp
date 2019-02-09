@@ -409,23 +409,23 @@ namespace kivm {
 
         if (exceptionOop->getFieldValue(L"java/lang/Throwable", L"detailMessage", L"Ljava/lang/String;", &messageOop)) {
             if (messageOop == nullptr) {
-                PANIC("(JVM) UncaughtException: %s",
-                    strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str());
+                PANIC("(JVM) UncaughtException: %S",
+                    (exceptionOop->getInstanceClass()->getName()).c_str());
 
             } else if (messageOop->getClass()->getClassType() == ClassType::INSTANCE_CLASS) {
                 auto instance = (instanceOop) messageOop;
-                PANIC("(JVM) UncaughtException: %s: %s",
-                    strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str(),
-                    strings::toStdString(java::lang::String::toNativeString(instance)).c_str());
+                PANIC("(JVM) UncaughtException: %S: %S",
+                    (exceptionOop->getInstanceClass()->getName()).c_str(),
+                    (java::lang::String::toNativeString(instance)).c_str());
 
             } else {
-                PANIC("(JVM) UncaughtException: %s (failed to convert message oop)",
-                    strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str());
+                PANIC("(JVM) UncaughtException: %S (failed to convert message oop)",
+                    (exceptionOop->getInstanceClass()->getName()).c_str());
             }
 
         } else {
-            PANIC("(JVM) UncaughtException: %s (failed to obtain message)",
-                strings::toStdString(exceptionOop->getInstanceClass()->getName()).c_str());
+            PANIC("(JVM) UncaughtException: %S (failed to obtain message)",
+                (exceptionOop->getInstanceClass()->getName()).c_str());
         }
     }
 

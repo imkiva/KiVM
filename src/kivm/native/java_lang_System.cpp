@@ -50,9 +50,9 @@ Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobje
     assert(thread != nullptr);
 
     for (const auto &e : PROPS) {
-        D("initProperties: set %s to %s",
-            strings::toStdString(e.first).c_str(),
-            strings::toStdString(e.second).c_str());
+        D("initProperties: set %S to %S",
+            (e.first).c_str(),
+            (e.second).c_str());
         std::list<oop> args{propOop,
                             java::lang::String::intern(e.first),
                             java::lang::String::intern(e.second)};

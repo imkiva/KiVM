@@ -12,6 +12,8 @@
 
 namespace kivm {
     namespace strings {
+        static std::wstring_convert<std::codecvt_utf8<wchar_t>> CONVERT;
+
         // $ 4.4.7
         static bool isFirstType(const u1 *bytes, size_t length, int position) {
             assert(position + 1 <= length);
@@ -93,13 +95,11 @@ namespace kivm {
         }
 
         String fromStdString(const std::string &str) {
-            std::wstring_convert<std::codecvt_utf8<wchar_t >> convert;
-            return convert.from_bytes(str);
+            return CONVERT.from_bytes(str);
         }
 
         std::string toStdString(const String &str) {
-            std::wstring_convert<std::codecvt_utf8<wchar_t>> convert;
-            return convert.to_bytes(str);
+            return CONVERT.to_bytes(str);
         }
 
         String replaceAll(const String &string, const String &oldValue, const String &newValue) {

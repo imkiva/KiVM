@@ -44,8 +44,8 @@ namespace kivm {
     }
 
     void InstanceKlass::initClass() {
-        D("%s: initializing static fields",
-            strings::toStdString(getName()).c_str());
+        D("%S: initializing static fields",
+            (getName()).c_str());
 
         for (auto &e : this->_staticFields) {
             auto field = e.second->_field;
@@ -60,8 +60,8 @@ namespace kivm {
                 helperInitField(_staticFieldValues, e.second->_offset, field);
             }
         }
-        D("%s: class inited",
-            strings::toStdString(getName()).c_str());
+        D("%S: class inited",
+            (getName()).c_str());
     }
 
     void InstanceKlass::linkClass() {
@@ -85,8 +85,8 @@ namespace kivm {
         linkAttributes(pool);
 
         this->setClassState(ClassState::LINKED);
-        D("%s: class linked",
-            strings::toStdString(getName()).c_str());
+        D("%S: class linked",
+            (getName()).c_str());
     }
 
     void InstanceKlass::linkSuperClass(cp_info **pool) {
@@ -140,14 +140,14 @@ namespace kivm {
             if (!method->isStatic()) {
                 auto ret = _vtable.insert(pair);
                 if (!ret.second) {
-                    D("%s: New override method %s",
-                        strings::toStdString(getName()).c_str(),
-                        strings::toStdString(id).c_str());
+                    D("%S: New override method %S",
+                        (getName()).c_str(),
+                        (id).c_str());
                     (*ret.first).second = methodID;
                 } else {
-                    D("%s: New virtual method %s",
-                        strings::toStdString(getName()).c_str(),
-                        strings::toStdString(id).c_str());
+                    D("%S: New virtual method %S",
+                        (getName()).c_str(),
+                        (id).c_str());
                 }
             }
         }
@@ -166,8 +166,8 @@ namespace kivm {
             instanceFieldIndex += (int) this->_instanceFields.size();
         }
 
-        D("%s: Extended instance field count: %d",
-            strings::toStdString(getName()).c_str(),
+        D("%S: Extended instance field count: %d",
+            (getName()).c_str(),
             instanceFieldIndex);
 
         // link our fields
@@ -178,12 +178,12 @@ namespace kivm {
             FieldPool::add(field);
 
             bool isStatic = field->isStatic();
-            D("%s: New %s field (final: %s): #%-d %s",
-                strings::toStdString(getName()).c_str(),
+            D("%S: New %s field (final: %s): #%-d %S",
+                (getName()).c_str(),
                 isStatic ? "static" : "instance",
                 field->isFinal() ? "true" : "false",
                 isStatic ? staticFieldIndex : instanceFieldIndex,
-                strings::toStdString(Field::makeIdentity(this, field)).c_str());
+                (Field::makeIdentity(this, field)).c_str());
 
             if (isStatic) {
                 _staticFields.insert(make_pair(Field::makeIdentity(this, field),
@@ -318,14 +318,14 @@ namespace kivm {
     }
 
     void InstanceKlass::setStaticFieldValue(FieldID *fieldID, oop value) {
-        D("Set field %s::%s(%s) (slot: %d, max: %zd) to %p in %s",
-            strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
-            strings::toStdString(fieldID->_field->getName()).c_str(),
-            strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
+        D("Set field %S::%S(%S) (slot: %d, max: %zd) to %p in %S",
+            (fieldID->_field->getClass()->getName()).c_str(),
+            (fieldID->_field->getName()).c_str(),
+            (fieldID->_field->getDescriptor()).c_str(),
             fieldID->_offset,
             this->_staticFieldValues.size(),
             value,
-            strings::toStdString(this->getName()).c_str());
+            (this->getName()).c_str());
         this->_staticFieldValues[fieldID->_offset] = value;
     }
 
@@ -356,10 +356,10 @@ namespace kivm {
     }
 
     void InstanceKlass::setInstanceFieldValue(instanceOop receiver, FieldID *fieldID, oop value) {
-        D("Set field %s::%s(%s) to %p",
-            strings::toStdString(fieldID->_field->getClass()->getName()).c_str(),
-            strings::toStdString(fieldID->_field->getName()).c_str(),
-            strings::toStdString(fieldID->_field->getDescriptor()).c_str(),
+        D("Set field %S::%S(%S) to %p",
+            (fieldID->_field->getClass()->getName()).c_str(),
+            (fieldID->_field->getName()).c_str(),
+            (fieldID->_field->getDescriptor()).c_str(),
             value);
         receiver->_instanceFieldValues[fieldID->_offset] = value;
     }

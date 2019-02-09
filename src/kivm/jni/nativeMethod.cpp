@@ -49,7 +49,7 @@ namespace kivm {
                 << strings::replaceAll(method->getName(), Global::SLASH, Global::UNDERLINE);
 
             const String &nativeSymbolName = nativeSymbolBuilder.str();
-            D("Looking up symbol: %s", strings::toStdString(nativeSymbolName).c_str());
+            D("Looking up symbol: %S", (nativeSymbolName).c_str());
             dl::DLInterface dlInterface;
             dl::DLSymbol nativeSymbol = dlInterface.findSymbol(strings::toStdString(nativeSymbolName));
             if (nativeSymbol != nullptr) {

@@ -127,19 +127,19 @@ namespace kivm {
 
         if (_thread->_frames.getSize() > 0) {
             auto returnTo = _thread->_frames.getCurrentFrame()->getMethod();
-            D("returned from %s.%s:%s to %s.%s:%s",
-                strings::toStdString(_method->getClass()->getName()).c_str(),
-                strings::toStdString(_method->getName()).c_str(),
-                strings::toStdString(_method->getDescriptor()).c_str(),
-                strings::toStdString(returnTo->getClass()->getName()).c_str(),
-                strings::toStdString(returnTo->getName()).c_str(),
-                strings::toStdString(returnTo->getDescriptor()).c_str());
+            D("returned from %S.%S:%S to %S.%S:%S",
+                (_method->getClass()->getName()).c_str(),
+                (_method->getName()).c_str(),
+                (_method->getDescriptor()).c_str(),
+                (returnTo->getClass()->getName()).c_str(),
+                (returnTo->getName()).c_str(),
+                (returnTo->getDescriptor()).c_str());
 
         } else {
-            D("returned from %s.%s:%s to the Java Virtual Machine",
-                strings::toStdString(_method->getClass()->getName()).c_str(),
-                strings::toStdString(_method->getName()).c_str(),
-                strings::toStdString(_method->getDescriptor()).c_str());
+            D("returned from %S.%S:%S to the Java Virtual Machine",
+                (_method->getClass()->getName()).c_str(),
+                (_method->getName()).c_str(),
+                (_method->getDescriptor()).c_str());
 
             if (_thread->isExceptionOccurred()) {
                 KiVM::uncaughtException(_thread);

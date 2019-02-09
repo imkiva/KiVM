@@ -58,10 +58,10 @@ namespace kivm {
         const CodeBlob &codeBlob = currentMethod->getCodeBlob();
         u4 &pc = thread->_pc;
 
-        D("currentMethod: %s.%s:%s",
-            strings::toStdString(currentClass->getName()).c_str(),
-            strings::toStdString(currentMethod->getName()).c_str(),
-            strings::toStdString(currentMethod->getDescriptor()).c_str());
+        D("currentMethod: %S.%S:%S",
+            (currentClass->getName()).c_str(),
+            (currentMethod->getName()).c_str(),
+            (currentMethod->getDescriptor()).c_str());
 
         Stack &stack = currentFrame->getStack();
         Locals &locals = currentFrame->getLocals();
