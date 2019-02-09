@@ -186,6 +186,14 @@ Java_sun_misc_Unsafe_getObjectVolatile(JNIEnv *env, jobject javaUnsafe, jobject 
     return *((volatile oop *) addr);
 }
 
+JAVA_NATIVE void
+Java_sun_misc_Unsafe_putObjectVolatile(JNIEnv *env, jobject javaUnsafe, jobject javaOwner, jlong encodedOffset,
+                                       jobject obj) {
+    DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset);
+    oop *addr = getFieldByOffset(owner, offset, isStatic);
+    *((volatile oop *) addr) = Resolver::javaOop(obj);
+}
+
 JAVA_NATIVE jboolean
 Java_sun_misc_Unsafe_compareAndSwapInt(JNIEnv *env, jobject javaUnsafe,
                                        jobject javaOwner, jlong encodedOffset,
@@ -198,8 +206,8 @@ Java_sun_misc_Unsafe_compareAndSwapInt(JNIEnv *env, jobject javaUnsafe,
 
 JAVA_NATIVE jboolean
 Java_sun_misc_Unsafe_compareAndSwapLong(JNIEnv *env, jobject javaUnsafe,
-                                       jobject javaOwner, jlong encodedOffset,
-                                       jlong expected, jlong update) {
+                                        jobject javaOwner, jlong encodedOffset,
+                                        jlong expected, jlong update) {
     DECODE_OFFSET_AND_OWNER(javaOwner, encodedOffset);
     oop *addr = getFieldByOffset(owner, offset, isStatic);
     volatile jlong *ptr = (*((longOop *) addr))->getValueUnsafe();

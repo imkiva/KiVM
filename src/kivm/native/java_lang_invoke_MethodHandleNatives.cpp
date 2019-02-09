@@ -46,7 +46,7 @@ static bool isSpecializedMethod(const String &methodName) {
 
 static String toClassName(mirrorOop mirror) {
     if (mirror->isPrimitiveMirror()) {
-        return std::to_wstring(mirror->getPrimitiveType());
+        return valueTypeToPrimitiveTypeDesc(mirror->getPrimitiveType());
 
     } else {
         auto target = mirror->getTarget();
@@ -246,7 +246,7 @@ JAVA_NATIVE jobject Java_java_lang_invoke_MethodHandleNatives_resolve(JNIEnv *en
     auto flagsObj = intOop(object);
     auto flags = (unsigned int) flagsObj->getValue();
 
-    // copied from hotspot vm:
+    // copied from MemberName.java:
     unsigned int refKind = (flags >> 24) & 15;
     const auto descriptor = resolveDescriptor(klass, name, typeObj);
 
