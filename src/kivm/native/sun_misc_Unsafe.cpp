@@ -262,3 +262,12 @@ JAVA_NATIVE void Java_sun_misc_Unsafe_freeMemory(JNIEnv *env, jobject javaUnsafe
     Universe::deallocCObject(ptr);
 }
 
+JAVA_NATIVE jboolean Java_sun_misc_Unsafe_shouldBeInitialized(JNIEnv *env, jobject javaUnsafe, jclass cls) {
+    auto mirror = Resolver::mirror(cls);
+    if (mirror->isPrimitiveMirror()) {
+        SHOULD_NOT_REACH_HERE();
+    }
+
+    return JBOOLEAN(mirror->getTarget()->getClassState() != ClassState::FULLY_INITIALIZED);
+}
+
