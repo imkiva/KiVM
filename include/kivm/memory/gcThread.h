@@ -15,6 +15,12 @@ namespace kivm {
         WAITING_FOR_SAFEPOINT,
     };
 
+    enum GCReason {
+        GC_FOR_MALLOC,
+        GC_EXPLICIT,
+        GC_CONCURRENT,
+    };
+
     class GCThread : public VMThread {
     private:
         static GCThread *sGCThreadInstance;

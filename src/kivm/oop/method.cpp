@@ -417,7 +417,7 @@ namespace kivm {
             auto checkClass = pool->getClass(ex.catch_type);
             if (checkClass == exceptionClass
                 || Execution::instanceOf(exceptionClass, checkClass)) {
-                // Yes! we got exception handler
+                // Yes! we got the exception handler
                 return ex.handler_pc;
             }
         }
