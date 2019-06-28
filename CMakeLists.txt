@@ -198,6 +198,9 @@ set(SOURCE_FILES
         include/shared/hashMap.h
         include/kivm/jni/nativeLibrariy.h
         include/kivm/jni/nativeMethod.h
+        include/kivm/cfg/block.h
+        include/kivm/bytecode2/defs.h
+        include/kivm/cfg/edge.h
         src/kivm/native/java_lang_ClassLoader.cpp
         src/shared/string.cpp
         src/kivm/oop/oopBase.cpp
@@ -279,7 +282,10 @@ set(SOURCE_FILES
         src/shared/filesystem.cpp
         src/kivm/native/java_lang_invoke_MethodHandleNatives.cpp
         src/kivm/native/java_lang_reflect_Array.cpp
-        src/kivm/native/sun_misc_URLClassPath.cpp)
+        src/kivm/native/sun_misc_URLClassPath.cpp
+        include/kivm/bytecode2/bytecodes.h
+        include/kivm/bytecode2/template.h
+        include/kivm/bytecode2/interpreterMacroAssembler.h src/kivm/bytecode2/template.cpp include/kivm/asm/address.h include/kivm/asm/register.h src/kivm/bytecode2/templateTable.cpp src/kivm/bytecode2/interpreterMacroAssembler.cpp include/kivm/bytecode2/templateTable.h)
 
 set(KIVM_PLATFORM_SRC
         include/shared/os/common/dl.h
