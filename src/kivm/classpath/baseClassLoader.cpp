@@ -67,4 +67,16 @@ namespace kivm {
         result.closeResource();
         return klass;
     }
+
+    Klass *BaseClassLoader::loadClass(u1 *classBytes, size_t classSize) {
+        if (classBytes == nullptr) {
+            return nullptr;
+        }
+
+        ClassFileParser fileParser(L"<stream>", classBytes, classSize);
+        ClassFile *classFile = fileParser.getParsedClassFile();
+        return classFile != nullptr
+               ? new InstanceKlass(classFile, this, nullptr, ClassType::INSTANCE_CLASS)
+               : nullptr;
+    }
 }

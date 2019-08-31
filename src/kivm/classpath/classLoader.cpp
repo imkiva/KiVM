@@ -9,7 +9,7 @@
 #include <shared/lock.h>
 
 namespace kivm {
-    static RecursiveLock &get_bootstrap_lock() {
+    static RecursiveLock &bootstrapLock() {
         static RecursiveLock lock;
         return lock;
     }
@@ -41,7 +41,7 @@ namespace kivm {
     }
 
     Klass *BootstrapClassLoader::loadClass(const String &className) {
-        RecursiveLockGuard guard(get_bootstrap_lock());
+        RecursiveLockGuard guard(bootstrapLock());
 
         // check whether class is already loaded
         auto iter = SystemDictionary::get()->find(className);
@@ -56,6 +56,25 @@ namespace kivm {
             klass->setClassState(ClassState::LOADED);
             klass->linkClass();
         }
+        return klass;
+    }
+
+    Klass *BootstrapClassLoader::loadClass(u1 *classBytes, size_t classSize) {
+        RecursiveLockGuard guard(bootstrapLock());
+        Klass *klass = BaseClassLoader::loadClass(classBytes, classSize);
+        if (klass == nullptr) {
+            return nullptr;
+        }
+
+        auto iter = SystemDictionary::get()->find(klass->getName());
+        if (iter != nullptr) {
+            delete klass;
+            return iter;
+        }
+
+        SystemDictionary::get()->put(klass->getName(), klass);
+        klass->setClassState(ClassState::LOADED);
+        klass->linkClass();
         return klass;
     }
 }

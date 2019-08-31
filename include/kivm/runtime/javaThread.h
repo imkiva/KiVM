@@ -108,6 +108,9 @@ namespace kivm {
     // implemented in src/kivm/runtime/init.cpp
     class JavaMainThread : public JavaThread {
     private:
+        bool _classFromStream;
+        u1 *_mainClassBytes;
+        size_t _mainClassSize;
         String _mainClassName;
         std::vector<String> _arguments;
 
@@ -118,6 +121,8 @@ namespace kivm {
 
     public:
         JavaMainThread(const String &mainClassName, const std::vector<String> &arguments);
+
+        JavaMainThread(u1 *mainClassBytes, size_t classSize, const std::vector<String> &arguments);
 
         inline void start() override {
             JavaThread::start(nullptr);

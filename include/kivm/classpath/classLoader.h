@@ -18,6 +18,8 @@ namespace kivm {
 
         virtual Klass *loadClass(const String &className) = 0;
 
+        virtual Klass *loadClass(u1 *classBytes, size_t classSize) = 0;
+
         ClassLoader() = default;
 
         ClassLoader(const ClassLoader &) = delete;
@@ -30,6 +32,8 @@ namespace kivm {
     class BaseClassLoader : public ClassLoader {
     public:
         Klass *loadClass(const String &className) override;
+
+        Klass *loadClass(u1 *classBytes, size_t classSize) override;
     };
 
     class BootstrapClassLoader : public BaseClassLoader {
@@ -37,5 +41,7 @@ namespace kivm {
         static BootstrapClassLoader *get();
 
         Klass *loadClass(const String &className) override;
+
+        Klass *loadClass(u1 *classBytes, size_t classSize) override;
     };
 }
