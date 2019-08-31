@@ -285,7 +285,13 @@ set(SOURCE_FILES
         src/kivm/native/sun_misc_URLClassPath.cpp
         include/kivm/bytecode2/bytecodes.h
         include/kivm/bytecode2/template.h
-        include/kivm/bytecode2/interpreterMacroAssembler.h src/kivm/bytecode2/template.cpp include/kivm/asm/address.h include/kivm/asm/register.h src/kivm/bytecode2/templateTable.cpp src/kivm/bytecode2/interpreterMacroAssembler.cpp include/kivm/bytecode2/templateTable.h)
+        include/kivm/bytecode2/interpreterMacroAssembler.h
+        src/kivm/bytecode2/template.cpp
+        include/kivm/asm/address.h
+        include/kivm/asm/register.h
+        src/kivm/bytecode2/templateTable.cpp
+        src/kivm/bytecode2/interpreterMacroAssembler.cpp
+        include/kivm/bytecode2/templateTable.h)
 
 set(KIVM_PLATFORM_SRC
         include/shared/os/common/dl.h
@@ -328,6 +334,7 @@ add_test_target(stack-and-locals)
 add_test_target(encode-decode-offset)
 add_test_target(oop-size)
 add_test_target(args-parser)
+add_test_target(native-image)
 
 #### Benchmarks
 add_executable(bench-allocation tests/bench-allocation.cpp)
