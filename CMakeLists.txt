@@ -291,7 +291,7 @@ set(SOURCE_FILES
         include/kivm/asm/register.h
         src/kivm/bytecode2/templateTable.cpp
         src/kivm/bytecode2/interpreterMacroAssembler.cpp
-        include/kivm/bytecode2/templateTable.h)
+        include/kivm/bytecode2/templateTable.h src/kivm/native/sun_reflect_NativeMethodAccessorImpl.cpp)
 
 set(KIVM_PLATFORM_SRC
         include/shared/os/common/dl.h
