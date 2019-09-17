@@ -80,7 +80,7 @@ namespace kivm {
             methodID->_method->getAccessFlag() & (~ACC_ANNOTATION)));
 
         if (nameField != nullptr) {
-            methodOop->setFieldValue(nameField, java::lang::String::from(methodID->_method->getName()));
+            methodOop->setFieldValue(nameField, java::lang::String::intern(methodID->_method->getName()));
         }
 
         methodOop->setFieldValue(classField, methodID->_method->getClass()->getJavaMirror());
