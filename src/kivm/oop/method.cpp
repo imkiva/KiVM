@@ -103,7 +103,7 @@ namespace kivm {
                             PANIC("Enclosing class name");
                         }
                         const auto &className = String(arrayDimension, L'[')
-                            + desc.substr(startIndex, i - startIndex + 1);
+                                                + desc.substr(startIndex, i - startIndex + 1);
 
                         if (arrayDimension > 0) {
                             arrayDimension = 0;
@@ -267,6 +267,7 @@ namespace kivm {
         this->_argumentValueTypesNoWrapResolved = false;
         this->_returnTypeResolved = false;
         this->_returnTypeNoWrapResolved = false;
+        this->_checkedExceptionsResolved = false;
         this->_nativePointer = nullptr;
         this->_runtimeVisibleAnnos = nullptr;
         this->_returnClassType = nullptr;
@@ -490,6 +491,27 @@ namespace kivm {
             return iter == _lineNumberTable.end() ? -1 : iter->second;
         }
         return 0;
+    }
+
+    const std::list<InstanceKlass *> &Method::getCheckedExceptions() {
+        if (_checkedExceptionsResolved) {
+            return _checkedExceptions;
+        }
+
+        auto codeAttr = this->_codeAttr;
+        auto pool = this->getClass()->getRuntimeConstantPool();
+
+        for (int i = 0; i < codeAttr->exception_table_length; ++i) {
+            auto ex = codeAttr->exception_table[i];
+
+            auto checkClass = pool->getClass(ex.catch_type);
+            if (checkClass->getClassType() == ClassType::INSTANCE_CLASS) {
+                _checkedExceptions.push_back((InstanceKlass *) checkClass);
+            }
+        }
+
+        _checkedExceptionsResolved = true;
+        return _checkedExceptions;
     }
 
     //===============================================================================

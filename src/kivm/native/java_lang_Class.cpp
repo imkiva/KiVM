@@ -11,6 +11,7 @@
 #include <kivm/oop/arrayOop.h>
 #include <kivm/bytecode/execution.h>
 #include <sstream>
+#include <kivm/bytecode/javaCall.h>
 
 namespace kivm {
     namespace java {

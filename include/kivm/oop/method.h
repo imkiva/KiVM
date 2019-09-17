@@ -59,6 +59,7 @@ namespace kivm {
         bool _argumentClassTypesResolved;
         bool _returnTypeNoWrapResolved;
         bool _returnTypeResolved;
+        bool _checkedExceptionsResolved;
         bool _linked;
 
         /**
@@ -71,8 +72,8 @@ namespace kivm {
         std::vector<mirrorOop> _argumentClassTypes;
         mirrorOop _returnClassType;
 
-        /** this method is likely to throw these exceptions **/
-        std::list<InstanceKlass *> _throws;
+        /** this method is likely to throw these checked exceptions **/
+        std::list<InstanceKlass *> _checkedExceptions;
 
         /** map<start-pc, line-number> **/
         HashMap<u2, u2> _lineNumberTable;
@@ -146,6 +147,11 @@ namespace kivm {
          */
         JavaNativeMethod *getNativeMethod();
 
+        /**
+         * Checked exceptions that this method may throw
+         * @return checked exceptions
+         */
+        const std::list<InstanceKlass *> &getCheckedExceptions();
 
     public:
         int findExceptionHandler(u4 currentPc, InstanceKlass *exceptionClass);
