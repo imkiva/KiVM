@@ -77,6 +77,9 @@ find_package(FFI REQUIRED)
 include_directories(${FFI_INCLUDE_DIRS})
 link_directories(${FFI_LIBRARIES})
 
+message(STATUS "libffi include: ${FFI_INCLUDE_DIRS}")
+message(STATUS "libffi libs: ${FFI_LIBRARIES}")
+
 #### libzip
 check_include_files(zip.h HAVE_ZIP_H)
 
@@ -91,11 +94,17 @@ if (HAVE_ZIP_H)
     # check libz if libzip is required
     if (NOT EXISTS "/system/framework/framework-res.apk")
         find_package(ZLIB REQUIRED)
+        if (!ZLIB_FOUND)
+            message(FATAL_ERROR "libz not found")
+        endif ()
+
         include_directories(${ZLIB_INCLUDE_DIR})
         set(CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIR})
-        if (ZLIB_VERSION_STRING VERSION_LESS "1.1.2")
-            message(FATAL_ERROR "zlib version too old, please install at least v1.1.2 to enable jar class loading.")
-        endif ()
+        message(STATUS "zlib version: ${ZLIB_VERSION_STRING}")
+        message(STATUS "zlib include: ${ZLIB_INCLUDE_DIR}")
+#        if (ZLIB_VERSION_STRING VERSION_LESS "1.1.2")
+#            message(FATAL_ERROR "zlib version too old, please install at least v1.1.2 to enable jar class loading.")
+#        endif ()
         message(STATUS "Jar class loading enabled")
     else ()
         message(STATUS "Detected building on Android, skipping zlib check")
