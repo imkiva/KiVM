@@ -75,15 +75,21 @@ message(STATUS "System arch: ${ARCH_NAME}")
 #### libffi
 find_package(FFI REQUIRED)
 include_directories(${FFI_INCLUDE_DIRS})
-link_directories(${FFI_LIBRARIES})
+link_libraries(${FFI_LIBRARIES})
 
 message(STATUS "libffi include: ${FFI_INCLUDE_DIRS}")
 message(STATUS "libffi libs: ${FFI_LIBRARIES}")
 
 #### libzip
-check_include_files(zip.h HAVE_ZIP_H)
+find_package(ZIP REQUIRED)
+if (ZIP_FOUND)
+    set(HAVE_ZIP_H true)
+    message(STATUS "libzip include: ${ZIP_INCLUDE_DIRS}")
+    message(STATUS "libzip libs: ${ZIP_LIBRARIES}")
 
-if (HAVE_ZIP_H)
+    include_directories(${ZIP_INCLUDE_DIRS})
+    link_libraries(${ZIP_LIBRARIES})
+
     check_c_source_compiles("#include <zip.h>
         int main(int argc, char *argv[]) { zip_flags_t flag = 0; }" HAVE_ZIP_FLAGS_T)
     check_c_source_compiles("#include <zip.h>
@@ -102,9 +108,9 @@ if (HAVE_ZIP_H)
         set(CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIR})
         message(STATUS "zlib version: ${ZLIB_VERSION_STRING}")
         message(STATUS "zlib include: ${ZLIB_INCLUDE_DIR}")
-#        if (ZLIB_VERSION_STRING VERSION_LESS "1.1.2")
-#            message(FATAL_ERROR "zlib version too old, please install at least v1.1.2 to enable jar class loading.")
-#        endif ()
+        if (ZLIB_VERSION_STRING VERSION_LESS "1.1.2")
+            message(FATAL_ERROR "zlib version too old, please install at least v1.1.2 to enable jar class loading.")
+        endif ()
         message(STATUS "Jar class loading enabled")
     else ()
         message(STATUS "Detected building on Android, skipping zlib check")
@@ -324,7 +330,8 @@ IF (UNIX)
     target_link_libraries(kivm dl)
     if (HAVE_ZIP_H)
         target_link_libraries(kivm z)
-        target_link_libraries(kivm zip)
+        target_link_libraries(kivm ${ZIP_LIBRARIES})
+        target_link_libraries(kivm ${FFI_LIBRARIES})
     endif ()
 ENDIF ()
 
