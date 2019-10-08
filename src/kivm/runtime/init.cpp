@@ -29,7 +29,14 @@ namespace kivm {
 
     JavaMainThread::JavaMainThread(const String &mainClassName, const std::vector<String> &arguments)
         : JavaThread(nullptr, {}),
-          _mainClassName(mainClassName), _arguments(arguments) {
+          _mainClassName(mainClassName), _arguments(arguments),
+          _classFromStream(false), _mainClassBytes(nullptr) {
+    }
+
+    JavaMainThread::JavaMainThread(u1 *mainClassBytes, size_t classSize, const std::vector<String> &arguments)
+        : JavaThread(nullptr, {}),
+          _mainClassName(), _arguments(arguments),
+          _classFromStream(true), _mainClassBytes(mainClassBytes), _mainClassSize(classSize) {
     }
 
     void JavaMainThread::run() {
@@ -40,7 +47,13 @@ namespace kivm {
 
         D("Threads::initializeJVM() succeeded. Lunching main()");
 
-        auto mainClass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(_mainClassName);
+        InstanceKlass *mainClass = nullptr;
+        if (_classFromStream) {
+            mainClass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(_mainClassBytes, _mainClassSize);
+        } else {
+            mainClass = (InstanceKlass *) BootstrapClassLoader::get()->loadClass(_mainClassName);
+        }
+        
         if (mainClass == nullptr) {
             PANIC("class not found: %S", (_mainClassName).c_str());
         }

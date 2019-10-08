@@ -75,12 +75,21 @@ message(STATUS "System arch: ${ARCH_NAME}")
 #### libffi
 find_package(FFI REQUIRED)
 include_directories(${FFI_INCLUDE_DIRS})
-link_directories(${FFI_LIBRARIES})
+link_libraries(${FFI_LIBRARIES})
+
+message(STATUS "libffi include: ${FFI_INCLUDE_DIRS}")
+message(STATUS "libffi libs: ${FFI_LIBRARIES}")
 
 #### libzip
-check_include_files(zip.h HAVE_ZIP_H)
+find_package(ZIP REQUIRED)
+if (ZIP_FOUND)
+    set(HAVE_ZIP_H true)
+    message(STATUS "libzip include: ${ZIP_INCLUDE_DIRS}")
+    message(STATUS "libzip libs: ${ZIP_LIBRARIES}")
 
-if (HAVE_ZIP_H)
+    include_directories(${ZIP_INCLUDE_DIRS})
+    link_libraries(${ZIP_LIBRARIES})
+
     check_c_source_compiles("#include <zip.h>
         int main(int argc, char *argv[]) { zip_flags_t flag = 0; }" HAVE_ZIP_FLAGS_T)
     check_c_source_compiles("#include <zip.h>
@@ -91,8 +100,14 @@ if (HAVE_ZIP_H)
     # check libz if libzip is required
     if (NOT EXISTS "/system/framework/framework-res.apk")
         find_package(ZLIB REQUIRED)
+        if (!ZLIB_FOUND)
+            message(FATAL_ERROR "libz not found")
+        endif ()
+
         include_directories(${ZLIB_INCLUDE_DIR})
         set(CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIR})
+        message(STATUS "zlib version: ${ZLIB_VERSION_STRING}")
+        message(STATUS "zlib include: ${ZLIB_INCLUDE_DIR}")
         if (ZLIB_VERSION_STRING VERSION_LESS "1.1.2")
             message(FATAL_ERROR "zlib version too old, please install at least v1.1.2 to enable jar class loading.")
         endif ()
@@ -198,6 +213,9 @@ set(SOURCE_FILES
         include/shared/hashMap.h
         include/kivm/jni/nativeLibrariy.h
         include/kivm/jni/nativeMethod.h
+        include/kivm/cfg/block.h
+        include/kivm/bytecode2/defs.h
+        include/kivm/cfg/edge.h
         src/kivm/native/java_lang_ClassLoader.cpp
         src/shared/string.cpp
         src/kivm/oop/oopBase.cpp
@@ -279,7 +297,16 @@ set(SOURCE_FILES
         src/shared/filesystem.cpp
         src/kivm/native/java_lang_invoke_MethodHandleNatives.cpp
         src/kivm/native/java_lang_reflect_Array.cpp
-        src/kivm/native/sun_misc_URLClassPath.cpp)
+        src/kivm/native/sun_misc_URLClassPath.cpp
+        include/kivm/bytecode2/bytecodes.h
+        include/kivm/bytecode2/template.h
+        include/kivm/bytecode2/interpreterMacroAssembler.h
+        src/kivm/bytecode2/template.cpp
+        include/kivm/asm/address.h
+        include/kivm/asm/register.h
+        src/kivm/bytecode2/templateTable.cpp
+        src/kivm/bytecode2/interpreterMacroAssembler.cpp
+        include/kivm/bytecode2/templateTable.h src/kivm/native/sun_reflect_NativeMethodAccessorImpl.cpp)
 
 set(KIVM_PLATFORM_SRC
         include/shared/os/common/dl.h
@@ -303,7 +330,8 @@ IF (UNIX)
     target_link_libraries(kivm dl)
     if (HAVE_ZIP_H)
         target_link_libraries(kivm z)
-        target_link_libraries(kivm zip)
+        target_link_libraries(kivm ${ZIP_LIBRARIES})
+        target_link_libraries(kivm ${FFI_LIBRARIES})
     endif ()
 ENDIF ()
 
@@ -322,6 +350,7 @@ add_test_target(stack-and-locals)
 add_test_target(encode-decode-offset)
 add_test_target(oop-size)
 add_test_target(args-parser)
+add_test_target(native-image)
 
 #### Benchmarks
 add_executable(bench-allocation tests/bench-allocation.cpp)

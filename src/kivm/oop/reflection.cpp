@@ -72,14 +72,23 @@ namespace kivm {
     }
 
     static void fillMethodBasicFields(MethodID *methodID, instanceOop methodOop,
+                                      FieldID *nameField,
                                       FieldID *classField, FieldID *slotField,
                                       FieldID *modifiersField, FieldID *signatureField,
                                       FieldID *overrideField) {
         methodOop->setFieldValue(modifiersField, new intOopDesc(
             methodID->_method->getAccessFlag() & (~ACC_ANNOTATION)));
+
+        if (nameField != nullptr) {
+            methodOop->setFieldValue(nameField, java::lang::String::intern(methodID->_method->getName()));
+        }
+
         methodOop->setFieldValue(classField, methodID->_method->getClass()->getJavaMirror());
         methodOop->setFieldValue(slotField, new intOopDesc(methodID->_offset));
+
+        // TODO: support override flag
         methodOop->setFieldValue(overrideField, new intOopDesc(JNI_FALSE));
+
         const auto &signature = methodID->_method->getSignature();
         if (!signature.empty()) {
             methodOop->setFieldValue(signatureField, java::lang::String::intern(signature));
@@ -87,6 +96,8 @@ namespace kivm {
     }
 
     instanceOop newJavaMethodObject(MethodID *method) {
+        static auto classArrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()
+            ->loadClass(L"[Ljava/lang/Class;");
         static auto methodClass = java::lang::reflect::Method::CLASS;
 
         static auto nameField = methodClass->getInstanceFieldInfo(J_METHOD,
@@ -105,6 +116,27 @@ namespace kivm {
             L"override", L"Z");
 
         instanceOop methodOop = methodClass->newInstance();
+        fillMethodBasicFields(method, methodOop,
+            nameField,
+            java::lang::reflect::Method::FIELD_CLAZZ,
+            java::lang::reflect::Method::FIELD_SLOT,
+            modifiersField, signatureField, overrideField);
+
+        // parameters
+        fillMethodParameterTypes(method, methodOop, parameterTypesField);
+
+        // return type
+        methodOop->setFieldValue(returnTypeField, method->_method->getReturnClassType());
+
+        // exception types
+        int index = 0;
+        int exceptionCount = method->_method->getCheckedExceptions().size();
+        objectArrayOop exceptionTypes = classArrayClass->newInstance(exceptionCount);
+        for (auto ex : method->_method->getCheckedExceptions()) {
+            exceptionTypes->setElementAt(index++, ex->getJavaMirror());
+        }
+        methodOop->setFieldValue(exceptionTypesField, exceptionTypes);
+
         return methodOop;
     }
 
@@ -125,6 +157,7 @@ namespace kivm {
         instanceOop methodOop = constructorClass->newInstance();
 
         fillMethodBasicFields(method, methodOop,
+            nullptr,
             java::lang::reflect::Constructor::FIELD_CLAZZ,
             java::lang::reflect::Constructor::FIELD_SLOT,
             modifiersField, signatureField, overrideField);
