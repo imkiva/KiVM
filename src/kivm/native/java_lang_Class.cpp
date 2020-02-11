@@ -77,7 +77,7 @@ namespace kivm {
                 auto &M = getDelayedMirrors();
                 long size = M.size();
                 for (int i = 0; i < size; ++i) {
-                    const auto &name = M.front();
+                    auto name = std::move(M.front());
                     M.pop();
 
                     bool isPrimitiveArray = false;
@@ -155,10 +155,10 @@ namespace kivm {
 
             void Class::createMirror(Klass *klass, mirrorOop javaLoader) {
                 if (getMirrorState() != ClassMirrorState::FIXED) {
-                    if (klass->getClassType() == ClassType::INSTANCE_CLASS)
+                    if (klass->getClassType() == ClassType::INSTANCE_CLASS) {
                         getDelayedMirrors().push(klass->getName());
 
-                    else if (klass->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
+                    } else if (klass->getClassType() == ClassType::OBJECT_ARRAY_CLASS) {
                         getDelayedArrayClassMirrors().push(klass);
 
                     } else {
