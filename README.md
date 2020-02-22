@@ -44,6 +44,13 @@ Options:
 * Modified version of [libzippp](https://github.com/ctabin/libzippp)
 * Command line options parsing using [clipp](https://github.com/muellan/clipp)
 
+## Acknowledge
+
+We would like to thank [JetBrains](https://www.jetbrains.com/?from=mozart++) for sharing free
+open-source licences of amazing tools such as [CLion](https://www.jetbrains.com/idea/?from=mozart++).
+
+[<img src="logo/jetbrains.png" width="200"/>](https://www.jetbrains.com/?from=mozart++)
+
 ### See Also
 * [HiVM](https://github.com/imkiva/HiVM)
 * [The Java Virtual Machine Specification Java SE 8 Edition](https://docs.oracle.com/javase/specs/jvms/se8/html/)
