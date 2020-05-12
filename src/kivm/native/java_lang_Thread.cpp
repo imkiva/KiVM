@@ -10,6 +10,8 @@
 
 #include <pthread.h>
 #include <csignal>
+#include <chrono>
+#include <thread>
 
 using namespace kivm;
 
@@ -69,4 +71,8 @@ JAVA_NATIVE void Java_java_lang_Thread_start0(JNIEnv *env, jobject threadObject)
     assert(runMethod != nullptr);
     auto thread = new JavaThread(runMethod, {threadOop});
     thread->start(threadOop);
+}
+
+JAVA_NATIVE void Java_java_lang_Thread_sleep(JNIEnv *env, jclass threadCls, jlong ms) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
