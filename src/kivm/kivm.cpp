@@ -9,7 +9,6 @@
 #include <kivm/classpath/classPathManager.h>
 #include <kivm/bytecode/interpreter.h>
 #include <kivm/memory/gcThread.h>
-#include <random>
 #include <kivm/bytecode/javaCall.h>
 
 #if defined(KIVM_PLATFORM_UNIX) || defined(KIVM_PLATFORM_APPLE)
@@ -49,10 +48,6 @@ namespace kivm {
         if (KiVM::sJavaVMInstance != nullptr || pJavaVM == nullptr) {
             return JNI_ERR;
         }
-
-        std::default_random_engine dre((unsigned int) time(nullptr));
-        std::uniform_int_distribution<int> distribution(0xABC, INT32_MAX);
-        distribution(dre);
 
         // initialize memory
         Universe::initialize();
