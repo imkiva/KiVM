@@ -10,8 +10,8 @@ namespace kivm {
     }
 
     RuntimeConfig::RuntimeConfig() {
-        threadMaxStackFrames = 512;
-        initialHeapSizeInBytes = SIZE_MB(64);
-        maxHeapSizeInBytes = SIZE_MB(512);
+        threadMaxStackFrames = 1024;
+        initialHeapSizeInBytes = SIZE_MB(512L);
+        maxHeapSizeInBytes = SIZE_MB(2048L);
     }
 }

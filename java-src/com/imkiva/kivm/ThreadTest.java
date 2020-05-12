@@ -76,10 +76,10 @@ public class ThreadTest {
     }
 
     private void test() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
             new Producer(i).start();
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 3; i++) {
             new Consumer(i).start();
         }
     }
