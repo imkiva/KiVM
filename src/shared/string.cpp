@@ -107,10 +107,10 @@ namespace kivm {
             auto newSize = newValue.size();
 
             String newString = string;
-            auto pos = newString.find(oldValue);
-            while (pos != std::string::npos) {
+            String::size_type pos = 0;
+            while ((pos = newString.find(oldValue, pos)) != String::npos) {
                 newString.replace(pos, oldSize, newValue);
-                pos = string.find(oldValue, pos + newSize);
+                pos += newSize;
             }
             return newString;
         }
